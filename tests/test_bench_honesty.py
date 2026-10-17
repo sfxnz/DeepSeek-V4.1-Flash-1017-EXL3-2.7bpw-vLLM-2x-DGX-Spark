@@ -282,6 +282,34 @@ class DisarmScanTests(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertEqual(r.stdout, "== spark1 ==\n== spark2 ==\n")
 
+    def test_uncovered_pack_k_is_a_head_disarm(self) -> None:
+        docker = (
+            '#!/usr/bin/env bash\n'
+            'case "$1 $3" in\n'
+            '  "logs "*) printf "%s\\n" "$STUB_LOGS" ;;\n'
+            '  "inspect {{json .Args}}") echo \'["serve","/cache/snap","--tensor-parallel-size","2"]\' ;;\n'
+            '  "inspect "*) printf "A=1\\nDSV41_P2B_COOP=2\\n" ;;\n'
+            '  "exec "*) printf "%s" "$STUB_CONFIG" ;;\n'
+            'esac\nexit 0\n')
+        k3 = {"quantization_config": {"bits": 2, "expert_bits": {str(n): [5, 5] for n in range(40)}}}  # no K=5 kernel
+        with tempfile.TemporaryDirectory() as d:
+            for name, body in (("docker", docker), ("ssh", self.SSH)):
+                (Path(d) / name).write_text(body)
+                (Path(d) / name).chmod(0o755)
+            env = dict(os.environ, PATH=f"{d}:{os.environ['PATH']}", STUB_LOGS="", STUB_LOGS_WORKER="",
+                       STUB_SSH_RC="", STUB_CONFIG=json.dumps(k3))
+            r = subprocess.run(["bash", str(ROOT / "tools/disarm_scan.sh")], env=env, capture_output=True,
+                               text=True, timeout=60)
+            self.assertEqual(r.returncode, 1, r.stderr)
+            lines = r.stdout.splitlines()
+            self.assertEqual(lines[0], "== spark1 ==")
+            self.assertTrue(lines[1].startswith("pack: K_gu/K_d=5/5 (layers 0-39)"), r.stdout)
+            self.assertEqual(lines[2:], ["== spark2 =="])
+            env["STUB_CONFIG"] = json.dumps({"quantization_config": {"bits": 2}})
+            r = subprocess.run(["bash", str(ROOT / "tools/disarm_scan.sh")], env=env, capture_output=True,
+                               text=True, timeout=60)
+            self.assertEqual((r.returncode, r.stdout), (0, "== spark1 ==\n== spark2 ==\n"), r.stderr)
+
     def test_unreachable_worker_is_not_clean(self) -> None:
         r = self._run("", "", ssh_rc="255")
         self.assertEqual(r.returncode, 1)

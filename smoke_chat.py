@@ -41,7 +41,7 @@ def content_of(payload: dict) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--url", default="http://127.0.0.1:8000/v1/chat/completions")
-    ap.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash")
+    ap.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash-1017")
     ap.add_argument("--prompt", default="What is 17*19? Return only the integer.")
     ap.add_argument("--max-tokens", type=int, default=32)
     ap.add_argument(

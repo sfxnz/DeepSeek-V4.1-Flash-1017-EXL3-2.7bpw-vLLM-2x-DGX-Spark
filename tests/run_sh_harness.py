@@ -25,7 +25,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MODEL = "sfxnz/DeepSeek-V4.1-Flash-EXL3"
+MODEL = "sfxnz/DeepSeek-V4.1-Flash-1017-EXL3"
 CONTAINER = "dsv41-dryrun-harness"
 
 _LOG = r'''#!/usr/bin/env python3
@@ -91,7 +91,7 @@ if cmd.startswith("docker "):
     "ip": "#!/bin/sh\nexit 0\n",
     # STUB_CURL_FAIL=1: the API never comes up.
     "curl": "#!/bin/sh\n[ \"$STUB_CURL_FAIL\" = 1 ] && exit 7\n"
-    "echo '{\"data\":[{\"id\":\"deepseek-ai/DeepSeek-V4.1-Flash\"}]}'\n",
+    "echo '{\"data\":[{\"id\":\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}]}'\n",
 }
 # vLLM prints this when the headless worker starts connecting to the head.
 WORKER_LAUNCH_LINE = "INFO [serve.py:217] Launching vLLM headless multiproc executor, with head node address"

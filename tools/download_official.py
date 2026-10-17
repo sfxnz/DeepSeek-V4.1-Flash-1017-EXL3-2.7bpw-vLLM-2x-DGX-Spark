@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resume-safe download of the official DeepSeek-V4.1-Flash snapshot.
+"""Resume-safe download of the official DeepSeek-V4.1-Flash-1017 snapshot (the pack source).
 
 The Engram shards are ~95 GiB each. Hugging Face xet must be enabled
 (do not set HF_HUB_DISABLE_XET). Requires the ``hf_xet`` package.
@@ -13,8 +13,8 @@ import time
 os.environ.pop("HF_HUB_DISABLE_XET", None)
 os.environ.setdefault("HF_XET_HIGH_PERFORMANCE", "1")
 
-REPO = "deepseek-ai/DeepSeek-V4.1-Flash"
-REV = "dba1be0a40aa45a94ad051997016db3960a90277"
+REPO = "deepseek-ai/DeepSeek-V4.1-Flash-1017"
+REV = "1bae0e1088993b9b82de08f59de5be5a34e42170"
 
 
 def main() -> int:

@@ -6,10 +6,15 @@ MXFP8/MXFP4/BF16 layout, including Engram tables (read from disk at serve).
 DSpark draft experts stay source-format from backbone layer 40.
 
 Codebook is a named pair (marker suffix, p2b cb). MCG is cb=1. MUL1 is cb=2.
-The published Hub pin is still 2.0bpw-mcg. Rebuild tools default to MUL1
-and p2b cb=2 exists so a later pack can use it. spark1+spark2 measured
-MUL1 + cb=2 at 23.52 vs 27.98 prose decode. Do not switch the serve pin.
+The Sept rebuild tools default to MUL1 and p2b cb=2 exists so a later pack
+can use it. spark1+spark2 measured MUL1 + cb=2 at 23.52 vs 27.98 prose
+decode. The 1017 pack (tools/build_pack_1017.py) is MCG.
 A pack-only swap without cb=2 drops native p2b onto generic exl3_moe.
+
+1017 mixed-K routed experts: quantization_config["expert_bits"] maps
+"<layer 0..39>" -> [K_gu, K_d]; K_gu is the K of w1 and w3, K_d of w2, each
+in {2, 3, 4}. The serving plugin honors it and falls back to layer_bits /
+bits when it is absent. DSpark/MTP experts stay source MXFP4.
 """
 from __future__ import annotations
 
@@ -33,7 +38,15 @@ CODEBOOKS = {
     "mul1": Codebook("mul1", 2, "mul1", "mul1"),
 }
 DEFAULT_CODEBOOK = "mul1"
-SERVE_REVISION = "2.0bpw-mcg-viterbi-lmhead-mxfp8"
+# 1017 pins. SERVE_REVISION is provisional (the main agent may rename it).
+SOURCE_REPO = "deepseek-ai/DeepSeek-V4.1-Flash-1017"
+SOURCE_REVISION = "1bae0e1088993b9b82de08f59de5be5a34e42170"
+SOURCE_SNAPSHOT_REL = (
+    "models--deepseek-ai--DeepSeek-V4.1-Flash-1017/snapshots/" + SOURCE_REVISION
+)
+PACK_REPO = "sfxnz/DeepSeek-V4.1-Flash-1017-EXL3"
+SERVE_REVISION = "2.7bpw-mcg-hq"
+EXPERT_K = (2, 3, 4)
 
 
 def get_codebook(name: str) -> Codebook:
@@ -66,11 +79,42 @@ def is_routed_expert_weight(name: str) -> bool:
     return is_routed_expert_tensor(name) and name.endswith(".weight")
 
 
+def validate_expert_bits(expert_bits: dict) -> dict[str, list[int]]:
+    """Normalize {"<layer>": [K_gu, K_d]} over backbone layers 0..39 (all required)."""
+    out: dict[str, list[int]] = {}
+    for key, pair in expert_bits.items():
+        layer = int(key)
+        if not 0 <= layer < BACKBONE_LAYERS or str(layer) != str(key).strip():
+            raise ValueError(f"expert_bits: bad layer key {key!r}")
+        if not isinstance(pair, (list, tuple)) or len(pair) != 2:
+            raise ValueError(f"expert_bits[{key}]: want [K_gu, K_d], got {pair!r}")
+        ks = [int(k) for k in pair]
+        if any(k != v or k not in EXPERT_K for k, v in zip(ks, pair)):
+            raise ValueError(f"expert_bits[{key}]: K must be in {EXPERT_K}, got {pair!r}")
+        out[str(layer)] = ks
+    missing = [str(n) for n in range(BACKBONE_LAYERS) if str(n) not in out]
+    if missing:
+        raise ValueError(f"expert_bits: missing layers {missing[:8]}")
+    return {str(n): out[str(n)] for n in range(BACKBONE_LAYERS)}
+
+
+def layer_bpw(k_gu: int, k_d: int) -> float:
+    """Trellis bits per routed-expert weight of a layer: w1, w3 at K_gu and w2 at K_d."""
+    return (2 * k_gu + k_d) / 3
+
+
+def routed_bpw(expert_bits: dict) -> float:
+    """Param-weighted mean trellis bpw over the backbone's routed experts."""
+    eb = validate_expert_bits(expert_bits)
+    return sum(layer_bpw(*eb[str(n)]) for n in range(BACKBONE_LAYERS)) / BACKBONE_LAYERS
+
+
 def build_quantization_config(
     *,
     bits: int = DEFAULT_BITS,
     codebook: str = DEFAULT_CODEBOOK,
     layer_bits: dict[str, int] | None = None,
+    expert_bits: dict | None = None,
 ) -> dict[str, Any]:
     if bits not in (2, 3, 4, 5, 6):
         raise ValueError(f"unsupported EXL3 bits={bits}")
@@ -97,6 +141,17 @@ def build_quantization_config(
     }
     if layer_bits:
         cfg["layer_bits"] = {str(k): int(v) for k, v in layer_bits.items()}
+    if expert_bits is not None:
+        eb = validate_expert_bits(expert_bits)
+        cfg["expert_bits"] = eb
+        # Fallback for a loader without expert_bits: uniform layers only. A
+        # K_gu != K_d layer is left to `bits`, which then fails the loader's
+        # shape check loudly instead of serving the wrong K.
+        lb = dict(cfg.get("layer_bits") or {})
+        lb.update({k: v[0] for k, v in eb.items() if v[0] == v[1]})
+        if lb:
+            cfg["layer_bits"] = {k: lb[k] for k in sorted(lb, key=int)}
+        cfg["routed_bpw"] = round(routed_bpw(eb), 6)
     return cfg
 
 

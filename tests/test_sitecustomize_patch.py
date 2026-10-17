@@ -28,6 +28,7 @@ REQUIRED = {
     "extra_page_bump",
     "native_indexer_decode",
     "indexer_adaptive",
+    "chat_encoder_1017",
 }
 REQUIRED_UNLESS_LM_ONLY = {"swa_image_width", "attention_image_width"}
 sys.path.insert(0, str(ROOT / "docker/patch"))

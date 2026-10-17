@@ -255,7 +255,10 @@ class DataflowWiringTests(unittest.TestCase):
         self.assertTrue(_load("widen_p2b_dataflow").LOG_ENGAGED.startswith("dsv41: " + needle))
         label = re.search(r'LABEL dsv41.recipe.patches="([^"]+)"', df).group(1).split(",")
         self.assertEqual(label[label.index("coop") + 1], "dataflow")
-        self.assertFalse((ROOT / "docker/Dockerfile.e15").exists(), "folded into Dockerfile.e14")
+        # The round-3 review-e15 was folded into Dockerfile.e14; a Dockerfile.e15 now is the 1017
+        # kbits stage layered on canonical-e14 (tests/test_widen_p2b_kbits.py).
+        e15 = ROOT / "docker/Dockerfile.e15"
+        self.assertFalse(e15.exists() and "FROM dsv41-flash-exl3-sm121:canonical-e14\n" not in e15.read_text())
 
     def test_full_chain_in_sync_with_e14(self) -> None:
         """docker/Dockerfile (from scratch) applies the same p2b stages in the same order and

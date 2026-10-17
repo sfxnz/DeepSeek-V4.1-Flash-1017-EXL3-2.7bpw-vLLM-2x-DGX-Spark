@@ -62,6 +62,9 @@ if str(ROOT / "tools") not in sys.path:
 from pack_meta import is_routed_expert_tensor, is_routed_expert_weight  # noqa: E402
 
 OUT = Path("/home/sfxnz/projects/data/dsv41-requant-viterbi")
+# Sept tool: it verifies against the Sept 2.0bpw-mcg reference pack, so it stays on the Sept
+# source on purpose. The 1017 pack is built by tools/build_pack_1017.py (which reuses this
+# module's claim/state machinery).
 SRC_REL = "models--deepseek-ai--DeepSeek-V4.1-Flash/snapshots/dba1be0a40aa45a94ad051997016db3960a90277"
 PACK_REPO = "models--sfxnz--DeepSeek-V4.1-Flash-EXL3"
 REF_REV = "2.0bpw-mcg"  # the served experts; lmhead-mxfp8 links its shards 3-42 here

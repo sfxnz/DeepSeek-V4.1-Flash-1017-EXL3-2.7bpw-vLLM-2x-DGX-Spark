@@ -2,6 +2,7 @@
 """tools/engagement_audit.py on canned boot logs (CPU only)."""
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 import tempfile
@@ -31,6 +32,7 @@ ENGAGED = """\
 (Worker_TP0 pid=618) INFO 09-22 12:03:56 [breakable_cudagraph.py:290] Breakable CUDA graph enabled
 (Worker_TP0 pid=618) dsv41: engram gather v2 self-check bit-exact (r=120)
 [dsv41-prefill-empty-cache] skipped #1 (longest seq 9000, MemAvailable 3.1 GiB)
+dsv41: chat encoder 1017 parity engaged (encoding rewritten, tokenizer rewritten)
 """
 
 
@@ -110,7 +112,7 @@ class AuditTests(unittest.TestCase):
         log = ENGAGED.replace("dsv41: lm_head mxfp8 enabled", "").replace("Breakable CUDA graph enabled", "")
         self.assertEqual(ea.audit({"head": log}, env), [])
         expected, _ = ea.expectations({})
-        self.assertEqual([label for label, _ in expected], ["fix_o_proj_woa_fp8.py"])
+        self.assertEqual([label for label, _ in expected], ["fix_o_proj_woa_fp8.py", "chat_encoder_1017.py"])
 
     def test_cli_warn_exits_0_strict_exits_1(self) -> None:
         with tempfile.TemporaryDirectory() as d:
@@ -130,6 +132,117 @@ class AuditTests(unittest.TestCase):
             proc = subprocess.run(argv + ["--mode", "strict", f"worker={d}/missing.log"], env=env, capture_output=True, text=True)
             self.assertEqual(proc.returncode, 1)
             self.assertIn("cannot read", proc.stderr)
+
+
+def _pack(**q) -> dict:
+    return {"quantization_config": {"quant_method": "exl3", "bits": 2, **q}}
+
+
+K3_PACK = _pack(expert_bits={str(n): ([3, 3] if n < 28 else [2, 2]) for n in range(40)})
+COOP = dict(DEFAULT_ENV, DSV41_P2B_COOP="2")
+KBITS_PATCH = (
+    'DATAFLOW_K = (2, 3, 4)\n'
+    'DATAFLOW_MIXED_K = False\n'
+    'LOG_ENGAGED_K = "dsv41: p2b dataflow engaged K={kgu}/{kd}"\n'
+)
+
+
+class KAwareTests(unittest.TestCase):
+    """1017 mixed-K packs: the dataflow lever must cover every routed (K_gu, K_d) of the pack."""
+
+    def test_pack_k_layers_prefers_expert_bits_then_layer_bits_then_bits(self) -> None:
+        self.assertEqual(ea.pack_k_layers(_pack()), {(2, 2): list(range(40))})
+        lb = ea.pack_k_layers(_pack(layer_bits={"0": 3, "1": 4}))
+        self.assertEqual(lb[(3, 3)], [0])
+        self.assertEqual(lb[(4, 4)], [1])
+        self.assertEqual(len(lb[(2, 2)]), 38)
+        eb = ea.pack_k_layers(_pack(layer_bits={"0": 4}, expert_bits={str(n): [3, 2] for n in range(40)}))
+        self.assertEqual(eb, {(3, 2): list(range(40))})
+
+    def test_k2_pack_on_the_k2_patch_set_is_covered(self) -> None:
+        self.assertEqual(ea.coverage(_pack(), COOP), ([], []))
+        self.assertEqual(ea.audit({"head": ENGAGED}, COOP | {"DSV41_P2B_COOP": "0"}, K3_PACK), [])
+
+    def test_k3_pack_without_a_k3_kernel_fails_even_with_clean_logs(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "widen_p2b_dataflow.py").write_text("x = 1\n")
+            problems, _ = ea.coverage(K3_PACK, COOP, Path(d))
+        self.assertEqual(len(problems), 1, problems)
+        self.assertIn("K_gu/K_d=3/3 (layers 0-27)", problems[0])
+
+    def test_the_kbits_patch_file_declares_k234_and_mixed(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "widen_p2b_kbits.py").write_text("x = 1\n")
+            sup = ea.dataflow_support(Path(d))
+        self.assertEqual((sup["k"], sup["mixed"]), ({2, 3, 4}, True))
+        mixed = _pack(expert_bits={str(n): [3, 2] for n in range(40)})
+        if (ea.PATCH_DIR / "widen_p2b_kbits.py").is_file():
+            self.assertEqual(ea.coverage(mixed, COOP)[0], [], "this tree's patch set covers the 1017 pack")
+
+    def test_declared_constants_cover_k3_and_expect_per_k_lines(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "some_kernel_patch.py").write_text(KBITS_PATCH)
+            sup = ea.dataflow_support(Path(d))
+            self.assertEqual(sup["k"], {2, 3, 4})
+            problems, expected = ea.coverage(K3_PACK, COOP, Path(d))
+            self.assertEqual(problems, [])
+            self.assertEqual(sorted(m for _, m in expected),
+                             ["dsv41: p2b dataflow engaged K=2/2", "dsv41: p2b dataflow engaged K=3/3"])
+            mixed, _ = ea.coverage(_pack(expert_bits={str(n): [3, 2] for n in range(40)}), COOP, Path(d))
+            self.assertEqual(len(mixed), 1)
+            self.assertIn("3/2", mixed[0])
+            (Path(d) / "some_kernel_patch.py").write_text(KBITS_PATCH.replace("False", "True"))
+            self.assertEqual(ea.coverage(_pack(expert_bits={str(n): [3, 2] for n in range(40)}), COOP, Path(d))[0], [])
+
+    def test_strict_boot_on_the_kbits_kernel_passes_and_a_real_disarm_still_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "widen_p2b_kbits.py").write_text(KBITS_PATCH)
+            orig = ea.PATCH_DIR
+            try:
+                for name in list(ea.PATCHES) + ["widen_p2b_kbits.py"]:
+                    src = orig / name
+                    if src.is_file():
+                        (Path(d) / name).write_text(src.read_text())
+                (Path(d) / "widen_p2b_kbits.py").write_text(KBITS_PATCH)
+                ea.PATCH_DIR = Path(d)
+                env = dict(COOP, DSV41_DENSE_GEMV="0", DSV41_MHC_DET_SPLITS="0")
+                good = ENGAGED + (
+                    "dsv41: p2b coop dataflow kernel engaged (DSV41_P2B_COOP=2)\n"
+                    "dsv41: p2b dataflow engaged K=3/3\n"
+                    "dsv41: p2b dataflow engaged K=2/2\n")
+                self.assertEqual(ea.audit({"head": good, "worker": good}, env, K3_PACK), [])
+                off = good + "dsv41: p2b coop dataflow lever is OFF for this call (K=3 mcg=1 m=4 top_k=6)\n"
+                problems = ea.audit({"head": good, "worker": off}, env, K3_PACK)
+                self.assertEqual(len(problems), 1, problems)
+                self.assertIn("worker: dsv41: p2b coop dataflow lever is OFF", problems[0])
+                missing = good.replace("dsv41: p2b dataflow engaged K=3/3\n", "")
+                problems = ea.audit({"head": missing}, env, K3_PACK)
+                self.assertEqual(problems, ["head: missing 'dsv41: p2b dataflow engaged K=3/3' (p2b dataflow K)"])
+            finally:
+                ea.PATCH_DIR = orig
+
+    def test_cli_coverage_only_and_pack_config(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            cfg = Path(d) / "config.json"
+            k5 = _pack(expert_bits={str(n): ([5, 5] if n < 28 else [2, 2]) for n in range(40)})  # no kernel takes K=5
+            cfg.write_text(json.dumps(k5))
+            argv = [sys.executable, str(ROOT / "tools/engagement_audit.py")]
+            env = dict(COOP, PATH="/usr/bin:/bin")
+            proc = subprocess.run(argv + ["--coverage-only", "--pack-config", str(cfg)], env=env,
+                                  capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 1, proc.stderr)
+            self.assertTrue(proc.stdout.startswith("pack: K_gu/K_d=5/5 (layers 0-27)"), proc.stdout)
+            log = Path(d) / "head.log"
+            log.write_text(ENGAGED + "dsv41: p2b coop dataflow kernel engaged (DSV41_P2B_COOP=2)\n")
+            env = dict(env, DSV41_DENSE_GEMV="0", DSV41_MHC_DET_SPLITS="0")
+            proc = subprocess.run(argv + ["--mode", "strict", "--pack-config", str(cfg), f"head={log}"], env=env,
+                                  capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 1, proc.stderr)
+            self.assertIn("WARNING audit pack: K_gu/K_d=5/5", proc.stderr)
+            cfg.write_text(json.dumps(_pack()))
+            proc = subprocess.run(argv + ["--mode", "strict", "--pack-config", str(cfg), f"head={log}"], env=env,
+                                  capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
 
 
 if __name__ == "__main__":

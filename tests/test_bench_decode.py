@@ -59,7 +59,7 @@ class BenchDecodeArithmeticTests(unittest.TestCase):
         src = (ROOT / "bench_decode.py").read_text()
         self.assertIn('"thinking": False', src)
         self.assertIn('"reasoning_effort": "low"', src)
-        self.assertIn("deepseek-ai/DeepSeek-V4.1-Flash", src)
+        self.assertIn("deepseek-ai/DeepSeek-V4.1-Flash-1017", src)
         self.assertIn('"ignore_eos": ignore_eos', src)
         # Frozen cells keep ignore_eos on by default.
         sig = inspect.signature(self.bench.stream_one)

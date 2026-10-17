@@ -1,0 +1,38 @@
+# e15-kbits (DeepSeek-V4.1-Flash-1017 pack): canonical-e14 + widen_p2b_kbits.py.
+#   - vllm_exl3 / vllm_exl3_c rebuilt from the same vllm-exl3 pin and the same p2b chain as
+#     docker/Dockerfile.e14, plus widen_p2b_kbits.py: the coop (DSV41_P2B_COOP=1) and dataflow
+#     (DSV41_P2B_COOP=2) kernels for K = 3 / 4 MCG and for gate/up K != down K
+#     (quantization_config.expert_bits = {"<layer>": [K_gu, K_d]}), and the plugin reading
+#     expert_bits (w13 at K_gu, w2 at K_d; native p2b, exl3_moe and the fat prefill path per
+#     projection K; mixed-K prefill on vllm_exl3_c.exl3_moe_kmix, exllamav3's exl3_moe kernel with
+#     compile-time (K_gu, K_d), instead of exl3_moe's ~2x slower runtime-K instance). The 14 p2b
+#     kernels of canonical-e14 keep byte-identical machine code (kernel_study/p2b_kbits/
+#     sass_identity_kbits.sh); packs without expert_bits load as before.
+#   docker build --memory 24g --memory-swap 24g -f docker/Dockerfile.e15 -t dsv41-flash-exl3-sm121:e15-kbits docker
+FROM dsv41-flash-exl3-sm121:canonical-e14
+
+COPY patch /opt/dsv41-patch
+
+# Same pin as docker/Dockerfile.e14
+ARG VLLM_EXL3_REF=d3cfd394920360d69f820d2dc96f8292a9e10283
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends git \
+ && git clone https://github.com/vcruz305/vllm-exl3.git /opt/vllm-exl3 \
+ && git -C /opt/vllm-exl3 checkout "$VLLM_EXL3_REF" \
+ && python3 /opt/dsv41-patch/fix_vllm_exl3_setup.py /opt/vllm-exl3/setup.py \
+ && python3 /opt/dsv41-patch/widen_p2b_shapes.py /opt/vllm-exl3 \
+ && python3 /opt/dsv41-patch/widen_p2b_mrow.py /opt/vllm-exl3 \
+ && python3 /opt/dsv41-patch/widen_p2b_cfg1.py /opt/vllm-exl3 \
+ && python3 /opt/dsv41-patch/widen_p2b_codebook.py /opt/vllm-exl3 \
+ && python3 /opt/dsv41-patch/widen_p2b_fshift.py /opt/vllm-exl3 \
+ && python3 /opt/dsv41-patch/widen_p2b_srcsort.py /opt/vllm-exl3 \
+ && python3 /opt/dsv41-patch/widen_p2b_coop.py /opt/vllm-exl3 \
+ && python3 /opt/dsv41-patch/widen_p2b_dataflow.py /opt/vllm-exl3 \
+ && python3 /opt/dsv41-patch/widen_p2b_kbits.py /opt/vllm-exl3 \
+ && TORCH_CUDA_ARCH_LIST=12.1a python3 -m pip install --no-build-isolation --no-deps --force-reinstall /opt/vllm-exl3 \
+ && python3 -c "import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); print('vllm_exl3 kbits cuda ok')" \
+ && rm -rf /opt/vllm-exl3 /var/lib/apt/lists/*
+
+RUN cp /opt/dsv41-patch/sitecustomize.py /usr/lib/python3.12/sitecustomize.py \
+ && python3 -m py_compile /usr/lib/python3.12/sitecustomize.py
+LABEL dsv41.recipe.patches="shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack"

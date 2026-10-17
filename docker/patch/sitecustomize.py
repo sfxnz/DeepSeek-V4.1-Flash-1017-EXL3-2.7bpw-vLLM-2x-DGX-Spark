@@ -550,6 +550,11 @@ _patch(
     _sm120_rewrite("models/deepseek_v4_1/attention.py", "patch_indexer_short_context_source"),
 )
 
+# DeepSeek-V4.1-Flash-1017 chat-encoder parity (docker/patch/chat_encoder_1017.py): tool-result-only
+# user turns do not start a turn, content_blocks passthrough, placeholder check before merging, 1017
+# reasoning-effort budgets. Rewrites the image's vllm/tokenizers/deepseek_v41{,_encoding}.py.
+_patch("chat_encoder_1017", lambda: __import__("chat_encoder_1017").install(_VLLM, _rewrite), required=True)
+
 # lm_head MXFP8 (b12x): DSV41_LMHEAD_MXFP8=1 + quantized tensor in the
 # snapshot. Default-off; self-disarms (one line, never a crash) when the
 # snapshot keeps the bf16 head. Halves the ~735 MB/call vocab-head weight

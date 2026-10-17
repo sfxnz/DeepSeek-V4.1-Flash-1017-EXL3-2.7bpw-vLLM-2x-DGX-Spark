@@ -41,9 +41,10 @@ class PackMetaTests(unittest.TestCase):
         self.assertEqual(cfg["non_routed_quantization"]["expert_dtype"], "fp4")
         self.assertEqual(cfg["weight_block_size"], [32, 32])
 
-    def test_serve_revision_is_mcg_lmhead_rebuild_defaults_mul1(self) -> None:
+    def test_serve_revision_is_1017_mcg_sept_rebuild_defaults_mul1(self) -> None:
         self.assertEqual(self.meta.DEFAULT_CODEBOOK, "mul1")
-        self.assertEqual(self.meta.SERVE_REVISION, "2.0bpw-mcg-viterbi-lmhead-mxfp8")
+        self.assertEqual(self.meta.SERVE_REVISION, "2.7bpw-mcg-hq")  # provisional
+        self.assertEqual(self.meta.SOURCE_REPO, "deepseek-ai/DeepSeek-V4.1-Flash-1017")
         self.assertEqual(self.meta.revision_for(), "2.0bpw-mul1")
         self.assertEqual(self.meta.revision_for(codebook="mcg"), "2.0bpw-mcg")
         self.assertEqual(self.meta.get_codebook("mul1").cb, 2)
@@ -277,8 +278,8 @@ class DownloadOfficialTests(unittest.TestCase):
     def test_enables_xet_and_pins_revision(self) -> None:
         src = (ROOT / "tools/download_official.py").read_text()
         self.assertIn('os.environ.pop("HF_HUB_DISABLE_XET", None)', src)
-        self.assertIn("dba1be0a40aa45a94ad051997016db3960a90277", src)
-        self.assertIn("deepseek-ai/DeepSeek-V4.1-Flash", src)
+        self.assertIn("1bae0e1088993b9b82de08f59de5be5a34e42170", src)
+        self.assertIn('"deepseek-ai/DeepSeek-V4.1-Flash-1017"', src)
         self.assertIn("snapshot_download", src)
 
 

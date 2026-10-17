@@ -227,7 +227,7 @@ def run_suite(url: str, model: str, full: bool) -> tuple[list[dict], bool]:
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--url", default="http://127.0.0.1:8000/v1/chat/completions")
-    p.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash")
+    p.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash-1017")
     p.add_argument("--full", action="store_true",
                    help="include the 64k recall check (slow prefill)")
     args = p.parse_args()

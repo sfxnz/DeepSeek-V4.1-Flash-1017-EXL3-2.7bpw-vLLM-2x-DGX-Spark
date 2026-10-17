@@ -3,9 +3,9 @@
 set -euo pipefail
 
 # BEGIN generated from recipe.yaml — edit recipe.yaml and run kit/render.py
-MODEL="${MODEL:-sfxnz/DeepSeek-V4.1-Flash-EXL3}"
-SERVED_NAME="${SERVED_NAME:-deepseek-ai/DeepSeek-V4.1-Flash}"
-IMAGE="${IMAGE:-dsv41-flash-exl3-sm121:canonical-e14}"
+MODEL="${MODEL:-sfxnz/DeepSeek-V4.1-Flash-1017-EXL3}"
+SERVED_NAME="${SERVED_NAME:-deepseek-ai/DeepSeek-V4.1-Flash-1017}"
+IMAGE="${IMAGE:-dsv41-flash-exl3-sm121:e15-kbits}"
 CONTAINER_NAME="${CONTAINER_NAME:-dsv41-flash-exl3}"
 PORT="${PORT:-8000}"
 MASTER_PORT="${MASTER_PORT:-29524}"
@@ -19,7 +19,7 @@ MAX_MODEL_LEN="${MAX_MODEL_LEN:-1048576}"
 MAX_NUM_SEQS="${MAX_NUM_SEQS:-2}"
 UTIL="${UTIL:-0.75}"
 KV_CACHE_DTYPE="${KV_CACHE_DTYPE:-fp8}"
-KV_CACHE_MEMORY="${KV_CACHE_MEMORY:-8589934592}"
+KV_CACHE_MEMORY="${KV_CACHE_MEMORY:-4831838208}"
 BLOCK_SIZE="${BLOCK_SIZE:-64}"
 NUM_SPECULATIVE_TOKENS="${NUM_SPECULATIVE_TOKENS:-3}"
 SPEC="${SPEC:-dspark}"
@@ -36,7 +36,7 @@ ENFORCE_EAGER="${ENFORCE_EAGER:-0}"
 DSV41_ALLOW_CUDA_GRAPHS="${DSV41_ALLOW_CUDA_GRAPHS:-1}"
 VLLM_USE_BREAKABLE_CUDAGRAPH="${VLLM_USE_BREAKABLE_CUDAGRAPH:-1}"
 HF_CACHE="${HF_CACHE:-$HOME/.cache/huggingface}"
-SNAPSHOT_SHA="${SNAPSHOT_SHA:-2.0bpw-mcg-viterbi-lmhead-mxfp8}"
+SNAPSHOT_SHA="${SNAPSHOT_SHA:-2.7bpw-mcg-hq}"
 SKIP_DOWNLOAD="${SKIP_DOWNLOAD:-0}"
 ORCHESTRATE="${ORCHESTRATE:-auto}"
 AUDIT="${AUDIT:-warn}"
@@ -68,7 +68,7 @@ NCCL_MAX_NCHANNELS="${NCCL_MAX_NCHANNELS:-8}"
 DSV41_DROP_PAGE_CACHE="${DSV41_DROP_PAGE_CACHE:-1}"
 DSV41_INDEXER_PREFILL_FACTOR="${DSV41_INDEXER_PREFILL_FACTOR:-1}"
 DSV41_PREFILL_EMPTY_CACHE_TOKENS="${DSV41_PREFILL_EMPTY_CACHE_TOKENS:-8192}"
-DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB="${DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB:-2.5}"
+DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB="${DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB:-4}"
 VLLM_SPARSE_INDEXER_MAX_LOGITS_MB="${VLLM_SPARSE_INDEXER_MAX_LOGITS_MB:-256}"
 # END generated
 HF_HOME_IN_CONTAINER="/cache/huggingface"
@@ -250,7 +250,7 @@ if [[ "$MAX_NUM_SEQS" -gt 2 && "$FORCE_UNSAFE_CTX" != 1 ]]; then
   exit 1
 fi
 if [[ "$KV_CACHE_MEMORY" -gt 8589934592 && "$FORCE_UNSAFE_CTX" != 1 ]]; then
-  echo "KV_CACHE_MEMORY=$KV_CACHE_MEMORY exceeds 8 GiB pin 8589934592. CSA2 is 890 B/token; 4 GiB holds 1M x 2. FORCE_UNSAFE_CTX=1 overrides." >&2
+  echo "KV_CACHE_MEMORY=$KV_CACHE_MEMORY exceeds the 8 GiB pin 8589934592 (the 2.7 bpw pack leaves ~4.5 GiB; 8 GiB held 2.18x 1M on the 2.0 pack). FORCE_UNSAFE_CTX=1 overrides." >&2
   exit 1
 fi
 if [[ "$SPEC" == dspark && ! "$NUM_SPECULATIVE_TOKENS" =~ ^[1-5]$ && "$FORCE_UNSAFE_CTX" != 1 ]]; then
@@ -677,7 +677,10 @@ audit_engagement() {
   for name in "${FORWARD_ENVS[@]%%=*}"; do
     envs+=("$name=${!name:-}")
   done
-  if ! env "${envs[@]}" python3 "$SCRIPT_DIR/tools/engagement_audit.py" --mode "$AUDIT" "${logs[@]}"; then
+  # K-aware: the served pack's routed-expert K must be covered by the p2b dataflow kernel.
+  local pack_args=()
+  [[ -n "${SNAPSHOT:-}" ]] && pack_args=(--pack-config "$SNAPSHOT/config.json")
+  if ! env "${envs[@]}" python3 "$SCRIPT_DIR/tools/engagement_audit.py" --mode "$AUDIT" "${pack_args[@]}" "${logs[@]}"; then
     echo "AUDIT=strict: a patch did not engage (see above). The serve is up; ./stop.sh tears it down." >&2
     exit 1
   fi

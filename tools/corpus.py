@@ -182,7 +182,7 @@ def trim_to_tokens(text: str, target_tokens: int, tokenize,
         take += add
 
 
-def make_tokenizer(url: str = "http://127.0.0.1:8000", model: str = "deepseek-ai/DeepSeek-V4.1-Flash"):
+def make_tokenizer(url: str = "http://127.0.0.1:8000", model: str = "deepseek-ai/DeepSeek-V4.1-Flash-1017"):
     """Return f(text) -> token count using the live /tokenize endpoint."""
 
     def count(text: str) -> int:

@@ -195,7 +195,7 @@ def request_routing(url: str, model: str, prompt: str, max_tokens: int, temperat
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--url", default="http://127.0.0.1:8000/v1/chat/completions")
-    ap.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash")
+    ap.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash-1017")
     ap.add_argument("--m", type=int, default=4, help="verify rows = NUM_SPECULATIVE_TOKENS + 1")
     ap.add_argument("--runs", type=int, default=2, help="requests per prompt")
     ap.add_argument("--npy", nargs="*", help="analyze saved arrays instead of calling the serve")

@@ -168,7 +168,7 @@ def stream_one(url: str, model: str, ignore_eos: bool = True) -> dict:
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--url", default="http://127.0.0.1:8000/v1/chat/completions")
-    p.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash")
+    p.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash-1017")
     p.add_argument("--runs", type=int, default=3)
     args = p.parse_args()
     metrics_url = args.url.split("/v1/", 1)[0] + "/metrics"

@@ -28,6 +28,8 @@ if str(ROOT / "tools") not in sys.path:
 
 from pack_meta import (  # noqa: E402
     DEFAULT_CODEBOOK,
+    PACK_REPO,
+    SOURCE_SNAPSHOT_REL,
     apply_pack_config,
     build_quantization_config,
     get_codebook,
@@ -556,15 +558,14 @@ def main() -> int:
     ap.add_argument(
         "--src",
         type=Path,
-        default=Path.home()
-        / ".cache/huggingface/hub/models--deepseek-ai--DeepSeek-V4.1-Flash"
-        / "snapshots/dba1be0a40aa45a94ad051997016db3960a90277",
+        default=Path.home() / ".cache/huggingface/hub" / SOURCE_SNAPSHOT_REL,
     )
     ap.add_argument(
         "--dst",
         type=Path,
         default=Path.home()
-        / ".cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-EXL3"
+        / ".cache/huggingface/hub"
+        / ("models--" + PACK_REPO.replace("/", "--"))
         / f"snapshots/{revision_for()}",
     )
     ap.add_argument("--bits", type=int, default=2)

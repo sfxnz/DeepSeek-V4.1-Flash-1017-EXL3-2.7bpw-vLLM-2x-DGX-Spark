@@ -34,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 HUB = Path(os.environ.get("HF_HUB", "/cache/huggingface/hub"))
+# Sept probe against the Sept 2.0bpw-mcg pack: stays on the Sept source on purpose (1017: build_pack_1017.py).
 SRC = HUB / "models--deepseek-ai--DeepSeek-V4.1-Flash/snapshots/dba1be0a40aa45a94ad051997016db3960a90277"
 PACK = HUB / "models--sfxnz--DeepSeek-V4.1-Flash-EXL3/snapshots/2.0bpw-mcg"
 SHARD = "model-00003-of-00048.safetensors"

@@ -193,7 +193,7 @@ def grade_tool(res) -> tuple[bool, str]:
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--url", default="http://127.0.0.1:8000/v1/chat/completions")
-    p.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash")
+    p.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash-1017")
     p.add_argument("--recall-tokens", type=int, default=65536)
     p.add_argument("--runs", type=int, default=1)
     args = p.parse_args()

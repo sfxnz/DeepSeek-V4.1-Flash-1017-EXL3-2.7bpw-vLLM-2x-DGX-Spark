@@ -2,7 +2,9 @@
 
 Serve an EXL3 pack of [deepseek-ai/DeepSeek-V4.1-Flash](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash) across two NVIDIA DGX Spark (GB10) nodes at tensor-parallel 2.
 
-The pack is [sfxnz/DeepSeek-V4.1-Flash-EXL3](https://huggingface.co/sfxnz/DeepSeek-V4.1-Flash-EXL3) at revision `2.0bpw-mcg-viterbi-lmhead-mxfp8`. It has the same format and bytes as the stock `2.0bpw-mcg` pack, but the routed experts are re-encoded with tail-biting Viterbi plus a scale refit (relative error 0.262 vs 0.378), and the lm_head tensor is in MXFP8. See Download the pack and Rebuild. Routed experts are EXL3 2.0 bpw (MCG). Engram stays on NVMe (`DSV41_ENGRAM_DISK=1`). Native MXFP4 and MXFP8 weights are about 511 GB and do not fit 2× Spark UMA.
+> **1017 retarget in progress (TODO phase D: rewrite this README).** The defaults now serve [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017) (source commit `1bae0e1088993b9b82de08f59de5be5a34e42170`) as `deepseek-ai/DeepSeek-V4.1-Flash-1017` from the pack [sfxnz/DeepSeek-V4.1-Flash-1017-EXL3](https://huggingface.co/sfxnz/DeepSeek-V4.1-Flash-1017-EXL3) at the provisional revision `2.7bpw-mcg-hq` (~2.70 bpw mixed-K routed experts, built by `tools/build_pack_1017.py`) on the provisional image `dsv41-flash-exl3-sm121:e15-kbits`. Everything below this note still describes the September 2.0 bpw pack and its measurements.
+
+The September pack is [sfxnz/DeepSeek-V4.1-Flash-EXL3](https://huggingface.co/sfxnz/DeepSeek-V4.1-Flash-EXL3) at revision `2.0bpw-mcg-viterbi-lmhead-mxfp8`. It has the same format and bytes as the stock `2.0bpw-mcg` pack, but the routed experts are re-encoded with tail-biting Viterbi plus a scale refit (relative error 0.262 vs 0.378), and the lm_head tensor is in MXFP8. See Download the pack and Rebuild. Routed experts are EXL3 2.0 bpw (MCG). Engram stays on NVMe (`DSV41_ENGRAM_DISK=1`). Native MXFP4 and MXFP8 weights are about 511 GB and do not fit 2× Spark UMA.
 
 **Decode campaign 2026-09-20/22 (+44% vs published)**: real-use prose 23 → **33.2 tok/s** (L.A.I.L cell, c=1 t=0.2, pooled n=10), greedy single-stream **39.6 tok/s** (9-run median, acc 2.61), 21.6/23.2 GiB free per Spark after a 32k prefill, zero OOMs in ~30 boots. Won levers: spec k=5→k=3 + matched cudagraph captures, Engram prefetch v3 (pf_hit 100%) + gather v2, NCCL AR-tail set, mem-hygiene bundle, lm_head mxfp8. Full evidence: `results/RESULTS.md` rounds 15–33.
 
@@ -66,8 +68,10 @@ Run the download on both nodes. Keep Hugging Face xet enabled. Do not set `HF_HU
 ```bash
 unset HF_HUB_DISABLE_XET
 export HF_XET_HIGH_PERFORMANCE=1
-hf download sfxnz/DeepSeek-V4.1-Flash-EXL3 --revision 2.0bpw-mcg-viterbi-lmhead-mxfp8
+hf download sfxnz/DeepSeek-V4.1-Flash-1017-EXL3 --revision 2.7bpw-mcg-hq
 ```
+
+(TODO phase D: the 1017 revision is not published yet; until then assemble it locally with `tools/build_pack_1017.py assemble`. The paragraph below is the September pack.)
 
 `2.0bpw-mcg-viterbi-lmhead-mxfp8` is the serve pin (round 36). It is `2.0bpw-mcg-lmhead-mxfp8` with all 40 routed-expert shards re-encoded from the MXFP4 source: tail-biting Viterbi plus a closed-form scale refit, the same 2.0 bpw MCG K=2 format, and the lm_head MXFP8 `model-00043` unchanged. Against round 35's pin it has 42% lower teacher-forced NLL on the fixed passages (0.139 vs 0.243 nats/token, 39 of 40 passages lower), GSM8K 97/97 vs 95/94 and MMLU 206/204 vs 196/198 (`results/RESULTS.md` rounds 35 and 36). `hf download` writes `refs/2.0bpw-mcg-viterbi-lmhead-mxfp8` and `snapshots/<commit>/`. `./run.sh` resolves that layout. An assembled pack at `snapshots/2.0bpw-mcg-viterbi-lmhead-mxfp8` still works. If both exist, `run.sh` uses the Hub commit snapshot. Previous revisions stay on the Hub. `2.0bpw-mcg-lmhead-mxfp8` was the serve pin in rounds 33-35: the stock pack with only `model-00043` re-encoded (lm_head to MXFP8). To serve it, download `--revision 2.0bpw-mcg-lmhead-mxfp8` and run `SNAPSHOT_SHA=2.0bpw-mcg-lmhead-mxfp8 ./run.sh`. `2.0bpw-mcg` is the stock pack. To serve it, download `--revision 2.0bpw-mcg` and run `SNAPSHOT_SHA=2.0bpw-mcg ./run.sh`; the lm_head MXFP8 path then turns itself off.
 
@@ -79,8 +83,10 @@ On both nodes, from this repo:
 
 ```bash
 docker pull vllm/vllm-openai:deepseekv41-flash-0909@sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58
-docker build -f docker/Dockerfile -t dsv41-flash-exl3-sm121:canonical-e14 docker
+docker build -f docker/Dockerfile -t dsv41-flash-exl3-sm121:e15-kbits docker
 ```
+
+(TODO phase D: `e15-kbits` is provisional. It is the K-bits kernel image, built by `docker/Dockerfile.e15` FROM `canonical-e14` (`docker build -f docker/Dockerfile.e15 -t dsv41-flash-exl3-sm121:e15-kbits docker` on a node that has `canonical-e14`); `docker/Dockerfile` does not carry the K-bits stage yet. The text below describes `canonical-e14`.)
 
 Stock `vllm/vllm-openai` wheels do not load `DeepseekV41ForCausalLM`. The image starts from the pinned `deepseekv41-flash-0909` digest and overlays Engram-on-disk plus `vllm-exl3`.
 
@@ -152,14 +158,14 @@ The golden flip hazard compares greedy text with the baseline's own greedy run, 
 <!-- BEGIN generated defaults from recipe.yaml — edit recipe.yaml and run kit/render.py -->
 | Setting | Value |
 |---|---|
-| Image | `dsv41-flash-exl3-sm121:canonical-e14` |
-| Model | `sfxnz/DeepSeek-V4.1-Flash-EXL3` revision `2.0bpw-mcg-viterbi-lmhead-mxfp8` |
+| Image | `dsv41-flash-exl3-sm121:e15-kbits` |
+| Model | `sfxnz/DeepSeek-V4.1-Flash-1017-EXL3` revision `2.7bpw-mcg-hq` |
 | `--tensor-parallel-size` / `--nnodes` | 2 / 2 |
 | `--max-model-len` | 1048576 |
 | `--max-num-seqs` | 2 |
 | `--max-num-batched-tokens` | 8192 |
 | `--kv-cache-dtype` | `fp8` |
-| `--kv-cache-memory` | 8589934592 |
+| `--kv-cache-memory` | 4831838208 |
 | `--quantization` | `exl3` |
 | Engram | disk (`DSV41_ENGRAM_DISK=1`) |
 | `--block-size` | 64 |
@@ -167,12 +173,12 @@ The golden flip hazard compares greedy text with the baseline's own greedy run, 
 | CUDA graphs | `FULL_AND_PIECEWISE`, capture sizes {1} ∪ {s·k, s·(k+1)} for s ≤ `--max-num-seqs` (`[1,3,4,6,8]` at k=3) (`ENFORCE_EAGER=0`, `DSV41_ALLOW_CUDA_GRAPHS=1`) |
 | Engram prefetch / census / gather | `DSV41_ENGRAM_PREFETCH=1` `DSV41_ENGRAM_CENSUS=1` `DSV41_ENGRAM_GATHER_V2=1` |
 | Engram prefill read-ahead | `DSV41_ENGRAM_WILLNEED=1` (gv2 calls with >= 512 rows fadvise their pages before the preadv loop) |
-| lm_head | MXFP8 (`DSV41_LMHEAD_MXFP8=1`), needs an lm_head-MXFP8 pack (`2.0bpw-mcg-viterbi-lmhead-mxfp8` or `2.0bpw-mcg-lmhead-mxfp8`); self-disarms on stock `2.0bpw-mcg` |
+| lm_head | MXFP8 (`DSV41_LMHEAD_MXFP8=1`), needs an lm_head-MXFP8 pack (`2.7bpw-mcg-hq` is one: `tools/build_pack_1017.py` converts source shard 43); self-disarms on a bf16-head pack |
 | Weight-load stream feed | `DSV41_STREAM_FEED=1` |
-| Decode levers | `DSV41_WOA_PREPACK=1` (needs the `dsv41-flash-exl3-sm121:canonical-e14` o_proj stage) `DSV41_DSPARK_SPARSE_MARKOV=1` `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024` |
-| Round-3 kernel bundle | `DSV41_P2B_COOP=2` (coop dataflow MoE kernel, needs the `dsv41-flash-exl3-sm121:canonical-e14` build) `DSV41_DENSE_GEMV=1` `DSV41_MHC_DET_SPLITS=16` `DSV41_ENGRAM_NATIVE_STAGE=1` `DSV41_ENGRAM_EARLY_HASH=1` `DSV41_ATTN_T2R_DEDUP=1` `DSV41_SWA_META_FUSED=1` `DSV41_MOE_PREP_FUSED=1` `DSV41_CANDIDATE_MASK_BOUNDED=1` `DSV41_INDEXER_WP_GEMV=1` (set one to `0` to turn it off) |
+| Decode levers | `DSV41_WOA_PREPACK=1` (needs the `dsv41-flash-exl3-sm121:e15-kbits` o_proj stage) `DSV41_DSPARK_SPARSE_MARKOV=1` `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024` |
+| Round-3 kernel bundle | `DSV41_P2B_COOP=2` (coop dataflow MoE kernel, needs the `dsv41-flash-exl3-sm121:e15-kbits` build) `DSV41_DENSE_GEMV=1` `DSV41_MHC_DET_SPLITS=16` `DSV41_ENGRAM_NATIVE_STAGE=1` `DSV41_ENGRAM_EARLY_HASH=1` `DSV41_ATTN_T2R_DEDUP=1` `DSV41_SWA_META_FUSED=1` `DSV41_MOE_PREP_FUSED=1` `DSV41_CANDIDATE_MASK_BOUNDED=1` `DSV41_INDEXER_WP_GEMV=1` (set one to `0` to turn it off) |
 | NCCL AR-tail set | `NCCL_BUFFSIZE=1048576` `NCCL_LL128_BUFFSIZE=262144` `NCCL_PROTO=^LL128` `NCCL_MAX_NCHANNELS=8` |
-| Memory hygiene | `DSV41_DROP_PAGE_CACHE=1` `DSV41_INDEXER_PREFILL_FACTOR=1` `DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192` `DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=2.5` `VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=256` |
+| Memory hygiene | `DSV41_DROP_PAGE_CACHE=1` `DSV41_INDEXER_PREFILL_FACTOR=1` `DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192` `DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4` `VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=256` |
 | Tokenizers / tools / reasoning | `deepseek_v41` |
 | Vision | on (`LANGUAGE_MODEL_ONLY=0`) |
 | `--mm-encoder-tp-mode` | data |
@@ -226,7 +232,7 @@ Exclusive GPU. Stop any quant container before `./run.sh`.
 python3 tools/download_official.py
 ```
 
-The commit is `dba1be0a40aa45a94ad051997016db3960a90277`. The two Engram shards are about 95 GiB each and need `hf_xet`. Do not set `HF_HUB_DISABLE_XET`.
+The commit is `1bae0e1088993b9b82de08f59de5be5a34e42170` (`deepseek-ai/DeepSeek-V4.1-Flash-1017`; the September source was `deepseek-ai/DeepSeek-V4.1-Flash` @ `dba1be0a40aa45a94ad051997016db3960a90277`). The two Engram shards are about 95 GiB each and need `hf_xet`. Do not set `HF_HUB_DISABLE_XET`.
 
 2. Hardlink the non-expert shards on the host. Quantize routed experts inside image `dsv41-flash-exl3-sm121:canonical-e12` with exclusive GPU. Host Python does not have ExLlamaV3. Use `--codebook mul1 --greedy --beam 16`. Split expert shards 3-22 and 23-42 across the two Sparks. Destination is `snapshots/2.0bpw-mul1`.
 

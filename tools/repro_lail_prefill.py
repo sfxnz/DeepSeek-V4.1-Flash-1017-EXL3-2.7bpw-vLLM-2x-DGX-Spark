@@ -16,7 +16,7 @@ PROMPT = " ".join(["benchmark"] * 70)
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--url", default="http://127.0.0.1:8000/v1/chat/completions")
-    p.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash")
+    p.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash-1017")
     p.add_argument("--max-tokens", type=int, default=8)
     args = p.parse_args()
     body = json.dumps(

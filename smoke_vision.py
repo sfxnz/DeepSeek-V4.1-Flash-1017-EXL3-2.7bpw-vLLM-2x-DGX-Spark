@@ -44,7 +44,7 @@ def says_red(text: str) -> bool:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", default="http://127.0.0.1:8000/v1/chat/completions")
-    parser.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash")
+    parser.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash-1017")
     args = parser.parse_args()
     body = {
         "model": args.model,

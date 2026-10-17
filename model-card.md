@@ -31,7 +31,7 @@ The 2× DGX Spark cookbook is [sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark]
 
 | Field | Value |
 |---|---|
-| Source | `deepseek-ai/DeepSeek-V4.1-Flash` commit `dba1be0a40aa45a94ad051997016db3960a90277` |
+| Source | `deepseek-ai/DeepSeek-V4.1-Flash-1017` commit `1bae0e1088993b9b82de08f59de5be5a34e42170` (TODO phase D: rest of this card is the Sept pack) |
 | Quant | EXL3 2.0 bpw, codebook MCG, `quant_method=exl3` |
 | Revision `2.0bpw-mcg-viterbi-lmhead-mxfp8` (serve pin since round 36) | All 46,080 routed-expert tensors re-encoded from the MXFP4 source: exllamav3 1.5.1 tail-biting Viterbi + `refit_scales`, same 2.0 bpw MCG K=2 format and bytes, mean relative error 0.262 vs 0.378. `model-00043` (lm_head MXFP8) is the same as in `2.0bpw-mcg-lmhead-mxfp8` |
 | Revision `2.0bpw-mcg-lmhead-mxfp8` (serve pin in rounds 33-35) | `2.0bpw-mcg` with only `model-00043` re-encoded (lm_head MXFP8, +5.9% L.A.I.L in round 33) |

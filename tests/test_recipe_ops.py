@@ -68,14 +68,15 @@ def _load_tool(rel: str, name: str):
     return mod
 
 
-HUB_MODEL = "sfxnz/DeepSeek-V4.1-Flash-EXL3"
-HUB_REV = "2.0bpw-mcg-viterbi-lmhead-mxfp8"
-PREV_REV = "2.0bpw-mcg-lmhead-mxfp8"  # serve pin in rounds 33-35
-STOCK_REV = "2.0bpw-mcg"
-IMAGE_TAG = "dsv41-flash-exl3-sm121:canonical-e14"
-PROMOTED_BOOT = "results/2026-09-22-endgame2/boot-lm.sh"
-HUB_DIRNAME = "models--sfxnz--DeepSeek-V4.1-Flash-EXL3"
-HUB_PACK_URL = "https://huggingface.co/sfxnz/DeepSeek-V4.1-Flash-EXL3"
+HUB_MODEL = "sfxnz/DeepSeek-V4.1-Flash-1017-EXL3"
+HUB_REV = "2.7bpw-mcg-hq"  # provisional 1017 revision name
+SERVED_NAME = "deepseek-ai/DeepSeek-V4.1-Flash-1017"
+IMAGE_TAG = "dsv41-flash-exl3-sm121:e15-kbits"  # provisional K-bits kernel image
+# TODO phase D: the 1017 promoted boot. Until then the Sept round-29 boot (copied, see
+# results/sept-baseline/README.md) with the 1017 memory deltas allowed below.
+PROMOTED_BOOT = "results/sept-baseline/boot-lm.sh"
+HUB_DIRNAME = "models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3"
+HUB_PACK_URL = "https://huggingface.co/sfxnz/DeepSeek-V4.1-Flash-1017-EXL3"
 DEFAULTS_BEGIN = (
     "<!-- BEGIN generated defaults from recipe.yaml — edit recipe.yaml and run kit/render.py -->"
 )
@@ -326,6 +327,8 @@ ENGAGED_LOG = "\n".join(
         "(Worker_TP0 pid=1) dsv41: moe prep fused self-check bit-exact",
         "(Worker_TP0 pid=1) dsv41: candidate mask bounded self-check bit-exact",
         "(Worker_TP0 pid=1) dsv41: indexer weights_proj GEMV self-check bit-exact",
+        # 1017 chat-encoder parity (sitecustomize, every process)
+        "dsv41: chat encoder 1017 parity engaged (encoding rewritten, tokenizer rewritten)",
     ]
 )
 
@@ -750,12 +753,15 @@ class RecipeOpsTests(unittest.TestCase):
         canonical-e13 (the woa-prepack o_proj stage DSV41_WOA_PREPACK needs). The other round-34
         defaults (WILLNEED, STREAM_FEED, WOA_PREPACK, SPARSE_MARKOV) are not in boot-lm.sh.
         SNAPSHOT_SHA: round 36 moves the pin from boot-lm.sh's 2.0bpw-mcg-lmhead-mxfp8 to the
-        Viterbi re-encode 2.0bpw-mcg-viterbi-lmhead-mxfp8 (same format, same lm_head shard).
+        Viterbi re-encode 2.0bpw-mcg-viterbi-lmhead-mxfp8 (same format, same lm_head shard), and
+        1017 to the provisional 2.7bpw-mcg-hq. DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB: 1017's
+        ~97.7 GiB/rank weights move the release floor from 2.5 to 4 GiB (provisional, the KV
+        pool is not in boot-lm.sh). TODO phase D: compare against the 1017 promoted boot.
         """
         import json
         import shlex
 
-        allowed = {"FORCE_UNSAFE_CTX", "IMAGE", "SNAPSHOT_SHA"}
+        allowed = {"FORCE_UNSAFE_CTX", "IMAGE", "SNAPSHOT_SHA", "DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB"}
         boot = {}
         for line in _read(PROMOTED_BOOT).splitlines():
             if line.startswith("export "):
@@ -853,11 +859,14 @@ class RecipeOpsTests(unittest.TestCase):
         self.assertIn("lm_only=0", proc.stdout)
         self.assertNotIn("--language-model-only", proc.stdout)
 
-    def test_default_prefill_batch_is_8192_and_hub_rev_is_mcg_lmhead(self) -> None:
-        self.assertEqual(_recipe()["serve"]["env"]["MAX_NUM_BATCHED_TOKENS"], "8192")
-        self.assertEqual(_recipe()["serve"]["env"]["MM_ENCODER_TP_MODE"], "data")
-        self.assertEqual(_recipe()["serve"]["env"]["SNAPSHOT_SHA"], HUB_REV)
-        self.assertTrue(HUB_REV.startswith(STOCK_REV + "-"))
+    def test_default_prefill_batch_is_8192_and_hub_rev_is_mcg_1017(self) -> None:
+        env = _recipe()["serve"]["env"]
+        self.assertEqual(env["MAX_NUM_BATCHED_TOKENS"], "8192")
+        self.assertEqual(env["MM_ENCODER_TP_MODE"], "data")
+        self.assertEqual(env["SNAPSHOT_SHA"], HUB_REV)
+        self.assertEqual(env["MODEL"], HUB_MODEL)
+        self.assertEqual(env["SERVED_NAME"], SERVED_NAME)
+        self.assertIn("mcg", HUB_REV)
         self.assertNotIn("mul1", HUB_REV)
         run = _read("run.sh")
         self.assertIn('MAX_NUM_BATCHED_TOKENS="${MAX_NUM_BATCHED_TOKENS:-8192}"', run)
@@ -871,8 +880,8 @@ class RecipeOpsTests(unittest.TestCase):
         self.assertIn("23.52", readme)
         self.assertIn("27.98", readme)
         self.assertIn(f"hf download {HUB_MODEL} --revision {HUB_REV}", readme)
-        self.assertIn(f"--revision {STOCK_REV}", readme)
-        self.assertIn(f"--revision {PREV_REV}", readme)
+        # TODO phase D: the README's Sept-pack history (2.0bpw-mcg, -lmhead-mxfp8) is checked
+        # by the assertions above until the 1017 README replaces it.
 
     def test_locator_prefers_refs_commit_over_named_snapshot(self) -> None:
         with tempfile.TemporaryDirectory() as d:

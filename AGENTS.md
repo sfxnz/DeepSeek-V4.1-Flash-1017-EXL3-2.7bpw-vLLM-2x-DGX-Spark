@@ -4,6 +4,8 @@ Serve an EXL3 pack of `deepseek-ai/DeepSeek-V4.1-Flash` at TP=2. Local image `ds
 
 Humans read [README.md](README.md).
 
+**1017 retarget (2026-10-17, provisional pins):** source `deepseek-ai/DeepSeek-V4.1-Flash-1017` @ `1bae0e1088993b9b82de08f59de5be5a34e42170`, served name `deepseek-ai/DeepSeek-V4.1-Flash-1017`, pack `sfxnz/DeepSeek-V4.1-Flash-1017-EXL3` @ `2.7bpw-mcg-hq` (built by `tools/build_pack_1017.py`: `plan` / `run --dry-run`, `run`, `encode`, `status`, `launch-cmd`, `assemble`), image `dsv41-flash-exl3-sm121:e15-kbits`, KV 4.5 GiB. The routed experts are mixed K (2/3/4 per layer and projection group, `quantization_config.expert_bits`) encoded with real activation Hessians; the "stay at K=2" rule below is the Sept rule. Hessian format: `dsv41-hessian-v1` (docstring of `tools/build_pack_1017.py`). `docker/patch/chat_encoder_1017.py` brings the image's V4.1 chat encoder to 1017 parity. The audit is K-aware (`flags.md`, 1017 retarget). The text below still describes the Sept pack until phase D.
+
 The public path is clone, `hf download` of `sfxnz/DeepSeek-V4.1-Flash-EXL3` at `2.0bpw-mcg-viterbi-lmhead-mxfp8`, image build on both nodes, then `./run.sh`. That revision is `2.0bpw-mcg-lmhead-mxfp8` (the stock `2.0bpw-mcg` pack with only `model-00043` re-encoded to lm_head MXFP8) with all routed experts re-encoded by tail-biting Viterbi + scale refit (`tools/requant_full.py`; same format and bytes). `run.sh` resolves Hub `refs/<rev>` to `snapshots/<commit>/`. It also accepts an assembled pack at `snapshots/<rev>`. `SNAPSHOT_SHA=2.0bpw-mcg-lmhead-mxfp8` serves the round-33..35 pack. `SNAPSHOT_SHA=2.0bpw-mcg` still serves the stock pack; lm_head MXFP8 then turns itself off. Rebuild tools can write `2.0bpw-mul1` and need p2b `cb=2`. Do not switch the serve pin: MUL1 + p2b `cb=2` lost prose decode (23.52 vs 27.98). Pack-only MUL1 is also a decode regression.
 
 ## Working rules
@@ -14,7 +16,7 @@ The public path is clone, `hf download` of `sfxnz/DeepSeek-V4.1-Flash-EXL3` at `
 - Pin `NCCL_IB_HCA`. GB10 exposes four HCAs and two are DOWN. Defaults are `enp1s0f1np1` / `rocep1s0f1`. A second rail, `roceP2p1s0f1` / `enP2p1s0f1np1`, is also ACTIVE. The recipe does not use it, and it is unmeasured.
 - Default thinking is off. `chat_template_kwargs`: `thinking=false`, `reasoning_effort=low`. Tokenizer/tool/reasoning parsers are `deepseek_v41`.
 - DeepJIT is a CUDA/Ascend kernel JIT library, not a serving stack. Official V4.1 kernels in the HF `inference/` tree are TileLang. Do not vendor DeepJIT into this image.
-- Stay at EXL3 K=2. Calibrate before raising bits. Do not raise `MAX_NUM_SEQS` before a new occupancy row.
+- Sept rule: stay at EXL3 K=2 until calibrated. 1017: K from the measured allocation only (`build_pack_1017.py --alloc`), with real Hessians (`--hessian-mode real`); `--hessian-mode identity` is the uncalibrated fallback. Do not raise `MAX_NUM_SEQS` before a new occupancy row.
 - DSpark k=3 (`NUM_SPECULATIVE_TOKENS=3`). The R15/R17 sweep measured L.A.I.L k5 26.32 / k4 25.87 / k3 28.76 / k2 26.89. `run.sh` derives cudagraph capture sizes from k and `MAX_NUM_SEQS` as {1} ∪ {s·k, s·(k+1)}, which gives `[1,3,4,6,8]`. Matched captures measured +5.5% in R16. k must stay 1..5 (the DSpark block is 5). E6 k=10 collapsed to 12.1.
 - `--max-num-batched-tokens` defaults to 8192. E1 measured 2048 at pp@16k −28%. PR 6 measured 8192 at 12,712-token prompts as 755 vs 797 tok/s (−5%) against 2048. `MAX_NUM_BATCHED_TOKENS=2048` is the override for that workload.
 - The serve pin is `SNAPSHOT_SHA=2.0bpw-mcg-viterbi-lmhead-mxfp8` (round 36): the MCG codebook with Viterbi-re-encoded experts plus lm_head MXFP8 (R33 +5.9% L.A.I.L). The protocol owner adopted it on round 35 P4's quality evidence (NLL −42%, GSM8K 97/97 vs 95/94, MMLU 206/204 vs 196/198). The golden-hazard gate does not apply to a pack change (ARMS.md step 6, pack changes). Its quality baseline and goldens are `results/2026-09-27-viterbi-adopt/quality-baseline/` (recorded on V-1); the 09-24 baseline belongs to `2.0bpw-mcg-lmhead-mxfp8`. Do not switch to MUL1. MUL1 + p2b `cb=2` measured 23.52 vs 27.98 prose decode. Prefill 792 vs 797 is flat and does not change the call.
@@ -33,7 +35,7 @@ Exits unless the matching `FORCE_UNSAFE_*=1`. All three default to 0. Campaign b
 - `DSV41_ENGRAM_DISK` not `1` (`FORCE_UNSAFE_ENGRAM`)
 - `--max-model-len` above 1048576 (`FORCE_UNSAFE_CTX`)
 - `MAX_NUM_SEQS` above 2 (`FORCE_UNSAFE_CTX`)
-- `KV_CACHE_MEMORY` above 8 GiB (`FORCE_UNSAFE_CTX`)
+- `KV_CACHE_MEMORY` above 8 GiB (`FORCE_UNSAFE_CTX`; the 1017 default is 4.5 GiB)
 - `NUM_SPECULATIVE_TOKENS` not an integer 1..5 when `SPEC=dspark` (`FORCE_UNSAFE_CTX`)
 
 Native MXFP4 experts are ~130 GiB per TP=2 rank before Engram. That does not fit 121 GiB UMA. Engram pinned in host RAM is the same pool.
@@ -50,6 +52,14 @@ Torch-gated tests skip on the host. Run them CPU-only in the image, from `tests/
 ```bash
 docker run --rm --network none --memory 8g --cpus 4 -v "$PWD":/w -w /w/tests --entrypoint python3 \
   dsv41-flash-exl3-sm121:canonical-e14 -m unittest test_lmhead_mxfp8 test_engram_gather_v2 test_fix_o_proj_woa_fp8 -q
+```
+
+The pack builder's torch tests and the chat-encoder image check (no GPU):
+
+```bash
+docker run --rm --network none --memory 8g --user 1000:1000 -e HOME=/tmp -v "$PWD":/repo:ro -w /repo \
+  --entrypoint python3 dsv41-quant151 -m unittest discover -s tests -p test_build_pack_1017.py -q
+DSV41_IMAGE_TESTS=1 python3 -m unittest tests.test_chat_encoder_1017 -q
 ```
 
 After `./run.sh` is up:

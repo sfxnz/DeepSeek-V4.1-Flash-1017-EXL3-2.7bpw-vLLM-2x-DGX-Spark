@@ -100,7 +100,7 @@ def hits_delta(before: dict | None, after: dict | None) -> float | None:
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--url", default="http://127.0.0.1:8000/v1/chat/completions")
-    p.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash")
+    p.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash-1017")
     p.add_argument("--tokens", type=int, default=2048)
     p.add_argument("--hit-block", type=int, default=128)
     p.add_argument("--timeout", type=int, default=900)

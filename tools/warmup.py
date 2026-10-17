@@ -74,7 +74,7 @@ def requests(nonce: str, vision: bool = True) -> list[tuple[str, str | list, flo
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--url", default="http://127.0.0.1:8000/v1/chat/completions")
-    ap.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash")
+    ap.add_argument("--model", default="deepseek-ai/DeepSeek-V4.1-Flash-1017")
     ap.add_argument("--no-vision", action="store_true", help="LANGUAGE_MODEL_ONLY=1 serve")
     args = ap.parse_args()
     nonce = secrets.token_hex(8)

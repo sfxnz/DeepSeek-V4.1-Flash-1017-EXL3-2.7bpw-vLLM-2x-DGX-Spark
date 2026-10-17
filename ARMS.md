@@ -21,7 +21,10 @@ One boot = one lever. Every arm produces the four numbers via
 4. **Boot floors** (read `free -h`, NEVER nvidia-smi):
    - abort if MemAvailable **< 12 GiB at boot** (before smoke);
    - abort if MemAvailable **< 8 GiB after smoke** (`smoke_chat.py` +
-     `smoke_vision.py`).
+     `smoke_vision.py`) on the Sept 2.0 pack. 1017 ~2.70 bpw pack:
+     **< 4 GiB after smoke** (campaign target, provisional until phase D;
+     the 2.7 bpw weights add ~22 GiB/rank, so 8 GiB is unreachable
+     without dropping vision or DSpark).
 5. **Four numbers** (serialized, ~20-25 min estimated; re-measure on the
    first campaign run):
    ```bash
@@ -229,9 +232,10 @@ bash results/2026-09-22-endgame2/boot-lm.sh   # R33 config (canonical-e12, lmhea
 ```
 
 - `serve.sh` → `exec ./run.sh`; on the head with `ORCHESTRATE=auto` (default)
-  and `NNODES=2`, run.sh starts the **worker on spark2 first** (scps itself +
-  `docker/patch` to /tmp there, launches worker container with the full env
-  forwarded), sleeps 25s for NCCL, then starts head rank 0 and `wait_ready`
+  and `NNODES=2`, run.sh starts the **worker on spark2 first** (scps itself to
+  /tmp and `docker/patch` to `~/.cache/dsv41-patch` there, launches the worker
+  container with the full env forwarded), waits for the worker's `headless
+  multiproc executor` line (up to 120 s), then starts head rank 0 and `wait_ready`
   (`/health` + `/v1/models`; allow up to 60 min, plan ≥20).
 - Kernel arms rollback: `IMAGE=dsv41-flash-exl3-sm121:canonical-e12 DSV41_WOA_PREPACK=0 ./serve.sh`
   plus the ten round-35 kernel levers at `0` (on e12 the WOA and COOP levers

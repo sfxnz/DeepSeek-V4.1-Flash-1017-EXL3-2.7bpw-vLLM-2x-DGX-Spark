@@ -67,7 +67,7 @@ class SmokeVisionTests(unittest.TestCase):
             self.assertEqual(proc.returncode, 0, proc.stderr)
             self.assertIn("red", proc.stdout)
             body = httpd.last_body  # type: ignore[attr-defined]
-            self.assertEqual(body["model"], "deepseek-ai/DeepSeek-V4.1-Flash")
+            self.assertEqual(body["model"], "deepseek-ai/DeepSeek-V4.1-Flash-1017")
             content = body["messages"][0]["content"]
             kinds = {part["type"] for part in content}
             self.assertEqual(kinds, {"text", "image_url"})
