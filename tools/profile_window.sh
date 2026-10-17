@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+# Profile ONE L.A.I.L prose request on a serve booted with
+#   EXTRA_ARGS='--profiler-config {"profiler":"torch","torch_profiler_dir":"/tmp/dsv41-traces"}'
+# (run.sh forwards EXTRA_ARGS to the worker, so both ranks write traces).
+#
+# Protocol (R18/R22/R25 + two-rank fix): warmup (profiler off) -> start_profile
+# -> one streaming 512-token prose request -> stop_profile -> flush wait ->
+# list traces on BOTH ranks -> docker cp on each host BEFORE ./stop.sh
+# (docker rm destroys them). Traces stay on the host that wrote them; parse
+# there on an idle host with tools/extract_kernels.py (RLIMIT_AS, never json.load).
+# Watch MemAvail: it dipped to 2 GiB during cp in R22/R25.
+#
+# stop_profile blocks until the trace export ends; that ran past 120 s in
+# Round 34 s5 (curl rc 28), so STOP_TIMEOUT_S defaults to 600. A failed stop,
+# ls or cp on either rank warns and the copies still run; the exit code is 1
+# if stop_profile failed (the traces may be partial).
+#
+# CONCURRENCY=N (default 1) sends N identical streams at once inside the window
+# (N=2 profiles the c=2 decode shape: verify m=8, draft m=6). MAX_TOKENS (default
+# 512) shortens the profiled streams: with stacks on, the worker's host memory
+# grows ~85 MB per profiled step and is not returned (Round 3: 250 steps took
+# spark1 MemAvail from 23.6 to 1.8 GiB).
+#
+# This script never stops the serve. Run ./stop.sh yourself afterwards.
+set -euo pipefail
+PORT="${PORT:-8000}"
+API="${API:-http://127.0.0.1:$PORT}"
+CONTAINER_NAME="${CONTAINER_NAME:-dsv41-flash-exl3}"
+WORKER_HOST="${WORKER_HOST:-spark2}"
+TRACE_DIR="${TRACE_DIR:-/tmp/dsv41-traces}"
+OUT_DIR="${OUT_DIR:-$HOME/projects/data/dsv41-traces/$(date +%Y%m%d-%H%M%S)}"
+FLUSH_S="${FLUSH_S:-15}"
+STOP_TIMEOUT_S="${STOP_TIMEOUT_S:-600}"
+CONCURRENCY="${CONCURRENCY:-1}"
+MAX_TOKENS="${MAX_TOKENS:-512}"
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+
+PROMPT='Continue this essay in the same voice. Do not stop.\n\nDecode throughput and time-to-first-token feel different when a coding agent shares a long system prompt across tabs on a DGX Spark with unified memory. The KV cache is the product, not a leftover after util. '
+body() {
+  printf '{"messages":[{"role":"user","content":"%s"}],"max_tokens":%d,"min_tokens":%d,"ignore_eos":true,"temperature":0.2,%s,"chat_template_kwargs":{"thinking":false}}' \
+    "$PROMPT" "$MAX_TOKENS" "$MAX_TOKENS" "$1"
+}
+
+echo "== warmup (profiler off) =="
+curl -s --max-time 120 "$API/v1/chat/completions" -H 'Content-Type: application/json' \
+  -d "$(body '"stream":false')" >"$TMP/warmup.json"
+python3 -c "import json,sys; r=json.load(open(sys.argv[1])); print('warmup completion tokens:', r['usage']['completion_tokens'])" "$TMP/warmup.json"
+
+echo "== start profile =="
+curl -s --max-time 30 -X POST "$API/start_profile"
+echo
+echo "== profiled request(s) (stream, $MAX_TOKENS tok, concurrency $CONCURRENCY) =="
+S=$(date +%s.%N)
+pids=()
+for ((i = 1; i <= CONCURRENCY; i++)); do
+  curl -sN --max-time 180 "$API/v1/chat/completions" -H 'Content-Type: application/json' \
+    -d "$(body '"stream":true,"stream_options":{"include_usage":true}')" >"$TMP/profiled.$i.sse" &
+  pids+=($!)
+done
+for p in "${pids[@]}"; do wait "$p"; done
+E=$(date +%s.%N)
+python3 - "$S" "$E" "$TMP"/profiled.*.sse <<'PY'
+import json, sys
+for path in sys.argv[3:]:
+    usage, chunks = None, 0
+    for line in open(path):
+        if line.startswith("data: ") and "[DONE]" not in line:
+            try:
+                d = json.loads(line[6:])
+            except ValueError:
+                continue
+            if d.get("usage"):
+                usage = d["usage"]
+            if d.get("choices"):
+                chunks += 1
+    print("profiled req usage:", usage, "content chunks (~steps):", chunks)
+print("wall s:", round(float(sys.argv[2]) - float(sys.argv[1]), 2))
+PY
+echo "== stop profile =="
+stop_rc=0
+curl -s --max-time "$STOP_TIMEOUT_S" -X POST "$API/stop_profile" || stop_rc=$?
+echo
+[[ "$stop_rc" == 0 ]] || echo "WARN: stop_profile curl rc=$stop_rc after ${STOP_TIMEOUT_S}s; copying both ranks anyway (traces may be partial)"
+date
+sleep "$FLUSH_S"
+
+echo "== trace files: rank 0 (head) =="
+docker exec "$CONTAINER_NAME" sh -c "ls -la $TRACE_DIR/" \
+  || echo "WARN: no rank-0 trace dir; still copying rank 1"
+echo "== trace files: rank 1 ($WORKER_HOST) =="
+ssh "$WORKER_HOST" docker exec "$CONTAINER_NAME" sh -c "'ls -la $TRACE_DIR/'" \
+  || echo "WARN: no rank-1 trace dir on $WORKER_HOST; still copying rank 0"
+
+echo "== MemAvail before cp =="
+free -h | sed -n 1,2p
+ssh "$WORKER_HOST" free -h | sed -n 1,2p
+
+echo "== docker cp BEFORE stop: rank 0 -> $(hostname):$OUT_DIR/rank0 =="
+mkdir -p "$OUT_DIR"
+docker cp "$CONTAINER_NAME:$TRACE_DIR" "$OUT_DIR/rank0" && ls -la "$OUT_DIR/rank0" \
+  || echo "WARN: rank-0 copy failed; still copying rank 1"
+echo "== docker cp BEFORE stop: rank 1 -> $WORKER_HOST:$OUT_DIR/rank1 =="
+ssh "$WORKER_HOST" "mkdir -p '$OUT_DIR' && docker cp '$CONTAINER_NAME:$TRACE_DIR' '$OUT_DIR/rank1' && ls -la '$OUT_DIR/rank1'" \
+  || echo "WARN: rank-1 copy failed on $WORKER_HOST"
+
+echo "== MemAvail after cp =="
+free -h | sed -n 1,2p
+ssh "$WORKER_HOST" free -h | sed -n 1,2p
+echo "Traces saved. Now ./stop.sh, then parse each rank on its own idle host."
+[[ "$stop_rc" == 0 ]] || { echo "WARN: stop_profile failed (rc=$stop_rc); check the traces are complete" >&2; exit 1; }

@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+"""tools/profile_window.sh with curl/docker/ssh/free shims (no serve, no GPU)."""
+from __future__ import annotations
+
+import os
+import subprocess
+import tempfile
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPT = ROOT / "tools/profile_window.sh"
+
+CURL = r'''#!/usr/bin/env bash
+echo "curl $*" >>"$SHIM_LOG"
+case "$*" in
+  *stop_profile*) [[ -n "${STOP_RC:-}" ]] && exit "$STOP_RC"; echo ok ;;
+  *start_profile*) echo ok ;;
+  *'"stream":true'*) printf 'data: {"choices":[{"delta":{"content":"x"}}]}\n\ndata: {"choices":[],"usage":{"completion_tokens":512}}\n\ndata: [DONE]\n' ;;
+  *) echo '{"usage":{"completion_tokens":512}}' ;;
+esac
+'''
+LOGGER = '#!/usr/bin/env bash\necho "{name} $*" >>"$SHIM_LOG"\n'
+DOCKER = LOGGER.format(name="docker") + '[[ "$1" == cp ]] && mkdir -p "$3"\nexit 0\n'
+
+
+class ProfileWindowTests(unittest.TestCase):
+    def test_syntax(self) -> None:
+        subprocess.run(["bash", "-n", str(SCRIPT)], check=True)
+
+    def _run(self, ssh_shim: str, docker: str = DOCKER, **extra: str) -> tuple[subprocess.CompletedProcess, list[str]]:
+        with tempfile.TemporaryDirectory() as d:
+            bin_dir = Path(d) / "bin"
+            bin_dir.mkdir()
+            (bin_dir / "curl").write_text(CURL)
+            (bin_dir / "docker").write_text(docker)
+            (bin_dir / "ssh").write_text(ssh_shim)
+            (bin_dir / "free").write_text(LOGGER.format(name="free"))
+            for f in bin_dir.iterdir():
+                f.chmod(0o755)
+            log = Path(d) / "calls.log"
+            env = {
+                **os.environ,
+                "PATH": f"{bin_dir}:{os.environ['PATH']}",
+                "SHIM_LOG": str(log),
+                "FLUSH_S": "0",
+                "OUT_DIR": str(Path(d) / "out"),
+                "WORKER_HOST": "spark2",
+                **extra,
+            }
+            r = subprocess.run(["bash", str(SCRIPT)], env=env, capture_output=True, text=True, timeout=60)
+            return r, log.read_text().splitlines()
+
+    def test_worker_without_trace_dir_still_copies_rank0(self) -> None:
+        # No trace dir on rank 1: the real `docker exec ls` AND `docker cp` both fail there.
+        ssh = LOGGER.format(name="ssh") + '[[ "$*" == *"docker exec"* || "$*" == *"docker cp"* ]] && exit 2\nexit 0\n'
+        r, calls = self._run(ssh)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("WARN: no rank-1 trace dir", r.stdout)
+        self.assertIn("WARN: rank-1 copy failed", r.stdout)
+        self.assertTrue(any(c.startswith("docker cp dsv41-flash-exl3:/tmp/dsv41-traces") for c in calls))
+        cp1 = next(i for i, c in enumerate(calls) if c.startswith("ssh spark2") and "docker cp" in c)
+        self.assertTrue(any(c.startswith("free") for c in calls[cp1:]), "MemAvail after cp still read")
+        self.assertIn("Traces saved", r.stdout)
+
+    def test_stop_profile_timeout_still_copies_both_ranks(self) -> None:
+        # Round 34 s5: stop_profile curl rc 28 at 120 s and set -e skipped both copies.
+        r, calls = self._run(LOGGER.format(name="ssh"), STOP_RC="28")
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("stop_profile curl rc=28 after 600s", r.stdout)
+        self.assertTrue(any("--max-time 600" in c and "stop_profile" in c for c in calls))
+        self.assertTrue(any(c.startswith("docker cp dsv41-flash-exl3:/tmp/dsv41-traces") for c in calls))
+        self.assertTrue(any(c.startswith("ssh spark2") and "docker cp" in c for c in calls))
+
+    def test_head_without_trace_dir_still_copies_rank1(self) -> None:
+        docker = LOGGER.format(name="docker") + '[[ "$1" == exec || "$1" == cp ]] && exit 1\nexit 0\n'
+        r, calls = self._run(LOGGER.format(name="ssh"), docker=docker)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("WARN: no rank-0 trace dir", r.stdout)
+        self.assertIn("WARN: rank-0 copy failed", r.stdout)
+        self.assertTrue(any(c.startswith("ssh spark2") and "docker cp" in c for c in calls))
+
+    def test_copies_both_ranks_and_never_stops_the_serve(self) -> None:
+        r, calls = self._run(LOGGER.format(name="ssh"))
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("completion_tokens': 512", r.stdout)
+        stop = next(i for i, c in enumerate(calls) if "stop_profile" in c)
+        head_cp = next(i for i, c in enumerate(calls) if c.startswith("docker cp dsv41-flash-exl3:/tmp/dsv41-traces"))
+        worker_ls = next(i for i, c in enumerate(calls) if c.startswith("ssh spark2 docker exec") and "ls -la" in c)
+        worker_cp = next(i for i, c in enumerate(calls) if c.startswith("ssh spark2") and "docker cp" in c)
+        self.assertLess(stop, worker_ls)
+        self.assertLess(stop, head_cp)
+        self.assertLess(stop, worker_cp)
+        self.assertIn("/rank1", calls[worker_cp])
+        self.assertFalse([c for c in calls if "stop.sh" in c or " rm " in c or " stop " in c])
+
+    def test_concurrency_two_sends_two_streams_inside_the_window(self) -> None:
+        r, calls = self._run(LOGGER.format(name="ssh"), CONCURRENCY="2")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        start = next(i for i, c in enumerate(calls) if "start_profile" in c)
+        stop = next(i for i, c in enumerate(calls) if "stop_profile" in c)
+        streams = [i for i, c in enumerate(calls) if '"stream":true' in c]
+        self.assertEqual(len(streams), 2)
+        self.assertTrue(all(start < i < stop for i in streams))
+        self.assertEqual(r.stdout.count("profiled req usage: {'completion_tokens': 512}"), 2)
+
+    def test_max_tokens_sets_both_bounds(self) -> None:
+        r, calls = self._run(LOGGER.format(name="ssh"), MAX_TOKENS="200")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        bodies = [c for c in calls if c.startswith("curl") and "chat/completions" in c]
+        self.assertTrue(bodies)
+        self.assertTrue(all('"max_tokens":200,"min_tokens":200' in c for c in bodies))
+
+
+if __name__ == "__main__":
+    unittest.main()
