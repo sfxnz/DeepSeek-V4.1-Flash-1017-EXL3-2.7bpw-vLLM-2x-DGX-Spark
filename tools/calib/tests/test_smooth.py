@@ -116,6 +116,23 @@ class SmoothTest(unittest.TestCase):
                                         ("noise", "GU", 0.0))
         self.assertTrue(torch.equal(z13, w13.float()))  # r = 0 is exactly the native weight
 
+    def test_joint_per_group_r(self):
+        """group ALL with r = (r_gu, r_d) == the GU-only draw at r_gu and the D-only draw at r_d (same key/seed)."""
+        hz = native.Harness.__new__(native.Harness)
+        hz.dev = torch.device(DEV)
+        hz.act_dtype = torch.float32
+        w13 = torch.randn(8, 32, device=DEV).to(torch.bfloat16)
+        w2 = torch.randn(32, 4, device=DEV).to(torch.bfloat16)
+        mk = lambda mod: native.Variant("j", {7: mod}, seed=3, noise_key="joint")
+        j13, j2, _ = hz._variant_weights(7, 2, mk(("noise", "ALL", (0.1, 0.3))), w13, w2, ("noise", "ALL", (0.1, 0.3)))
+        g13, _, _ = hz._variant_weights(7, 2, mk(("noise", "GU", 0.1)), w13, w2, ("noise", "GU", 0.1))
+        _, d2, _ = hz._variant_weights(7, 2, mk(("noise", "D", 0.3)), w13, w2, ("noise", "D", 0.3))
+        self.assertTrue(torch.equal(j13, g13))
+        self.assertTrue(torch.equal(j2, d2))
+        a13, a2, _ = hz._variant_weights(7, 2, mk(("noise", "ALL", 0.2)), w13, w2, ("noise", "ALL", 0.2))
+        t13, t2, _ = hz._variant_weights(7, 2, mk(("noise", "ALL", (0.2, 0.2))), w13, w2, ("noise", "ALL", (0.2, 0.2)))
+        self.assertTrue(torch.equal(a13, t13) and torch.equal(a2, t2))  # scalar r == (r, r)
+
 
 if __name__ == "__main__":
     unittest.main()

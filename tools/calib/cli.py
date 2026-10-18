@@ -303,6 +303,15 @@ def sens_variant(L: int, g: str, r: str, seed: int, shared_noise: bool) -> Varia
                    noise_key=f"L{L}-{g}" if shared_noise else None)
 
 
+def joint_variant(spec: str, seed: int, shared_noise: bool) -> Variant:
+    """NAME:PATH[:seed]; PATH = JSON {"<layer>": [r_gu, r_d], ...}: every listed layer's GU and D groups get iid noise
+    at their own r in ONE variant. shared_noise: all joint variants of a seed share one draw (noise_key 'joint')."""
+    name, path, *sd = spec.split(":")
+    rs = json.loads(Path(path).read_text())
+    mods = {int(L): ("noise", "ALL", (float(r[0]), float(r[1]))) for L, r in rs.items()}
+    return Variant(name=name, mods=mods, seed=int(sd[0]) if sd else seed, noise_key="joint" if shared_noise else None)
+
+
 def cmd_sens(a):
     hz = make_harness(a)
     rows = rows_from_jsonl(hz, a.panel, a.limit, a.score_all)
@@ -314,6 +323,7 @@ def cmd_sens(a):
         for g in a.groups.split(","):
             for r in a.r.split(","):
                 variants.append(sens_variant(L, g, r, a.seed, a.shared_noise))
+    variants += [joint_variant(spec, a.seed, a.shared_noise) for spec in a.joint or []]
     assert len({v.name for v in variants}) == len(variants), "duplicate variant names"
     hz.stack = a.smooth and not a.no_stack
     hz.w32 = a.fp32_weights
@@ -394,6 +404,7 @@ def main(argv=None):
     p.add_argument("--score-all", action="store_true", help="score all text targets, not only loss_spans")
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--variant", action="append", help="L:GROUP:r[:seed], e.g. 3:GU:0.1")
+    p.add_argument("--joint", action="append", help="NAME:PATH[:seed], PATH = JSON {layer: [r_gu, r_d]} (multi-layer)")
     p.add_argument("--smooth", action="store_true", help="B-1 smooth mode: bf16 activations, frozen routing/indexer")
     p.add_argument("--shared-noise", action="store_true", help="one noise draw per (layer, group, seed) across r")
     p.add_argument("--no-stack", action="store_true", help="smooth mode: per-stream expert GEMMs (bit-exact r=0)")

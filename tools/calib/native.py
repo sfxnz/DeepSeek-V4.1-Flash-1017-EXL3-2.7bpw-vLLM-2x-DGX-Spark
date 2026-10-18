@@ -323,7 +323,8 @@ def chunked(n: int, c: int):
 
 @dataclass
 class Variant:
-    """A perturbed copy of every native row. mods: {layer: ("noise", group, r) | ("swap",)}."""
+    """A perturbed copy of every native row. mods: {layer: ("noise", group, r) | ("swap",)};
+    group "ALL" takes r = (r_gu, r_d) for per-group noise levels (joint variants)."""
     name: str
     mods: dict
     seed: int = 0
@@ -759,6 +760,7 @@ class Harness:
                                   T[f"layers.{layer}.ffn.experts.{e}.{p}.svh"], cb) for p in ("w1", "w3", "w2")]
             return torch.cat(rec[:2]), rec[2], "swap"
         _, group, rel = mod
+        rel_gu, rel_d = rel if isinstance(rel, tuple) else (rel, rel)
         key = var.noise_key or var.name
         seed = int.from_bytes(hashlib.blake2b(f"{var.seed}/{key}/{layer}/{e}".encode(), digest_size=8).digest(), "little") >> 1
         g = torch.Generator(device=self.dev)
@@ -775,12 +777,12 @@ class Harness:
             half = w13.size(0) // 2
             n1 = unit("w13", w13.shape, seed)
             w1, w3 = w13[:half].float(), w13[half:].float()
-            s1 = w1.square().mean().sqrt() * rel
-            s3 = w3.square().mean().sqrt() * rel
+            s1 = w1.square().mean().sqrt() * rel_gu
+            s3 = w3.square().mean().sqrt() * rel_gu
             w13 = torch.cat([w1 + n1[:half] * s1, w3 + n1[half:] * s3]).to(self.noisy_dtype(w2))
         if group in (D, "ALL"):
             w2f = w2.float()
-            w2 = (w2f + unit("w2", w2.shape, seed ^ 0x5DEECE66D) * (w2f.square().mean().sqrt() * rel)).to(self.noisy_dtype(w2))
+            w2 = (w2f + unit("w2", w2.shape, seed ^ 0x5DEECE66D) * (w2f.square().mean().sqrt() * rel_d)).to(self.noisy_dtype(w2))
         return w13, w2, "noise"
 
     def noisy_dtype(self, w):
