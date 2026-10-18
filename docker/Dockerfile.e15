@@ -8,7 +8,13 @@
 #     compile-time (K_gu, K_d), instead of exl3_moe's ~2x slower runtime-K instance). The 14 p2b
 #     kernels of canonical-e14 keep byte-identical machine code (kernel_study/p2b_kbits/
 #     sass_identity_kbits.sh); packs without expert_bits load as before.
-#   docker build --memory 24g --memory-swap 24g -f docker/Dockerfile.e15 -t dsv41-flash-exl3-sm121:e15-kbits docker
+#   - widen_p2b_kbits.py also prints one plugin boot line per routed-expert layer and rank,
+#     "dsv41: exl3 routed experts K_gu/K_d=<gu>/<d> layer <n> (expert_bits|bits)" (LOG_ENGAGED_K,
+#     checked by tools/engagement_audit.py against the served config.json).
+# docker/Dockerfile applies the same p2b chain from scratch (tests/test_widen_p2b_dataflow.py).
+#   docker build --memory 24g --memory-swap 24g -f docker/Dockerfile.e15 -t dsv41-flash-exl3-sm121:e15-kbits \
+#     --build-arg DSV41_GIT_REV=$(git rev-parse HEAD) \
+#     --build-arg DSV41_TREE_DIFF=$(git diff HEAD --binary -- docker | sha256sum | cut -c1-64) docker
 FROM dsv41-flash-exl3-sm121:canonical-e14
 
 COPY patch /opt/dsv41-patch
@@ -36,3 +42,7 @@ RUN apt-get update \
 RUN cp /opt/dsv41-patch/sitecustomize.py /usr/lib/python3.12/sitecustomize.py \
  && python3 -m py_compile /usr/lib/python3.12/sitecustomize.py
 LABEL dsv41.recipe.patches="shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack"
+# Build provenance: git HEAD and sha256 of `git diff HEAD --binary -- docker` (uncommitted build context).
+ARG DSV41_GIT_REV=unknown
+ARG DSV41_TREE_DIFF=unknown
+LABEL dsv41.recipe.git_rev="$DSV41_GIT_REV" dsv41.recipe.tree_diff_sha256="$DSV41_TREE_DIFF"

@@ -327,6 +327,8 @@ ENGAGED_LOG = "\n".join(
         "(Worker_TP0 pid=1) dsv41: moe prep fused self-check bit-exact",
         "(Worker_TP0 pid=1) dsv41: candidate mask bounded self-check bit-exact",
         "(Worker_TP0 pid=1) dsv41: indexer weights_proj GEMV self-check bit-exact",
+        # widen_p2b_kbits.py plugin line, one per routed-expert layer (the stub pack is K 2/2)
+        "(Worker_TP0 pid=1) dsv41: exl3 routed experts K_gu/K_d=2/2 layer 0 (bits)",
         # 1017 chat-encoder parity (sitecustomize, every process)
         "dsv41: chat encoder 1017 parity engaged (encoding rewritten, tokenizer rewritten)",
     ]

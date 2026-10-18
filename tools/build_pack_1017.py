@@ -432,6 +432,26 @@ def hessian_ready(root: Path | None, layer: int) -> bool:
     return m.get("format") == HESSIAN_FORMAT and m.get("layer") == layer and m.get("complete") is True
 
 
+def parse_layer_list(spec: str) -> set[int]:
+    """'1,3,5-9' -> {1, 3, 5, 6, 7, 8, 9}."""
+    out: set[int] = set()
+    for part in spec.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        a, _, b = part.partition("-")
+        out.update(range(int(a), int(b or a) + 1))
+    return out
+
+
+def unit_selected(info: dict, only_layers: set[int] | None, lmhead: bool, limit: int | None) -> bool:
+    """run --layers/--lmhead/--limit: expert units of only_layers (all if None); the lm_head unit unless
+    --layers is given without --lmhead; never the lm_head under --limit (a test run records nothing)."""
+    if info["kind"] == "lmhead":
+        return not limit and (only_layers is None or lmhead)
+    return only_layers is None or info["layer"] in only_layers
+
+
 def pin_state(store: LocalStore, rel: str, value) -> None:
     """Write state/<rel> once; later workers must agree with it."""
     known = store.read(rel)
@@ -494,6 +514,18 @@ def expected_pack_names(src_map: dict) -> set[str]:
 # ---------------------------------------------------------------- GPU / torch (container)
 
 
+def _drop_cache(path) -> None:
+    """POSIX_FADV_DONTNEED on a file just read (the calibration harness' page-cache mechanism)."""
+    try:
+        fd = os.open(path, os.O_RDONLY)
+        try:
+            os.posix_fadvise(fd, 0, 0, os.POSIX_FADV_DONTNEED)
+        finally:
+            os.close(fd)
+    except OSError:
+        pass
+
+
 def load_hessian(root: Path, layer: int, expert: int, group: str, dim: int):
     """One expert's H for one input (CPU fp32), checked: shape, finite, symmetric, PSD-ish diagonal."""
     import torch
@@ -502,7 +534,10 @@ def load_hessian(root: Path, layer: int, expert: int, group: str, dim: int):
     path = Path(root) / f"layer_{layer:02d}" / f"expert_{expert:03d}.safetensors"
     key = HESSIAN_KEYS[group]
     with safe_open(str(path), framework="pt") as fh:
-        h = fh.get_tensor(key)
+        # clone: get_tensor is backed by the file's mmap, so every later read of h (the checks below,
+        # the encoder's copy) would fault the dropped pages straight back into the page cache
+        h = fh.get_tensor(key).clone()
+    _drop_cache(path)  # 48 GB of Hessians per layer: the GB10 does not reclaim page cache for CUDA allocations
     if h.dtype != torch.float32 or tuple(h.shape) != (dim, dim):
         raise ValueError(f"{path}:{key}: {h.dtype} {tuple(h.shape)}, want float32 ({dim}, {dim})")
     if not torch.isfinite(h).all():
@@ -881,8 +916,13 @@ def cmd_run(args) -> int:
     log(f"worker {args.node} order={args.order} units={len(units)} mode={args.hessian_mode} "
         f"bpw={build['routed_bpw']:.4f} state={args.state_host or 'local'}:{out / 'state'}")
 
+    only = parse_layer_list(args.layers) if args.layers else None
+    tried: set[str] = set()  # --limit: partial units are encoded once per process, never recorded as done
+
     def can_run(x):
         info = units[x]
+        if x in tried or not unit_selected(info, only, args.lmhead, args.limit):
+            return False
         if find_src(srcs, info["file"]) is None:
             return False
         return info["kind"] != "experts" or hessian_ready(hess, info["layer"])
@@ -912,7 +952,7 @@ def cmd_run(args) -> int:
                 else:
                     rec = encode_experts_unit(u, info, srcs, alloc, out, mode=args.hessian_mode, hessians=hess,
                                               gates=gates, batch=args.batch, tile_chunk=args.tile_chunk,
-                                              heartbeat=hb, log=log)
+                                              limit=args.limit, heartbeat=hb, log=log)
             except Exception:
                 failures[u] = failures.get(u, 0) + 1
                 log(f"unit {u} FAILED ({failures[u]}x):\n{traceback.format_exc()}")
@@ -920,6 +960,11 @@ def cmd_run(args) -> int:
                     log(f"unit {u} failed twice; stopping (claim kept for resume)")
                     return 2
                 continue
+        if args.limit:
+            tried.add(u)
+            log(f"unit {u} --limit {args.limit}: partial record units/{u}.partial.json, not recorded as done "
+                f"(gate ok={rec['gate']['ok']})")
+            continue
         rec.update(node=args.node, host=socket.gethostname(), recorded=utcnow())
         store.write(f"done/{u}.json", json.dumps(rec, indent=1) + "\n")
         man = refresh_manifest(store, units, alloc, build)
@@ -1097,6 +1142,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--order", choices=("asc", "desc"))
     p.add_argument("--gpu-lock", default=None)
     p.add_argument("--wait-hessians", action="store_true", help="poll while layers wait for their Hessians")
+    p.add_argument("--layers", default=None, help="only the expert units of these layers, e.g. 1,3,5-9 (phase C)")
+    p.add_argument("--lmhead", action="store_true", help="with --layers: also the lm_head unit")
+    p.add_argument("--limit", type=int, default=None,
+                   help="test: first N experts per unit, partial records only (nothing recorded as done)")
     p = sub.add_parser("encode")
     common(p, src=True, alloc=True, enc=True)
     p.add_argument("--unit", required=True)

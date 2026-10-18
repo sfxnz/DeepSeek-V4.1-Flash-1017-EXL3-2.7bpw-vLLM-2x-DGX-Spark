@@ -263,6 +263,18 @@ class StateTests(unittest.TestCase):
             (root / "layer_03" / "meta.json").write_text("{not json")
             self.assertFalse(bp.hessian_ready(root, 3))
 
+    def test_run_layer_selection(self) -> None:
+        self.assertEqual(bp.parse_layer_list("1,3, 5-7"), {1, 3, 5, 6, 7})
+        exp, head = {"kind": "experts", "layer": 3}, {"kind": "lmhead", "layer": None}
+        self.assertTrue(bp.unit_selected(exp, None, False, None))
+        self.assertTrue(bp.unit_selected(head, None, False, None))
+        self.assertTrue(bp.unit_selected(exp, {1, 3}, False, None))
+        self.assertFalse(bp.unit_selected(exp, {0, 2}, True, None))
+        self.assertFalse(bp.unit_selected(head, {1, 3}, False, None), "--layers without --lmhead skips lm_head")
+        self.assertTrue(bp.unit_selected(head, {0, 2}, True, None))
+        self.assertFalse(bp.unit_selected(head, None, True, 8), "a --limit test run never takes lm_head")
+        self.assertTrue(bp.unit_selected(exp, {3}, False, 8))
+
     def test_pin_state_refuses_a_different_allocation(self) -> None:
         with tempfile.TemporaryDirectory() as d:
             store = bp.LocalStore(Path(d))

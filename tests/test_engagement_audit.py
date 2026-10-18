@@ -160,7 +160,9 @@ class KAwareTests(unittest.TestCase):
         self.assertEqual(eb, {(3, 2): list(range(40))})
 
     def test_k2_pack_on_the_k2_patch_set_is_covered(self) -> None:
-        self.assertEqual(ea.coverage(_pack(), COOP), ([], []))
+        # widen_p2b_kbits.py's per-layer plugin line (LOG_ENGAGED_K) is the only per-K expectation.
+        boot = [("p2b dataflow K", t.format(kgu=2, kd=2)) for t in ea.dataflow_support()["engaged_k"]]
+        self.assertEqual(ea.coverage(_pack(), COOP), ([], boot))
         self.assertEqual(ea.audit({"head": ENGAGED}, COOP | {"DSV41_P2B_COOP": "0"}, K3_PACK), [])
 
     def test_k3_pack_without_a_k3_kernel_fails_even_with_clean_logs(self) -> None:
@@ -240,6 +242,7 @@ class KAwareTests(unittest.TestCase):
             self.assertEqual(proc.returncode, 1, proc.stderr)
             self.assertIn("WARNING audit pack: K_gu/K_d=5/5", proc.stderr)
             cfg.write_text(json.dumps(_pack()))
+            log.write_text(log.read_text() + "dsv41: exl3 routed experts K_gu/K_d=2/2 layer 0 (bits)\n")
             proc = subprocess.run(argv + ["--mode", "strict", "--pack-config", str(cfg), f"head={log}"], env=env,
                                   capture_output=True, text=True)
             self.assertEqual(proc.returncode, 0, proc.stderr)

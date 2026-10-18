@@ -28,6 +28,9 @@ dataflow kernel stays bitwise equal to DSV41_P2B_COOP=1 and, for one-hot routing
 Plugin side (src/vllm_exl3/exl3.py):
 - quantization_config.expert_bits = {"<layer>": [K_gu, K_d]} (ints in {2, 3, 4}); layers without an
   entry keep layer_bits / bits for both groups.
+- get_quant_method prints LOG_ENGAGED_K once per routed-expert layer and rank, e.g.
+  "dsv41: exl3 routed experts K_gu/K_d=3/2 layer 5 (expert_bits)" (or "(bits)" without an entry):
+  tools/engagement_audit.py expects the line for every (K_gu, K_d) of the served config.json.
 - Exl3MoEMethod allocates w13_trellis with K_gu words and w2_trellis with K_d words; the native
   call passes (K_gu, K_gu, K_d); exl3_moe gets the same triple (its K = 0 instance switches K at
   runtime when they differ); the fat prefill path uses the down tensor's own K for w2 (the
@@ -46,6 +49,8 @@ import argparse
 from pathlib import Path
 
 MARK = "// --- widen_p2b_kbits"
+# Plugin boot line per routed-expert layer (format keys {kgu} {kd}; tools/engagement_audit.py).
+LOG_ENGAGED_K = "dsv41: exl3 routed experts K_gu/K_d={kgu}/{kd} "
 MIXED = ((2, 3), (2, 4), (3, 2), (3, 4), (4, 2), (4, 3))
 
 HELPERS = r'''// --- widen_p2b_kbits: BITS = K, or 10 * K_gu + K_d when gate/up and down K differ ---
@@ -766,6 +771,13 @@ PY_EDITS = (
             )
 """,
         """            k_gu, k_d = self.expert_bits_for_prefix(prefix)  # widen_p2b_kbits
+            _lm = self._LAYER_RE.search(prefix or "")
+            print(
+                f"dsv41: exl3 routed experts K_gu/K_d={k_gu}/{k_d} layer "
+                f"{_lm.group(1) if _lm else prefix} "
+                f"({'expert_bits' if _lm and int(_lm.group(1)) in self.expert_bits else 'bits'})",
+                flush=True,
+            )
             return Exl3MoEMethod(layer.moe_config, self, bits=k_gu, bits_d=k_d)
 """,
         "get_quant_method MoE K",

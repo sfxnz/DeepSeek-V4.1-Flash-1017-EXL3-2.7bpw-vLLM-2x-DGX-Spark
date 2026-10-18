@@ -57,7 +57,8 @@ def parse_layers(s: str, n: int = 40) -> list[int]:
 def make_harness(a) -> Harness:
     over = json.loads(a.cfg_override) if a.cfg_override else None
     return Harness(a.ckpt, index=a.index, engram=not a.no_engram, cfg_overrides=over,
-                   attn_chunk=a.attn_chunk, log=log)
+                   attn_chunk=a.attn_chunk, log=log, smooth=getattr(a, "smooth", False),
+                   act_dtype=torch.float32 if getattr(a, "smooth_fp32", False) else torch.bfloat16)
 
 
 def rows_from_jsonl(hz: Harness, path, limit=None, score_all=False) -> list[Row]:
@@ -285,26 +286,50 @@ def variant_report(hz: Harness, head: Head, rows, t0) -> dict:
             "routed_out_rel_mse_tokmean": None if e is None else e[2] / max(e[3], 1),
             "drafter_in_rel_mse": {str(L): v[0] / max(v[1], 1e-30) for L, v in head.drafter.get(name, {}).items()},
         }
+        tk = [head.tok_kl[r.id] for r in rows if r.variant is not None and r.variant.name == name and r.id in head.tok_kl]
+        if tk:
+            k = torch.cat(tk).sort(descending=True).values
+            res[name]["kl_top1pct_share"] = (k[: max(1, k.numel() // 100)].sum() / k.sum().clamp_min(1e-30)).item()
+            res[name]["kl_by_row"] = {r.id.split("@")[0]: head.tok_kl[r.id].mean().item() for r in rows
+                                      if r.variant is not None and r.variant.name == name and r.id in head.tok_kl}
     out["variants"] = res
     return out
+
+
+def sens_variant(L: int, g: str, r: str, seed: int, shared_noise: bool) -> Variant:
+    """Name L{L}-{g}-r{r}[-s{seed}]; shared_noise: one noise draw per (layer, group, seed) across r."""
+    name = f"L{L}-{g}-r{r}" + (f"-s{seed}" if seed else "")
+    return Variant(name=name, mods={L: ("noise", g, float(r))}, seed=seed,
+                   noise_key=f"L{L}-{g}" if shared_noise else None)
 
 
 def cmd_sens(a):
     hz = make_harness(a)
     rows = rows_from_jsonl(hz, a.panel, a.limit, a.score_all)
     variants = []
-    for spec in a.variant or []:
-        L, g, r = spec.split(":")
-        variants.append(Variant(name=f"L{int(L)}-{g}-r{r}", mods={int(L): ("noise", g, float(r))}, seed=a.seed))
+    for spec in a.variant or []:  # L:GROUP:r[:seed]
+        L, g, r, *sd = spec.split(":")
+        variants.append(sens_variant(int(L), g, r, int(sd[0]) if sd else a.seed, a.shared_noise))
     for L in parse_layers(a.sweep_layers) if a.sweep_layers else []:
         for g in a.groups.split(","):
             for r in a.r.split(","):
-                variants.append(Variant(name=f"L{L}-{g}-r{r}", mods={L: ("noise", g, float(r))}, seed=a.seed))
-    log(f"{len(variants)} variants x {len(rows)} rows")
-    head = Head()
+                variants.append(sens_variant(L, g, r, a.seed, a.shared_noise))
+    assert len({v.name for v in variants}) == len(variants), "duplicate variant names"
+    hz.stack = a.smooth and not a.no_stack
+    hz.w32 = a.fp32_weights
+    log(f"{len(variants)} variants x {len(rows)} rows, smooth={a.smooth}, stack={hz.stack}, shared_noise={a.shared_noise}")
+    head = Head(keep_tok_kl=True)
     t0 = time.time()
     rows = hz.run(rows, variants=variants, head_cb=head)
-    write(a.out, variant_report(hz, head, rows, t0))
+    out = variant_report(hz, head, rows, t0)
+    out["mode"] = "smooth" if a.smooth else "fp8"
+    out["stack"] = hz.stack
+    out["act_dtype"] = str(hz.act_dtype)
+    out["fp32_weights"] = hz.w32
+    out["shared_noise"] = a.shared_noise
+    out["panel"] = str(a.panel)
+    write(a.out, out)
+    torch.save(head.tok_kl, Path(a.out).with_suffix(".tokkl.pt"))
 
 
 def cmd_swap(a):
@@ -368,7 +393,12 @@ def main(argv=None):
     p.add_argument("--panel", required=True)
     p.add_argument("--score-all", action="store_true", help="score all text targets, not only loss_spans")
     p.add_argument("--limit", type=int, default=0)
-    p.add_argument("--variant", action="append", help="L:GROUP:r, e.g. 3:GU:0.1")
+    p.add_argument("--variant", action="append", help="L:GROUP:r[:seed], e.g. 3:GU:0.1")
+    p.add_argument("--smooth", action="store_true", help="B-1 smooth mode: bf16 activations, frozen routing/indexer")
+    p.add_argument("--shared-noise", action="store_true", help="one noise draw per (layer, group, seed) across r")
+    p.add_argument("--no-stack", action="store_true", help="smooth mode: per-stream expert GEMMs (bit-exact r=0)")
+    p.add_argument("--smooth-fp32", action="store_true", help="smooth mode with fp32 activations (split bf16 GEMMs)")
+    p.add_argument("--fp32-weights", action="store_true", help="with --smooth-fp32: fp32 weights + plain fp32 GEMMs (slow)")
     p.add_argument("--sweep-layers", default="")
     p.add_argument("--groups", default="GU,D")
     p.add_argument("--r", default="0.1")

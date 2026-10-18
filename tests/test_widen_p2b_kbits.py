@@ -242,6 +242,28 @@ class KbitsPluginPatchTests(unittest.TestCase):
             path.write_text(self.patched)
             return _load("exl3_kbits", path)
 
+    def test_boot_line_per_layer_matches_the_audit_template(self) -> None:
+        import textwrap
+        import types
+
+        gqm = _block(self.patched, "    def get_quant_method(", "        if isinstance(layer, LinearBase):")
+        body = textwrap.dedent(_block(gqm, "            k_gu, k_d = self.expert_bits_for_prefix(prefix)",
+                                      "            return Exl3MoEMethod("))
+        layer_re = re.search(r'_LAYER_RE = (re\.compile\(.*\))\n', self.patched).group(1)
+        lines: list[str] = []
+        cfg = types.SimpleNamespace(_LAYER_RE=eval(layer_re), expert_bits={5: (3, 2)})
+        cfg.expert_bits_for_prefix = lambda prefix: cfg.expert_bits.get(int(prefix.split(".")[2]), (2, 2))
+        for prefix in ("model.layers.5.ffn.experts", "model.layers.6.ffn.experts"):
+            exec(body, {"self": cfg, "prefix": prefix, "print": lambda s, flush: lines.append(s)})
+        self.assertEqual(lines, ["dsv41: exl3 routed experts K_gu/K_d=3/2 layer 5 (expert_bits)",
+                                 "dsv41: exl3 routed experts K_gu/K_d=2/2 layer 6 (bits)"])
+        self.assertIn(self.kb.LOG_ENGAGED_K.format(kgu=3, kd=2), lines[0])
+        self.assertNotIn(self.kb.LOG_ENGAGED_K.format(kgu=3, kd=2), lines[1])
+        sys.path.insert(0, str(ROOT / "tools"))
+        import engagement_audit as ea
+
+        self.assertIn(self.kb.LOG_ENGAGED_K, ea.dataflow_support()["engaged_k"])
+
     def test_expert_bits_config(self) -> None:
         try:
             mod = self._module()

@@ -16,7 +16,10 @@ RUN python3 /opt/dsv41-patch/apply_engram_disk.py \
 # allows V4.1 TP=2 5120x1152. coop + dataflow (DSV41_P2B_COOP=1|2; run.sh defaults to 2
 # since round 35; unset or 0 runs the SORT=0/1 kernels, byte-identical to canonical-e13's)
 # are the k3 round-3 stages that docker/Dockerfile.e14 layers on canonical-e13 as
-# canonical-e14 (the round-3 serve arms' review-e14, same image ID).
+# canonical-e14 (the round-3 serve arms' review-e14, same image ID). kbits (1017 pack:
+# coop/dataflow at K 2/3/4 and K_gu != K_d, expert_bits in the plugin, exl3_moe_kmix) is the
+# stage docker/Dockerfile.e15 layers on canonical-e14 as e15-kbits; this file applies the
+# same chain from scratch (tests/test_widen_p2b_dataflow.py keeps the two in sync).
 ARG VLLM_EXL3_REF=d3cfd394920360d69f820d2dc96f8292a9e10283
 ARG EXLLAMAV3_REF=5be886578ec80324c2c715269387be2058724b6e
 RUN apt-get update \
@@ -38,8 +41,9 @@ RUN apt-get update \
  && python3 /opt/dsv41-patch/widen_p2b_srcsort.py /opt/vllm-exl3 \
  && python3 /opt/dsv41-patch/widen_p2b_coop.py /opt/vllm-exl3 \
  && python3 /opt/dsv41-patch/widen_p2b_dataflow.py /opt/vllm-exl3 \
+ && python3 /opt/dsv41-patch/widen_p2b_kbits.py /opt/vllm-exl3 \
  && TORCH_CUDA_ARCH_LIST=12.1a python3 -m pip install --no-build-isolation --no-deps /opt/vllm-exl3 \
- && python3 -c "import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; print('vllm_exl3 cuda ok')" \
+ && python3 -c "import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); print('vllm_exl3 kbits cuda ok')" \
  && rm -rf /opt/exllamav3 /opt/vllm-exl3 /var/lib/apt/lists/*
 
 ENV VLLM_PLUGINS=vllm_exl3
@@ -59,5 +63,10 @@ RUN python3 /opt/dsv41-patch/widen_b12x_smalls.py /usr/local/lib/python3.12/dist
 # flashinfer cute-dsl path at equal acceptance (2026-09-19 A/B, two 5-run
 # batches per image). Revisit only with a proper kernel-level A/B.
 # run.sh warns when IMAGE lacks this label (e.g. a stale local :latest).
-LABEL dsv41.recipe.patches="shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack"
+LABEL dsv41.recipe.patches="shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack"
+# Build provenance (docker build --build-arg DSV41_GIT_REV=$(git rev-parse HEAD)
+#   --build-arg DSV41_TREE_DIFF=$(git diff HEAD --binary -- docker | sha256sum | cut -c1-64)).
+ARG DSV41_GIT_REV=unknown
+ARG DSV41_TREE_DIFF=unknown
+LABEL dsv41.recipe.git_rev="$DSV41_GIT_REV" dsv41.recipe.tree_diff_sha256="$DSV41_TREE_DIFF"
 ENTRYPOINT ["vllm", "serve"]
