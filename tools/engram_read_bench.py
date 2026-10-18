@@ -39,7 +39,18 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 PATCH = ROOT / "docker/patch"
-DEFAULT_SNAPSHOT = Path.home() / ".cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-EXL3/snapshots/2.0bpw-mcg"
+PACK_HUB = Path.home() / ".cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3"
+PACK_REV = "2.7bpw-mcg-hq"
+
+
+def default_snapshot() -> Path:
+    """The 1017 pack, resolved like run.sh: refs/<rev> commit first, else snapshots/<rev>."""
+    ref = PACK_HUB / "refs" / PACK_REV
+    if ref.is_file():
+        snap = PACK_HUB / "snapshots" / ref.read_text().strip()
+        if snap.is_dir():
+            return snap
+    return PACK_HUB / "snapshots" / PACK_REV
 
 
 def load_disk_module(tmp: Path):
@@ -63,7 +74,7 @@ def load_disk_module(tmp: Path):
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--snapshot", type=Path, default=DEFAULT_SNAPSHOT)
+    ap.add_argument("--snapshot", type=Path, default=default_snapshot())
     ap.add_argument("--layer", type=int, default=1)
     ap.add_argument("--rows", type=int, nargs="+", default=[2000, 20000], help="rows per call; serial runs only the first size")
     ap.add_argument("--reps", type=int, default=3)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Output-quality eval for the DeepSeek-V4.1-Flash EXL3 serve (HTTP only).
+"""Output-quality eval for the DeepSeek-V4.1-Flash-1017 EXL3 serve (HTTP only).
 
 Stdlib only. It talks to the OpenAI-compatible serve, prints a JSON summary
 line (`QUALITY {...}`), writes the full result with --out, and exits 1 when a
@@ -37,7 +37,7 @@ low} except gsm8k_think. Concurrency never exceeds 2 (MAX_NUM_SEQS=2); nll,
 decode, selfcons and needle run at c=1. Never run this next to a bench.
 
   python3 tests/quality_eval.py --quick --out q.json
-  python3 tests/quality_eval.py --quick --baseline results/2026-09-27-viterbi-adopt/quality-baseline/quick.json
+  python3 tests/quality_eval.py --full --baseline results/2026-10-18-1017/quality-baseline/full.json
   python3 tests/quality_eval.py --result armB.json --baseline armA.json   # offline re-gate
 """
 
@@ -74,7 +74,7 @@ DECODE_TOKENS = 128
 SELFCONS_TOKENS = 128
 DEPTHS = (0.1, 0.5, 0.9)
 
-# Same 12 prompts as results/2026-09-22-lmhead/greedy_capture.py (R30).
+# Fixed 12 prompts (the Sept R30 greedy capture set).
 SELFCONS_PROMPTS = [
     "17 * 19 = ? Step by step, then answer.",
     "Write a Python function to reverse a linked list iteratively.",

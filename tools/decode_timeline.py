@@ -36,7 +36,7 @@ from pathlib import Path
 
 PEAK_GBPS = 250.0  # demonstrated sustained LPDDR5x stream (cutlass lm_head / Markov, kernels.md)
 
-# Model constants (config.json of 2.0bpw-mcg-lmhead-mxfp8), per TP rank where split.
+# Model constants (config.json; the 1017 2.7bpw-mcg-hq dims equal the Sept pack's), per TP rank where split.
 MODEL = {
     "hidden": 5120, "layers": 40, "vocab": 129280, "tp": 2,
     "experts": 384, "topk": 6, "moe_inter": 2304, "q_lora": 1280, "heads": 64, "head_dim": 512,
@@ -156,7 +156,10 @@ def idle_gaps(intervals: list[tuple[float, float, int]], lo: float, hi: float, m
 MB = 1e6
 H = MODEL["hidden"]
 VOCAB_RANK = MODEL["vocab"] // MODEL["tp"]
-EXPERT_BYTES = 3 * H * (MODEL["moe_inter"] // MODEL["tp"]) * 2 / 8  # EXL3 2.0 bpw gate+up+down per rank
+# EXL3 gate+up+down per rank at a uniform 2.0 bpw (Sept K=2 basis). The 1017 pack is mixed K, layer
+# bpw (2*K_gu + K_d)/3 from quantization_config.expert_bits, mean 2.70: on it these bytes and the
+# p2b GB/s derived from them are low by 2.70/2.0 = 1.35x on average, and per layer by layer bpw / 2.0.
+EXPERT_BYTES = 3 * H * (MODEL["moe_inter"] // MODEL["tp"]) * 2 / 8
 
 
 def _fp8(n: int, k: int) -> float:

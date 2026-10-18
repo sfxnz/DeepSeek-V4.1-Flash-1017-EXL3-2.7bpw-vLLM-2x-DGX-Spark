@@ -1,0 +1,135 @@
+ctx=512 pp_warm run=1 doc=379 ttft=0.97s rate=393.8 tok/s acc=-
+ctx=512 pp_warm run=2 doc=503 ttft=1.08s rate=468.0 tok/s acc=-
+ctx=512 pp_novel run=1 doc=497 ttft=0.95s rate=524.9 tok/s acc=-
+ctx=512 pp_novel run=2 doc=502 ttft=0.86s rate=585.4 tok/s acc=-
+ctx=512 tg run=1 doc=497 ttft=1.05s rate=37.8 tok/s acc=2.125
+ctx=512 tg run=2 doc=473 ttft=1.00s rate=39.6 tok/s acc=2.333333333333333
+ctx=4096 pp_warm run=1 doc=4074 ttft=6.26s rate=651.5 tok/s acc=-
+ctx=4096 pp_warm run=2 doc=4013 ttft=5.27s rate=762.7 tok/s acc=-
+ctx=4096 pp_novel run=1 doc=4087 ttft=5.18s rate=789.9 tok/s acc=-
+ctx=4096 pp_novel run=2 doc=4040 ttft=5.06s rate=799.1 tok/s acc=-
+ctx=4096 tg run=1 doc=4029 ttft=5.77s rate=59.0 tok/s acc=3.2
+ctx=4096 tg run=2 doc=3996 ttft=10.39s rate=45.8 tok/s acc=2.4615384615384617
+ctx=16384 pp_warm run=1 doc=16292 ttft=22.37s rate=728.6 tok/s acc=-
+ctx=16384 pp_warm run=2 doc=16193 ttft=24.97s rate=648.7 tok/s acc=-
+ctx=16384 pp_novel run=1 doc=16327 ttft=21.88s rate=746.5 tok/s acc=-
+ctx=16384 pp_novel run=2 doc=16289 ttft=21.36s rate=762.6 tok/s acc=-
+ctx=16384 tg run=1 doc=16333 ttft=25.06s rate=50.8 tok/s acc=2.909090909090909
+ctx=16384 tg run=2 doc=16228 ttft=47.17s rate=19.9 tok/s acc=2.75
+ctx=65536 pp_warm run=1 doc=64540 ttft=91.31s rate=706.9 tok/s acc=-
+ctx=65536 pp_warm run=2 doc=63663 ttft=95.05s rate=669.8 tok/s acc=-
+ctx=65536 pp_novel run=1 doc=65403 ttft=89.08s rate=734.3 tok/s acc=-
+ctx=65536 pp_novel run=2 doc=65382 ttft=89.38s rate=731.6 tok/s acc=-
+ctx=65536 tg run=1 doc=64284 ttft=90.76s rate=46.6 tok/s acc=2.6153846153846154
+ctx=65536 tg run=2 doc=65101 ttft=97.11s rate=49.6 tok/s acc=2.666666666666667
+SUMMARY [
+ {
+  "ctx": 512,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 430.9,
+  "median_ttft_s": 1.03,
+  "doc_tokens": 379,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 512,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 555.1,
+  "median_ttft_s": 0.91,
+  "doc_tokens": 497,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 512,
+  "phase": "tg",
+  "median_rate_tok_s": 38.7,
+  "median_ttft_s": 1.02,
+  "doc_tokens": 497,
+  "acceptance_len": 2.23,
+  "runs": 2
+ },
+ {
+  "ctx": 4096,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 707.1,
+  "median_ttft_s": 5.76,
+  "doc_tokens": 4074,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 4096,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 794.5,
+  "median_ttft_s": 5.12,
+  "doc_tokens": 4087,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 4096,
+  "phase": "tg",
+  "median_rate_tok_s": 52.4,
+  "median_ttft_s": 8.08,
+  "doc_tokens": 4029,
+  "acceptance_len": 2.83,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 688.7,
+  "median_ttft_s": 23.67,
+  "doc_tokens": 16292,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 754.6,
+  "median_ttft_s": 21.62,
+  "doc_tokens": 16327,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "tg",
+  "median_rate_tok_s": 35.4,
+  "median_ttft_s": 36.12,
+  "doc_tokens": 16333,
+  "acceptance_len": 2.83,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 688.4,
+  "median_ttft_s": 93.18,
+  "doc_tokens": 64540,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 732.9,
+  "median_ttft_s": 89.23,
+  "doc_tokens": 65403,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "tg",
+  "median_rate_tok_s": 48.1,
+  "median_ttft_s": 93.94,
+  "doc_tokens": 64284,
+  "acceptance_len": 2.64,
+  "runs": 2
+ }
+]
+rc=0

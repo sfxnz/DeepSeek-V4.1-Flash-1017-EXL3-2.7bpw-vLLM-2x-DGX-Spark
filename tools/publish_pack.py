@@ -19,7 +19,7 @@ os.environ.pop("HF_HUB_DISABLE_XET", None)
 os.environ.setdefault("HF_XET_HIGH_PERFORMANCE", "1")
 
 REPO = "sfxnz/DeepSeek-V4.1-Flash-1017-EXL3"
-REVISION = "2.7bpw-mcg-hq"  # provisional (tools/pack_meta.py SERVE_REVISION)
+REVISION = "2.7bpw-mcg-hq"  # tools/pack_meta.py SERVE_REVISION
 DEFAULT_SRC = Path.home() / ".cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq"
 ROOT = Path(__file__).resolve().parents[1]
 CARD = ROOT / "model-card.md"
@@ -134,7 +134,7 @@ def main() -> int:
     parser.add_argument(
         "--revision",
         default=REVISION,
-        help="Hub revision to create/upload. Default: the provisional 1017 serve revision.",
+        help="Hub revision to create/upload. Default: the 1017 serve revision.",
     )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()

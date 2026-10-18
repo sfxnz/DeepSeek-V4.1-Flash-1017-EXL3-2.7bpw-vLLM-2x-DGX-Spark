@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Stream official V4.1 shards into an EXL3 mixed pack.
 
+Sept-era uniform K=2 rebuild tool (2.0 bpw, MUL1 or MCG). The 1017 mixed-K
+pack (2.7bpw-mcg-hq, K 2/3/4 per layer and projection group, real activation
+Hessians) is built by tools/build_pack_1017.py, which imports the encode
+helpers from this module.
+
 Copies / hardlinks non-routed tensors as stored. Replaces backbone routed-expert
-w1/w2/w3 with EXL3 trellis (default 2.0 bpw, MUL1). Engram embed tables are
-hardlinked so DSV41_ENGRAM_DISK=1 can pread them — they must not be loaded into
-RAM (each is ~100 GiB). Stay at K=2 until a Spark UMA row exists. Do not raise
-bits or pass --hq before an activation-Hessian rebuild.
+w1/w2/w3 with EXL3 trellis (2.0 bpw, default codebook MUL1). Engram embed tables
+are hardlinked so DSV41_ENGRAM_DISK=1 can pread them — they must not be loaded
+into RAM (each is ~100 GiB). The CLI refuses bits other than 2.
 
 Uncalibrated identity Hessian (no activation capture). Same-shape experts in a
 shard share that Hessian and go through quantize_exl3_batch. Resume-safe per
@@ -563,17 +567,17 @@ def main() -> int:
     ap.add_argument(
         "--dst",
         type=Path,
-        default=Path.home()
-        / ".cache/huggingface/hub"
-        / ("models--" + PACK_REPO.replace("/", "--"))
-        / f"snapshots/{revision_for()}",
+        required=True,
+        help=f"output pack dir (e.g. a scratch dir named {revision_for()}); "
+        f"never the {PACK_REPO} Hub cache",
     )
     ap.add_argument("--bits", type=int, default=2)
     ap.add_argument(
         "--codebook",
         default=DEFAULT_CODEBOOK,
         choices=sorted(("mcg", "mul1")),
-        help="EXL3 trellis codebook. Default mul1. Serve still pins 2.0bpw-mcg.",
+        help="EXL3 trellis codebook. Default mul1. The serve pins the 1017 mixed-K "
+        "pack from tools/build_pack_1017.py, not this output.",
     )
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--batch", type=int, default=8)
@@ -617,8 +621,8 @@ def main() -> int:
     get_codebook(args.codebook)
     if args.bits != 2:
         print(
-            "bits!=2 needs a new Spark UMA row after a calibrated K=2 MUL1 pack. "
-            "Refusing to raise bits here.",
+            "This Sept-era tool encodes uniform K=2 only (identity Hessian). "
+            "Mixed K needs real Hessians: use tools/build_pack_1017.py.",
             file=sys.stderr,
         )
         return 1

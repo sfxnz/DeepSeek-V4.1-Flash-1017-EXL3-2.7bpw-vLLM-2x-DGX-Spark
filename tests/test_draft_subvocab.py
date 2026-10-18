@@ -45,7 +45,8 @@ class SubvocabTests(unittest.TestCase):
 
 class ResultsTests(unittest.TestCase):
     def test_committed_research_results_are_small_json(self) -> None:
-        d = ROOT / "results/2026-09-24-review/research"
+        d = ROOT / "results"
+        self.assertTrue(d.is_dir(), d)
         for p in d.rglob("*"):
             if p.is_file():
                 self.assertLess(p.stat().st_size, 5 << 20, p)

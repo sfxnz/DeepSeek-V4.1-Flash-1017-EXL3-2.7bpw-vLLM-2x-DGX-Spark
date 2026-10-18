@@ -32,7 +32,7 @@ ENC_PIN = FIX / "dsv41_tokenizer_encoding_e14.pin.py"
 TOK_PIN = FIX / "dsv41_tokenizer_e14.pin.py"
 VECTORS = (Path.home() / ".cache/huggingface/hub/models--deepseek-ai--DeepSeek-V4.1-Flash-1017/snapshots"
            / "1bae0e1088993b9b82de08f59de5be5a34e42170/encoding/tests")
-IMAGE = os.environ.get("DSV41_IMAGE", "dsv41-flash-exl3-sm121:canonical-e14")
+IMAGE = os.environ.get("DSV41_IMAGE", "dsv41-flash-exl3-sm121:e15-kbits")
 
 
 def _module(src: str, name: str):

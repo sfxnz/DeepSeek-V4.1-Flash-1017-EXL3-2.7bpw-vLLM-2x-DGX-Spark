@@ -2,7 +2,14 @@
 
 One boot = one lever. Every arm produces the four numbers via
 `tools/four_numbers.sh --arm NAME` and a verdict appended to `flags.md`,
-`results/RESULTS.md`, and the `recipes` skill ledger.
+the arm's evidence directory under `results/` (1017 evidence starts at
+`results/2026-10-18-1017/`), and the `recipes` skill ledger.
+
+Rounds R1-R36 and the `results/2026-09-*` paths cited below are Sept
+history (Sept model, 2.0 bpw pack). Their evidence is in the Sept recipe,
+`https://github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark` @
+`3de9146`. They explain the protocol; they are not reference numbers for
+1017 arms.
 
 ## Arm loop
 
@@ -11,20 +18,25 @@ One boot = one lever. Every arm produces the four numbers via
 2. **Stop both nodes**: `./stop.sh` (reads `.run-state/worker_host`, ssh's
    to spark2).
 3. **Boot with ONE env lever** (one knob changed vs baseline; full argv/env
-   recorded — paste the exact `FOO=1 ./serve.sh` line into the arm notes):
+   recorded — paste the exact `FOO=1 ./run.sh` line into the arm notes):
    ```bash
-   DSV41_ENGRAM_PREFETCH=1 ./serve.sh     # example lever
+   DSV41_P2B_SRC_SORT=1 AUDIT=strict ./run.sh     # example lever (off by default)
    ```
-   run.sh refuses unsafe configs (`FORCE_UNSAFE_QUANT/ENGRAF/CTX` guards);
+   run.sh refuses unsafe configs (`FORCE_UNSAFE_QUANT/ENGRAM/CTX` guards);
    if an A/B legitimately needs an override, set the guard for that boot
    only and record it — never commit it as a default.
 4. **Boot floors** (read `free -h`, NEVER nvidia-smi):
-   - abort if MemAvailable **< 12 GiB at boot** (before smoke);
-   - abort if MemAvailable **< 8 GiB after smoke** (`smoke_chat.py` +
-     `smoke_vision.py`) on the Sept 2.0 pack. 1017 ~2.70 bpw pack:
-     **< 4 GiB after smoke** (campaign target, provisional until phase D;
-     the 2.7 bpw weights add ~22 GiB/rank, so 8 GiB is unreachable
-     without dropping vision or DSpark).
+   - abort if MemAvailable **< 4 GiB** on either node during boot or
+     **after smoke** (`smoke_chat.py` + `smoke_vision.py`). The 2.70 bpw
+     pack is 97.73 GiB per TP rank (Sept 2.0 pack: 75.58), so the Sept
+     floors (12 GiB at boot, 8 GiB after smoke) cannot hold on 1017.
+     Boot D1 (KV 3.875 GiB, `results/2026-10-18-1017/boot-d1/`) read a
+     boot minimum of 4.6 / 5.4 GiB and 4.3 / 5.9 GiB after smoke
+     (spark1 / spark2);
+   - known dip, not an abort: `quality_eval.py`'s nll component
+     (prompt_logprobs, full-vocab logits on the head) took spark1 to
+     3.17 GiB for ~10 s on D1. Normal serving, the 128k needle included,
+     stayed at or above 3.8 GiB, and the memory watchdog never tripped.
 5. **Four numbers** (serialized, ~20-25 min estimated; re-measure on the
    first campaign run):
    ```bash
@@ -84,13 +96,15 @@ One boot = one lever. Every arm produces the four numbers via
    pass against the stored baseline of the pack under test:
    ```bash
    python3 tests/quality_eval.py --quick \
-     --baseline results/2026-09-27-viterbi-adopt/quality-baseline/quick.json \
+     --baseline results/2026-10-18-1017/quality-baseline/quick.json \
      --out results/<arm-dir>/quality_quick.json      # exit 0 = pass
    ```
-   Baselines by pack: `results/2026-09-27-viterbi-adopt/quality-baseline/`
-   for `2.0bpw-mcg-viterbi-lmhead-mxfp8` (the default since round 36,
-   recorded on V-1), and `results/2026-09-24-review/quality-baseline/` for
-   `2.0bpw-mcg-lmhead-mxfp8` (rounds 33-35).
+   The baseline for `2.7bpw-mcg-hq` is
+   `results/2026-10-18-1017/quality-baseline/`: `full.json` was recorded
+   on boot D1 (PASS); `quick.json` is TBD-PHASED(quick baseline), to be
+   recorded on the release boot. Until it exists, gate on `--full`
+   against `full.json`. Sept baselines were recorded on a different model
+   and fail by construction against 1017 weights.
    It gates prefill numerics (NLL), decode numerics (decode-vs-prefill
    probe and the golden flip hazard against the A/A control), tool calls,
    needle 8k/32k, c=2 and vision. A lever that changes numerics by design
@@ -128,138 +142,100 @@ One boot = one lever. Every arm produces the four numbers via
    the second boot of the new defaults, where the golden hazard applies
    again, within the A/A band). The old baseline stays as the reference for
    the previous pack.
+
+   **1017 clause (2026-10-18).** The 1017 retarget is not a pack change
+   in this sense. It is a new source model: every shard changed (vision,
+   embed, drafter and Engram included), it is served under a different
+   `MODEL` and served name, and it uses the 1017 chat encoder. There is
+   no current pack on the same weights to pair against, so the paired
+   NLL and McNemar tests above do not apply to it. The 1017 serve rests on
+   absolute results on 1017: `quality_eval.py --full` PASS on boot D1,
+   which is also its baseline and goldens
+   (`results/2026-10-18-1017/quality-baseline/full.json`; quick baseline
+   TBD-PHASED(quick baseline)), plus its own A/A band from later 1017
+   boots. A later pack built from the same 1017 source (a new allocation
+   or encode) is a pack change and follows the paired rule above against
+   `2.7bpw-mcg-hq`.
 7. **Free the box between arms**: `./stop.sh`, confirm no GPU containers on
    either node, then boot the next arm. Never stack levers on a promoted
    arm's boot without re-running the full four numbers.
-8. **Verdicts**: append to `flags.md` (per-round note), `results/RESULTS.md`
-   (row with evidence path), and the `recipes` skill ledger. Record per-boot
-   medians, the spread and the ms/step deltas, not only the pooled number.
-   Reference cells at close (R33): frozen prose c=1 39.60 tok/s and
-   L.A.I.L prose 33.23 tok/s. Both force `ignore_eos`: the frozen prose
-   prompt stops at 78 of 200 tokens
-   (`results/2026-09-24-review/bench-honesty/smoke-prose.txt`), so most of
-   that cell is post-EOS text. They stay for continuity only. Round 34
-   reference (s13, the round-34 defaults, `four_numbers.sh`): prose 40.37
-   at 63.03 ms/step, prose_long c=1 33.13 at 62.88 ms/step, prose_long c=2
-   45.94 aggregate, pp_novel 8k/32k 808.8/800.2, pp_warm 759.6/766.8,
-   L.A.I.L 3x 33.98 (`results/2026-09-24-review/campaign/s13-promote-final/`).
-   Round 35 reference (the round-35 defaults; medians of the per-boot medians of
-   S1024-1, S1024-2 and final-1, `results/2026-09-26-serve-r3/round35-headline.json`):
-   fresh L.A.I.L 43.17 at 49.00 ms/step, four prose c=1 52.52 at 48.07 ms/step,
-   prose_long c=1 43.73 at 48.98 ms/step, prose_long c=2 65.62 aggregate,
-   pp_novel 8k/32k 821.4/806.3, pp_warm 757.6/768.0. Round 36 reference (the
-   round-36 defaults, i.e. the round-35 config on the Viterbi pack; medians of
-   the per-boot medians of V-1 and V-2,
-   `results/2026-09-27-viterbi-adopt/round36-headline.json`): fresh L.A.I.L
-   42.58 at 48.78 ms/step (acceptance 2.115), four prose c=1 50.51 at 47.96
-   ms/step, prose_long c=1 43.80 at 49.59 ms/step, prose_long c=2 69.00
-   aggregate, pp_novel 8k/32k 814.4/811.9, pp_warm 772.8/774.9. After a
-   change to the defaults, a new ABAB still needs its own A boots.
+8. **Verdicts**: append to `flags.md` (per-round note), the arm's
+   evidence directory (under `results/2026-10-18-1017/` or a new dated
+   `results/` directory, with the evidence path in the flags.md note), and
+   the `recipes` skill ledger. Record per-boot medians, the spread and the
+   ms/step deltas, not only the pooled number.
+   1017 reference cells (boot D1, one boot, the release defaults,
+   `results/2026-10-18-1017/boot-d1/`; `bench_decode.py`, `benches/micro.py`
+   and the fresh L.A.I.L, not `four_numbers.sh`): L.A.I.L prose c=1 (512
+   tokens, t=0.2, median of 3) 39.6 tok/s at 52.5 ms/step, acceptance 2.09;
+   bench_decode prose c=1 (x9, 200 tokens) 49.6 tok/s at 52.2 ms/step,
+   acceptance 2.58; structured c=1 (x9) 77.0 tok/s at 51.4 ms/step,
+   acceptance 3.96; prose c=2 aggregate (x5) 75.8; structured c=2 aggregate
+   (x5) 140.3; pp_novel 4k/16k/64k 795/755/733 tok/s; pp_warm 4k/16k/64k
+   707/689/688 tok/s; tg after 64k context 48.1 tok/s. The bench_decode
+   prose prompt stops naturally at 83 tokens, so most of that cell is
+   post-EOS text; the structured prompt ran to 200. D1 has no
+   `four_numbers.sh` capture (pp 8k/32k, prose_long c=1/c=2, warm-prefix):
+   the first 1017 ABAB records those on its A boots. A new ABAB always
+   needs its own A boots. The Sept R33-R36 reference cells are history
+   (Sept repo, `flags.md` and `results/RESULTS.md`).
    Warm-prefix hits depend on the prompt length: a repeat of N tokens
    missed entirely when N ran only 10-58 tokens past the last 128-token
-   boundary, and hit at 68-127 (results/RESULTS.md round 34).
+   boundary, and hit at 68-127 (Sept `results/RESULTS.md` round 34).
    `tools/warm_prefix.py` now pads the prompt so that tail is at least 80
    tokens (`tail_tokens` in its summary). Read a 0.0 in older captures with
    that in mind.
 
 ## Exact restore sequence
 
-Current serve (round 36) = the round-35 defaults below on the default pack
-`2.0bpw-mcg-viterbi-lmhead-mxfp8`, launched with `AUDIT=strict ./run.sh` from
-the kernels-r3 worktree (`results/2026-09-27-viterbi-adopt/V-2/`).
-
-Round 35 (before round 36) = `dsv41-flash-exl3-sm121:canonical-e14` on both
-nodes with the round-35 defaults: the round-34 set below plus the round-3
-kernel bundle (`DSV41_P2B_COOP=2`, `DSV41_DENSE_GEMV=1`,
-`DSV41_MHC_DET_SPLITS=16`, `DSV41_ENGRAM_NATIVE_STAGE=1`,
-`DSV41_ENGRAM_EARLY_HASH=1`, `DSV41_ATTN_T2R_DEDUP=1`,
-`DSV41_SWA_META_FUSED=1`, `DSV41_MOE_PREP_FUSED=1`,
-`DSV41_CANDIDATE_MASK_BOUNDED=1`, `DSV41_INDEXER_WP_GEMV=1`) and
-`DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024` on pack `2.0bpw-mcg-lmhead-mxfp8`, launched
-with `AUDIT=strict ./run.sh` from the kernels-r3 worktree
-(`results/2026-09-26-serve-r3/final-1/`; on round-36 code add
-`SNAPSHOT_SHA=2.0bpw-mcg-lmhead-mxfp8`). Until
-perf/kernels-r3 merges, the main checkout keeps older defaults. The round-35
-kernel levers need `canonical-e14` for COOP; every other line below that
-boots an older image must set the ten round-3 levers to `0` (list under
-"Round-34 config" below), or COOP logs `the lever is OFF` and a strict audit
-fails.
-
-- Round-34 config on the round-35 code (the arm A of `ARMS-r3.txt` section 5):
-  ```bash
-  DSV41_P2B_COOP=0 DSV41_DENSE_GEMV=0 DSV41_MHC_DET_SPLITS=0 \
-    DSV41_ENGRAM_NATIVE_STAGE=0 DSV41_ENGRAM_EARLY_HASH=0 DSV41_ATTN_T2R_DEDUP=0 \
-    DSV41_SWA_META_FUSED=0 DSV41_MOE_PREP_FUSED=0 DSV41_CANDIDATE_MASK_BOUNDED=0 \
-    DSV41_INDEXER_WP_GEMV=0 DSV41_DSPARK_SPARSE_MARKOV_TOPK=256 \
-    SNAPSHOT_SHA=2.0bpw-mcg-lmhead-mxfp8 AUDIT=strict ./run.sh
-  ```
-  In a run.sh dry run (tests/run_sh_harness.py) this gives A-2's recorded
-  DSV41/NCCL/VLLM container env except `DSV41_P2B_COOP=0` and
-  `DSV41_DSPARK_SPARSE_MARKOV_TOPK=256`, which A left unset (off, and the
-  in-code 256). On `canonical-e14` with COOP off the p2b kernels are
-  canonical-e13's; add `IMAGE=dsv41-flash-exl3-sm121:canonical-e13` to boot the
-  round-34 image itself.
-- Round 36 made the Viterbi pack `2.0bpw-mcg-viterbi-lmhead-mxfp8` the
-  default `SNAPSHOT_SHA`. It was rejected as written in round 35 P4 and
-  adopted by the protocol owner (step 6, pack changes). Every line in this
-  section that reproduces a round-35-or-earlier config must also set
-  `SNAPSHOT_SHA=2.0bpw-mcg-lmhead-mxfp8`, the round-33..35 pin (the Round-34
-  line above does, and boot-lm.sh exports it). The round-35
-  serve itself is `SNAPSHOT_SHA=2.0bpw-mcg-lmhead-mxfp8 AUDIT=strict ./run.sh`
-  on round-36 code. Until the Hub revision exists, the Viterbi snapshot must
-  be assembled on BOTH nodes
-  (`/home/sfxnz/projects/data/dsv41-requant-viterbi/PLAN.txt` section 9:
-  `python3 .../code/tools/requant_full.py assemble --node spark1`, and on
-  spark2 `... assemble --node spark2 --state-host spark1`). `run.sh`
-  resolves `snapshots/<rev>/` when no `refs/<rev>` exists.
-
-Round 34 (before round 35) = `dsv41-flash-exl3-sm121:canonical-e13` on both
-nodes with the round-34 defaults (`DSV41_ENGRAM_WILLNEED=1`,
-`DSV41_STREAM_FEED=1`, `DSV41_WOA_PREPACK=1`,
-`DSV41_DSPARK_SPARSE_MARKOV=1`), launched with `AUDIT=strict ./run.sh` from
-the perf-review-0924 worktree. Until that branch merges, the main checkout
-keeps the R33 defaults and boot-lm.sh below restores the R33 config. After
-the merge, boot-lm.sh exports only its own names, so it would inherit the
-round-34 lever defaults on e12, and WOA would log `lever is OFF`. Use the
-"R33 reproduction" command further down instead.
+Current serve (1017) = `dsv41-flash-exl3-sm121:e15-kbits` on both nodes,
+pack `sfxnz/DeepSeek-V4.1-Flash-1017-EXL3` @ `2.7bpw-mcg-hq`, served as
+`deepseek-ai/DeepSeek-V4.1-Flash-1017`, with the release defaults:
+`KV_CACHE_MEMORY=4160749568` (3.875 GiB), `MAX_MODEL_LEN=1048576`,
+`MAX_NUM_SEQS=2`, `MAX_NUM_BATCHED_TOKENS=8192`, DSpark k=3, `UTIL=0.75`,
+`DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4`, and every round-34 and round-35
+lever on (AGENTS.md, working rules). Launched from this checkout:
 
 ```bash
-cd /home/sfxnz/projects/ai-lab/recipes/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark
-./stop.sh                                  # both nodes (stops spark2 via ssh)
-bash results/2026-09-22-endgame2/boot-lm.sh   # R33 config (canonical-e12, lmhead pack), old code
+./stop.sh                       # both nodes (stops spark2 via ssh)
+AUDIT=strict ./run.sh
 # readiness: python3 smoke_chat.py && python3 smoke_vision.py
 # then: tools/four_numbers.sh --arm <label> to re-confirm baseline cells
 ```
+
+Boot D1 ran `SKIP_DOWNLOAD=1 AUDIT=strict KV_CACHE_MEMORY=4160749568
+./run.sh` (`results/2026-10-18-1017/boot-d1/command.txt`).
+`results/2026-10-18-1017/boot.sh` exports the release env and then runs
+`exec ./run.sh`.
+
+The mixed-K pack needs `e15-kbits`. `canonical-e14` and older images have
+no `expert_bits` support (the plugin ignores it), and the K-aware audit
+fails `AUDIT=strict`. Do not roll back by image on 1017.
 
 - `serve.sh` → `exec ./run.sh`; on the head with `ORCHESTRATE=auto` (default)
   and `NNODES=2`, run.sh starts the **worker on spark2 first** (scps itself to
   /tmp and `docker/patch` to `~/.cache/dsv41-patch` there, launches the worker
   container with the full env forwarded), waits for the worker's `headless
   multiproc executor` line (up to 120 s), then starts head rank 0 and `wait_ready`
-  (`/health` + `/v1/models`; allow up to 60 min, plan ≥20).
-- Kernel arms rollback: `IMAGE=dsv41-flash-exl3-sm121:canonical-e12 DSV41_WOA_PREPACK=0 ./serve.sh`
-  plus the ten round-35 kernel levers at `0` (on e12 the WOA and COOP levers
-  log `the lever is OFF` and a strict audit fails).
-- Round-34 levers off on the new code (the s3 B1 config):
-  `IMAGE=dsv41-flash-exl3-sm121:canonical-e12 DSV41_ENGRAM_WILLNEED=0 DSV41_STREAM_FEED=0 DSV41_WOA_PREPACK=0 DSV41_DSPARK_SPARSE_MARKOV=0 ./run.sh`,
-  plus the ten round-35 kernel levers at `0` on round-35 code.
-  An empty value keeps the default, so use `0`.
-- R33 reproduction after the merge. boot-lm.sh stays as recorded evidence and
-  is not edited. Run it with the four round-34 levers off (on round-35 code
-  also the ten round-35 kernel levers, as above), plus `WARMUP=0`
-  because the R33 run.sh sent no post-ready warmup:
+  (`/health` + `/v1/models`; allow up to 60 min, plan ≥20). D1 booted in
+  ~11 min (load 508 s head / 305 s worker).
+- Lever rollbacks stay on `e15-kbits`: set the lever to `0` (an empty value
+  keeps the default). Round-35 kernel levers off (the round-34 config):
   ```bash
-  DSV41_ENGRAM_WILLNEED=0 DSV41_STREAM_FEED=0 DSV41_WOA_PREPACK=0 \
-    DSV41_DSPARK_SPARSE_MARKOV=0 WARMUP=0 bash results/2026-09-22-endgame2/boot-lm.sh
+  DSV41_P2B_COOP=0 DSV41_DENSE_GEMV=0 DSV41_MHC_DET_SPLITS=0 \
+    DSV41_ENGRAM_NATIVE_STAGE=0 DSV41_ENGRAM_EARLY_HASH=0 DSV41_ATTN_T2R_DEDUP=0 \
+    DSV41_SWA_META_FUSED=0 DSV41_MOE_PREP_FUSED=0 DSV41_CANDIDATE_MASK_BOUNDED=0 \
+    DSV41_INDEXER_WP_GEMV=0 DSV41_DSPARK_SPARSE_MARKOV_TOPK=256 AUDIT=strict ./run.sh
   ```
-  In a run.sh dry run (tests/run_sh_harness.py), this gives the same container
-  env and vllm argv as the levers-off `./run.sh` line above, apart from the
-  port. The argv matches the s3 B1 capture. The env matches the R33 env
-  captured in s2 (`campaign/s2-old-fresh/serve_env_spark1.txt`) except for
-  three new names that do nothing on a clean boot:
-  `DSV41_PATCH_STRICT=1`, `DSV41_DENSE_DG_SMALLM=0` and
-  `DSV41_ENGRAM_WILLNEED_MIN_ROWS=512`. The patch code is the merged code. For
-  the R33 code as well, boot from a worktree at `45d3303`. `AUDIT` only reads
-  logs, so it does not change the config.
+  Round-34 levers off as well: add `DSV41_ENGRAM_WILLNEED=0
+  DSV41_STREAM_FEED=0 DSV41_WOA_PREPACK=0 DSV41_DSPARK_SPARSE_MARKOV=0`.
+- Before the Hub revision is on a node, `tools/build_pack_1017.py assemble`
+  writes the pack to `snapshots/2.7bpw-mcg-hq`; `run.sh` resolves
+  `snapshots/<rev>/` when no `refs/<rev>` exists. If both exist, it uses the
+  Hub commit snapshot.
+- Sept restores (the Sept model, the 2.0 bpw packs, `canonical-e12`..`e14`,
+  `boot-lm.sh`) run from the Sept recipe @ `3de9146`, not from this
+  checkout: this repo's `MODEL`, served name, KV default and the required
+  `chat_encoder_1017` patch are 1017-only.
 - Patch-script changes (`docker/patch/engram_*`) take effect on restart
   without an image rebuild (patch dir is volume-mounted read-only).

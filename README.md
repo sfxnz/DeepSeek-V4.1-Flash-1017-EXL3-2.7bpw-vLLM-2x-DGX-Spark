@@ -1,42 +1,14 @@
-# Serve DeepSeek-V4.1-Flash EXL3 on 2× DGX Spark
+# Serve DeepSeek-V4.1-Flash-1017 EXL3 2.7 bpw on 2× DGX Spark
 
-Serve an EXL3 pack of [deepseek-ai/DeepSeek-V4.1-Flash](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash) across two NVIDIA DGX Spark (GB10) nodes at tensor-parallel 2.
+Serve an EXL3 pack of [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017) (source commit `1bae0e1088993b9b82de08f59de5be5a34e42170`, MIT) across two NVIDIA DGX Spark (GB10) nodes at tensor-parallel 2 with vLLM. The pack is [sfxnz/DeepSeek-V4.1-Flash-1017-EXL3](https://huggingface.co/sfxnz/DeepSeek-V4.1-Flash-1017-EXL3) at revision `2.7bpw-mcg-hq`. The image is `dsv41-flash-exl3-sm121:e15-kbits`. The served model name is `deepseek-ai/DeepSeek-V4.1-Flash-1017`.
 
-> **1017 retarget in progress (TODO phase D: rewrite this README).** The defaults now serve [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017) (source commit `1bae0e1088993b9b82de08f59de5be5a34e42170`) as `deepseek-ai/DeepSeek-V4.1-Flash-1017` from the pack [sfxnz/DeepSeek-V4.1-Flash-1017-EXL3](https://huggingface.co/sfxnz/DeepSeek-V4.1-Flash-1017-EXL3) at the provisional revision `2.7bpw-mcg-hq` (~2.70 bpw mixed-K routed experts, built by `tools/build_pack_1017.py`) on the provisional image `dsv41-flash-exl3-sm121:e15-kbits`. Everything below this note still describes the September 2.0 bpw pack and its measurements.
+Native MXFP4 and MXFP8 weights are about 510 GB and do not fit 2× Spark UMA. The pack re-encodes only the routed experts (40 layers × 384, source MXFP4) as EXL3 MCG trellis with an integer K in {2, 3, 4} per layer and projection group (GU = gate+up, D = down). The routed mean is exactly 2.70 bpw. K is not uniform: the allocation puts the bits where the measured sensitivity of the official 1017 model is highest. Jointly perturbed, the chosen allocation scores KL_eq 0.050, against 0.088 for uniform 3/2 at 2.67 bpw and 0.137 for uniform 2/2 at 2.0 bpw ([How the pack was made](#how-the-pack-was-made)). The experts are encoded with real activation Hessians. Everything else keeps the source dtypes, the lm_head is MXFP8, and the Engram tables stay on NVMe (`DSV41_ENGRAM_DISK=1`).
 
-The September pack is [sfxnz/DeepSeek-V4.1-Flash-EXL3](https://huggingface.co/sfxnz/DeepSeek-V4.1-Flash-EXL3) at revision `2.0bpw-mcg-viterbi-lmhead-mxfp8`. It has the same format and bytes as the stock `2.0bpw-mcg` pack, but the routed experts are re-encoded with tail-biting Viterbi plus a scale refit (relative error 0.262 vs 0.378), and the lm_head tensor is in MXFP8. See Download the pack and Rebuild. Routed experts are EXL3 2.0 bpw (MCG). Engram stays on NVMe (`DSV41_ENGRAM_DISK=1`). Native MXFP4 and MXFP8 weights are about 511 GB and do not fit 2× Spark UMA.
+On boot D1 the pack serves 39.6 tok/s on the L.A.I.L prose cell and 49.6 tok/s greedy prose at c=1, holds one 1,048,576-token request in its KV pool, and passes the full quality eval (GSM8K 97/100, MMLU 208/228, tools 22/22, needle 9/9).
 
-**Decode campaign 2026-09-20/22 (+44% vs published)**: real-use prose 23 → **33.2 tok/s** (L.A.I.L cell, c=1 t=0.2, pooled n=10), greedy single-stream **39.6 tok/s** (9-run median, acc 2.61), 21.6/23.2 GiB free per Spark after a 32k prefill, zero OOMs in ~30 boots. Won levers: spec k=5→k=3 + matched cudagraph captures, Engram prefetch v3 (pf_hit 100%) + gather v2, NCCL AR-tail set, mem-hygiene bundle, lm_head mxfp8. Full evidence: `results/RESULTS.md` rounds 15–33.
+This recipe replaces the September recipe for `deepseek-ai/DeepSeek-V4.1-Flash` (2.0 bpw pack, rounds 1-36): [sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark](https://github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark) @ `3de9146`. Its numbers are history, not this pack's.
 
-**Review campaign 2026-09-24 (round 34)**: before is s2, a fresh boot of the round-33 config. After is pooled over s8 and s13, the two boots that ran the identical new defaults under the same protocol (medians of the pooled per-run values):
-- L.A.I.L fresh: 32.44 → **33.68 tok/s** (+3.8%, n=20; 66.38 → 62.63 ms/step). Per boot 34.51 / 32.44.
-- prose c=1: 37.07 → **39.52 tok/s** (+6.6%, n=18; 67.77 → 63.5 ms/step). Per boot 39.87 / 39.18.
-- structured c=1: 58.57 → **62.52 tok/s** (+6.7%)
-- c=2 aggregate: prose 52.93 → 56.77 (+7.3%), structured 84.04 → 89.44 (+6.4%)
-- L.A.I.L after c=2 traffic: 31.91 → 33.75 tok/s (+5.8%, n=20)
-- novel-text prefill (s13 only): 8k 184.2 → **838.0 tok/s**, 32k 231.1 → **811.5 tok/s** (Engram WILLNEED read-ahead)
-- quick quality eval: pass
-- SPARSE_MARKOV's effect on acceptance is open (round-2 ABAB pending; settled in round 35: it stays).
-
-**Round-3 kernels 2026-09-26/27 (round 35)**: ten bit-exact (COOP: within 1 fp16 ulp) decode kernels promoted as one bundle, plus `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024`, on image `canonical-e14`. Before is arm A, the round-34 defaults on the same image (2 boots). After is the final config (3 boots: S1024-1, S1024-2 and the validation boot final-1). Values are medians of the per-boot medians; the per-boot ranges do not overlap on any decode row:
-- L.A.I.L fresh: 33.95 → **43.17 tok/s** (+27.1%; 62.79 → 49.00 ms/step at unchanged acceptance, 2.138 → 2.133). Per boot 43.17 / 43.62 / 42.74 vs 33.69 / 34.21.
-- prose_long c=1 (natural finish, no post-EOS text): 33.00 → **43.73 tok/s** (+32.5%; 63.34 → 48.98 ms/step)
-- four_numbers prose c=1: 39.16 → **52.52 tok/s** (+34.1%); structured c=1 62.19 → **83.81** (+34.8%)
-- c=2 aggregate: prose 56.70 → 81.69 (+44.1%), structured 89.04 → 138.34 (+55.4%), prose_long 47.40 → 65.62 (+38.4%)
-- prefill unchanged within noise (pp_novel 8k/32k 821.4 / 806.3)
-- quality: quick PASS on all three boots; full PASS on final-1 (GSM8K 94/100, thinking 39/40, MMLU 199/228, needle 9/9)
-- Not promoted: the five KP add-ons (no tok/s gain beyond noise). Rejected as written: the Viterbi re-encoded pack (golden-hazard gate and L.A.I.L). Round 36 adopted it (below).
-
-**Viterbi pack 2026-09-27 (round 36)**: the default pack is now `2.0bpw-mcg-viterbi-lmhead-mxfp8`. Format and kernels are the same; the routed experts are re-encoded (tail-biting Viterbi + scale refit). Round 35 rejected it as its rules were written. The protocol owner adopted it on its quality evidence, and the golden-hazard gate now applies only to same-pack levers (ARMS.md step 6). Before is the round-35 final config on the old pack (S1024-1, S1024-2, final-1). After is the new defaults (V-1, V-2). The two sets were not interleaved. Values are medians of the per-boot medians:
-- quality: NLL 0.243 → **0.139** nats/token (−42%, 39/40 passages lower, paired), GSM8K 94 → 97 / 96, MMLU 199 → 205 / 202, tools exact args 21/22 → 22/22; V-2 passes quick and full against the new baseline
-- L.A.I.L fresh: 43.17 → 42.58 tok/s (−1.4%, boot-to-boot noise 0.88); 49.00 → 48.78 ms/step; acceptance 2.133 → 2.115
-- prose_long c=1: 43.73 → 43.80 tok/s (+0.2%, noise 2.75); four_numbers prose c=1 52.52 → 50.51 (−3.8%; acceptance 2.513 → 2.416)
-- structured c=2 aggregate: 138.34 → 156.29 (+13.0%; both streams run at acceptance 4.0)
-- c=1 ms/step and prefill: unchanged within noise
-
-New default levers (round 35): `DSV41_P2B_COOP=2`, `DSV41_DENSE_GEMV=1`, `DSV41_MHC_DET_SPLITS=16`, `DSV41_ENGRAM_NATIVE_STAGE=1`, `DSV41_ENGRAM_EARLY_HASH=1`, `DSV41_ATTN_T2R_DEDUP=1`, `DSV41_SWA_META_FUSED=1`, `DSV41_MOE_PREP_FUSED=1`, `DSV41_CANDIDATE_MASK_BOUNDED=1`, `DSV41_INDEXER_WP_GEMV=1` and `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024`, on image `canonical-e14`. Evidence: `results/RESULTS.md` round 35 (per-lever attribution in `results/2026-09-26-serve-r3/P3/attribution.txt`). Round 34's (`DSV41_ENGRAM_WILLNEED`, `DSV41_STREAM_FEED`, `DSV41_WOA_PREPACK`, `DSV41_DSPARK_SPARSE_MARKOV`) stay on.
-
-Default thinking is off. If you omit `chat_template_kwargs`, V4.1 thinking is on at effort 50. A small `max_tokens` then returns empty `content`.
+Default thinking is off (`thinking=false`, `reasoning_effort=low`). Turn it on per request with `chat_template_kwargs`. The efforts are `low` (50), `high` (75) and `max` (100). `xhigh` is not a 1017 effort and is rejected. With thinking on, a small `max_tokens` can return empty `content`.
 
 ## Prerequisites
 
@@ -45,25 +17,27 @@ You need:
 - Two DGX Spark nodes
 - Passwordless SSH from the head to `WORKER_HOST` (default `spark2`)
 - Exclusive GPUs on both nodes. Do not start the serve while another `--gpus all` container is up.
-- About 340 GB free disk per node
+- About 450 GB free disk per node: the pack is 405.1 GB (377.2 GiB) and the image about 24 GB. The source model is not needed to serve.
 - Hugging Face `hf` (or `huggingface-cli`) and Docker on both nodes
 
-Pin `NCCL_IB_HCA`. GB10 exposes four HCAs and two are DOWN. Read unified memory with `free -h`. Never read VRAM from `nvidia-smi`.
+- The two Sparks' direct ConnectX link up, with an IPv4 address on the same subnet on `IFACE` on both nodes
 
-The recipe defaults are `HEAD_IP=10.100.8.1`, `WORKER_HOST=spark2`, `IFACE=enp1s0f1np1`, and `HCA=rocep1s0f1`. If your fabric differs, export `HEAD_IP`, `WORKER_HOST`, `IFACE`, and `HCA` before `./run.sh`.
+The recipe defaults are `HEAD_IP=10.100.8.1` (the head's address on `IFACE`), `WORKER_HOST=spark2`, `IFACE=enp1s0f1np1`, and `HCA=rocep1s0f1`. If your fabric differs, export `HEAD_IP`, `WORKER_HOST`, `IFACE`, and `HCA` before `./run.sh`. `run.sh` pins `NCCL_IB_HCA` from `HCA` and the socket interfaces from `IFACE`; exporting `NCCL_IB_HCA` directly has no effect. GB10 exposes four HCAs and two are DOWN: pick the one `ibdev2netdev` maps to `IFACE` with `(Up)`. Read unified memory with `free -h`. Never read VRAM from `nvidia-smi`.
+
+In this README spark1 is the head and spark2 the worker.
 
 ## Clone the recipe
 
-The default branch is `main`.
+Clone on both nodes at the same commit (the worker needs `docker/` to build the image). `./run.sh` and `./stop.sh` run from the head's checkout; `run.sh` copies its patch directory to the worker. The default branch is `main`.
 
 ```bash
-git clone https://github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark.git
-cd DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark
+git clone https://github.com/sfxnz/DeepSeek-V4.1-Flash-1017-EXL3-2.7bpw-vLLM-2x-DGX-Spark.git
+cd DeepSeek-V4.1-Flash-1017-EXL3-2.7bpw-vLLM-2x-DGX-Spark
 ```
 
 ## Download the pack
 
-Run the download on both nodes. Keep Hugging Face xet enabled. Do not set `HF_HUB_DISABLE_XET`. The revision is about 334 GB.
+Run the download on both nodes. Keep Hugging Face xet enabled. Do not set `HF_HUB_DISABLE_XET`. The revision is 405.1 GB (48 shards plus sidecars).
 
 ```bash
 unset HF_HUB_DISABLE_XET
@@ -71,11 +45,7 @@ export HF_XET_HIGH_PERFORMANCE=1
 hf download sfxnz/DeepSeek-V4.1-Flash-1017-EXL3 --revision 2.7bpw-mcg-hq
 ```
 
-(TODO phase D: the 1017 revision is not published yet; until then assemble it locally with `tools/build_pack_1017.py assemble`. The paragraph below is the September pack.)
-
-`2.0bpw-mcg-viterbi-lmhead-mxfp8` is the serve pin (round 36). It is `2.0bpw-mcg-lmhead-mxfp8` with all 40 routed-expert shards re-encoded from the MXFP4 source: tail-biting Viterbi plus a closed-form scale refit, the same 2.0 bpw MCG K=2 format, and the lm_head MXFP8 `model-00043` unchanged. Against round 35's pin it has 42% lower teacher-forced NLL on the fixed passages (0.139 vs 0.243 nats/token, 39 of 40 passages lower), GSM8K 97/97 vs 95/94 and MMLU 206/204 vs 196/198 (`results/RESULTS.md` rounds 35 and 36). `hf download` writes `refs/2.0bpw-mcg-viterbi-lmhead-mxfp8` and `snapshots/<commit>/`. `./run.sh` resolves that layout. An assembled pack at `snapshots/2.0bpw-mcg-viterbi-lmhead-mxfp8` still works. If both exist, `run.sh` uses the Hub commit snapshot. Previous revisions stay on the Hub. `2.0bpw-mcg-lmhead-mxfp8` was the serve pin in rounds 33-35: the stock pack with only `model-00043` re-encoded (lm_head to MXFP8). To serve it, download `--revision 2.0bpw-mcg-lmhead-mxfp8` and run `SNAPSHOT_SHA=2.0bpw-mcg-lmhead-mxfp8 ./run.sh`. `2.0bpw-mcg` is the stock pack. To serve it, download `--revision 2.0bpw-mcg` and run `SNAPSHOT_SHA=2.0bpw-mcg ./run.sh`; the lm_head MXFP8 path then turns itself off.
-
-If the pack is already in the Hub cache on a node, skip the download on that node.
+`hf download` writes `refs/2.7bpw-mcg-hq` and `snapshots/<commit>/`. `./run.sh` resolves that layout under `HF_CACHE` (default `~/.cache/huggingface`, the same path on both nodes); it does not read `HF_HOME`. If you download elsewhere, `export HF_CACHE=<that HF_HOME>` before `./run.sh`. A pack assembled locally at `snapshots/2.7bpw-mcg-hq` (Rebuild the pack) also works. If both exist, `run.sh` uses the Hub commit snapshot. If the pack is already in the Hub cache on a node, skip the download on that node.
 
 ## Build the image
 
@@ -86,13 +56,9 @@ docker pull vllm/vllm-openai:deepseekv41-flash-0909@sha256:d84a123255b822fc22508
 docker build -f docker/Dockerfile -t dsv41-flash-exl3-sm121:e15-kbits docker
 ```
 
-(TODO phase D: `e15-kbits` is provisional. It is the K-bits kernel image, built by `docker/Dockerfile.e15` FROM `canonical-e14` (`docker build -f docker/Dockerfile.e15 -t dsv41-flash-exl3-sm121:e15-kbits docker` on a node that has `canonical-e14`); `docker/Dockerfile` does not carry the K-bits stage yet. The text below describes `canonical-e14`.)
+If the image `dsv41-flash-exl3-sm121:e15-kbits` is already present, skip the pull and the build on that node. A node that already has `dsv41-flash-exl3-sm121:canonical-e14` can layer the K-bits stage on it instead of a full build: `docker build -f docker/Dockerfile.e15 -t dsv41-flash-exl3-sm121:e15-kbits docker`. `canonical-e14` alone cannot serve the mixed-K pack.
 
-Stock `vllm/vllm-openai` wheels do not load `DeepseekV41ForCausalLM`. The image starts from the pinned `deepseekv41-flash-0909` digest and overlays Engram-on-disk plus `vllm-exl3`.
-
-If the image `dsv41-flash-exl3-sm121:canonical-e14` is already present, skip the pull and the build on that node. A node that already has `canonical-e13` can layer the round-35 stages on it instead of a full build: `docker build -f docker/Dockerfile.e14 -t dsv41-flash-exl3-sm121:canonical-e14 docker`. A node with only `canonical-e12` builds `docker/Dockerfile.e13` as `canonical-e13` first.
-
-`docker/Dockerfile` builds the canonical serve image `dsv41-flash-exl3-sm121:canonical-e14`, which is the `IMAGE` default. It already applies the E10+E11 keeps (p2b mrow/cfg1/codebook/fshift, b12x smalls, `fix_o_proj_woa_fp8`) that the historical `docker/Dockerfile.e10` → `docker/Dockerfile.e11` chain added. `results/RESULTS.md` round 7 records the rebuild as content-equivalent. Round 34 adds the p2b srcsort build (`DSV41_P2B_SRC_SORT`, default off, byte-identical kernels when off) and the `fix_o_proj_woa_fp8` stage 2 that `DSV41_WOA_PREPACK=1` needs; on `canonical-e12` that lever logs `the lever is OFF` and the strict audit fails. `docker/Dockerfile.e13` layers the same two stages on `canonical-e12`; the Sparks' `canonical-e13` is that build (`sha256:c81762335a12`, `results/RESULTS.md` round 34). Round 35 (the k3 round-3 kernel work, `perf/kernels-r3`) adds the p2b coop and dataflow builds (`DSV41_P2B_COOP=1|2`; with the env unset or `0` the kernels are byte-identical to `canonical-e13`'s). `docker/Dockerfile.e14` layers them on `canonical-e13`; the Sparks' `canonical-e14` is that build, the round-3 serve arms' `review-e14` (`sha256:3a002b55c9bc`) tagged on both nodes (`results/RESULTS.md` round 35). `DSV41_P2B_COOP=2`, a default since round 35, needs it: on `canonical-e13` the boot logs `the lever is OFF. Rebuild docker/Dockerfile.e14` and `AUDIT=strict` fails. The other round-3 kernels compile at first use from the mounted `docker/patch` and need no build stage. The image carries a `dsv41.recipe.patches` label. `run.sh` warns, but still boots, when `IMAGE` lacks the label: a stale local `:latest`, or a canonical-e12 built before the label existed. The experiment Dockerfiles (`docker/Dockerfile.e10`, `docker/Dockerfile.mma`) chain `FROM` the untagged base and are history.
+Stock `vllm/vllm-openai` wheels do not load `DeepseekV41ForCausalLM`. The image starts from the pinned `deepseekv41-flash-0909` digest and overlays Engram-on-disk plus `vllm-exl3`. The K-bits stage (`docker/patch/widen_p2b_kbits.py`) builds the coop and dataflow MoE kernels at K 2/3/4 with K_gu ≠ K_d, reads `quantization_config.expert_bits` in the plugin, and runs mixed-K prefill on `exl3_moe_kmix`. Packs without `expert_bits` load as before. At boot each rank logs one `routed experts K_gu/K_d` line per layer, and the engagement audit checks them against the pack. The image carries a `dsv41.recipe.patches` label. `run.sh` warns, but still boots, when `IMAGE` lacks it.
 
 ## Run
 
@@ -108,9 +74,9 @@ python3 bench_decode.py --phase prose --concurrency 1
 python3 tools/measure_lail_prose.py
 ```
 
-The API is `http://127.0.0.1:8000/v1`. The served model is `deepseek-ai/DeepSeek-V4.1-Flash`. Cap is `MAX_NUM_SEQS=2`. Do not send a third stream.
+`./run.sh` starts the worker, then the head, and returns when the serve is ready. It prints `==> Ready → http://127.0.0.1:8000/v1  (context=1048576)`, then `==> audit ok`, the warmup replies, and `==> Stop with: ./stop.sh`. Run the smokes after that. Follow the head with `docker logs -f dsv41-flash-exl3`.
 
-The promoted recipe additionally ships, all default-on and individually A/B'd (results/RESULTS.md rounds 15–33): `NUM_SPECULATIVE_TOKENS=3` with cudagraph capture sizes `[1,3,4,6,8]`, `MAX_NUM_BATCHED_TOKENS=8192`, the NCCL AR-tail set (`NCCL_BUFFSIZE=1048576`, `NCCL_LL128_BUFFSIZE=262144`, `NCCL_PROTO=^LL128`, `NCCL_MAX_NCHANNELS=8`), the mem-hygiene bundle (`DSV41_DROP_PAGE_CACHE=1`, `DSV41_INDEXER_PREFILL_FACTOR=1`, `DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192`, `DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=2.5`, `VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=256`), Engram prefetch v3 + gather v2 + census (`DSV41_ENGRAM_PREFETCH=1`, `DSV41_ENGRAM_GATHER_V2=1`, `DSV41_ENGRAM_CENSUS=1`), and lm_head mxfp8 (`DSV41_LMHEAD_MXFP8=1`, pack revision `2.0bpw-mcg-lmhead-mxfp8` — the stock pack with only `model-00043` re-encoded; `tools/quantize_lmhead_mxfp8.py` builds it from `2.0bpw-mcg` in ~10 min). Round 34 (2026-09-24 review campaign, `results/RESULTS.md`) adds four more default-on levers: `DSV41_ENGRAM_WILLNEED=1` (prefill read-ahead) and `DSV41_STREAM_FEED=1` (weight-load drain), both from the s4 prefill arm; `DSV41_WOA_PREPACK=1`, bit-exact and ABAB-tested (bundled with MHC split-K, which was rejected); and `DSV41_DSPARK_SPARSE_MARKOV=1`, from one boot. Round 35 (the k3 round-3 kernels, `results/RESULTS.md`) adds the kernel bundle `DSV41_P2B_COOP=2` (coop dataflow MoE kernel, needs `canonical-e14`), `DSV41_DENSE_GEMV=1`, `DSV41_MHC_DET_SPLITS=16`, `DSV41_ENGRAM_NATIVE_STAGE=1`, `DSV41_ENGRAM_EARLY_HASH=1`, `DSV41_ATTN_T2R_DEDUP=1`, `DSV41_SWA_META_FUSED=1`, `DSV41_MOE_PREP_FUSED=1`, `DSV41_CANDIDATE_MASK_BOUNDED=1` and `DSV41_INDEXER_WP_GEMV=1` (A, K, KC interleaved ABAB: −14.5 to −15.8 ms/step at c=1), and `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024` (its own ABAB). Set any of them to `0` to turn it off (`DSV41_DSPARK_SPARSE_MARKOV_TOPK=256` restores the round-34 width).
+The API is `http://127.0.0.1:8000/v1`. The served model is `deepseek-ai/DeepSeek-V4.1-Flash-1017`. Cap is `MAX_NUM_SEQS=2`. Do not send a third stream. A boot takes about 11 minutes (model load 508 s on the head, 305 s on the worker).
 
 The `smoke_chat.py` default prompt is `What is 17*19? Return only the integer.` Thinking is off. The pass is `content` matching `323` (`--expect ''` accepts any non-empty content). `smoke_vision.py` sends a 64x64 solid-red PNG as OpenAI `image_url`. It must not return HTTP 400 `is not a multimodal model`, and the answer must contain `red`. `bench_decode.py` is streamed greedy, thinking off, 200 completion tokens, 3-run median by default (the headline cell uses `--runs 9`).
 
@@ -122,9 +88,26 @@ When you are done:
 ./stop.sh
 ```
 
+Run it on the head. It removes `dsv41-flash-exl3` on both nodes (the worker over ssh). If it reports `Cannot SSH to <worker>`, run `docker rm -f dsv41-flash-exl3` on the worker.
+
+The serve levers are the ones the September recipe promoted, all default-on: DSpark k=3 (`NUM_SPECULATIVE_TOKENS=3`) with cudagraph capture sizes `[1,3,4,6,8]`, `MAX_NUM_BATCHED_TOKENS=8192` (`2048` is the override for long-prompt-heavy workloads), the NCCL AR-tail set, the mem-hygiene bundle, Engram prefetch + gather v2 + census + `DSV41_ENGRAM_WILLNEED`, lm_head MXFP8 (`DSV41_LMHEAD_MXFP8=1`), `DSV41_STREAM_FEED`, `DSV41_WOA_PREPACK`, `DSV41_DSPARK_SPARSE_MARKOV` with `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024`, and the round-3 kernel bundle (`DSV41_P2B_COOP=2`, `DSV41_DENSE_GEMV=1`, `DSV41_MHC_DET_SPLITS=16`, `DSV41_ENGRAM_NATIVE_STAGE=1`, `DSV41_ENGRAM_EARLY_HASH=1`, `DSV41_ATTN_T2R_DEDUP=1`, `DSV41_SWA_META_FUSED=1`, `DSV41_MOE_PREP_FUSED=1`, `DSV41_CANDIDATE_MASK_BOUNDED=1`, `DSV41_INDEXER_WP_GEMV=1`). Set any `DSV41_*` lever to `0` to turn it off (`DSV41_DSPARK_SPARSE_MARKOV_TOPK=256` restores the round-34 top-k; `SPEC=none` turns speculative decoding off). `flags.md` has the per-flag record; the September A/B evidence is in the September recipe.
+
+## Memory and context
+
+The model takes 97.73 GiB per TP rank. The release KV pool is `KV_CACHE_MEMORY=4160749568` (3.875 GiB), which holds 1,108,848 tokens: 1.06× one 1,048,576-token request. Two concurrent streams share that pool, so two 1M-token requests do not fit at once. A 4.5 GiB pool would leave spark1 about 3.7 GiB `MemAvailable` after the smokes (estimate from this boot), below the 4 GiB floor target.
+
+`MemAvailable` on boot D1 (spark1 / spark2):
+
+- minimum during boot: 4.6 / 5.4 GiB
+- after the smokes: 4.3 / 5.9 GiB
+- normal serving, including the 128k needle: ≥ 3.8 GiB
+- minimum under every test: 3.17 GiB on spark1 for about 10 s, during `quality_eval.py`'s NLL component (full-vocab `prompt_logprobs` logits on the head)
+
+The memory watchdog never tripped. After a prefill step of 8192 tokens or more (`DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192`), the allocator releases its unused cached blocks while `MemAvailable` is below 4 GiB (`DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4`).
+
 ## Quality eval
 
-`tests/quality_eval.py` measures output quality against a running serve. It is stdlib-only and uses HTTP only. `--quick` (~6-9 min) covers:
+`tests/quality_eval.py` measures output quality against a running serve. It is stdlib-only and uses HTTP only. `--quick` covers:
 
 - teacher-forced NLL on 40 public-domain passages (`prompt_logprobs`, with BOS)
 - a decode-vs-prefill logprob probe
@@ -137,8 +120,8 @@ When you are done:
 `--full` adds GSM8K-100 with thinking off, GSM8K-40 with thinking on, MMLU 4×57, and the needle at 128k. The run exits 1 when a gate fails.
 
 ```bash
-python3 tests/quality_eval.py --quick --out /tmp/q.json \
-  --baseline results/2026-09-27-viterbi-adopt/quality-baseline/quick.json
+python3 tests/quality_eval.py --full --out /tmp/q.json \
+  --baseline results/2026-10-18-1017/quality-baseline/full.json
 ```
 
 With `--baseline`, it gates on the following:
@@ -151,7 +134,23 @@ With `--baseline`, it gates on the following:
 | Needle | found ≥ baseline |
 | Golden flip hazard | ≤ 2× max(baseline A/A hazard, 0.005); the run's own A/A hazard has the same limit |
 
-The golden flip hazard compares greedy text with the baseline's own greedy run, so it applies only when the baseline ran the same pack (weights). It gates kernel and numerics levers. A pack change is judged on paired NLL over the fixed passages, paired task scores and A/A self-consistency, and then the baseline is re-recorded on the new pack (ARMS.md step 6). Vision and c=2 must always pass. `--result saved.json --baseline other.json` re-gates two saved runs offline with no traffic, which is how an A/B compares two boots. Run it serialized: never next to a bench, and never with a third stream. The vendored data and licenses are in `tests/quality/README.md`. The baseline for the default pack `2.0bpw-mcg-viterbi-lmhead-mxfp8` was recorded on boot V-1 of round 36; its numbers are in `results/2026-09-27-viterbi-adopt/quality-baseline/README.txt`. The baseline for `2.0bpw-mcg-lmhead-mxfp8` (rounds 33-35) is `results/2026-09-24-review/quality-baseline/`.
+The golden flip hazard compares greedy text with the baseline's own greedy run, so it applies only when the baseline ran the same pack (weights). It gates kernel and numerics levers. A pack change is judged on paired NLL over the fixed passages, paired task scores and A/A self-consistency, and then the baseline is re-recorded on the new pack (ARMS.md step 6). Vision and c=2 must always pass. `--result saved.json --baseline other.json` re-gates two saved runs offline with no traffic, which is how an A/B compares two boots. Run it serialized: never next to a bench, and never with a third stream. The vendored data and licenses are in `tests/quality/README.md`.
+
+The 1017 baseline for `2.7bpw-mcg-hq` is `results/2026-10-18-1017/quality-baseline/`, recorded on boot D1. `full.json` passed:
+
+| Component | Result |
+|---|---|
+| NLL (40 passages) | 0.1445 nats/token (repeat delta 0.0018) |
+| Decode probe | median \|Δlogprob\| 0.00069 |
+| Tools | 22/22 exact args, 8/8 no-call |
+| Needle | 9/9 (8k / 32k / 128k × 3 depths) |
+| Self-consistency | 5/12 identical |
+| c=2, vision | pass |
+| GSM8K-100, thinking off | 97/100 |
+| GSM8K-40, thinking on | 39/40 |
+| MMLU 4×57 | 208/228 (91.2%) |
+
+The quick baseline is TBD-PHASED(quick baseline). Long context beyond 128k: TBD-PHASED(256k needle x3, 1M needle x3). Served KL against the native unquantized 1017 model (`tools/served_kl.py`, 72 held-out text rows): TBD-PHASED(served KL). Soak and long c=2 run: TBD-PHASED(soak).
 
 ## Defaults
 
@@ -165,7 +164,7 @@ The golden flip hazard compares greedy text with the baseline's own greedy run, 
 | `--max-num-seqs` | 2 |
 | `--max-num-batched-tokens` | 8192 |
 | `--kv-cache-dtype` | `fp8` |
-| `--kv-cache-memory` | 4831838208 |
+| `--kv-cache-memory` | 4160749568 |
 | `--quantization` | `exl3` |
 | Engram | disk (`DSV41_ENGRAM_DISK=1`) |
 | `--block-size` | 64 |
@@ -191,68 +190,126 @@ The golden flip hazard compares greedy text with the baseline's own greedy run, 
 
 ## Measured on 2× DGX Spark
 
-`bench_decode.py` is streamed greedy, 200 completion tokens, 3-run median; the round-36 table below pools 9 runs from each of two identical-config boots (50.41 tok/s prose c=1, n=18; the prompt stops naturally at ~78-86 tokens, so the cell forces `ignore_eos` and about 60% of it is post-EOS text). `tools/measure_lail_prose.py` matches L.A.I.L streams prose (512 tokens, temperature 0.2) — this is the real-world-use cell: 42.58 tok/s (n=20), +85% vs the pre-campaign published recipe (23 tok/s). The table pools the round-36 boots `V-1` and `V-2`, which both ran exactly the current defaults (`results/2026-09-27-viterbi-adopt/round36-headline.json`; round 35's table on the previous pack was 52.97 / 42.98 on `results/2026-09-26-serve-r3/round35-headline.json`). Default is DSpark-3 with matched cudagraph captures, vision on. These cells are the Viterbi-re-encoded MCG pack with the lm_head-mxfp8 head (`2.0bpw-mcg-viterbi-lmhead-mxfp8`) on native p2b `cb=1`. A MUL1 pack measured and lost prose decode at every bit-width tested (see below). The KV pool is 8 GiB. Every accepted/rejected experiment lives in `results/RESULTS.md` (36 rounds); run `benches/micro.sh` and `benches/e2e.sh` to reproduce cells, and `tests/correctness.sh --full` for the quality gate.
+Boot D1 (2026-10-18, both nodes, `AUDIT=strict`, `KV_CACHE_MEMORY=4160749568`, the image and pack above, every other setting at its default). Evidence: `results/2026-10-18-1017/boot-d1/`. The right column is the September recipe's round-36 pack on the September model, kept only as history: a different model, not a paired comparison.
 
-`MAX_NUM_BATCHED_TOKENS` history: at 12.7k-token prompts 8192 measured −5% vs 2048 (`evidence/pr6-batched-8192/`), but on the campaign's prose/prefill cells 8192 was re-measured across rounds 15–33 as part of the promoted config — every kept lever was A/B'd on top of it. It ships as the default now; 2048 remains available for long-prompt-heavy workloads.
+| Cell | 1017 2.70 bpw pack | Sept 2.0 bpw pack, Sept model (previous recipe, history only) |
+|---|---|---|
+| L.A.I.L prose c=1 (512 tokens, t=0.2, median of 3) | 39.6 tok/s, 52.5 ms/step, acceptance 2.09 | 42.6 tok/s, 48.8 ms/step, acceptance 2.11 |
+| `bench_decode.py` prose c=1 (9 runs, 200 tokens) | 49.6 tok/s, 52.2 ms/step, acceptance 2.58 | 50.7 tok/s, 48.5 ms/step, acceptance 2.45 |
+| `bench_decode.py` structured c=1 (9 runs) | 77.0 tok/s, 51.4 ms/step, acceptance 3.96 | 84.3 tok/s, 47.5 ms/step |
+| `bench_decode.py` prose c=2 aggregate (5 runs) | 75.8 tok/s | 81.0 tok/s |
+| `bench_decode.py` structured c=2 aggregate (5 runs) | 140.3 tok/s | 156.3 tok/s |
+| Prefill, novel text, 4k / 16k / 64k | 795 / 755 / 733 tok/s | 814 (8k) / 812 (32k) tok/s |
+| Prefill, warm, 4k / 16k / 64k | 707 / 689 / 688 tok/s | 773 (8k) / 775 (32k) tok/s |
+| Decode after 64k context | 48.1 tok/s | - |
+| TTFT, short prompt | ~0.24 s | - |
+| `benches/e2e.sh` | 3/3 pass; coding agent 53.9 tok/s decode; 64k document recall hit (TTFT 90.6 s) | - |
 
-MUL1 + p2b `cb=2` (`2.0bpw-mul1` K=2 on `dsv41-flash-exl3-sm121:cb2`) lost prose decode: 23.52 vs 27.98 MCG. Runs 26.43 / 23.52 / 23.17 vs baseline 26.34 / 27.98 / 31.77. MUL1 median and two of three runs sit below the worst baseline run. 12,712-token prefill 792 vs 797 (flat). Rebuild tools stay. Serve stays on the MCG codebook (`2.0bpw-mcg-viterbi-lmhead-mxfp8`). See `evidence/pr6-mul1-cb2/`.
+`tools/measure_lail_prose.py` matches L.A.I.L's streamed prose (512 tokens, temperature 0.2): it is the real-use cell. `bench_decode.py` is streamed greedy with thinking off. Its prose prompt stops naturally at 83 tokens, so the 200-token cell forces `ignore_eos` and runs on past EOS; the structured prompt runs to 200 tokens. Reproduce with `python3 bench_decode.py --runs 9 --concurrency 1`, `python3 bench_decode.py --runs 5 --concurrency 2`, `benches/micro.sh --contexts 512 4096 16384 65536 --runs 2` and `benches/e2e.sh`. The quality gate is `tests/quality_eval.py --full --baseline results/2026-10-18-1017/quality-baseline/full.json` (`tests/correctness.sh --full` is a separate fixed correctness check).
 
 <!-- BEGIN generated measured from recipe.yaml — edit recipe.yaml and run kit/render.py -->
 | Phase | Concurrency | Decode tok/s (median per stream) | Aggregate tok/s | TTFT p50 |
 |---|---|---:|---:|---:|
-| prose | 1 | 50.41 | 50.39 | 0.23 s |
-| prose | 2 | 41.57 | 81.02 | 0.25 s |
-| structured | 1 | 84.20 | 84.18 | 0.21 s |
-| structured | 2 | 78.17 | 156.29 | 0.23 s |
-| lail_prose | 1 | 42.58 | 42.58 | 0.32 s |
+| prose | 1 | 49.6 | 49.6 | 0.24 s |
+| prose | 2 | 38.4 | 75.8 | 0.28 s |
+| structured | 1 | 77.0 | 77.0 | 0.19 s |
+| structured | 2 | 70.2 | 140.3 | 0.23 s |
+| lail_prose | 1 | 39.6 | 39.6 | 0.34 s |
 <!-- END generated measured -->
+
+## How the pack was made
+
+**Allocation.** A native (unquantized) layer-streaming harness of the official 1017 model (`tools/calib/`) runs in lockstep with the official `model.py` (NLL 0.64707 vs 0.64705). In smooth mode (fp32 activations, frozen routing) it injects noise into one projection group at a time and measures the KL against the native output on a held-out panel of 8 domains (including images, tools, code, math and multilingual). The noise level per K is calibrated to the real per-K output error of real-Hessian encodes (r_eff). An exact dynamic program then picks K per (layer, group) under the 2.70 bpw budget. The choice is an ensemble of 6 sensitivity estimators (regret ≤ 2.6% against each estimator's own optimum; ≤ 4.6% under ±14% r_eff jitter), and two panels agree (Spearman 0.94).
+
+The allocation is `tools/calib/alloc/expert_bits_2.70.json` (K_gu/K_d; layer bpw = (2·K_gu + K_d)/3):
+
+| Layers | K_gu/K_d |
+|---|---|
+| 0-6 | 2/2 |
+| 7-9, 11, 13, 16, 34, 36 | 2/3 |
+| 10, 12, 14-15, 17-18, 20-33, 35, 37-39 | 3/3 |
+| 19 | 3/4 |
+
+That is 7 layers at 2/2, 8 at 2/3, 24 at 3/3 and 1 at 3/4. The pack's `config.json` carries it as `quantization_config.expert_bits` = `{"<layer>": [K_gu, K_d]}`.
+
+**Joint validation.** With every group perturbed at once (smooth mode, 2 seeds), KL_eq was:
+
+| Allocation | Routed bpw | KL_eq (seed 3 / seed 4: `joint_s3.json` / `joint_s4.json`) |
+|---|---|---|
+| Chosen | 2.70 | 0.050 / 0.049 |
+| Code-optimised | | 0.066 / 0.061 |
+| Uniform 3/2 | 2.67 | 0.088 / 0.087 |
+| Uniform 2/2 | 2.0 | 0.137 / 0.135 |
+
+The ranking matched the prediction in every domain except tools on one seed. Evidence: `results/2026-10-18-1017/allocation/`.
+
+**Encode.** ExLlamaV3 1.5.1 tail-biting Viterbi plus scale refit, with real activation Hessians in the `dsv41-hessian-v1` format: per expert, the routed-weight-weighted H over that expert's tokens, mixed with an all-token prior for cold experts (the w2 prior comes from 512 random tokens). The Hessians were captured from the native 1017 stream on 410,542 calibration tokens (218 sequences of chat, code, math, tools, multilingual and images, disjoint from the panel). Wall time was 13.9 h and 14.3 h on the two Sparks in parallel.
+
+**Gates.** All 41 per-unit gates passed (40 expert shards plus the lm_head), with no fallback. Mean relative weight error:
+
+| K | GU | D |
+|---|---|---|
+| 2 | 0.32-0.33 | 0.33-0.34 |
+| 3 | 0.160-0.166 | 0.167-0.172 |
+| 4 | | 0.087 |
+
+The lm_head MXFP8 relative error is 0.027. Evidence: `results/2026-10-18-1017/encode/`.
+
+**Non-routed tensors.** Dense, attention, shared-expert and indexer weights are the source MXFP8. The lm_head is MXFP8 (source shard 43 converted). Embeddings and vision are the source BF16. The DSpark/MTP drafter experts stay at the source MXFP4 and are never quantized. The Engram tables are the source FP8 on NVMe (shards 47-48).
 
 ## Rebuild the pack
 
-If you already downloaded `sfxnz/DeepSeek-V4.1-Flash-EXL3` at revision `2.0bpw-mcg`, skip the expert rebuild. The published pack is the serve path. Two rebuilds were measured end-to-end and **both lost decode**:
+You do not need this to serve: the published revision is the serve path. Rebuilding needs the GPUs of both Sparks for about 14 hours and exclusive GPUs. Stop the serve (`./stop.sh`) and any quant container before you start, and before `./run.sh` again.
 
-- **MUL1 + p2b `cb=2`** (`2.0bpw-mul1`, K=2): 23.52 vs 27.98 MCG on our kit. Do not serve it. Pack-only MUL1 without p2b `cb=2` drops native fused MoE onto generic `exl3_moe` and is a decode regression.
-- **Her 2.9 bpw mul1 pack** (MiaAI-Lab kit, 4 boots, results/2026-09-20-mul1-lane/): stock k=3 prose 16.35, spec-off 23.64 vs our MCG 34+ — its MTP drafter is quantized to 4-bit EXL3 (`mtp_bits: 4`, acceptance 1.33 vs 2.77 source-precision). Her k=3 numbers are not reproducible on that pack; the deficit is a pack property, not a flag.
+The capture and encode run inside the quant image `dsv41-quant151` (ExLlamaV3 1.5.1): `docker build -f docker/Dockerfile.quant151 -t dsv41-quant151 docker/`, on both nodes. Never serve from that image. It builds `FROM dsv41-flash-exl3-sm121:canonical-e12`, which this repo does not build: that is the September recipe's `docker/Dockerfile` output at commit `f67434b1fa816cc5bcca876eb51cbef1d89d5f48` (`docker build -f docker/Dockerfile -t dsv41-flash-exl3-sm121:canonical-e12 docker` in that checkout).
 
-Two derivatives were adopted. The lm_head-mxfp8 pack **won** on speed (+5.9% L.A.I.L, round 33); it re-encodes only `model-00043` of the stock pack and is published as the Hub branch `2.0bpw-mcg-lmhead-mxfp8`. The Viterbi pack (round 36, the default `2.0bpw-mcg-viterbi-lmhead-mxfp8`) builds on it and was adopted on quality: NLL −42%, with L.A.I.L within noise and short-prose c=1 −3.8%. `tools/requant_full.py` re-encodes the 46,080 routed-expert tensors from the MXFP4 source across both Sparks with exllamav3's tail-biting Viterbi and `refit_scales`, and keeps that `model-00043` (round 35 in `results/RESULTS.md`). To rebuild the lm_head pack, run the tool on a copy of the stock snapshot (it edits in place; needs torch + safetensors, e.g. inside the image):
+The tools default to the author's paths under `/home/sfxnz/projects/data/dsv41-1017`. Pass your own: `--out` (builder state and shards, same path on both nodes), `--work`, `--calib`, `--ssh-dir ~/.ssh`.
 
-```bash
-S=~/.cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-EXL3/snapshots
-cp -a "$S/<stock 2.0bpw-mcg snapshot>" "$S/2.0bpw-mcg-lmhead-mxfp8"
-python3 tools/quantize_lmhead_mxfp8.py --snapshot "$S/2.0bpw-mcg-lmhead-mxfp8"
-```
-
-Stay at K=2 for expert re-encodes. Calibrate (activation Hessian / official convert) before raising bits. Do not pass `--hq` or `bits!=2` here. This recipe does not ship a calibration harness.
-
-Exclusive GPU. Stop any quant container before `./run.sh`.
-
-1. Download the official snapshot.
+1. Download the official snapshot on both nodes.
 
 ```bash
 python3 tools/download_official.py
 ```
 
-The commit is `1bae0e1088993b9b82de08f59de5be5a34e42170` (`deepseek-ai/DeepSeek-V4.1-Flash-1017`; the September source was `deepseek-ai/DeepSeek-V4.1-Flash` @ `dba1be0a40aa45a94ad051997016db3960a90277`). The two Engram shards are about 95 GiB each and need `hf_xet`. Do not set `HF_HUB_DISABLE_XET`.
+The commit is `1bae0e1088993b9b82de08f59de5be5a34e42170` (`deepseek-ai/DeepSeek-V4.1-Flash-1017`). The two Engram shards are about 95 GiB each and need `hf_xet`. Do not set `HF_HUB_DISABLE_XET`.
 
-2. Hardlink the non-expert shards on the host. Quantize routed experts inside image `dsv41-flash-exl3-sm121:canonical-e12` with exclusive GPU. Host Python does not have ExLlamaV3. Use `--codebook mul1 --greedy --beam 16`. Split expert shards 3-22 and 23-42 across the two Sparks. Destination is `snapshots/2.0bpw-mul1`.
+2. Build the calibration set (required: the Hessian capture reads it). `python3 tools/calib/data/build.py --out <data dir>/calib` writes `calib.jsonl` (410,542 tokens) and the disjoint `panel.jsonl`, encoded exactly as the 1017 model sees them (record schema: the `tools/calib/data/load.py` docstring).
 
-```bash
-python3 tools/quantize_experts_exl3.py --codebook mul1 --link-only
+   Redoing the allocation is optional. The shipped `tools/calib/alloc/expert_bits_2.70.json` is the allocation above. To redo it: `tools/calib/cli.py` (run through `tools/calib/run_gpu.sh`) is the native harness (`nll`, `panel`, `sens`, `swap`), `tools/calib/sens_sweep.py` plans the sensitivity passes, `tools/calib/r_eff.py` measures r_eff on real-Hessian encodes, and `tools/calib/alloc/alloc.py` with `tools/calib/alloc/ensemble.py` solves the allocation.
 
-# spark1: expert shards 3-22, inside the recipe image
-python3 tools/quantize_experts_exl3.py \
-  --codebook mul1 --allow-partial --batch 8 --greedy --beam 16 --only-files $(python3 -c "print(' '.join(f'model-{i:05d}-of-00048.safetensors' for i in range(3,23)))")
-
-# spark2: expert shards 23-42, inside the recipe image
-python3 tools/quantize_experts_exl3.py \
-  --codebook mul1 --allow-partial --batch 8 --greedy --beam 16 --only-files $(python3 -c "print(' '.join(f'model-{i:05d}-of-00048.safetensors' for i in range(23,43)))")
-```
-
-3. Merge the two node outputs.
+3. Check the plan: sizes, per-node disk, per-rank GiB and ETA (host, no torch).
 
 ```bash
-CODEBOOK=mul1 bash tools/assemble_pack.sh
+python3 tools/build_pack_1017.py plan --alloc tools/calib/alloc/expert_bits_2.70.json --hessian-mode real
 ```
+
+4. Capture Hessians and encode, one driver per node. `tools/phase_c.py` holds the node's GPU lock and loops: it encodes every layer whose Hessians are complete (`build_pack_1017.py run --layers <ready> --hessian-mode real`), deletes those Hessians, then captures the next layers that fit on disk (`tools/calib/capture_h.py`, resuming the native stream from its checkpoint). Hessians are about 48.4 GB per layer, so they are streamed, not kept. The builder state lives on spark1; spark2 points at it with `--state-host spark1`. A crash or reboot resumes at unit granularity.
+
+```bash
+python3 tools/phase_c.py split --alloc tools/calib/alloc/expert_bits_2.70.json   # balanced layer sets
+
+# spark1
+python3 tools/phase_c.py run --node spark1 --layers <spark1 layers> --lmhead \
+  --alloc tools/calib/alloc/expert_bits_2.70.json --gates results/2026-10-18-1017/encode/gates.json \
+  --calib <data dir>/calib/calib.jsonl --out <out dir> --work <work dir> --ssh-dir ~/.ssh
+# spark2
+python3 tools/phase_c.py run --node spark2 --layers <spark2 layers> --state-host spark1 \
+  --alloc tools/calib/alloc/expert_bits_2.70.json --gates results/2026-10-18-1017/encode/gates.json \
+  --calib <data dir>/calib/calib.jsonl --out <out dir> --work <work dir> --ssh-dir ~/.ssh
+
+python3 tools/phase_c.py status --node spark1 --layers <spark1 layers> \
+  --alloc tools/calib/alloc/expert_bits_2.70.json --work <work dir>
+python3 tools/build_pack_1017.py status
+```
+
+5. Assemble on spark1. `assemble` pulls spark2's shards and refuses any whose size or sha256 differs from its done record, hard-links the source shards that are not re-encoded (vision, embed, DSpark/MTP, Engram), and writes `config.json` with `expert_bits`, the index and the manifest to `snapshots/2.7bpw-mcg-hq` in the Hub cache.
+
+```bash
+python3 tools/build_pack_1017.py assemble --node spark1 --out <out dir> \
+  --src ~/.cache/huggingface/hub/models--deepseek-ai--DeepSeek-V4.1-Flash-1017/snapshots/1bae0e1088993b9b82de08f59de5be5a34e42170
+```
+
+spark2 needs the same snapshot: copy spark1's built shards to `<out dir>/shards/` on spark2 and run the same `assemble --node spark2 --state-host spark1` there (it hard-links spark2's own source copy), or copy the snapshot directory. Then `./run.sh`. `--hessian-mode identity` is the uncalibrated fallback (H = I, no Hessians needed). The release pack used `real`. Pick K from a measured allocation only (`--alloc`).
 
 ## License
 

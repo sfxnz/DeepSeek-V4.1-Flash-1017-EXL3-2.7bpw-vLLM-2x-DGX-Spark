@@ -231,9 +231,9 @@ class CoopMicrobenchSourceTests(unittest.TestCase):
         self.assertIn('ap.add_argument("--dups", default="0,0.3,0.5")', text)
         self.assertIn('ap.add_argument("--m", type=int, default=4', text)
         self.assertIn("2, 2, 2, True, INTER, SWIGLU_LIMIT", text)  # K=2 gate/up/down, MCG
-        # The Sept s10 routing census (results/2026-09-24-review/...) was not imported into the 1017
-        # recipe; the driver takes --census '' to skip census routings. TODO phase D: point the
-        # driver at the 1017 routing census from the native harness and require it here again.
+        # The driver's default census is the Sept s10 routing census, which lives in the Sept
+        # recipe @ 3de9146, not here; without it the driver runs synth routings only, and
+        # --census '' skips census routings explicitly.
         self.assertIn("results/2026-09-24-review/campaign/s10-diag-census-skew/census_npy", text)
         self.assertIn("'' skips census routings", text)
 

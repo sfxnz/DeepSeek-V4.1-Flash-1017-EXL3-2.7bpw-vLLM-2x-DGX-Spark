@@ -33,7 +33,7 @@ class LailProseHarnessTests(unittest.TestCase):
     def test_frozen_protocol_is_512_tokens_temperature_0_2(self) -> None:
         self.assertEqual(self.mod.MAX_TOKENS, 512)
         self.assertEqual(self.mod.TEMPERATURE, 0.2)
-        body = self.mod.completion_body("deepseek-ai/DeepSeek-V4.1-Flash")
+        body = self.mod.completion_body("deepseek-ai/DeepSeek-V4.1-Flash-1017")
         self.assertEqual(body["max_tokens"], 512)
         self.assertEqual(body["min_tokens"], 512)
         self.assertTrue(body["ignore_eos"])
@@ -91,7 +91,7 @@ class LailProseHarnessTests(unittest.TestCase):
         thread.start()
         try:
             url = f"http://127.0.0.1:{server.server_address[1]}/v1/chat/completions"
-            row = self.mod.stream_one(url, "deepseek-ai/DeepSeek-V4.1-Flash")
+            row = self.mod.stream_one(url, "deepseek-ai/DeepSeek-V4.1-Flash-1017")
         finally:
             server.shutdown()
             server.server_close()

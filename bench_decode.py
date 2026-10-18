@@ -9,7 +9,7 @@ Honesty fields (the frozen cells keep ignore_eos for continuity):
 - After a phase's measured runs, one probe WITHOUT ignore_eos records
   natural_completion_tokens + natural_finish_reason; post_eos_fraction is the
   share of the median measured completion generated after the natural stop
-  (the frozen prose cell stops at ~78 of 200 tokens).
+  (on the 1017 pack the frozen prose cell stops at 83 of 200 tokens).
 - Spec acceptance per run from /metrics vllm:spec_decode_* deltas, and
   ms/step = decode_s / (decode_tokens / acceptance_len): the device step time,
   which does not move with the acceptance lottery the way tok/s does.

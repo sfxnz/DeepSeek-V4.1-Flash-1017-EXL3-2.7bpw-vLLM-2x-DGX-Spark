@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# DeepSeek-V4.1-Flash EXL3 on 2x DGX Spark (GB10) — vLLM TP=2
+# DeepSeek-V4.1-Flash-1017 EXL3 (2.70 bpw mixed K) on 2x DGX Spark (GB10) — vLLM TP=2
 set -euo pipefail
 
 # BEGIN generated from recipe.yaml — edit recipe.yaml and run kit/render.py
@@ -19,7 +19,7 @@ MAX_MODEL_LEN="${MAX_MODEL_LEN:-1048576}"
 MAX_NUM_SEQS="${MAX_NUM_SEQS:-2}"
 UTIL="${UTIL:-0.75}"
 KV_CACHE_DTYPE="${KV_CACHE_DTYPE:-fp8}"
-KV_CACHE_MEMORY="${KV_CACHE_MEMORY:-4831838208}"
+KV_CACHE_MEMORY="${KV_CACHE_MEMORY:-4160749568}"
 BLOCK_SIZE="${BLOCK_SIZE:-64}"
 NUM_SPECULATIVE_TOKENS="${NUM_SPECULATIVE_TOKENS:-3}"
 SPEC="${SPEC:-dspark}"
@@ -250,11 +250,11 @@ if [[ "$MAX_NUM_SEQS" -gt 2 && "$FORCE_UNSAFE_CTX" != 1 ]]; then
   exit 1
 fi
 if [[ "$KV_CACHE_MEMORY" -gt 8589934592 && "$FORCE_UNSAFE_CTX" != 1 ]]; then
-  echo "KV_CACHE_MEMORY=$KV_CACHE_MEMORY exceeds the 8 GiB pin 8589934592 (the 2.7 bpw pack leaves ~4.5 GiB; 8 GiB held 2.18x 1M on the 2.0 pack). FORCE_UNSAFE_CTX=1 overrides." >&2
+  echo "KV_CACHE_MEMORY=$KV_CACHE_MEMORY exceeds the 8 GiB cap 8589934592. The 2.70 bpw pack loads 97.73 GiB per rank; the 3.875 GiB default (4160749568) holds 1,108,848 tokens (1.06x of one 1M request) and leaves ~4.3 GiB MemAvailable on the head after the smokes. FORCE_UNSAFE_CTX=1 overrides." >&2
   exit 1
 fi
 if [[ "$SPEC" == dspark && ! "$NUM_SPECULATIVE_TOKENS" =~ ^[1-5]$ && "$FORCE_UNSAFE_CTX" != 1 ]]; then
-  echo "NUM_SPECULATIVE_TOKENS=$NUM_SPECULATIVE_TOKENS must be an integer 1..5 (DSpark block size 5). E6: k=10 collapsed L.A.I.L to 12.1 vs 22.6. FORCE_UNSAFE_CTX=1 overrides." >&2
+  echo "NUM_SPECULATIVE_TOKENS=$NUM_SPECULATIVE_TOKENS must be an integer 1..5 (DSpark block size 5). Sept pack E6: k=10 collapsed L.A.I.L to 12.1 vs 22.6. FORCE_UNSAFE_CTX=1 overrides." >&2
   exit 1
 fi
 case "$AUDIT" in
@@ -584,7 +584,7 @@ fail_worker_exited() {
 }
 
 # EXIT trap while the head is starting: keep both ranks' logs, then remove
-# both containers so a failed boot does not leave a ~75 GiB rank loaded on
+# both containers so a failed boot does not leave a 97.73 GiB rank loaded on
 # either node (a started head keeps waiting on the rendezvous otherwise).
 HEAD_STARTED=0
 cleanup_worker_on_failure() {

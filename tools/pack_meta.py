@@ -38,7 +38,7 @@ CODEBOOKS = {
     "mul1": Codebook("mul1", 2, "mul1", "mul1"),
 }
 DEFAULT_CODEBOOK = "mul1"
-# 1017 pins. SERVE_REVISION is provisional (the main agent may rename it).
+# 1017 pins. SERVE_REVISION is the published serve revision.
 SOURCE_REPO = "deepseek-ai/DeepSeek-V4.1-Flash-1017"
 SOURCE_REVISION = "1bae0e1088993b9b82de08f59de5be5a34e42170"
 SOURCE_SNAPSHOT_REL = (

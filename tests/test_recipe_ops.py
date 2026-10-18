@@ -69,12 +69,11 @@ def _load_tool(rel: str, name: str):
 
 
 HUB_MODEL = "sfxnz/DeepSeek-V4.1-Flash-1017-EXL3"
-HUB_REV = "2.7bpw-mcg-hq"  # provisional 1017 revision name
+HUB_REV = "2.7bpw-mcg-hq"
 SERVED_NAME = "deepseek-ai/DeepSeek-V4.1-Flash-1017"
-IMAGE_TAG = "dsv41-flash-exl3-sm121:e15-kbits"  # provisional K-bits kernel image
-# TODO phase D: the 1017 promoted boot. Until then the Sept round-29 boot (copied, see
-# results/sept-baseline/README.md) with the 1017 memory deltas allowed below.
-PROMOTED_BOOT = "results/sept-baseline/boot-lm.sh"
+IMAGE_TAG = "dsv41-flash-exl3-sm121:e15-kbits"
+PROMOTED_BOOT = "results/2026-10-18-1017/boot.sh"
+RELEASE_KV_CACHE_MEMORY = "4160749568"  # 3.875 GiB, boot D1
 HUB_DIRNAME = "models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3"
 HUB_PACK_URL = "https://huggingface.co/sfxnz/DeepSeek-V4.1-Flash-1017-EXL3"
 DEFAULTS_BEGIN = (
@@ -627,12 +626,11 @@ class RecipeOpsTests(unittest.TestCase):
         self.assertIn("p2b_fused_moe", df)
         self.assertIn("exl3_moe", df)
 
-    def test_assemble_pack_is_executable_and_wired(self) -> None:
-        path = ROOT / "tools/assemble_pack.sh"
-        self.assertTrue(path.is_file())
-        self.assertTrue(os.access(path, os.X_OK))
-        run = _read("README.md")
-        self.assertIn("assemble_pack.sh", run)
+    def test_readme_assembles_with_build_pack_1017(self) -> None:
+        readme = _read("README.md")
+        self.assertIn("python3 tools/build_pack_1017.py assemble", readme)
+        self.assertNotIn("assemble_pack.sh", readme)
+        self.assertTrue((ROOT / "tools/build_pack_1017.py").is_file())
 
     def test_head_preflight_before_worker_scp(self) -> None:
         run = _read("run.sh")
@@ -748,22 +746,17 @@ class RecipeOpsTests(unittest.TestCase):
         self.assertNotIn("dsv41.recipe.patches", res["stderr"])
 
     def test_defaults_match_promoted_boot(self) -> None:
-        """A plain ./run.sh reproduces the measured 39.6/33.2 boot (results/2026-09-22-endgame2/boot-lm.sh).
+        """A plain ./run.sh reproduces the 1017 release boot (results/2026-10-18-1017/boot.sh).
 
-        Intentional deltas: FORCE_UNSAFE_CTX. The campaign set it per boot to get k=3 past the old
-        %5 spec guard; the default stays 0 (ARMS.md: never commit it). IMAGE: round 34 promotes
-        canonical-e13 (the woa-prepack o_proj stage DSV41_WOA_PREPACK needs). The other round-34
-        defaults (WILLNEED, STREAM_FEED, WOA_PREPACK, SPARSE_MARKOV) are not in boot-lm.sh.
-        SNAPSHOT_SHA: round 36 moves the pin from boot-lm.sh's 2.0bpw-mcg-lmhead-mxfp8 to the
-        Viterbi re-encode 2.0bpw-mcg-viterbi-lmhead-mxfp8 (same format, same lm_head shard), and
-        1017 to the provisional 2.7bpw-mcg-hq. DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB: 1017's
-        ~97.7 GiB/rank weights move the release floor from 2.5 to 4 GiB (provisional, the KV
-        pool is not in boot-lm.sh). TODO phase D: compare against the 1017 promoted boot.
+        boot.sh exports the release env measured on boot D1 (e15-kbits, 2.7bpw-mcg-hq,
+        KV 4160749568, DSpark k=3, MEMAVAIL floor 4 GiB, round-34/35 levers on). Every export
+        must equal what the dry-run head container and argv get. The only allowed delta is
+        FORCE_UNSAFE_CTX, should a boot script ever set it: the default stays 0 (ARMS.md).
         """
         import json
         import shlex
 
-        allowed = {"FORCE_UNSAFE_CTX", "IMAGE", "SNAPSHOT_SHA", "DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB"}
+        allowed = {"FORCE_UNSAFE_CTX"}
         boot = {}
         for line in _read(PROMOTED_BOOT).splitlines():
             if line.startswith("export "):
@@ -779,6 +772,10 @@ class RecipeOpsTests(unittest.TestCase):
             IMAGE=image,
             SNAPSHOT_SHA=Path(args[1]).name,
             MAX_NUM_BATCHED_TOKENS=args[args.index("--max-num-batched-tokens") + 1],
+            KV_CACHE_MEMORY=args[args.index("--kv-cache-memory") + 1],
+            MAX_MODEL_LEN=args[args.index("--max-model-len") + 1],
+            MAX_NUM_SEQS=args[args.index("--max-num-seqs") + 1],
+            UTIL=args[args.index("--gpu-memory-utilization") + 1],
             COMPILATION_CONFIG=args[args.index("--compilation-config") + 1],
             NUM_SPECULATIVE_TOKENS=str(
                 json.loads(args[args.index("--speculative-config") + 1])["num_speculative_tokens"]
@@ -814,7 +811,7 @@ class RecipeOpsTests(unittest.TestCase):
     def test_smoke_vision_uses_image_url(self) -> None:
         smoke = _read("smoke_vision.py")
         self.assertIn("image_url", smoke)
-        self.assertIn("deepseek-ai/DeepSeek-V4.1-Flash", smoke)
+        self.assertIn(SERVED_NAME, smoke)
         self.assertIn("is not a multimodal model", smoke)
         self.assertNotIn("from PIL", smoke)
         self.assertNotIn("import PIL", smoke)
@@ -877,13 +874,15 @@ class RecipeOpsTests(unittest.TestCase):
         self.assertIn("8192", row)
         self.assertIn("data", _defaults_row("`--mm-encoder-tp-mode`"))
         readme = _read("README.md")
-        self.assertIn("−5%", readme)
-        self.assertIn("12,712", readme)
-        self.assertIn("23.52", readme)
-        self.assertIn("27.98", readme)
+        self.assertIn("`2048` is the override", readme)
         self.assertIn(f"hf download {HUB_MODEL} --revision {HUB_REV}", readme)
-        # TODO phase D: the README's Sept-pack history (2.0bpw-mcg, -lmhead-mxfp8) is checked
-        # by the assertions above until the 1017 README replaces it.
+
+    def test_default_kv_cache_memory_is_the_release_pool(self) -> None:
+        self.assertEqual(_recipe()["serve"]["env"]["KV_CACHE_MEMORY"], RELEASE_KV_CACHE_MEMORY)
+        self.assertIn(
+            f'KV_CACHE_MEMORY="${{KV_CACHE_MEMORY:-{RELEASE_KV_CACHE_MEMORY}}}"', _read("run.sh")
+        )
+        self.assertIn(RELEASE_KV_CACHE_MEMORY, _defaults_row("`--kv-cache-memory`"))
 
     def test_locator_prefers_refs_commit_over_named_snapshot(self) -> None:
         with tempfile.TemporaryDirectory() as d:
@@ -975,9 +974,14 @@ class ReadmeHowToTests(unittest.TestCase):
         self.assertIn("python3 smoke_chat.py", readme)
         self.assertIn("python3 smoke_vision.py", readme)
         self.assertIn("python3 bench_decode.py", readme)
-        self.assertIn("--codebook mul1", readme)
-        self.assertIn("2.0bpw-mul1", readme)
-        self.assertIn("pack-only", readme.lower())
+        self.assertIn("./stop.sh", readme)
+        self.assertIn(f"hf download {HUB_MODEL} --revision {HUB_REV}", readme)
+        self.assertIn(f"docker build -f docker/Dockerfile -t {IMAGE_TAG} docker", readme)
+        self.assertIn("tools/build_pack_1017.py plan", readme)
+        self.assertIn("--alloc tools/calib/alloc/expert_bits_2.70.json", readme)
+        self.assertIn("--hessian-mode real", readme)
+        for sept in ("--codebook mul1", "2.0bpw-mul1", "assemble_pack.sh"):
+            self.assertNotIn(sept, readme)
         self.assertNotIn("once published", readme)
         self.assertNotIn("docker exec dsv41-quant", readme)
 
@@ -988,12 +992,9 @@ class ReadmeHowToTests(unittest.TestCase):
             for line in readme.splitlines()
             if line.strip().startswith("git clone")
         ]
-        self.assertEqual(
-            clones,
-            [
-                "git clone https://github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark.git"
-            ],
-        )
+        repo = _recipe()["links"]["repo"]
+        self.assertEqual(clones, [f"git clone {repo}.git"])
+        self.assertIn(f"cd {repo.rsplit('/', 1)[1]}", readme)
         self.assertIn("The default branch is `main`.", readme)
         self.assertNotIn("recipe/dsv41-flash-exl3", readme)
 

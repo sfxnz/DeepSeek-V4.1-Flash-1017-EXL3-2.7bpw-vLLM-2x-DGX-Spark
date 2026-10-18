@@ -1,0 +1,14 @@
+[nll] 79.4s {"passages": 40, "tokens_scored": 19828, "bos_id": 0, "mean_nll": 0.144473, "ppl": 1.1554, "run_means": [0.144473, 0.142719], "repeat_abs_delta": 0.001754, "repeat_max_passage_delta": 0.016987, "prefix_cache_hits_delta": 0.0}
+[decode] 39.8s {"prompts": 8, "tokens": 1024, "median_abs_dlogprob": 0.00069, "p99_abs_dlogprob": 0.76921, "mean_abs_dlogprob": 0.05795, "gen_nll_prefill": 0.20876, "gen_nll_decode": 0.18561}
+[tools] 39.6s {"json_valid": {"k": 22, "n": 22, "rate": 1.0, "ci95": [0.8513, 1.0]}, "exact_args": {"k": 22, "n": 22, "rate": 1.0, "ci95": [0.8513, 1.0]}, "no_call": {"k": 8, "n": 8, "rate": 1.0, "ci95": [0.6756, 1.0]}}
+[needle] 755.8s {"found": 9, "total": 9}
+[selfcons] 58.1s {"prompts": 12, "max_tokens": 128, "identical": 5}
+[c2] 1.8s {"pass": true, "answers": ["323", "252"]}
+[vision] 1.1s {"pass": true, "content": "Red"}
+[gsm8k] 241.1s {"acc": {"k": 97, "n": 100, "rate": 0.97, "ci95": [0.9155, 0.9897]}, "mean_completion_tokens": 188.0}
+[gsm8k_think] 120.9s {"acc": {"k": 39, "n": 40, "rate": 0.975, "ci95": [0.8712, 0.9956]}, "mean_completion_tokens": 217.4}
+[mmlu] 91.5s {"acc": {"k": 208, "n": 228, "rate": 0.9123, "ci95": [0.8684, 0.9425]}}
+PASS vision value=Red limit=red
+PASS c2 value=['323', '252'] limit=None
+QUALITY {"mode": "full", "pass": true, "elapsed_s": 1429.2, "nll": 0.144473, "nll_repeat_delta": 0.001754, "decode_median_dlp": 0.00069, "decode_gen_nll": 0.20876, "tools_exact": 1.0, "tools_json": 1.0, "tools_nocall": 1.0, "needle": 9, "selfcons_identical": 5, "selfcons_aa_hazard": 0.01426, "gsm8k": 0.97, "gsm8k_think": 0.975, "mmlu": 0.9123, "c2": true, "vision": true}
+rc=0

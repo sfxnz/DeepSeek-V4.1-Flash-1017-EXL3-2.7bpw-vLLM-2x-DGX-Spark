@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fixed correctness eval for the DeepSeek-V4.1-Flash EXL3 serve.
+"""Fixed correctness eval for the DeepSeek-V4.1-Flash-1017 EXL3 serve.
 
 Deterministic: temperature 0, thinking off, reasoning_effort low, fixed seed.
 Covers math, strict JSON, tool-call arguments, code tracing, long-context

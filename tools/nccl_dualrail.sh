@@ -18,13 +18,13 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-IMAGE="${IMAGE:-dsv41-flash-exl3-sm121:canonical-e12}"
+IMAGE="${IMAGE:-dsv41-flash-exl3-sm121:e15-kbits}"
 WORKER_HOST="${WORKER_HOST:-spark2}"
 HEAD_IP="${HEAD_IP:-10.100.8.1}"
 IFACE="${IFACE:-enp1s0f1np1}"
 PORT="${NCCL_BENCH_PORT:-29531}"
 ARMS="${ARMS:-single single_bare dual dual_keep dual_keep_nomerge}"
-OUT="${OUT:-$ROOT/results/2026-09-24-review/research/nccl-dualrail-$(date +%Y%m%d-%H%M)}"
+OUT="${OUT:-$HOME/projects/data/dsv41-nccl-dualrail/$(date +%Y%m%d-%H%M)}"
 RAIL0=rocep1s0f1
 RAIL1=roceP2p1s0f1
 KEEP="NCCL_BUFFSIZE=1048576 NCCL_LL128_BUFFSIZE=262144 NCCL_PROTO=^LL128 NCCL_MAX_NCHANNELS=8"

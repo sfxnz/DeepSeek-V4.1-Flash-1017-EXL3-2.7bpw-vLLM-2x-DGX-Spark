@@ -1,18 +1,17 @@
 # Source of truth. Edit here, then `python3 kit/render.py`.
 model:
   id: &model sfxnz/DeepSeek-V4.1-Flash-1017-EXL3
-  # Provisional revision name (the main agent may rename it before publishing).
   revision: &revision 2.7bpw-mcg-hq
   served_name: &served_name deepseek-ai/DeepSeek-V4.1-Flash-1017
   family: DeepSeek-V4.1-Flash-1017
   source: deepseek-ai/DeepSeek-V4.1-Flash-1017@1bae0e1088993b9b82de08f59de5be5a34e42170
   params: 552B backbone / 8B prefill / 16B decode, plus 196B Engram
-  quant: EXL3 ~2.70 bpw routed experts (MCG, K in {2,3,4} per layer and projection group, Hessian Viterbi encode), source MXFP8/MXFP4 elsewhere (DSpark/MTP experts MXFP4), lm_head MXFP8, Engram on NVMe
+  quant: EXL3 2.70 bpw routed experts (MCG, K in {2,3,4} per layer and projection group from tools/calib/alloc/expert_bits_2.70.json, Viterbi encode with real activation Hessians), source MXFP8/MXFP4 elsewhere (DSpark/MTP experts MXFP4), lm_head MXFP8, Engram on NVMe
 
 image:
   base: vllm/vllm-openai:deepseekv41-flash-0909
   digest: sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58
-  # Provisional: the K-bits kernel image (built FROM canonical-e14 by the kernel workstream).
+  # K-bits kernel image: docker/Dockerfile (from scratch) or docker/Dockerfile.e15 (layered on canonical-e14).
   local_tag: &image dsv41-flash-exl3-sm121:e15-kbits
   build: docker/Dockerfile
 
@@ -43,7 +42,7 @@ serve:
     MAX_NUM_SEQS: 2
     UTIL: 0.75
     KV_CACHE_DTYPE: fp8
-    KV_CACHE_MEMORY: 4831838208
+    KV_CACHE_MEMORY: 4160749568
     BLOCK_SIZE: 64
     NUM_SPECULATIVE_TOKENS: 3
     SPEC: dspark
@@ -129,14 +128,14 @@ readme:
 
 measured:
   decode:
-    conditions: "SEPT BASELINE, NOT 1017 (TODO phase D: replace every row with the 1017 pack's measured cells and evidence). Rows are the Sept 2.0 bpw pack's round-36 numbers; evidence copied to results/sept-baseline/. Round 36 (2026-09-27, results/2026-09-27-viterbi-adopt/): pooled V-1 and V-2, 2 boots of the identical round-36 default config, i.e. the round-35 config (image canonical-e14 = sha256:3a002b55c9bc, DSpark-3 greedy verify + captures [1,3,4,6,8], the round-34 set (Engram prefetch v3 + census + gather v2 + WILLNEED, NCCL AR-tail set, mem-hygiene bundle, lm_head mxfp8, STREAM_FEED, WOA_PREPACK, SPARSE_MARKOV), the round-3 kernel bundle and SPARSE_MARKOV_TOPK=1024, vision on, Engram on disk) on the Viterbi pack 2.0bpw-mcg-viterbi-lmhead-mxfp8, each booted with `AUDIT=strict ./run.sh` and no lever/pack/image env (strict audit clean, gpu_guard clean, disarm_scan rc 0). Each row is the median of the per-run values pooled over the two boots (round36-compute.py.txt -> round36-headline.json, pooled.V; same method as round 35's round35-headline-compute.py.txt). bench_decode.py = streamed greedy 200 tokens thinking off, 9 runs per boot (pooled n=18; c=2 per-stream n=36), ignore_eos (prose post-EOS about 0.6); L.A.I.L prose = tools/measure_lail_prose.py 512 tokens temperature 0.2, 10 runs per boot (pooled n=20). Per boot: L.A.I.L 42.73 / 42.44, prose c=1 50.26 / 51.12, structured c=1 84.37 / 84.19. Round-35 final config on the previous pack 2.0bpw-mcg-lmhead-mxfp8 (S1024-1, S1024-2, final-1, pooled the same way): L.A.I.L 42.98, prose c=1 52.97, structured c=1 83.73, prose c=2 agg 81.73, structured c=2 agg 138.34. Quality: V-1 recorded the new baseline (quality-baseline/); V-2 quick and full PASS against it. History: results/RESULTS.md rounds 1-36."
+    conditions: "1017 release, boot D1 (2026-10-18 18:23Z, one boot, 2 nodes): `SKIP_DOWNLOAD=1 AUDIT=strict KV_CACHE_MEMORY=4160749568 ./run.sh` (boot-d1/command.txt; that KV value is now the default), image dsv41-flash-exl3-sm121:e15-kbits (sha256:7e2cec199bed), pack sfxnz/DeepSeek-V4.1-Flash-1017-EXL3 @ 2.7bpw-mcg-hq, release defaults otherwise (DSpark-3 greedy verify + captures [1,3,4,6,8], the round-34/35 levers on, vision on, Engram on disk). Audit ok on head and worker, 40 per-rank boot lines \"routed experts K_gu/K_d\" matching the allocation, smokes 323 / Red, warmup ok. Each row is the median of the per-run values. bench_decode.py = streamed greedy 200 tokens thinking off, ignore_eos, 9 runs at c=1 (boot-d1/bench_decode.txt), 5 runs at c=2 (boot-d1/bench_decode_c2.txt); the prose natural run stops at 83 tokens. L.A.I.L prose = tools/measure_lail_prose.py 512 tokens temperature 0.2, 3 runs (boot-d1/e2e.txt). Quality: quality_eval --full PASS; results/2026-10-18-1017/quality-baseline/full.json is the 1017 baseline. Sept 2.0 bpw pack history: github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark @ 3de9146."
     units: {decode: tok/s per stream (median), aggregate: tok/s, ttft_p50: s}
     rows:
-      - {phase: prose, concurrency: 1, decode: "50.41", aggregate: "50.39", ttft_p50: "0.23", evidence: results/sept-baseline/round36-headline.json}
-      - {phase: prose, concurrency: 2, decode: "41.57", aggregate: "81.02", ttft_p50: "0.25", evidence: results/sept-baseline/round36-headline.json}
-      - {phase: structured, concurrency: 1, decode: "84.20", aggregate: "84.18", ttft_p50: "0.21", evidence: results/sept-baseline/round36-headline.json}
-      - {phase: structured, concurrency: 2, decode: "78.17", aggregate: "156.29", ttft_p50: "0.23", evidence: results/sept-baseline/round36-headline.json}
-      - {phase: lail_prose, concurrency: 1, decode: "42.58", aggregate: "42.58", ttft_p50: "0.32", evidence: results/sept-baseline/round36-headline.json}
+      - {phase: prose, concurrency: 1, decode: "49.6", aggregate: "49.6", ttft_p50: "0.24", evidence: results/2026-10-18-1017/boot-d1/bench_decode.txt}
+      - {phase: prose, concurrency: 2, decode: "38.4", aggregate: "75.8", ttft_p50: "0.28", evidence: results/2026-10-18-1017/boot-d1/bench_decode_c2.txt}
+      - {phase: structured, concurrency: 1, decode: "77.0", aggregate: "77.0", ttft_p50: "0.19", evidence: results/2026-10-18-1017/boot-d1/bench_decode.txt}
+      - {phase: structured, concurrency: 2, decode: "70.2", aggregate: "140.3", ttft_p50: "0.23", evidence: results/2026-10-18-1017/boot-d1/bench_decode_c2.txt}
+      - {phase: lail_prose, concurrency: 1, decode: "39.6", aggregate: "39.6", ttft_p50: "0.34", evidence: results/2026-10-18-1017/boot-d1/e2e.txt}
 
 links:
   model: https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017

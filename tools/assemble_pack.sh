@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 # Merge two-Spark EXL3 shards, rebuild the index, rsync the pack to the worker.
+# Sept-era K=2 rebuild tool: uniform 2.0bpw-* revisions in the Sept pack repo dir
+# (sfxnz/DeepSeek-V4.1-Flash-EXL3) and the Sept fixed shard split (23-42 on the worker).
+# The 1017 mixed-K pack is assembled by `tools/build_pack_1017.py assemble`, not this.
 set -euo pipefail
 CODEBOOK="${CODEBOOK:-mul1}"
 REV="${REV:-2.0bpw-${CODEBOOK}}"

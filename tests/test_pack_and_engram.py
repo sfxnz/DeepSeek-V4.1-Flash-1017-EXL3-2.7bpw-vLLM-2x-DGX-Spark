@@ -43,7 +43,7 @@ class PackMetaTests(unittest.TestCase):
 
     def test_serve_revision_is_1017_mcg_sept_rebuild_defaults_mul1(self) -> None:
         self.assertEqual(self.meta.DEFAULT_CODEBOOK, "mul1")
-        self.assertEqual(self.meta.SERVE_REVISION, "2.7bpw-mcg-hq")  # provisional
+        self.assertEqual(self.meta.SERVE_REVISION, "2.7bpw-mcg-hq")
         self.assertEqual(self.meta.SOURCE_REPO, "deepseek-ai/DeepSeek-V4.1-Flash-1017")
         self.assertEqual(self.meta.revision_for(), "2.0bpw-mul1")
         self.assertEqual(self.meta.revision_for(codebook="mcg"), "2.0bpw-mcg")
@@ -211,8 +211,11 @@ class CheckExl3ShardTests(unittest.TestCase):
             self.assertTrue(any("mixes" in p for p in probs))
 
 
-class AssemblePackTests(unittest.TestCase):
-    def test_assemble_pulls_spark2_shards_and_rebuilds_index(self) -> None:
+class SeptAssemblePackTests(unittest.TestCase):
+    """tools/assemble_pack.sh is the Sept-era uniform K=2 assembler (2.0bpw-* revisions, Sept
+    shard split). The 1017 pack is assembled by `tools/build_pack_1017.py assemble`."""
+
+    def test_sept_assemble_pulls_spark2_shards_and_rebuilds_index(self) -> None:
         src = (ROOT / "tools/assemble_pack.sh").read_text()
         self.assertIn("rebuild_index.py", src)
         self.assertIn("chmod a+w", src)

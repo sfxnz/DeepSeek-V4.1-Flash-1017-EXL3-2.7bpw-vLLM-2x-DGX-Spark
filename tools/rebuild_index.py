@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Rebuild model.safetensors.index.json from shard headers in a pack dir."""
+"""Rebuild model.safetensors.index.json from shard headers in a pack dir.
+
+Sept-era K=2 rebuild helper (called by tools/assemble_pack.sh). The 1017 pack's index is
+written by `tools/build_pack_1017.py assemble`.
+"""
 from __future__ import annotations
 
 import argparse
@@ -32,13 +36,7 @@ def rebuild(dst: Path) -> dict[str, str]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument(
-        "--dst",
-        type=Path,
-        default=Path.home()
-        / ".cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-EXL3"
-        / "snapshots/2.0bpw-mul1",
-    )
+    ap.add_argument("--dst", type=Path, required=True, help="pack snapshot dir")
     args = ap.parse_args()
     wm = rebuild(args.dst)
     print(f"wrote {args.dst / 'model.safetensors.index.json'} tensors={len(wm)}")
