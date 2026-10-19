@@ -101,9 +101,8 @@ history (Sept model, 2.0 bpw pack). Their evidence is in the Sept recipe,
    ```
    The baseline for `2.7bpw-mcg-hq` is
    `results/2026-10-18-1017/quality-baseline/`: `full.json` was recorded
-   on boot D1 (PASS); `quick.json` is TBD-PHASED(quick baseline), to be
-   recorded on the release boot. Until it exists, gate on `--full`
-   against `full.json`. Sept baselines were recorded on a different model
+   on boot D1 (PASS); `quick.json` was recorded on release
+   boot r1 (PASS). Sept baselines were recorded on a different model
    and fail by construction against 1017 weights.
    It gates prefill numerics (NLL), decode numerics (decode-vs-prefill
    probe and the golden flip hazard against the A/A control), tool calls,
@@ -152,7 +151,7 @@ history (Sept model, 2.0 bpw pack). Their evidence is in the Sept recipe,
    absolute results on 1017: `quality_eval.py --full` PASS on boot D1,
    which is also its baseline and goldens
    (`results/2026-10-18-1017/quality-baseline/full.json`; quick baseline
-   TBD-PHASED(quick baseline)), plus its own A/A band from later 1017
+   `quick.json`, release boot r1), plus its own A/A band from later 1017
    boots. A later pack built from the same 1017 source (a new allocation
    or encode) is a pack change and follows the paired rule above against
    `2.7bpw-mcg-hq`.

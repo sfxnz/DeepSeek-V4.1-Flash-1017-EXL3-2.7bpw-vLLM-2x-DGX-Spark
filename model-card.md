@@ -43,8 +43,9 @@ Measured on 2× DGX Spark at the recipe's release defaults (DSpark k=3, KV pool 
 | MMLU 4×57 | 208/228 (91.2%) |
 | Tool calls | 22/22 exact args, 8/8 no-call |
 | Needle 8k / 32k / 128k × 3 depths | 9/9 |
-| Needle 256k / 1M | TBD-PHASED(256k needle x3, 1M needle x3) |
-| Served KL vs native unquantized 1017 | TBD-PHASED(served KL) |
+| Needle 256k / 1M (3 depths each) | 3/3 / 3/3 |
+| Served KL vs native unquantized 1017 (72 rows, 92,818 tokens) | 0.025 nats/token, ΔNLL +0.63%, top-1 95.3% (encyclopedic worst: 0.114, 88.1%) |
+| 60-minute c=2 soak, mixed checked traffic | 4,296 requests, 0 errors, 4,295 correct |
 
 The recipe's README has the full table, the memory notes and the quality baseline.
 

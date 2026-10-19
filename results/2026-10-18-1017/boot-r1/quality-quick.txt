@@ -1,0 +1,11 @@
+[nll] 39.4s {"passages": 40, "tokens_scored": 19828, "bos_id": 0, "mean_nll": 0.143046, "ppl": 1.1538, "run_means": [0.143046], "prefix_cache_hits_delta": 0.0}
+[decode] 40.8s {"prompts": 8, "tokens": 1024, "median_abs_dlogprob": 0.00096, "p99_abs_dlogprob": 0.84606, "mean_abs_dlogprob": 0.06541, "gen_nll_prefill": 0.23013, "gen_nll_decode": 0.20155}
+[tools] 39.1s {"json_valid": {"k": 22, "n": 22, "rate": 1.0, "ci95": [0.8513, 1.0]}, "exact_args": {"k": 22, "n": 22, "rate": 1.0, "ci95": [0.8513, 1.0]}, "no_call": {"k": 8, "n": 8, "rate": 1.0, "ci95": [0.6756, 1.0]}}
+[needle] 188.9s {"found": 6, "total": 6}
+[selfcons] 56.1s {"prompts": 12, "max_tokens": 128, "identical": 6}
+[c2] 2.4s {"pass": true, "answers": ["323", "252"]}
+[vision] 1.0s {"pass": true, "content": "Red"}
+PASS vision value=Red limit=red
+PASS c2 value=['323', '252'] limit=None
+QUALITY {"mode": "quick", "pass": true, "elapsed_s": 367.6, "nll": 0.143046, "decode_median_dlp": 0.00096, "decode_gen_nll": 0.23013, "tools_exact": 1.0, "tools_json": 1.0, "tools_nocall": 1.0, "needle": 6, "selfcons_identical": 6, "selfcons_aa_hazard": 0.01064, "c2": true, "vision": true}
+rc=0

@@ -1,0 +1,3 @@
+[needle 1048000@0.1] found=True prompt_tokens=1047432 1999.1s answer='HWQ-6256-JT' code=HWQ-6256-JT
+[needle 1048000@0.5] found=True prompt_tokens=1047429 1919.2s answer='HWQ-6256-JT' code=HWQ-6256-JT
+[needle 1048000@0.9] found=True prompt_tokens=1047429 1908.1s answer='HWQ-6256-JT' code=HWQ-6256-JT

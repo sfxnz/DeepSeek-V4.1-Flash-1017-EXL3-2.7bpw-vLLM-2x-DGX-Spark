@@ -1,0 +1,22 @@
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=512 temperature=0.2 runs=3 phase=lail_prose c=1
+run=1 {"ttft_s": 0.3704981207847595, "decode_s": 12.351528680883348, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 231, "lail_tok_s": 41.45235891266077, "recipe_tok_s": 41.371397274159484, "tokens_per_chunk": 2.2164502164502164, "repeat_ratio": 0.0024630541871921183, "collapsed": false, "preview": "The KV cache is the product, not a leftover after util. Once you internalize that, the whole scheduling problem inverts. You stop asking \"how much context can I afford to keep resident?\" and start asking \"which resident contexts are earning", "acceptance_len": 2.2217391304347824, "draft_acceptance_rate": 0.4072463768115942}
+run=2 {"ttft_s": 0.353695813100785, "decode_s": 14.085230342112482, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 264, "lail_tok_s": 36.35013326471529, "recipe_tok_s": 36.27913691068264, "tokens_per_chunk": 1.9393939393939394, "repeat_ratio": 0.002364066193853428, "collapsed": false, "preview": "The KV cache is the product, not a leftover after util. That inversion is the whole game. On a conventional discrete-GPU box you think of memory as a budget you spend to buy compute: you load weights, you carve out activations, and whatever", "acceptance_len": 1.946768060836502, "draft_acceptance_rate": 0.3155893536121673}
+run=3 {"ttft_s": 0.31402534432709217, "decode_s": 12.926052091643214, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 244, "lail_tok_s": 39.60992856674403, "recipe_tok_s": 39.53256542501211, "tokens_per_chunk": 2.098360655737705, "repeat_ratio": 0.0025380710659898475, "collapsed": false, "preview": "The KV cache is the product, not a leftover after util. Once you internalize that, the whole scheduling problem inverts. You stop asking \"how much of the GPU did I use\" and start asking \"how many distinct prefixes am I holding warm, and who", "acceptance_len": 2.111111111111111, "draft_acceptance_rate": 0.37037037037037035}
+natural phase=lail_prose completion_tokens=512 finish_reason=length
+SUMMARY {
+  "phase": "lail_prose",
+  "concurrency": 1,
+  "max_tokens": 512,
+  "temperature": 0.2,
+  "n": 3,
+  "median_lail_tok_s": 39.60992856674403,
+  "median_recipe_tok_s": 39.53256542501211,
+  "median_ttft_s": 0.353695813100785,
+  "median_completion_tokens": 512,
+  "natural_completion_tokens": 512,
+  "natural_finish_reason": "length",
+  "post_eos_fraction": 0.0,
+  "median_acceptance_len": 2.111111111111111,
+  "median_draft_acceptance_rate": 0.37037037037037035
+}
+rc=0

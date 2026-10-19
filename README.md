@@ -4,7 +4,7 @@ Serve an EXL3 pack of [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface
 
 Native MXFP4 and MXFP8 weights are about 510 GB and do not fit 2× Spark UMA. The pack re-encodes only the routed experts (40 layers × 384, source MXFP4) as EXL3 MCG trellis with an integer K in {2, 3, 4} per layer and projection group (GU = gate+up, D = down). The routed mean is exactly 2.70 bpw. K is not uniform: the allocation puts the bits where the measured sensitivity of the official 1017 model is highest. Jointly perturbed, the chosen allocation scores KL_eq 0.050, against 0.088 for uniform 3/2 at 2.67 bpw and 0.137 for uniform 2/2 at 2.0 bpw ([How the pack was made](#how-the-pack-was-made)). The experts are encoded with real activation Hessians. Everything else keeps the source dtypes, the lm_head is MXFP8, and the Engram tables stay on NVMe (`DSV41_ENGRAM_DISK=1`).
 
-On boot D1 the pack serves 39.6 tok/s on the L.A.I.L prose cell and 49.6 tok/s greedy prose at c=1, holds one 1,048,576-token request in its KV pool, and passes the full quality eval (GSM8K 97/100, MMLU 208/228, tools 22/22, needle 9/9).
+On boot D1 the pack serves 39.6 tok/s on the L.A.I.L prose cell and 49.6 tok/s greedy prose at c=1, holds one 1,048,576-token request in its KV pool, and passes the full quality eval (GSM8K 97/100, MMLU 208/228, tools 22/22, needle 9/9). It finds a needle at 256k and at 1M tokens (3/3 depths each), stays within 0.025 nats/token KL of the native unquantized model, and ran a 60-minute mixed c=2 soak with 0 errors.
 
 This recipe replaces the September recipe for `deepseek-ai/DeepSeek-V4.1-Flash` (2.0 bpw pack, rounds 1-36): [sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark](https://github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark) @ `3de9146`. Its numbers are history, not this pack's.
 
@@ -101,9 +101,13 @@ The model takes 97.73 GiB per TP rank. The release KV pool is `KV_CACHE_MEMORY=4
 - minimum during boot: 4.6 / 5.4 GiB
 - after the smokes: 4.3 / 5.9 GiB
 - normal serving, including the 128k needle: ≥ 3.8 GiB
-- minimum under every test: 3.17 GiB on spark1 for about 10 s, during `quality_eval.py`'s NLL component (full-vocab `prompt_logprobs` logits on the head)
+- minimum under the quality eval: 3.17 GiB on spark1 for about 10 s, during `quality_eval.py`'s NLL component (full-vocab `prompt_logprobs` logits on the head)
+- 256k and 1M needles: spark1 dips to 2.1–2.8 GiB for 2 s or less at prefill boundaries, and to 1.8 GiB for 2 s or less while the API server tokenizes a 1M-token prompt (the engine is idle then)
+- release boot r1: 4.4 / 5.2 GiB after the smokes and 4.1 / 5.5 GiB after the 60-minute soak; spark2's lowest sample over all tests was 3.6 GiB
 
-The memory watchdog never tripped. After a prefill step of 8192 tokens or more (`DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192`), the allocator releases its unused cached blocks while `MemAvailable` is below 4 GiB (`DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4`).
+These short dips use page cache and swap headroom and did not OOM. Concurrent long-context requests near 1M tokens are not supported (`MAX_NUM_SEQS=2` shares one 1.06× pool).
+
+The memory watchdog (stop at under 1.5 GiB on either node for two 2 s samples) never tripped in any test. After a prefill step of 8192 tokens or more (`DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192`), the allocator releases its unused cached blocks while `MemAvailable` is below 4 GiB (`DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4`).
 
 ## Quality eval
 
@@ -150,7 +154,27 @@ The 1017 baseline for `2.7bpw-mcg-hq` is `results/2026-10-18-1017/quality-baseli
 | GSM8K-40, thinking on | 39/40 |
 | MMLU 4×57 | 208/228 (91.2%) |
 
-The quick baseline is TBD-PHASED(quick baseline). Long context beyond 128k: TBD-PHASED(256k needle x3, 1M needle x3). Served KL against the native unquantized 1017 model (`tools/served_kl.py`, 72 held-out text rows): TBD-PHASED(served KL). Soak and long c=2 run: TBD-PHASED(soak).
+The quick baseline (`quality-baseline/quick.json`) was recorded on release boot r1: PASS, NLL 0.1430, decode median |Δlogprob| 0.00096, tools exact, needle 6/6, c=2 and vision pass.
+
+**Long context.** Needle at 256k: 3/3 depths (10% / 50% / 90%), about 400 s per request end to end, roughly 650 tok/s prefill. Needle at 1,047,432 prompt tokens: 3/3 depths, 1908–1999 s per request, roughly 530 tok/s prefill. One request at a time; the KV pool holds 1.06× a 1M request (`results/2026-10-18-1017/boot-d1/long-needle*.txt`).
+
+**Served KL against the native model.** `tools/served_kl.py` scores the live serve's `prompt_logprobs` (top 20) against the native unquantized 1017 model's top-128 logits on 72 held-out text rows (92,818 tokens). It measures the whole served stack, so engine numerics count against it as well as the quantization. Eval boot: `MAX_NUM_BATCHED_TOKENS=512 LANGUAGE_MODEL_ONLY=1`, because `prompt_logprobs` materialises full-vocab logits per chunk on the head.
+
+| Domain | Tokens | KL (nats/token) | ΔNLL | Top-1 agreement |
+|---|---:|---:|---:|---:|
+| All | 92,818 | 0.025 | +0.0059 (+0.63%) | 95.3% |
+| Chat | 25,682 | 0.022 | +0.0042 | 95.0% |
+| Code | 17,116 | 0.008 | +0.0042 | 97.3% |
+| Math | 21,969 | 0.010 | +0.0052 | 96.6% |
+| Tool calls | 6,825 | 0.009 | −0.0006 | 96.9% |
+| Multilingual | 13,436 | 0.036 | +0.0044 | 94.4% |
+| Encyclopedic | 7,790 | 0.114 | +0.0251 | 88.1% |
+
+Encyclopedic text loses the most. Rare-fact recall lives in the routed experts that 2.70 bpw compresses hardest, and the native model is already least certain there (NLL 1.86 against 0.93 overall). Code, math and tool calls are close to native. Evidence: `results/2026-10-18-1017/boot-eval/`.
+
+**Soak.** A 60-minute c=2 run of mixed, answer-checked traffic on release boot r1 (`results/2026-10-18-1017/boot-r1/soak.json`): 4,296 requests, 0 HTTP errors, 4,295 correct. Tool calls 891/891, vision 862/862, prose 844/844, 32k needle 6/6, arithmetic 1,692/1,693. The one miss was a model arithmetic error (561×54 answered 30300, expected 30294; thinking off). Latency p50: arithmetic 0.39 s, vision 0.44 s, tool 1.62 s, 300-token prose 4.64 s.
+
+**Second boot.** Release boot r1 reproduced boot D1: L.A.I.L prose 39.6 tok/s, greedy prose 50.0 tok/s, structured 75.8 tok/s at c=1 (`results/2026-10-18-1017/boot-r1/`).
 
 ## Defaults
 

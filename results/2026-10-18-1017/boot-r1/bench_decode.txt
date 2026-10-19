@@ -1,0 +1,98 @@
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=200 runs=9 concurrency=[1] phases=['prose', 'structured']
+phase=prose c=1 run=1 wall=5.45s agg=49.80 tok/s per_stream=[49.81] ttft=[1.458] acc=2.551 ms_step=[51.2]
+phase=prose c=1 run=2 wall=4.29s agg=48.86 tok/s per_stream=[48.86] ttft=[0.213] acc=2.532 ms_step=[51.8]
+phase=prose c=1 run=3 wall=4.16s agg=50.40 tok/s per_stream=[50.42] ttft=[0.212] acc=2.658 ms_step=[52.7]
+phase=prose c=1 run=4 wall=4.20s agg=50.02 tok/s per_stream=[50.03] ttft=[0.224] acc=2.667 ms_step=[53.3]
+phase=prose c=1 run=5 wall=4.11s agg=51.64 tok/s per_stream=[51.65] ttft=[0.258] acc=2.689 ms_step=[52.1]
+phase=prose c=1 run=6 wall=4.25s agg=49.72 tok/s per_stream=[49.73] ttft=[0.250] acc=2.618 ms_step=[52.7]
+phase=prose c=1 run=7 wall=3.85s agg=55.42 tok/s per_stream=[55.43] ttft=[0.255] acc=2.926 ms_step=[52.8]
+phase=prose c=1 run=8 wall=4.33s agg=48.79 tok/s per_stream=[48.80] ttft=[0.255] acc=2.632 ms_step=[53.9]
+phase=prose c=1 run=9 wall=4.19s agg=50.18 tok/s per_stream=[50.20] ttft=[0.222] acc=2.680 ms_step=[53.4]
+natural phase=prose completion_tokens=80 finish_reason=stop
+phase=structured c=1 run=1 wall=4.09s agg=74.12 tok/s per_stream=[74.13] ttft=[1.406] acc=3.961 ms_step=[53.4]
+phase=structured c=1 run=2 wall=2.78s agg=76.98 tok/s per_stream=[77.01] ttft=[0.196] acc=4.000 ms_step=[51.9]
+phase=structured c=1 run=3 wall=2.87s agg=75.28 tok/s per_stream=[75.30] ttft=[0.229] acc=3.961 ms_step=[52.6]
+phase=structured c=1 run=4 wall=2.75s agg=77.51 tok/s per_stream=[77.53] ttft=[0.184] acc=4.000 ms_step=[51.6]
+phase=structured c=1 run=5 wall=2.78s agg=77.68 tok/s per_stream=[77.70] ttft=[0.223] acc=4.000 ms_step=[51.5]
+phase=structured c=1 run=6 wall=2.85s agg=75.98 tok/s per_stream=[76.00] ttft=[0.228] acc=3.961 ms_step=[52.1]
+phase=structured c=1 run=7 wall=2.85s agg=75.38 tok/s per_stream=[75.39] ttft=[0.207] acc=3.961 ms_step=[52.5]
+phase=structured c=1 run=8 wall=2.91s agg=73.18 tok/s per_stream=[73.20] ttft=[0.187] acc=4.000 ms_step=[54.6]
+phase=structured c=1 run=9 wall=2.85s agg=75.83 tok/s per_stream=[75.85] ttft=[0.227] acc=3.961 ms_step=[52.2]
+natural phase=structured completion_tokens=200 finish_reason=length
+SUMMARY [
+  {
+    "phase": "prose",
+    "concurrency": 1,
+    "median_decode_tok_s": 50.03199290830448,
+    "median_ttft_s": 0.2501069689169526,
+    "median_agg_tok_s": 50.02473943433027,
+    "median_completion_tokens": 200,
+    "n": 9,
+    "acceptance_len": 2.657311669128508,
+    "draft_acceptance_rate": 0.552437223042836,
+    "run_acceptance_len": [
+      2.5513,
+      2.5316,
+      2.6579,
+      2.6667,
+      2.6892,
+      2.6184,
+      2.9265,
+      2.6316,
+      2.68
+    ],
+    "median_run_acceptance_len": 2.6578947368421053,
+    "median_ms_per_step": 52.718883788132345,
+    "ttft_s_p50": 0.2501069689169526,
+    "ttft_s_p90": 0.49830927010625625,
+    "ttft_s_p99": 1.3616495199128984,
+    "inter_chunk_ms_p50": 51.25532206147909,
+    "inter_chunk_ms_p90": 60.52873730659484,
+    "inter_chunk_ms_p99": 74.99912928789817,
+    "finish_reasons": {
+      "length": 9
+    },
+    "natural_completion_tokens": 80,
+    "natural_finish_reason": "stop",
+    "natural_covers_max": false,
+    "post_eos_fraction": 0.6
+  },
+  {
+    "phase": "structured",
+    "concurrency": 1,
+    "median_decode_tok_s": 75.84980756853004,
+    "median_ttft_s": 0.2225955012254417,
+    "median_agg_tok_s": 75.83086867631476,
+    "median_completion_tokens": 200,
+    "n": 9,
+    "acceptance_len": 3.978021978021978,
+    "draft_acceptance_rate": 0.9926739926739927,
+    "run_acceptance_len": [
+      3.9608,
+      4.0,
+      3.9608,
+      4.0,
+      4.0,
+      3.9608,
+      3.9608,
+      4.0,
+      3.9608
+    ],
+    "median_run_acceptance_len": 3.9607843137254903,
+    "median_ms_per_step": 52.21877867187646,
+    "ttft_s_p50": 0.2225955012254417,
+    "ttft_s_p90": 0.4640560643747451,
+    "ttft_s_p99": 1.3114898303523659,
+    "inter_chunk_ms_p50": 51.46530503407121,
+    "inter_chunk_ms_p90": 54.63002938777208,
+    "inter_chunk_ms_p99": 67.62791003100571,
+    "finish_reasons": {
+      "length": 9
+    },
+    "natural_completion_tokens": 200,
+    "natural_finish_reason": "length",
+    "natural_covers_max": true,
+    "post_eos_fraction": 0.0
+  }
+]
+rc=0

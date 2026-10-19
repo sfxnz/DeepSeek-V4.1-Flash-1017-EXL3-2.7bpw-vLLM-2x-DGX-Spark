@@ -1,0 +1,29 @@
+{
+ "262144": {
+  "found": 3,
+  "total": 3,
+  "cells": {
+   "262144@0.1": {
+    "found": true,
+    "prompt_tokens": 260703,
+    "s": 409.6,
+    "answer": "HWQ-6256-JT",
+    "code": "HWQ-6256-JT"
+   },
+   "262144@0.5": {
+    "found": true,
+    "prompt_tokens": 260798,
+    "s": 398.8,
+    "answer": "RPC-3385-ZT",
+    "code": "RPC-3385-ZT"
+   },
+   "262144@0.9": {
+    "found": true,
+    "prompt_tokens": 258419,
+    "s": 381.6,
+    "answer": "ZJR-7748-XS",
+    "code": "ZJR-7748-XS"
+   }
+  }
+ }
+}
