@@ -16,6 +16,8 @@ Honesty fields (the frozen cells keep ignore_eos for continuity):
 - TTFT and inter-chunk gap p50/p90/p99.
 - prose_long: a prompt whose natural length is >= max_tokens, so every
   measured token is real prose (natural_finish_reason should be "length").
+- code: the TensorFold C5 draft-policy sweep's code prompt, verbatim, so draft
+  depth ratios compare with its evidence (s5-final/c5-draft-policy).
 """
 
 from __future__ import annotations
@@ -44,6 +46,11 @@ PHASES = {
         "attention helps long-context language models. Cover memory, compute "
         "and retrieval quality in separate paragraphs. No bullet points, no "
         "headings."
+    ),
+    "code": (
+        "Write a Python module that implements an LRU cache with a fixed capacity, using a "
+        "dictionary and a doubly linked list. Include type hints, docstrings and a short usage "
+        "example at the end."
     ),
 }
 # --phase both keeps its historical meaning (the two frozen cells).

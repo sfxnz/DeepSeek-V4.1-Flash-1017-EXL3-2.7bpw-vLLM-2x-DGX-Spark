@@ -24,6 +24,7 @@ DSV41_KV_PACKED_GROUPS="${DSV41_KV_PACKED_GROUPS:-1}"
 BLOCK_SIZE="${BLOCK_SIZE:-64}"
 PREFIX_CACHE_RETENTION_INTERVAL="${PREFIX_CACHE_RETENTION_INTERVAL:-4096}"
 NUM_SPECULATIVE_TOKENS="${NUM_SPECULATIVE_TOKENS:-3}"
+NUM_SPECULATIVE_TOKENS_PER_BATCH="${NUM_SPECULATIVE_TOKENS_PER_BATCH:-1-2:5,3-4:3}"
 SPEC="${SPEC:-dspark}"
 LOAD_FORMAT="${LOAD_FORMAT:-auto}"
 QUANTIZATION="${QUANTIZATION:-exl3}"
@@ -55,6 +56,7 @@ DSV41_STREAM_FEED="${DSV41_STREAM_FEED:-1}"
 DSV41_WOA_PREPACK="${DSV41_WOA_PREPACK:-1}"
 DSV41_DSPARK_SPARSE_MARKOV="${DSV41_DSPARK_SPARSE_MARKOV:-1}"
 DSV41_DSPARK_SPARSE_MARKOV_TOPK="${DSV41_DSPARK_SPARSE_MARKOV_TOPK:-1024}"
+DSV41_DSPARK_ADAPTIVE="${DSV41_DSPARK_ADAPTIVE:-1}"
 DSV41_P2B_COOP="${DSV41_P2B_COOP:-2}"
 DSV41_DENSE_GEMV="${DSV41_DENSE_GEMV:-1}"
 DSV41_MHC_DET_SPLITS="${DSV41_MHC_DET_SPLITS:-16}"
@@ -174,6 +176,9 @@ FORWARD_ENVS=(
   DSV41_DSPARK_SOFTMAX_VERIFY=0
   DSV41_DSPARK_REFINE_PASS=0
   DSV41_DSPARK_CONF_GATE=0
+  DSV41_DSPARK_ADAPTIVE=
+  DSV41_DSPARK_TAU=
+  DSV41_DSPARK_VERIFY_MAX=
   DSV41_MLA_IO_WARPS=0
   DSV41_MLA_CHUNKS_PER_BLOCK=0
   DSV41_DENSE_DG_SMALLM=0
@@ -266,6 +271,39 @@ if [[ "${RESOLVE_SNAPSHOT_ONLY:-0}" == "1" ]]; then
   exit 1
 fi
 
+# DSpark depth per batch size: "lo-hi:k" (or "n:k") tiers joined by commas, e.g. 1-2:5,3-4:3,
+# from batch size 1 to MAX_NUM_SEQS. vLLM's num_speculative_tokens_per_batch_size picks the verify
+# width from the running batch size; DSpark still drafts its full block, so NUM_SPECULATIVE_TOKENS
+# becomes the largest k. The head turns this into SPEC_CONFIG and COMPILATION_CONFIG for both ranks.
+# 0 = one k (NUM_SPECULATIVE_TOKENS): for SPEC=none, a SPEC_CONFIG of your own, or a MAX_NUM_SEQS the tiers do not end at.
+if [[ "$NUM_SPECULATIVE_TOKENS_PER_BATCH" == 0 ]]; then NUM_SPECULATIVE_TOKENS_PER_BATCH=""; fi
+spec_tier_k=()
+if [[ -n "$NUM_SPECULATIVE_TOKENS_PER_BATCH" ]]; then
+  tiers_refuse() {
+    echo "NUM_SPECULATIVE_TOKENS_PER_BATCH=$NUM_SPECULATIVE_TOKENS_PER_BATCH: $1. Want lo-hi:k (or n:k) tiers joined by commas, from batch size 1 to MAX_NUM_SEQS=$MAX_NUM_SEQS with no gap or overlap, each k an integer 1..5 (DSpark block size 5), e.g. 1-2:5,3-4:3; 0 = one k (NUM_SPECULATIVE_TOKENS)." >&2
+    exit 1
+  }
+  [[ "$SPEC" == dspark ]] || tiers_refuse "needs SPEC=dspark"
+  [[ -z "${SPEC_CONFIG:-}" ]] || tiers_refuse "SPEC_CONFIG is set as well; set only one of them"
+  spec_tiers_json=""
+  spec_next=1
+  spec_kmax=0
+  IFS=',' read -r -a spec_tiers <<<"${NUM_SPECULATIVE_TOKENS_PER_BATCH// /}"
+  for tier in "${spec_tiers[@]}"; do
+    [[ "$tier" =~ ^([1-9][0-9]*)(-([1-9][0-9]*))?:([1-5])$ ]] || tiers_refuse "malformed tier '$tier'"
+    lo="${BASH_REMATCH[1]}" hi="${BASH_REMATCH[3]:-${BASH_REMATCH[1]}}" k="${BASH_REMATCH[4]}"
+    ((lo == spec_next && hi >= lo)) || tiers_refuse "tier '$tier' should start at batch size $spec_next"
+    ((hi <= MAX_NUM_SEQS)) || tiers_refuse "tier '$tier' runs past MAX_NUM_SEQS=$MAX_NUM_SEQS"
+    for ((s = lo; s <= hi; s++)); do spec_tier_k[s]="$k"; done
+    if ((k > spec_kmax)); then spec_kmax="$k"; fi
+    spec_tiers_json+="${spec_tiers_json:+,}[$lo,$hi,$k]"
+    spec_next=$((hi + 1))
+  done
+  ((spec_next == MAX_NUM_SEQS + 1)) || tiers_refuse "the tiers stop at batch size $((spec_next - 1))"
+  NUM_SPECULATIVE_TOKENS="$spec_kmax"
+  SPEC_CONFIG='{"method":"dspark","num_speculative_tokens":'"$spec_kmax"',"draft_sample_method":"greedy","num_speculative_tokens_per_batch_size":['"$spec_tiers_json"']}'
+fi
+
 if [[ -z "${SPEC_CONFIG:-}" ]]; then
   case "$SPEC" in
     dspark)
@@ -315,6 +353,9 @@ esac
 
 # Cudagraph capture sizes match the verify batch: {1} + {s*k, s*(k+1)} for s in 1..MAX_NUM_SEQS.
 # k=3, 4 seqs gives [1,3,4,6,8,9,12,16]; 2 seqs gave [1,3,4,6,8] (R16: +5.5% vs padded k5-era sizes).
+# Per-batch k: s*k for the drafter's full block, and s*(k_c+1) for every c >= s, because the
+# scheduler picks the next step's width from this step's batch size c and the decode batch can
+# only shrink in between (1-2:5,3-4:3 at 4 seqs gives [1,4,5,6,8,10,12,15,16,20]).
 if [[ -z "${COMPILATION_CONFIG:-}" ]]; then
   spec_k=0
   if [[ "$SPEC" == dspark ]]; then
@@ -322,15 +363,22 @@ if [[ -z "${COMPILATION_CONFIG:-}" ]]; then
   fi
   capture_sizes=(1)
   for ((s = 1; s <= MAX_NUM_SEQS; s++)); do
-    capture_sizes+=($((s * spec_k)) $((s * (spec_k + 1))))
+    if [[ -n "$NUM_SPECULATIVE_TOKENS_PER_BATCH" ]]; then
+      capture_sizes+=($((s * spec_k)))
+      for ((c = s; c <= MAX_NUM_SEQS; c++)); do
+        capture_sizes+=($((s * (spec_tier_k[c] + 1))))
+      done
+    else
+      capture_sizes+=($((s * spec_k)) $((s * (spec_k + 1))))
+    fi
   done
   capture_list="$(printf '%s\n' "${capture_sizes[@]}" | awk '$1 > 0' | sort -nu | paste -sd, -)"
   COMPILATION_CONFIG='{"cudagraph_mode":"FULL_AND_PIECEWISE","cudagraph_capture_sizes":['"$capture_list"'],"custom_ops":["all"]}'
 fi
 
 if [[ "${VALIDATE_ONLY:-0}" == "1" ]]; then
-  printf '==> validate-only spec=%s seqs=%s spec_tokens=%s quant=%s engram_disk=%s eager=%s lm_only=%s image=%s compilation_config=%s\n' \
-    "$SPEC" "$MAX_NUM_SEQS" "$NUM_SPECULATIVE_TOKENS" "$QUANTIZATION" "$DSV41_ENGRAM_DISK" "$ENFORCE_EAGER" "$LANGUAGE_MODEL_ONLY" "$IMAGE" "$COMPILATION_CONFIG"
+  printf '==> validate-only spec=%s seqs=%s spec_tokens=%s quant=%s engram_disk=%s eager=%s lm_only=%s image=%s compilation_config=%s spec_config=%s\n' \
+    "$SPEC" "$MAX_NUM_SEQS" "$NUM_SPECULATIVE_TOKENS" "$QUANTIZATION" "$DSV41_ENGRAM_DISK" "$ENFORCE_EAGER" "$LANGUAGE_MODEL_ONLY" "$IMAGE" "$COMPILATION_CONFIG" "$SPEC_CONFIG"
   exit 0
 fi
 
@@ -784,6 +832,8 @@ if [[ "$ORCHESTRATE" == "auto" && "$ROLE" == "head" ]]; then
     for name in "${worker_config[@]}" "${FORWARD_ENVS[@]%%=*}"; do
       worker_env+=" $name=$(printf '%q' "${!name:-}")"
     done
+    # The head turned the tiers into SPEC_CONFIG and COMPILATION_CONFIG above; the worker takes those as they are.
+    worker_env+=" NUM_SPECULATIVE_TOKENS_PER_BATCH=0"
     # Preflight both nodes (image, weights, EXL3 config) before any container starts.
     log "Preflight $(host_short)"
     ensure_image

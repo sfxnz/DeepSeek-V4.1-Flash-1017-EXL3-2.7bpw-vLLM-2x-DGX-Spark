@@ -11,6 +11,7 @@ run.sh runs from a copy in a temp dir (docker/ and tools/ symlinked), so its
 state; STUB_* env knobs make a rank die or the API never come up.
 
     python3 tests/run_sh_harness.py        # print head + worker docker run argv
+    python3 tests/run_sh_harness.py NUM_SPECULATIVE_TOKENS_PER_BATCH=1-2:5,3-4:3   # with run.sh env set
 """
 from __future__ import annotations
 
@@ -198,7 +199,7 @@ def flag_value(args: list[str], flag: str) -> str:
 
 
 if __name__ == "__main__":
-    res = dry_run()
+    res = dry_run(**dict(arg.split("=", 1) for arg in sys.argv[1:]))
     if res["returncode"] != 0 or not res["head"] or not res["worker"]:
         sys.stderr.write(res["stdout"] + res["stderr"])
         sys.exit(1)

@@ -211,7 +211,8 @@ class EnvForwardingTests(unittest.TestCase):
         self.assertEqual(len(names), len(set(names)))
 
     def test_every_recipe_knob_reaches_the_worker(self) -> None:
-        head_only = {"WORKER_HOST", "ORCHESTRATE", "AUDIT", "WARMUP"}
+        # NUM_SPECULATIVE_TOKENS_PER_BATCH: the head turns it into SPEC_CONFIG and COMPILATION_CONFIG.
+        head_only = {"WORKER_HOST", "ORCHESTRATE", "AUDIT", "WARMUP", "NUM_SPECULATIVE_TOKENS_PER_BATCH"}
         reach = set(_worker_config()) | set(_forward_envs())
         missing = sorted(set(_recipe()["serve"]["env"]) - reach - head_only)
         self.assertEqual(missing, [])
@@ -354,6 +355,9 @@ ENGAGED_LOG = "\n".join(
         "dsv41: model loop release engaged (model.py rewritten)",
         "dsv41: attention out defer engaged (o_padded after the indexer above 64 eager rows)",
         "dsv41: engram post engaged (in place on, wkv rows full, above 64 eager rows, self-check 2 calls)",
+        # perf2 dspark-adaptive: DSV41_DSPARK_ADAPTIVE=1 at k=5, the per-batch tiers' largest k (each worker)
+        "(Worker_TP0 pid=1) dsv41: dspark adaptive verify armed (tau=0.15 verify_max=5 k=5, masking; "
+        "masked rows reuse their anchor's experts in 40 MoE layers)",
     ]
 )
 
@@ -690,9 +694,10 @@ class RecipeOpsTests(unittest.TestCase):
         self.assertIn("engram_disk=1", proc.stdout)
         self.assertIn("spec=dspark", proc.stdout)
         k = _recipe()["serve"]["env"]["NUM_SPECULATIVE_TOKENS"]
-        self.assertEqual(k, "3")
-        self.assertIn(f"spec_tokens={k}", proc.stdout)
-        self.assertIn('"cudagraph_capture_sizes":[1,3,4,6,8,9,12,16]', proc.stdout)
+        self.assertEqual(k, "3")  # one k, with NUM_SPECULATIVE_TOKENS_PER_BATCH=0
+        self.assertEqual(_recipe()["serve"]["env"]["NUM_SPECULATIVE_TOKENS_PER_BATCH"], "1-2:5,3-4:3")
+        self.assertIn("spec_tokens=5", proc.stdout)  # the DSpark block is the largest tier k
+        self.assertIn('"cudagraph_capture_sizes":[1,4,5,6,8,10,12,15,16,20]', proc.stdout)
         self.assertIn("seqs=4", proc.stdout)
         self.assertIn("eager=0", proc.stdout)
         self.assertIn("lm_only=0", proc.stdout)
@@ -700,24 +705,26 @@ class RecipeOpsTests(unittest.TestCase):
 
     def test_validate_only_refuses_max_num_seqs(self) -> None:
         for seqs in ("5", "8"):
-            proc = _run_sh(MAX_NUM_SEQS=seqs)
+            proc = _run_sh(MAX_NUM_SEQS=seqs, NUM_SPECULATIVE_TOKENS_PER_BATCH="0")
             self.assertNotEqual(proc.returncode, 0, seqs)
             self.assertIn("exceeds 4", proc.stderr)
             self.assertIn("FORCE_UNSAFE_CTX=1 overrides", proc.stderr)
         for seqs in ("1", "4"):
-            self.assertEqual(_run_sh(MAX_NUM_SEQS=seqs).returncode, 0, seqs)
-        self.assertEqual(_run_sh(MAX_NUM_SEQS="8", FORCE_UNSAFE_CTX="1").returncode, 0)
+            self.assertEqual(_run_sh(MAX_NUM_SEQS=seqs, NUM_SPECULATIVE_TOKENS_PER_BATCH="0").returncode, 0, seqs)
+        self.assertEqual(_run_sh(MAX_NUM_SEQS="4").returncode, 0)
+        self.assertEqual(
+            _run_sh(MAX_NUM_SEQS="8", FORCE_UNSAFE_CTX="1", NUM_SPECULATIVE_TOKENS_PER_BATCH="0").returncode, 0)
 
     def test_validate_only_refuses_spec_tokens_above_block(self) -> None:
         for k in ("10", "6", "0", "3.5"):
-            proc = _run_sh(SPEC="dspark", NUM_SPECULATIVE_TOKENS=k)
+            proc = _run_sh(SPEC="dspark", NUM_SPECULATIVE_TOKENS=k, NUM_SPECULATIVE_TOKENS_PER_BATCH="0")
             self.assertNotEqual(proc.returncode, 0, k)
             self.assertIn("integer 1..5", proc.stderr)
             self.assertIn("E6", proc.stderr)
 
     def test_validate_only_spec_tokens_in_block_pass(self) -> None:
         for k in ("1", "3", "5"):
-            proc = _run_sh(SPEC="dspark", NUM_SPECULATIVE_TOKENS=k)
+            proc = _run_sh(SPEC="dspark", NUM_SPECULATIVE_TOKENS=k, NUM_SPECULATIVE_TOKENS_PER_BATCH="0")
             self.assertEqual(proc.returncode, 0, proc.stderr)
             self.assertIn(f"spec_tokens={k}", proc.stdout)
 
@@ -730,7 +737,7 @@ class RecipeOpsTests(unittest.TestCase):
             ("3", "1"): "[1,3,4]",
         }
         for (k, seqs), sizes in cases.items():
-            proc = _run_sh(NUM_SPECULATIVE_TOKENS=k, MAX_NUM_SEQS=seqs)
+            proc = _run_sh(NUM_SPECULATIVE_TOKENS=k, MAX_NUM_SEQS=seqs, NUM_SPECULATIVE_TOKENS_PER_BATCH="0")
             self.assertEqual(proc.returncode, 0, proc.stderr)
             self.assertIn(f'"cudagraph_capture_sizes":{sizes}', proc.stdout, (k, seqs))
         explicit = '{"cudagraph_mode":"PIECEWISE","cudagraph_capture_sizes":[1,2]}'
@@ -816,6 +823,10 @@ class RecipeOpsTests(unittest.TestCase):
             COMPILATION_CONFIG=args[args.index("--compilation-config") + 1],
             NUM_SPECULATIVE_TOKENS=str(
                 json.loads(args[args.index("--speculative-config") + 1])["num_speculative_tokens"]
+            ),
+            NUM_SPECULATIVE_TOKENS_PER_BATCH=",".join(
+                f"{lo}-{hi}:{k}" for lo, hi, k in json.loads(args[args.index("--speculative-config") + 1]).get(
+                    "num_speculative_tokens_per_batch_size", [])
             ),
         )
         for name, value in boot.items():

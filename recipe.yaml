@@ -48,6 +48,7 @@ serve:
     BLOCK_SIZE: 64
     PREFIX_CACHE_RETENTION_INTERVAL: 4096
     NUM_SPECULATIVE_TOKENS: 3
+    NUM_SPECULATIVE_TOKENS_PER_BATCH: "1-2:5,3-4:3"
     SPEC: dspark
     LOAD_FORMAT: auto
     QUANTIZATION: exl3
@@ -79,6 +80,7 @@ serve:
     DSV41_WOA_PREPACK: 1
     DSV41_DSPARK_SPARSE_MARKOV: 1
     DSV41_DSPARK_SPARSE_MARKOV_TOPK: 1024
+    DSV41_DSPARK_ADAPTIVE: 1
     DSV41_P2B_COOP: 2
     DSV41_DENSE_GEMV: 1
     DSV41_MHC_DET_SPLITS: 16
@@ -128,8 +130,8 @@ readme:
     - Engram: "disk (`DSV41_ENGRAM_DISK={DSV41_ENGRAM_DISK}`)"
     - "`--block-size`": "{BLOCK_SIZE}"
     - "`--prefix-cache-retention-interval`": "{PREFIX_CACHE_RETENTION_INTERVAL} (sliding-window prefix-cache checkpoint every 4096 tokens; vLLM's default 0 keeps only the replay boundary)"
-    - Speculative: "DSpark-{NUM_SPECULATIVE_TOKENS} (`SPEC={SPEC}`)"
-    - CUDA graphs: "`FULL_AND_PIECEWISE`, capture sizes {1} ∪ {s·k, s·(k+1)} for s ≤ `--max-num-seqs` (`[1,3,4,6,8,9,12,16]` at k=3) (`ENFORCE_EAGER={ENFORCE_EAGER}`, `DSV41_ALLOW_CUDA_GRAPHS={DSV41_ALLOW_CUDA_GRAPHS}`)"
+    - Speculative: "DSpark (`SPEC={SPEC}`): the verify width follows the running batch size, `NUM_SPECULATIVE_TOKENS_PER_BATCH={NUM_SPECULATIVE_TOKENS_PER_BATCH}` (k=5 at 1-2 requests, k=3 at 3-4; the DSpark block is the largest k), with adaptive verify `DSV41_DSPARK_ADAPTIVE={DSV41_DSPARK_ADAPTIVE}` (TAU 0.15); `NUM_SPECULATIVE_TOKENS_PER_BATCH=0` gives one k, `NUM_SPECULATIVE_TOKENS={NUM_SPECULATIVE_TOKENS}`"
+    - CUDA graphs: "`FULL_AND_PIECEWISE`, capture sizes {1} ∪ {s·K} ∪ {s·(k_c+1) : s ≤ c} for the block K and the width k_c at batch size c (`[1,4,5,6,8,10,12,15,16,20]` at `1-2:5,3-4:3`), {1} ∪ {s·k, s·(k+1)} with one k (`[1,3,4,6,8,9,12,16]` at k=3), s and c up to `--max-num-seqs` (`ENFORCE_EAGER={ENFORCE_EAGER}`, `DSV41_ALLOW_CUDA_GRAPHS={DSV41_ALLOW_CUDA_GRAPHS}`)"
     - Engram prefetch / census / gather: "`DSV41_ENGRAM_PREFETCH={DSV41_ENGRAM_PREFETCH}` `DSV41_ENGRAM_CENSUS={DSV41_ENGRAM_CENSUS}` `DSV41_ENGRAM_GATHER_V2={DSV41_ENGRAM_GATHER_V2}`"
     - Engram prefill read-ahead: "`DSV41_ENGRAM_WILLNEED={DSV41_ENGRAM_WILLNEED}` (gv2 calls with >= 512 rows fadvise their pages before the preadv loop) `DSV41_ENGRAM_PREFILL_AHEAD={DSV41_ENGRAM_PREFILL_AHEAD}` (the next chunk's rows are read on 8 threads while the current chunk computes, and used only where they match the GPU's hash ids; `_DONTNEED=1` drops the pages a prefill read brought in)"
     - lm_head: "MXFP8 (`DSV41_LMHEAD_MXFP8={DSV41_LMHEAD_MXFP8}`), needs an lm_head-MXFP8 pack (`{SNAPSHOT_SHA}` is one: `tools/build_pack_1017.py` converts source shard 43); self-disarms on a bf16-head pack"
