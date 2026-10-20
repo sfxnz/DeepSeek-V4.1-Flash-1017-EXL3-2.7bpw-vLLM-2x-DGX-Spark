@@ -78,6 +78,7 @@ PATCHES = {
     "decoder_replay.py": {"DSV41_DECODER_REPLAY_ROWS": "2670"},  # other W: disarm markers only
     "prefix_end_fallback.py": {"DSV41_PREFIX_END_FALLBACK": "1"},
     "prefix_reply_retain.py": {"DSV41_PREFIX_REPLY_RETAIN": "1"},
+    "sched_prefill_cap.py": {"DSV41_SCHED_PREFILL_CAP": "2048"},  # every process; other caps: disarm markers only
 }
 # K coverage of the p2b dataflow lever (see the module docstring).
 DATAFLOW_GATE = {"DSV41_P2B_COOP": "2"}

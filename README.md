@@ -4,7 +4,7 @@ Serve an EXL3 pack of [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface
 
 Native MXFP4 and MXFP8 weights are about 510 GB and do not fit 2× Spark UMA. The pack re-encodes only the routed experts (40 layers × 384, source MXFP4) as EXL3 MCG trellis with an integer K in {2, 3, 4} per layer and projection group (GU = gate+up, D = down). The routed mean is exactly 2.70 bpw. K is not uniform: the allocation puts the bits where the measured sensitivity of the official 1017 model is highest. Jointly perturbed, the chosen allocation scores KL_eq 0.050, against 0.088 for uniform 3/2 at 2.67 bpw and 0.137 for uniform 2/2 at 2.0 bpw ([How the pack was made](#how-the-pack-was-made)). The experts are encoded with real activation Hessians. Everything else keeps the source dtypes, the lm_head is MXFP8, and the Engram tables stay on NVMe (`DSV41_ENGRAM_DISK=1`).
 
-On boot D1 the pack serves 39.6 tok/s on the L.A.I.L prose cell and 49.6 tok/s greedy prose at c=1, holds one 1,048,576-token request in its KV pool, and passes the full quality eval (GSM8K 97/100, MMLU 208/228, tools 22/22, needle 9/9). It finds a needle at 256k and at 1M tokens (3/3 depths each), stays within 0.025 nats/token KL of the native unquantized model, and ran a 60-minute mixed c=2 soak with 0 errors. Those numbers were measured with `MAX_NUM_SEQS=2` and a 1,048,576-token window. The defaults are now four sessions at a 500,000-token window from the same 3.875 GiB KV pool, with packed KV groups ([Memory and context](#memory-and-context)). The perf2 boots measured that configuration (`results/2026-10-19-1017-perf2/`), and boot FINAL ran the full quality eval, the long needles and the 4-session soak on the full perf2 stack (`results/2026-10-19-1017-perf2/FINAL/`).
+With the perf2 defaults (boot FINAL, 2026-10-20: the stack tip, a plain `./run.sh`) the pack serves 40.5 tok/s on the L.A.I.L prose cell, 51.3 tok/s greedy prose and 103.6 tok/s structured output at c=1, and 96.4 tok/s aggregate over four sessions of distinct prose; it prefills a 64K prompt at 2,932 tok/s. It passes the full quality eval against the release baseline (GSM8K 98/100, MMLU 211/228, tools 22/22, needle 9/9; GSM8K with thinking 38/40 against the baseline's 39/40, inside the gate's Wilson bound), finds a needle at 256K and at 500K tokens (3/3 depths each), matches the release's served KL on all 72 panel rows (0.0253 against 0.0254 nats/token), and held four sessions of ~447K tokens resident with 0 preemptions (`results/2026-10-19-1017-perf2/FINAL/`). The release boot D1 (2026-10-18, `MAX_NUM_SEQS=2`, 1,048,576-token window) served 39.6 / 49.6 tok/s on the same c=1 prose cells, found needles at 256K and 1M, stayed within 0.025 nats/token KL on all 72 panel rows and ran a 60-minute mixed c=2 soak with 0 errors. The defaults are four sessions at a 500,000-token window from the same 3.875 GiB KV pool, with packed KV groups ([Memory and context](#memory-and-context)).
 
 This recipe replaces the September recipe for `deepseek-ai/DeepSeek-V4.1-Flash` (2.0 bpw pack, rounds 1-36): [sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark](https://github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark) @ `3de9146`. Its numbers are history, not this pack's.
 
@@ -218,6 +218,7 @@ Encyclopedic text loses the most. Rare-fact recall lives in the routed experts t
 | Decoder replay (CED prefill skip) | `DSV41_DECODER_REPLAY_ROWS=2670`: in eager prefill steps layer 20 writes its KV for every row and layers 20-39 run on kept rows only: W >= 2414 keeps each prompt's last W rows (exact), 128 keeps each chunk's last 128 rows (the upstream/DeepSeek approximation), 0 is off; SWA blocks of skipped rows stay out of the prefix cache, so a later prompt reuses a trimmed prompt's KV only if it diverges no earlier than 64 tokens before the prompt's last 128-token boundary (with the prefix-end fallback), or at a shared-prefix junction: the second request sharing a system prompt keeps up to 2542 more decoder rows ending there and the third hits it, as with stock e15 |
 | Prefix-end fallback | `DSV41_PREFIX_END_FALLBACK=1`: SWA groups also keep the prefix-cache tail one 128-token hit unit below each prompt end (and shared-prefix junction), so every resend or follow-up that diverges at the prompt end hits within 192 tokens; e15 alone misses for about half of all prompt lengths (0 = stock) |
 | Prefix reply retention | `DSV41_PREFIX_REPLY_RETAIN=1`: SWA blocks filled during decode enter the prefix cache as they fill, so a follow-up that repeats the assistant reply verbatim hits within 192 tokens of the shared end instead of prefilling the reply again (0 = stock) |
+| Prefill sharing | `DSV41_SCHED_PREFILL_CAP=2048` `DSV41_SCHED_DECODE_STEPS=1`: while the scheduler holds more than one request, each prefilling request takes at most CAP tokens per step and STEPS decode-only steps follow each step that carried prefill, so the other sessions keep decoding through a long prefill; a request alone in the scheduler is scheduled as stock (0 = stock) |
 | NCCL AR-tail set | `NCCL_BUFFSIZE=1048576` `NCCL_LL128_BUFFSIZE=262144` `NCCL_PROTO=^LL128` `NCCL_MAX_NCHANNELS=8` |
 | Memory hygiene | `DSV41_DROP_PAGE_CACHE=1` `DSV41_INDEXER_PREFILL_FACTOR=1` `DSV41_INDEXER_EXPANDED_TABLE_LAZY=1` `DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192` `DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4` `DSV41_PREFILL_EMPTY_CACHE_HOLD=1` (no release while a prompt is in flight unless MemAvailable < `DSV41_PREFILL_EMPTY_CACHE_FLOOR_GIB=3` GiB or the held pool grows more than `DSV41_PREFILL_EMPTY_CACHE_GROWTH_MIB=150` MiB beyond what the steps' peak need explains) `DSV41_PREFILL_EMPTY_CACHE_COUNT_PCP=1` (those MemAvailable rules count the free pages on the kernel's per-CPU lists) `DSV41_FAT_SCRATCH_SHARED=1` (one vllm_exl3 fat-expert scratch set) `DSV41_MODEL_LOOP_RELEASE=1` `DSV41_ATTN_OUT_DEFER=1` `DSV41_ENGRAM_POST_INPLACE=1` (prefill transient cuts, bit-identical) `VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=256` |
 | Tokenizers / tools / reasoning | `deepseek_v41` |
@@ -233,31 +234,34 @@ Encyclopedic text loses the most. Rare-fact recall lives in the routed experts t
 
 ## Measured on 2× DGX Spark
 
-Boot D1 (2026-10-18, both nodes, `AUDIT=strict`, `KV_CACHE_MEMORY=4160749568`, the image and pack above, every other setting at its default). Evidence: `results/2026-10-18-1017/boot-d1/`. The right column is the September recipe's round-36 pack on the September model, kept only as history: a different model, not a paired comparison.
+Boot FINAL (2026-10-20, both nodes, `SKIP_DOWNLOAD=1 AUDIT=strict ./run.sh` from the perf2 stack tip: every setting at its default, four sessions at a 500,000-token window, DSpark per-batch k with adaptive verify, the perf2 levers). Evidence: `results/2026-10-19-1017-perf2/FINAL/`. The middle column is the release boot D1 (2026-10-18, `MAX_NUM_SEQS=2`, 1,048,576-token window, the image's KV groups; `results/2026-10-18-1017/boot-d1/`), the right column the September recipe's round-36 pack on the September model. Both are history, not paired comparisons.
 
-| Cell | 1017 2.70 bpw pack | Sept 2.0 bpw pack, Sept model (previous recipe, history only) |
-|---|---|---|
-| L.A.I.L prose c=1 (512 tokens, t=0.2, median of 3) | 39.6 tok/s, 52.5 ms/step, acceptance 2.09 | 42.6 tok/s, 48.8 ms/step, acceptance 2.11 |
-| `bench_decode.py` prose c=1 (9 runs, 200 tokens) | 49.6 tok/s, 52.2 ms/step, acceptance 2.58 | 50.7 tok/s, 48.5 ms/step, acceptance 2.45 |
-| `bench_decode.py` structured c=1 (9 runs) | 77.0 tok/s, 51.4 ms/step, acceptance 3.96 | 84.3 tok/s, 47.5 ms/step |
-| `bench_decode.py` prose c=2 aggregate (5 runs) | 75.8 tok/s | 81.0 tok/s |
-| `bench_decode.py` structured c=2 aggregate (5 runs) | 140.3 tok/s | 156.3 tok/s |
-| Prefill, novel text, 4k / 16k / 64k | 795 / 755 / 733 tok/s | 814 (8k) / 812 (32k) tok/s |
-| Prefill, warm, 4k / 16k / 64k | 707 / 689 / 688 tok/s | 773 (8k) / 775 (32k) tok/s |
-| Decode after 64k context | 48.1 tok/s | - |
-| TTFT, short prompt | ~0.24 s | - |
-| `benches/e2e.sh` | 3/3 pass; coding agent 53.9 tok/s decode; 64k document recall hit (TTFT 90.6 s) | - |
+| Cell | 1017 2.70 bpw pack, perf2 defaults (FINAL) | 1017 release defaults, boot D1 (history) | Sept 2.0 bpw pack, Sept model (previous recipe, history only) |
+|---|---|---|---|
+| L.A.I.L prose c=1 (512 tokens, t=0.2; FINAL median of 10, D1 of 3) | 40.5 tok/s, 50.4 ms/step, acceptance 2.02 | 39.6 tok/s, 52.5 ms/step, acceptance 2.09 | 42.6 tok/s, 48.8 ms/step, acceptance 2.11 |
+| `bench_decode.py` prose c=1 (9 runs, 200 tokens) | 51.3 tok/s, 52.2 ms/step, acceptance 2.74 | 49.6 tok/s, 52.2 ms/step, acceptance 2.58 | 50.7 tok/s, 48.5 ms/step, acceptance 2.45 |
+| `bench_decode.py` structured c=1 (9 runs) | 103.6 tok/s, 56.8 ms/step, acceptance 5.88 | 77.0 tok/s, 51.4 ms/step, acceptance 3.96 | 84.3 tok/s, 47.5 ms/step |
+| `bench_decode.py` prose c=2 aggregate (5 runs) | 74.6 tok/s | 75.8 tok/s | 81.0 tok/s |
+| `bench_decode.py` structured c=2 aggregate (5 runs) | 183.4 tok/s | 140.3 tok/s | 156.3 tok/s |
+| Four distinct prompts at once, aggregate (prose / structured, 5 runs) | 96.4 / 201.1 tok/s (90.8 / 78.6 ms/step) | - | - |
+| Prefill, novel text, 4k / 16k / 64k | 1,830 / 2,236 / 2,932 tok/s | 795 / 755 / 733 tok/s | 814 (8k) / 812 (32k) tok/s |
+| Prefill, warm, 4k / 16k / 64k | 1,595 / 2,037 / 2,773 tok/s | 707 / 689 / 688 tok/s | 773 (8k) / 775 (32k) tok/s |
+| Decode after 64k context | 45.1 tok/s | 48.1 tok/s | - |
+| TTFT, short prompt (prose c=1 p50) | 0.20 s | ~0.24 s | - |
+| `benches/e2e.sh` | not run on FINAL | 3/3 pass; coding agent 53.9 tok/s decode; 64k document recall hit (TTFT 90.6 s) | - |
 
 `tools/measure_lail_prose.py` matches L.A.I.L's streamed prose (512 tokens, temperature 0.2): it is the real-use cell. `bench_decode.py` is streamed greedy with thinking off. Its prose prompt stops naturally at 83 tokens, so the 200-token cell forces `ignore_eos` and runs on past EOS; the structured prompt runs to 200 tokens. Reproduce with `python3 bench_decode.py --runs 9 --concurrency 1`, `python3 bench_decode.py --runs 5 --concurrency 2`, `benches/micro.sh --contexts 512 4096 16384 65536 --runs 2` and `benches/e2e.sh`. The quality gate is `tests/quality_eval.py --full --baseline results/2026-10-18-1017/quality-baseline/full.json` (`tests/correctness.sh --full` is a separate fixed correctness check).
 
 <!-- BEGIN generated measured from recipe.yaml — edit recipe.yaml and run kit/render.py -->
 | Phase | Concurrency | Decode tok/s (median per stream) | Aggregate tok/s | TTFT p50 |
 |---|---|---:|---:|---:|
-| prose | 1 | 49.6 | 49.6 | 0.24 s |
-| prose | 2 | 38.4 | 75.8 | 0.28 s |
-| structured | 1 | 77.0 | 77.0 | 0.19 s |
-| structured | 2 | 70.2 | 140.3 | 0.23 s |
-| lail_prose | 1 | 39.6 | 39.6 | 0.34 s |
+| prose | 1 | 51.3 | 51.3 | 0.20 s |
+| prose | 2 | 38.5 | 74.6 | 0.21 s |
+| structured | 1 | 103.6 | 103.6 | 0.18 s |
+| structured | 2 | 91.7 | 183.4 | 0.20 s |
+| prose_distinct | 4 | 27.1 | 96.4 | 0.30 s |
+| structured_distinct | 4 | 50.7 | 201.1 | 0.38 s |
+| lail_prose | 1 | 40.5 | 40.5 | 0.25 s |
 <!-- END generated measured -->
 
 ## How the pack was made
