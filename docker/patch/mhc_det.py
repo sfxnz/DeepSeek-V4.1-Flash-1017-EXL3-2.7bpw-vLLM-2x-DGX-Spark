@@ -3,7 +3,8 @@
 The stock decode mHC path per sublayer is mhc_post (TileLang) -> prenorm GEMM (DeepGEMM TF32,
 16-split split-K, one CTA per split) -> fused norm (TileLang, sums the 16 partials in split
 order). It is deterministic; its cost is the GEMM's layout (16 CTAs, 8 warps each multiplying a
-128-row tile for T <= 16 tokens). With DSV41_MHC_DET_SPLITS=16, for T <= 16 tokens:
+128-row tile for T <= 16 tokens). With DSV41_MHC_DET_SPLITS=16, for T <= 16 tokens (T <= 24 once the
+T 17..24 self-tests pass: rows 16..23 in the GEMM's second m16 tile, mhc_det_gemm_t24, c4-kernels):
 - mhc_post -> det post (same fp32 FMA order and bf16 rounding, 20*T CTAs, launches its
   dependent GEMM on entry so the weights stream during the post),
 - the prenorm GEMM -> det GEMM: the same 16 splits, the same mma.sync m16n8k8 TF32 chain per
@@ -16,7 +17,9 @@ Every output is bitwise the stock one (kernel_study/mhc_det, results/2026-09-25-
 16 is the only accepted value: it names the stock decode split-K that the kernels reproduce.
 After weight load every packed fn (GEMM), every sublayer's whole pre (GEMM + norm, the layer's
 real parameters) and the post are checked bitwise against the stock kernels on the GPU; any
-mismatch leaves the stock path in place for the process (LOG_DISARMED).
+mismatch leaves the stock path in place for the process (LOG_DISARMED). T 17..24 have their own
+self-tests after those (every fn's GEMM at T 24, the first layer's pre at T 17 / 24, the post at
+T 24); a mismatch there keeps only T > 16 on the stock path (no LOG_DISARMED line).
 DSV41_MHC_DET_OVERLAP=1 (mhc_det_overlap.py) moves each pre's prenorm GEMM + sinkhorn under the
 next TP all-reduce on a side stream; the fused norm is then launched as its two halves.
 
@@ -34,6 +37,7 @@ STAGE_KB = 2
 XS_PAD = 8
 PK_KB_BYTES = 1280
 MAX_T = 16
+WIDE_T = 24  # c4-kernels: T 17..24 (mhc_det_gemm_t24) once their own self-tests pass (_S.max_t)
 NORM_H = 5120  # hidden size compiled into mhc_det_norm
 
 
@@ -98,12 +102,13 @@ class DetKernels:
         self._post = self.mod.function("mhc_det_post")
         self._norm = self.mod.function("mhc_det_norm")  # the split entries resolve on first use
         self._gemm = {big: self.mod.function(f"mhc_det_gemm_t{16 if big else 8}") for big in (False, True)}
+        self._gemm24 = self.mod.function("mhc_det_gemm_t24")
 
     @staticmethod
     def _check(x, mixes, sqr) -> tuple[int, int]:
         t, k = x.shape
-        if not 1 <= t <= MAX_T:
-            raise ValueError(f"T={t} outside 1..{MAX_T}")
+        if not 1 <= t <= WIDE_T:
+            raise ValueError(f"T={t} outside 1..{WIDE_T}")
         if tuple(mixes.shape) != (SPLITS, t, 24) or tuple(sqr.shape) != (SPLITS, t):
             raise ValueError(f"bad output shapes {tuple(mixes.shape)} {tuple(sqr.shape)}")
         return t, k
@@ -111,7 +116,7 @@ class DetKernels:
     def gemm_pk(self, x, fnp, mixes, sqr, pdl: bool = True) -> None:
         """Det prenorm GEMM: x [T, K] bf16, fnp = pack_fn(fn) -> mixes [16, T, 24], sqr [16, T]."""
         t, k = self._check(x, mixes, sqr)
-        self._gemm[t > 8].launch(
+        (self._gemm24 if t > 16 else self._gemm[t > 8]).launch(
             (3, SPLITS), (32,), smem_bytes(t, k),
             [(x.data_ptr(), ctypes.c_void_p), (fnp.data_ptr(), ctypes.c_void_p),
              (mixes.data_ptr(), ctypes.c_void_p), (sqr.data_ptr(), ctypes.c_void_p),
@@ -260,6 +265,8 @@ class _State:
         self.misses = 0
         self.captured = False  # a CUDA graph holds packed-fn pointers
         self.ovl = None  # mhc_det_overlap, when DSV41_MHC_DET_OVERLAP=1 armed
+        self.max_t = MAX_T  # WIDE_T after the T 17..24 self-tests pass
+        self.wide_failed = False  # a T 17..24 self-test failed (any label): T > MAX_T stays stock
 
 
 _S = _State()
@@ -299,12 +306,12 @@ def _randn(g, *shape):
     return torch.randn(*shape, device=g.device, generator=g, dtype=torch.float32)
 
 
-def _selftest_gemm(fn, packed) -> str | None:
+def _selftest_gemm(fn, packed, ts=(1, 4, 8, 16)) -> str | None:
     import torch
     from vllm.utils.deep_gemm import tf32_hc_prenorm_gemm
 
     k = fn.shape[1]
-    for t in (1, 4, 8, 16):
+    for t in ts:
         g = torch.Generator(device=fn.device).manual_seed(1000 * t + k)
         x = (_randn(g, t, k) * 3).to(torch.bfloat16)
         ref = (torch.empty(SPLITS, t, 24, device=fn.device, dtype=torch.float32),
@@ -344,10 +351,10 @@ def _selftest_pre(layer, sub, fn, packed, broadcast: bool, carried: bool, tokens
     return None
 
 
-def _selftest_post(device) -> str | None:
+def _selftest_post(device, ts=(1, 4, 16)) -> str | None:
     import torch
 
-    for t in (1, 4, 16):
+    for t in ts:
         g = torch.Generator(device=device).manual_seed(77 + t)
         residual = (_randn(g, t, 4, 5120) * 4).to(torch.bfloat16)
         x = (_randn(g, t, 5120) * 2).to(torch.bfloat16)
@@ -411,6 +418,7 @@ def prepare(model, label: str) -> None:
             _S.dk = DetKernels()
         n_fn = n_pre = 0
         mib = 0.0
+        tested = []  # (layer, sub, fn, packed, broadcast) for the T 17..24 self-tests
         for li, layer in enumerate(layers):
             cases = [("attn", layer.hc_attn_fn, False), ("ffn", layer.hc_ffn_fn, False)]
             if getattr(layer, "hc_attn_fn_broadcast", None) is not None:
@@ -421,6 +429,7 @@ def prepare(model, label: str) -> None:
                 packed = _pack_one(fn)
                 mib += packed.numel() / 2**20
                 n_fn += 1
+                tested.append((layer, sub, fn, packed, broadcast))
                 err = _selftest_gemm(fn, packed)
                 first = n_pre == 0
                 for carried in ((False, True) if first and not broadcast else (not broadcast,)):
@@ -438,10 +447,15 @@ def prepare(model, label: str) -> None:
             return
         torch.cuda.synchronize()
         _S.on = True
+        wide = _selftest_wide(tested)  # c4-kernels: T 17..24; a failure keeps only those on stock
+        if wide:
+            _S.wide_failed = True
+            print(f"dsv41: mhc det T {MAX_T + 1}..{WIDE_T} stay on the stock kernels: {label}: {wide}", flush=True)
+        _S.max_t = MAX_T if _S.wide_failed else WIDE_T
         print(
             f"dsv41: mhc det engaged: {label}: {n_fn} fn packed ({mib:.1f} MiB); det GEMM, fused norm and "
             f"post bitwise equal to stock on {n_pre} pre self-tests (DeepGEMM {SPLITS}-split, TileLang); "
-            f"T <= {MAX_T}",
+            f"T <= {_S.max_t}",
             flush=True,
         )
     except Exception as exc:  # noqa: BLE001 - the lever never breaks the load
@@ -453,14 +467,33 @@ def prepare(model, label: str) -> None:
     try:
         layer = layers[0]
         fn = layer.hc_attn_fn
-        err = _selftest_overlap(layer, fn, _lookup(fn), (1, 4, 16))
+        err = _selftest_overlap(layer, fn, _lookup(fn), (1, 4, 16) + ((WIDE_T,) if _S.max_t == WIDE_T else ()))
     except Exception as exc:  # noqa: BLE001
         err = f"self-test raised {exc!r}"
     if err:
         ov._disarm(f"{label}: split path self-test failed ({err}); the fused det pre stays")
         return
     ov.engage(label, "layer_input right after the post; prenorm GEMM + sinkhorn forked under the next "
-                     "all-reduce; split path bitwise equal to stock (fork and in place, T 1/4/16)")
+                     "all-reduce; split path bitwise equal to stock (fork and in place, T 1/4/16"
+                     f"{'/' + str(WIDE_T) if _S.max_t == WIDE_T else ''})")
+
+
+def _selftest_wide(tested) -> str | None:
+    """T 17..24 (mhc_det_gemm_t24) vs stock, bitwise: every fn's GEMM at T 24, the first non-broadcast
+    sublayer's whole pre at T 17 / 24 (fresh and carried pre-mix), the post at T 24. None = pass."""
+    try:
+        for layer, sub, fn, packed, broadcast in tested:
+            err = _selftest_gemm(fn, packed, (WIDE_T,))
+            if err:
+                return err
+        layer, sub, fn, packed, _ = next(c for c in tested if not c[4])
+        for carried in (False, True):
+            err = _selftest_pre(layer, sub, fn, packed, False, carried, (MAX_T + 1, WIDE_T))
+            if err:
+                return err
+        return _selftest_post(fn.device, (WIDE_T,))
+    except Exception as exc:  # noqa: BLE001
+        return f"self-test raised {exc!r}"
 
 
 def _lookup(fn):
@@ -491,7 +524,7 @@ def _post(x, residual, post_layer_mix, comb_res_mix):
 
     if _S.ovl is not None:
         _S.ovl.settle()  # a deferred coefficient half of the previous pre feeds this post
-    if (_S.on and residual.dim() == 3 and 1 <= residual.shape[0] <= MAX_T and residual.shape[1] == 4
+    if (_S.on and residual.dim() == 3 and 1 <= residual.shape[0] <= _S.max_t and residual.shape[1] == 4
             and residual.shape[2] % 256 == 0 and residual.dtype == torch.bfloat16
             and x.dtype == torch.bfloat16 and tuple(x.shape) == (residual.shape[0], residual.shape[2])
             and post_layer_mix.dtype == torch.float32 and comb_res_mix.dtype == torch.float32
@@ -508,7 +541,7 @@ def _pre_eligible(residual, fn, pre_mix, x, norm_weight) -> bool:
     from vllm.utils.deep_gemm import is_deep_gemm_supported
 
     if not (_S.on and norm_weight is not None and residual.dim() == 3 and residual.dtype == torch.bfloat16
-            and residual.is_contiguous() and residual.is_cuda and 1 <= residual.shape[0] <= MAX_T
+            and residual.is_contiguous() and residual.is_cuda and 1 <= residual.shape[0] <= _S.max_t
             and tuple(residual.shape[1:]) == (4, NORM_H) and norm_weight.dtype == torch.bfloat16
             and norm_weight.is_contiguous() and norm_weight.numel() == NORM_H):
         return False

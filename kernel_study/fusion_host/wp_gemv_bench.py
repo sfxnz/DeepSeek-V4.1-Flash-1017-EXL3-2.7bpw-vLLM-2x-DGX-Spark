@@ -21,7 +21,9 @@ serve's target graph), and beside a DRAM-saturating copy on another stream,
 >= 300 replays, arms alternating. Last, a sabotage run: the GEMV followed by
 one flipped output bit; the per-call verify must return the stock output and
 disarm (the next call is stock), and the first-call self-test must disarm.
-Prints one JSON line.
+Prints one JSON line. c4-kernels: --wide also checks M MAX_M+1..WIDE_MAX_M (the wide range's own
+self-test; reported per range, a wide-only mismatch is "wide_bad", not "bad"), runs the wrapper at
+M 12/24/25 and times M 12/16/24; docker/patch is imported from the repo before /opt/dsv41-patch.
 """
 from __future__ import annotations
 
@@ -33,6 +35,7 @@ import sys
 import torch
 
 sys.path.insert(0, "/opt/dsv41-patch")
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[2] / "docker" / "patch"))
 
 SNAP = "/hf/hub/models--sfxnz--DeepSeek-V4.1-Flash-EXL3/snapshots/2.0bpw-mcg-lmhead-mxfp8"
 LAYERS = (2, 8, 14, 20, 24, 28, 32, 36)
@@ -47,14 +50,14 @@ def summarize(v):
     return dict(n=len(v), median=statistics.median(v), p10=pct(v, 0.10), p90=pct(v, 0.90), mean=statistics.fmean(v))
 
 
-def load_weights():
+def load_weights(snap=SNAP):
     from safetensors import safe_open
 
-    idx = json.load(open(SNAP + "/model.safetensors.index.json"))["weight_map"]
+    idx = json.load(open(snap + "/model.safetensors.index.json"))["weight_map"]
     out = []
     for layer in LAYERS:
         name = f"layers.{layer}.attn.indexer.weights_proj.weight"
-        with safe_open(SNAP + "/" + idx[name], framework="pt") as f:
+        with safe_open(snap + "/" + idx[name], framework="pt") as f:
             out.append(f.get_tensor(name).cuda().contiguous())
     return out
 
@@ -64,17 +67,20 @@ def main() -> int:
     ap.add_argument("--iters", type=int, default=300)
     ap.add_argument("--warmup", type=int, default=20)
     ap.add_argument("--configs", default="256:4:3,512:2:3,512:4:4")
+    ap.add_argument("--wide", action="store_true", help="c4-kernels: also M up to WIDE_MAX_M")
+    ap.add_argument("--snap", default=SNAP)
     args = ap.parse_args()
 
     import indexer_wp_gemv as wpg
     from vllm.triton_utils import tl, triton
 
     kernel = wpg._build_kernel(tl, triton)
-    ws = load_weights()
+    ws = load_weights(args.snap)
+    hi = wpg.WIDE_MAX_M if args.wide else wpg.MAX_M
     dev = torch.device("cuda")
     g = torch.Generator(device="cuda").manual_seed(0)
     configs = [tuple(int(v) for v in c.split(":")) for c in args.configs.split(",")]
-    out = {"torch": torch.__version__, "configs": {}, "bad": []}
+    out = {"torch": torch.__version__, "configs": {}, "bad": [], "wide_bad": []}
 
     def run(cfg, x, w, o):
         bk, warps, stages = cfg
@@ -85,7 +91,7 @@ def main() -> int:
     for cfg in configs:
         ok = True
         for li, w in enumerate(ws):
-            for m in range(wpg.MIN_M, wpg.MAX_M + 1):
+            for m in range(wpg.MIN_M, hi + 1):
                 for scale in (1.0, 30.0):
                     x = (torch.randn(m, 5120, device=dev, generator=g) * scale).to(torch.bfloat16)
                     ref = torch.nn.functional.linear(x, w)
@@ -93,20 +99,21 @@ def main() -> int:
                     run(cfg, x, w, o)
                     torch.cuda.synchronize()
                     if not torch.equal(o.view(torch.int16), ref.view(torch.int16)):
-                        ok = False
-                        out["bad"].append(f"cfg={cfg} layer={LAYERS[li]} m={m} scale={scale}")
+                        ok = ok if m > wpg.MAX_M else False
+                        out["bad" if m <= wpg.MAX_M else "wide_bad"].append(
+                            f"cfg={cfg} layer={LAYERS[li]} m={m} scale={scale}")
         out["configs"][":".join(map(str, cfg))] = {"bitwise": ok}
 
     # the serve wrapper (make_forward) on a stand-in layer: self-test, verify,
     # stock fallback for M outside MIN_M..MAX_M, tuple return like ReplicatedLinear
     import types as _types
 
-    wpg._STATE.update(armed=True, verify_left=8, engaged=False)
+    wpg._STATE.update(armed=True, verify_left=8, engaged=False, wide=False)
     for li, w in enumerate(ws):
         layer = _types.SimpleNamespace(weight=w, bias=None, return_bias=True)
         stock = lambda x, w=w: (torch.nn.functional.linear(x, w), None)
         fwd = wpg.make_forward(torch, triton, kernel, stock)
-        for m in (1, 2, 3, 4, 6, 8, 9, 16):
+        for m in (1, 2, 3, 4, 6, 8, 9, 12, 16, 24, 25):
             x = torch.randn(m, 5120, device=dev, generator=g).to(torch.bfloat16)
             got, bias_out = fwd(layer, x)
             ref = torch.nn.functional.linear(x, w)
@@ -141,7 +148,7 @@ def main() -> int:
     big_dst = torch.empty_like(big_src)
     w = ws[4]
     timing = {}
-    for m in (1, 3, 4, 6, 8):
+    for m in (1, 3, 4, 6, 8) + ((12, 16, 24) if args.wide else ()):
         x = torch.randn(m, 5120, device=dev, generator=g).to(torch.bfloat16)
         o = torch.empty(m, 32, device=dev, dtype=torch.bfloat16)
         arms = {"cublas": lambda: torch.nn.functional.linear(x, w, out=None)}

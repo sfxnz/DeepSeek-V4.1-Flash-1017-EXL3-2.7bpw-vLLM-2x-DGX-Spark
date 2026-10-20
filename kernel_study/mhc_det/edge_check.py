@@ -4,17 +4,18 @@
 From the review of 4f661a5 (reviewer's rv_edge.py), plus the DSV41_MHC_DET_OVERLAP split path.
 GEMM (det vs DeepGEMM 16-split): x families the bench_gemm families do not reach: denormal-range
 squares, signed zeros, all-zero rows, huge (square overflow), inf/nan rows.
-Whole pre at EVERY T in 1..16 on several real sublayers, carried pre-mix families (softmax,
+Whole pre at EVERY T in 1..WIDE_T (24, c4-kernels) on several real sublayers, carried pre-mix families (softmax,
 extreme, signed zeros) and residual families: the fused det pre (det GEMM + det norm) AND the
 split pre (mhc_det_norm_li + det GEMM + mhc_det_norm_coef, forked to a side stream and joined by
 mhc_det_overlap, and launched in place), each vs the stock pre.
-Post at every T in 1..16 with signed zeros / tiny / huge values.
+Post at every T in 1..WIDE_T with signed zeros / tiny / huge values.
 Gate, fixed before any run: equal bits, or both NaN at the same positions (NaN payload
 differences are counted separately and reported). Writes results/.../edge_check.json.
 """
 from __future__ import annotations
 
 import json
+import os
 import sys
 
 import torch
@@ -92,7 +93,7 @@ def main() -> int:
         fn = w[name]
         pk = mhc_det.pack_fn(fn)
         k = fn.shape[1]
-        for t in range(1, 17):
+        for t in range(1, mhc_det.WIDE_T + 1):
             for kind in kinds:
                 x = xfam(kind, t, k, g)
                 rm, rs = torch.empty(16, t, 24, device="cuda"), torch.empty(16, t, device="cuda")
@@ -127,7 +128,7 @@ def main() -> int:
         args = (w[f"{prefix}.hc_{sub}_scale"], w[f"{prefix}.hc_{sub}_base"], RMS_EPS, HC_EPS, HC_EPS, POST_ALPHA,
                 SINKHORN)
         nw = w[f"{prefix}.{sub}_norm.weight"]
-        for t in range(1, 17):
+        for t in range(1, mhc_det.WIDE_T + 1):
             for rf in rfams:
                 for pf in (pfams if not bc else [None]):
                     xx = None
@@ -203,7 +204,7 @@ def main() -> int:
 
     # ---------------- post, every T ----------------
     post = {"cases": 0, "fail": 0, "first": []}
-    for t in range(1, 17):
+    for t in range(1, mhc_det.WIDE_T + 1):
         for fam in ("negzero", "tiny", "huge", "randn"):
             z = torch.randn(t, 4, 5120, device="cuda", generator=g)
             zx = torch.randn(t, 5120, device="cuda", generator=g)
@@ -232,6 +233,7 @@ def main() -> int:
     res["post"] = post
     print("post", json.dumps(post), flush=True)
     res["gate"] = "equal bits, or both NaN at the same positions"
+    os.makedirs(BP.OUT, exist_ok=True)
     with open(f"{BP.OUT}/edge_check.json", "w") as fh:
         json.dump(res, fh, indent=1)
     ok = gemm["bitwise_fail"] == 0 and pre["fail"] == 0 and split["fail"] == 0 and post["fail"] == 0

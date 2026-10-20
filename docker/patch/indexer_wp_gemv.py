@@ -19,7 +19,10 @@ mismatch prints one LOG_DISARMED line and every later call is stock. Decode
 batches replay CUDA graphs, so eager decode-size calls may never come: the
 first eager call of any size (the profile run's) also self-tests the GEMV on
 random rows at every M in MIN_M..MAX_M against the stock forward, and prints
-LOG_ENGAGED or disarms.
+LOG_ENGAGED or disarms. Rows MAX_M+1..WIDE_MAX_M (c >= 3 verify batches) have
+their own self-test after that one: a mismatch there leaves only those rows on
+cuBLAS (no LOG_DISARMED line), so M <= MAX_M cannot regress. Above BM rows the
+GEMV runs one launch per 16-row tile (the same kernel and MMA chain per row).
 
 Top-level imports are stdlib only. decode_levers.install() calls install()
 when the env is on.
@@ -35,10 +38,12 @@ LOG_ENGAGED = "dsv41: indexer weights_proj GEMV self-check bit-exact"
 LOG_DISARMED = "dsv41: indexer weights_proj GEMV DISABLED ->"
 
 MIN_M, MAX_M = 2, 8  # rows checked bit-exact vs cuBLAS (decode captures 3, 4, 6, 8)
+WIDE_MAX_M = 12  # c4-kernels: own self-test; cuBLAS keeps the 16x16 wmma chain only up to M = 12 (GPU check
+                 # 2026-10-19: GEMV != cuBLAS bits from M = 13, where cuBLAS runs a faster kernel: 12 us at M 16)
 BM = BN = 16
 BK, WARPS, STAGES = 512, 2, 3  # kernel_study/fusion_host/wp_gemv_bench.py
 DEFAULT_VERIFY = 8
-_STATE = {"armed": True, "verify_left": DEFAULT_VERIFY, "engaged": False}
+_STATE = {"armed": True, "verify_left": DEFAULT_VERIFY, "engaged": False, "wide": False}
 
 
 def enabled(env=None) -> bool:
@@ -84,18 +89,21 @@ def _build_kernel(tl, triton):
 def launch(kernel, triton, x, w, o, bk=BK, warps=WARPS, stages=STAGES) -> None:
     m, k = x.shape
     n = w.shape[0]
-    kernel[(triton.cdiv(n, BN),)](
-        x, w, o, m, n, k, x.stride(0), w.stride(0), o.stride(0),
-        BM=BM, BN=BN, BK=bk, num_warps=warps, num_stages=stages,
-    )
+    for r0 in range(0, m, BM):  # one launch per BM-row tile; m <= BM is the one launch it always was
+        xr, orr = x[r0 : r0 + BM], o[r0 : r0 + BM]
+        kernel[(triton.cdiv(n, BN),)](
+            xr, w, orr, xr.shape[0], n, k, xr.stride(0), w.stride(0), orr.stride(0),
+            BM=BM, BN=BN, BK=bk, num_warps=warps, num_stages=stages,
+        )
 
 
-def usable(torch, x, w, bias) -> bool:
+def usable(torch, x, w, bias, max_m=None) -> bool:
+    max_m = (WIDE_MAX_M if _STATE["wide"] else MAX_M) if max_m is None else max_m
     return (
         _STATE["armed"]
         and bias is None
         and x.dim() == 2
-        and MIN_M <= x.shape[0] <= MAX_M
+        and MIN_M <= x.shape[0] <= max_m
         and x.dtype == torch.bfloat16
         and w.dtype == torch.bfloat16
         and x.is_cuda
@@ -107,13 +115,13 @@ def usable(torch, x, w, bias) -> bool:
     )
 
 
-def selftest(torch, triton, kernel, layer, stock_forward, device) -> None:
-    """GEMV vs the stock forward on random rows, every M in MIN_M..MAX_M."""
-    g = torch.Generator(device=device).manual_seed(0)
+def selftest(torch, triton, kernel, layer, stock_forward, device, lo=MIN_M, hi=MAX_M) -> None:
+    """GEMV vs the stock forward on random rows, every M in lo..hi (default MIN_M..MAX_M)."""
+    g = torch.Generator(device=device).manual_seed(0 if lo == MIN_M else lo)
     k = layer.weight.shape[1]
-    for m in range(MIN_M, MAX_M + 1):
+    for m in range(lo, hi + 1):
         x = torch.randn(m, k, device=device, generator=g).to(torch.bfloat16)
-        if not usable(torch, x, layer.weight, getattr(layer, "bias", None)):
+        if not usable(torch, x, layer.weight, getattr(layer, "bias", None), max_m=hi):
             raise RuntimeError(f"self-test shape not served (m={m}, k={k})")
         o = torch.empty((m, layer.weight.shape[0]), dtype=torch.bfloat16, device=device)
         launch(kernel, triton, x, layer.weight, o)
@@ -137,6 +145,21 @@ def make_forward(torch, triton, kernel, stock_forward):
                 )
             except Exception as exc:  # noqa: BLE001
                 _disarm(exc)
+            if _STATE["engaged"]:
+                try:  # c4-kernels: rows MAX_M+1..WIDE_MAX_M; a mismatch keeps only them on cuBLAS
+                    selftest(torch, triton, kernel, self, stock_forward, x.device, MAX_M + 1, WIDE_MAX_M)
+                    _STATE["wide"] = True
+                    print(
+                        "dsv41: indexer weights_proj GEMV wide rows self-check bit-exact (m=%d..%d)"
+                        % (MAX_M + 1, WIDE_MAX_M),
+                        flush=True,
+                    )
+                except Exception as exc:  # noqa: BLE001
+                    print(
+                        "dsv41: indexer weights_proj GEMV wide rows (m=%d..%d) stay on cuBLAS: %r"
+                        % (MAX_M + 1, WIDE_MAX_M, exc),
+                        flush=True,
+                    )
         if not usable(torch, x, self.weight, bias):
             return stock_forward(x)
         o = torch.empty((x.shape[0], self.weight.shape[0]), dtype=torch.bfloat16, device=x.device)
@@ -173,5 +196,5 @@ def install() -> str:
     DeepseekV4Indexer.__init__ = __init__
     return (
         f"DeepseekV4Indexer.weights_proj GEMV armed ({MIN_M}<=m<={MAX_M}, "
-        f"verify={_STATE['verify_left']})"
+        f"{MAX_M + 1}<=m<={WIDE_MAX_M} after its self-test, verify={_STATE['verify_left']})"
     )

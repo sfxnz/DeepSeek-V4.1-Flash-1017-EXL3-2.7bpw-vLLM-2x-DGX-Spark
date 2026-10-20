@@ -9,13 +9,14 @@
 #     --prefix-cache-retention-interval 4096. 500,000 because 4 x 500K fits the pool at B=8192 without
 #     preemption and 4 x 524,288 does not (CPU: 3.82 vs 3.99 GiB); B=4096 would allow 4 x 524,288. KV pool
 #     unchanged (3.875 GiB).
+#   - perf2 c4-kernels: IMAGE e15-kbits -> e16-rows (native decode MoE for 9..24 rows).
 # GPU evidence: results/2026-10-19-1017-perf2/ (boot I3 ran the kv-pack defaults with the later perf2 levers
 # off). Boot FINAL ran the full stack's defaults (the last of these PRs) with the 4-session resident soak.
 # Run with: SKIP_DOWNLOAD=1 AUDIT=strict results/2026-10-19-1017-c4/boot.sh
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 
-export IMAGE=dsv41-flash-exl3-sm121:e15-kbits
+export IMAGE=dsv41-flash-exl3-sm121:e16-rows
 export SNAPSHOT_SHA=2.7bpw-mcg-hq
 export KV_CACHE_MEMORY=4160749568
 export DSV41_KV_PACKED_GROUPS=1

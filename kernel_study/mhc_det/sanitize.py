@@ -2,7 +2,7 @@
 """Driver for compute-sanitizer over every det mHC kernel (serve image, spark2; see san.sh).
 
 From the review of 4f661a5 (reviewer's rv_sanitize.py / rv_init.py), plus the split kernels of
-DSV41_MHC_DET_OVERLAP. Every T in 1..16 (--init: T 1, 5, 8, 9, 16), K 20480 and 5120, carried and
+DSV41_MHC_DET_OVERLAP. Every T in 1..WIDE_T (--init: T 1, 5, 8, 9, 16, 17, 24), K 20480 and 5120, carried and
 one-hot pre-mix, PDL launches as shipped: det post; fused pre (det GEMM + mhc_det_norm); split
 pre (mhc_det_norm_li, then det GEMM + mhc_det_norm_coef forked to a side stream and joined).
 Random data: these checks are about memory, barriers and initialization, not numerics.
@@ -36,7 +36,7 @@ def main() -> int:
     eps = (1e-20, 1e-6, 1e-6, 2.0, 20)
     n = 0
     checksum = 0.0
-    for t in ((1, 5, 8, 9, 16) if init else range(1, 17)):
+    for t in ((1, 5, 8, 9, 16, 17, 24) if init else range(1, mhc_det.WIDE_T + 1)):  # c4-kernels: + t24's T
         residual = (torch.randn(t, 4, 5120, device="cuda", generator=g) * 3).bfloat16()
         x = (torch.randn(t, 5120, device="cuda", generator=g)).bfloat16()
         post_mix = (2 * torch.sigmoid(torch.randn(t, 4, 1, device="cuda", generator=g))).contiguous()

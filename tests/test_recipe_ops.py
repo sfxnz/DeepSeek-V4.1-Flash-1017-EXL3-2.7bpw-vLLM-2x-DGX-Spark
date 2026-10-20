@@ -71,7 +71,7 @@ def _load_tool(rel: str, name: str):
 HUB_MODEL = "sfxnz/DeepSeek-V4.1-Flash-1017-EXL3"
 HUB_REV = "2.7bpw-mcg-hq"
 SERVED_NAME = "deepseek-ai/DeepSeek-V4.1-Flash-1017"
-IMAGE_TAG = "dsv41-flash-exl3-sm121:e15-kbits"
+IMAGE_TAG = "dsv41-flash-exl3-sm121:e16-rows"
 PROMOTED_BOOT = "results/2026-10-19-1017-c4/boot.sh"  # 4-session defaults; 2026-10-18-1017/boot.sh is D1/r1 evidence
 RELEASE_KV_CACHE_MEMORY = "4160749568"  # 3.875 GiB, boot D1; the 4-session defaults keep it
 HUB_DIRNAME = "models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3"

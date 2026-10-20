@@ -17,6 +17,9 @@ import torch
 sys.path.insert(0, "/repo/docker/patch")
 
 SNAP = "/snaproot/snapshots/2.0bpw-mcg-lmhead-mxfp8"
+# c4-kernels: kernel_study/p2b_kbits/spark2.sh mounts the 1017 pack at /hf1017 instead (same mHC tensors)
+if not os.path.isdir(SNAP) and os.path.isdir("/hf1017/snapshots/2.7bpw-mcg-hq"):
+    SNAP = "/hf1017/snapshots/2.7bpw-mcg-hq"
 PEAK_GBPS = 250.0
 HIDDEN, HC = 5120, 4
 K_FULL = HIDDEN * HC

@@ -20,8 +20,9 @@ graph capture) also run the stock ops and compare raw bits; a mismatch
 disarms to the stock ops for good. Decode batches replay CUDA graphs, so eager
 decode calls may never come: the first eager call of the rewritten function
 (any size; the profile run's returns before the glue) also self-tests the
-kernel on synthetic routings (m 1..8, invalid ids, NaN/inf weights and x)
-against the stock ops, and prints LOG_ENGAGED or disarms.
+kernel on synthetic routings (m 1..8, 12, 16, 24: the native path's rows with
+widen_p2b_rows; invalid ids, NaN/inf weights and x) against the stock ops, and
+prints LOG_ENGAGED or disarms.
 
 The same lever drops one of the two conversions after p2b: the native path
 returns p2b's fp16 output as fp32 and apply_exl3_experts casts that to the
@@ -43,6 +44,7 @@ LOG_ENGAGED = "dsv41: moe prep fused self-check bit-exact"
 LOG_DISARMED = "dsv41: moe prep fused DISABLED ->"
 
 DEFAULT_VERIFY = 16
+SELFTEST_M = (*range(1, 9), 12, 16, 24)  # c4-kernels: the native path's rows up to widen_p2b_rows' 24
 IDS_BLOCK = 64
 X_BLOCK = 1024
 
@@ -231,7 +233,7 @@ class MoePrep:
             return
         try:
             g = torch.Generator(device=device).manual_seed(0)
-            for m in range(1, 9):
+            for m in SELFTEST_M:
                 ids = torch.randint(0, 384, (m, 6), device=device, generator=g)
                 ids.view(-1)[0] = -1
                 ids.view(-1)[-1] = 384
@@ -252,7 +254,7 @@ class MoePrep:
             _disarm(exc)
             return
         _STATE["engaged"] = True
-        print("dsv41: moe prep fused self-check bit-exact (synthetic, m=1..8)", flush=True)
+        print("dsv41: moe prep fused self-check bit-exact (synthetic, m=1..8,12,16,24)", flush=True)
 
     def __call__(self, ids, weights, x2d, n_exp, expert_map):
         if not self.usable(ids, weights, x2d, expert_map):

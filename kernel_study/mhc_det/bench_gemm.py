@@ -2,7 +2,7 @@
 """mHC prenorm GEMM: det kernels vs the stock DeepGEMM 16-split kernel (serve image, spark2).
 
 --mode check : bitwise equality vs stock on all 86 real fn matrices + the layer-0 broadcast fn,
-               T = 1..16, several input families; 1000-run determinism of det and of stock
+               T = 1..WIDE_T (24: c4-kernels' t24 included), several input families; 1000-run determinism of det and of stock
                (16 and 40 splits, GEMM and the full stock pre); CUDA-graph replay equality.
 --mode time  : CUDA-event timing, cold L2 (64 MB flush, activation re-written so it is
                L2-hot as in the serve) and warm, 200 iterations after 20 warmup, arms
@@ -46,7 +46,7 @@ def check(args) -> dict:
     for li, (name, fn) in enumerate(fns):
         k = fn.shape[1]
         kinds = kinds_all + (kinds_edge if li % 10 == 0 or k != C.K_FULL else [])
-        for t in range(1, 17):
+        for t in range(1, mhc_det.WIDE_T + 1):
             for kind in kinds:
                 x = C.make_x(kind, t, k, seed=1000 * li + 17 * t + len(kind), emb=emb)
                 ref_m = torch.empty(16, t, 24, device="cuda")
@@ -62,7 +62,7 @@ def check(args) -> dict:
                         fails.append({"fn": name, "T": t, "kind": kind, "arm": arm,
                                       "mixes": C.maxdiff(m, ref_m), "sqr": C.maxdiff(s, ref_s)})
     res["bitwise"] = {"comparisons": n_cmp, "failures": len(fails), "first_failures": fails[:10],
-                      "fns": len(fns), "T": "1..16", "kinds": kinds_all + kinds_edge}
+                      "fns": len(fns), "T": f"1..{mhc_det.WIDE_T}", "kinds": kinds_all + kinds_edge}
     print(json.dumps(res["bitwise"])[:2000], flush=True)
 
     # determinism: 1000 runs, every output compared bitwise with run 0 (on device, one sync)
@@ -223,8 +223,12 @@ def main() -> int:
     args = ap.parse_args()
     res = check(args) if args.mode == "check" else timing(args)
     res["device"] = torch.cuda.get_device_name()
+    import os
+
+    os.makedirs(OUT, exist_ok=True)
     with open(f"{OUT}/gemm_{args.mode}{args.tag}.json", "w") as fh:
         json.dump(res, fh, indent=1)
+    print(json.dumps({k: res[k] for k in res if k in ("bitwise", "determinism", "graph")})[:4000], flush=True)
     return 0
 
 

@@ -11,8 +11,9 @@ model:
 image:
   base: vllm/vllm-openai:deepseekv41-flash-0909
   digest: sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58
-  # K-bits kernel image: docker/Dockerfile (from scratch) or docker/Dockerfile.e15 (layered on canonical-e14).
-  local_tag: &image dsv41-flash-exl3-sm121:e15-kbits
+  # Kernel image e16-rows (K-bits + 9..24-row decode MoE): docker/Dockerfile (from scratch) or
+  # docker/Dockerfile.e16 (layered on e15-kbits, which docker/Dockerfile.e15 layers on canonical-e14).
+  local_tag: &image dsv41-flash-exl3-sm121:e16-rows
   build: docker/Dockerfile
 
 engine:

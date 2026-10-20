@@ -53,12 +53,12 @@ On both nodes, from this repo:
 
 ```bash
 docker pull vllm/vllm-openai:deepseekv41-flash-0909@sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58
-docker build -f docker/Dockerfile -t dsv41-flash-exl3-sm121:e15-kbits docker
+docker build -f docker/Dockerfile -t dsv41-flash-exl3-sm121:e16-rows docker
 ```
 
-If the image `dsv41-flash-exl3-sm121:e15-kbits` is already present, skip the pull and the build on that node. A node that already has `dsv41-flash-exl3-sm121:canonical-e14` can layer the K-bits stage on it instead of a full build: `docker build -f docker/Dockerfile.e15 -t dsv41-flash-exl3-sm121:e15-kbits docker`. `canonical-e14` alone cannot serve the mixed-K pack.
+If the image `dsv41-flash-exl3-sm121:e16-rows` is already present, skip the pull and the build on that node. A node that already has `dsv41-flash-exl3-sm121:e15-kbits` can layer the rows stage on it instead of a full build: `docker build -f docker/Dockerfile.e16 -t dsv41-flash-exl3-sm121:e16-rows docker` (`e15-kbits` itself is `docker/Dockerfile.e15` layered on `canonical-e14`). `canonical-e14` alone cannot serve the mixed-K pack. `e15-kbits` serves it, but runs decode batches of 9..24 rows (three or four sessions) on the slower exllamav3 `exl3_moe` path.
 
-Stock `vllm/vllm-openai` wheels do not load `DeepseekV41ForCausalLM`. The image starts from the pinned `deepseekv41-flash-0909` digest and overlays Engram-on-disk plus `vllm-exl3`. The K-bits stage (`docker/patch/widen_p2b_kbits.py`) builds the coop and dataflow MoE kernels at K 2/3/4 with K_gu ≠ K_d, reads `quantization_config.expert_bits` in the plugin, and runs mixed-K prefill on `exl3_moe_kmix`. Packs without `expert_bits` load as before. At boot each rank logs one `routed experts K_gu/K_d` line per layer, and the engagement audit checks them against the pack. The image carries a `dsv41.recipe.patches` label. `run.sh` warns, but still boots, when `IMAGE` lacks it.
+Stock `vllm/vllm-openai` wheels do not load `DeepseekV41ForCausalLM`. The image starts from the pinned `deepseekv41-flash-0909` digest and overlays Engram-on-disk plus `vllm-exl3`. The K-bits stage (`docker/patch/widen_p2b_kbits.py`) builds the coop and dataflow MoE kernels at K 2/3/4 with K_gu ≠ K_d, reads `quantization_config.expert_bits` in the plugin, and runs mixed-K prefill on `exl3_moe_kmix`. Packs without `expert_bits` load as before. The rows stage (`docker/patch/widen_p2b_rows.py`) adds the dataflow MoE kernel for 9..24 decode rows, which three or four sessions verify at DSpark k=3 (`DSV41_P2B_WIDE=0` keeps the 8-row contract). At boot each rank logs one `routed experts K_gu/K_d` line per layer, and the engagement audit checks them against the pack. The image carries a `dsv41.recipe.patches` label. `run.sh` warns, but still boots, when `IMAGE` lacks it.
 
 ## Run
 
@@ -190,7 +190,7 @@ Encyclopedic text loses the most. Rare-fact recall lives in the routed experts t
 <!-- BEGIN generated defaults from recipe.yaml — edit recipe.yaml and run kit/render.py -->
 | Setting | Value |
 |---|---|
-| Image | `dsv41-flash-exl3-sm121:e15-kbits` |
+| Image | `dsv41-flash-exl3-sm121:e16-rows` |
 | Model | `sfxnz/DeepSeek-V4.1-Flash-1017-EXL3` revision `2.7bpw-mcg-hq` |
 | `--tensor-parallel-size` / `--nnodes` | 2 / 2 |
 | `--max-model-len` | 500000 |
@@ -209,8 +209,8 @@ Encyclopedic text loses the most. Rare-fact recall lives in the routed experts t
 | Engram prefill read-ahead | `DSV41_ENGRAM_WILLNEED=1` (gv2 calls with >= 512 rows fadvise their pages before the preadv loop) |
 | lm_head | MXFP8 (`DSV41_LMHEAD_MXFP8=1`), needs an lm_head-MXFP8 pack (`2.7bpw-mcg-hq` is one: `tools/build_pack_1017.py` converts source shard 43); self-disarms on a bf16-head pack |
 | Weight-load stream feed | `DSV41_STREAM_FEED=1` |
-| Decode levers | `DSV41_WOA_PREPACK=1` (needs the `dsv41-flash-exl3-sm121:e15-kbits` o_proj stage) `DSV41_DSPARK_SPARSE_MARKOV=1` `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024` |
-| Round-3 kernel bundle | `DSV41_P2B_COOP=2` (coop dataflow MoE kernel, needs the `dsv41-flash-exl3-sm121:e15-kbits` build) `DSV41_DENSE_GEMV=1` `DSV41_MHC_DET_SPLITS=16` `DSV41_ENGRAM_NATIVE_STAGE=1` `DSV41_ENGRAM_EARLY_HASH=1` `DSV41_ATTN_T2R_DEDUP=1` `DSV41_SWA_META_FUSED=1` `DSV41_SWA_META_BATCHED=1` `DSV41_MOE_PREP_FUSED=1` `DSV41_CANDIDATE_MASK_BOUNDED=1` `DSV41_INDEXER_WP_GEMV=1` (set one to `0` to turn it off) |
+| Decode levers | `DSV41_WOA_PREPACK=1` (needs the `dsv41-flash-exl3-sm121:e16-rows` o_proj stage) `DSV41_DSPARK_SPARSE_MARKOV=1` `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024` |
+| Round-3 kernel bundle | `DSV41_P2B_COOP=2` (coop dataflow MoE kernel, needs the `dsv41-flash-exl3-sm121:e16-rows` build) `DSV41_DENSE_GEMV=1` `DSV41_MHC_DET_SPLITS=16` `DSV41_ENGRAM_NATIVE_STAGE=1` `DSV41_ENGRAM_EARLY_HASH=1` `DSV41_ATTN_T2R_DEDUP=1` `DSV41_SWA_META_FUSED=1` `DSV41_SWA_META_BATCHED=1` `DSV41_MOE_PREP_FUSED=1` `DSV41_CANDIDATE_MASK_BOUNDED=1` `DSV41_INDEXER_WP_GEMV=1` (set one to `0` to turn it off) |
 | NCCL AR-tail set | `NCCL_BUFFSIZE=1048576` `NCCL_LL128_BUFFSIZE=262144` `NCCL_PROTO=^LL128` `NCCL_MAX_NCHANNELS=8` |
 | Memory hygiene | `DSV41_DROP_PAGE_CACHE=1` `DSV41_INDEXER_PREFILL_FACTOR=1` `DSV41_INDEXER_EXPANDED_TABLE_LAZY=1` `DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192` `DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4` `VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=256` |
 | Tokenizers / tools / reasoning | `deepseek_v41` |
