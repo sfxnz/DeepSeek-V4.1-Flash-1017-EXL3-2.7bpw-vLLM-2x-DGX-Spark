@@ -10,6 +10,7 @@
 #     preemption and 4 x 524,288 does not (CPU: 3.82 vs 3.99 GiB); B=4096 would allow 4 x 524,288. KV pool
 #     unchanged (3.875 GiB).
 #   - perf2 c4-kernels: IMAGE e15-kbits -> e16-rows (native decode MoE for 9..24 rows).
+#   - perf2 prefill-moe: DSV41_MOE_PREFILL_TC=1 (tensor-core routed-MoE prefill kernel, prebuilt in e16-rows).
 # GPU evidence: results/2026-10-19-1017-perf2/ (boot I3 ran the kv-pack defaults with the later perf2 levers
 # off). Boot FINAL ran the full stack's defaults (the last of these PRs) with the 4-session resident soak.
 # Run with: SKIP_DOWNLOAD=1 AUDIT=strict results/2026-10-19-1017-c4/boot.sh
@@ -65,5 +66,7 @@ export DSV41_CANDIDATE_MASK_BOUNDED=1
 export DSV41_INDEXER_WP_GEMV=1
 # perf2 kv-pack.
 export DSV41_SWA_META_BATCHED=1
+# perf2 prefill-moe.
+export DSV41_MOE_PREFILL_TC=1
 
 exec ./run.sh

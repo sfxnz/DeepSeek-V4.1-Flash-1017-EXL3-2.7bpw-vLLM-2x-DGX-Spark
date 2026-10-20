@@ -43,6 +43,7 @@ PATCHES = {
     "engram_native_stage.py": {"DSV41_ENGRAM_NATIVE_STAGE": "1"},
     "engram_early_hash.py": {"DSV41_ENGRAM_NATIVE_STAGE": "1", "DSV41_ENGRAM_EARLY_HASH": "1"},
     "moe_prep_fused.py": {"DSV41_MOE_PREP_FUSED": "1"},
+    "moe_prefill_tc.py": {"DSV41_MOE_PREFILL_TC": "1"},  # opt-in lever; self-check line expected when on
     "candidate_mask_bounded.py": {"DSV41_CANDIDATE_MASK_BOUNDED": "1"},
     "indexer_wp_gemv.py": {"DSV41_INDEXER_WP_GEMV": "1"},
     "swa_meta_fused.py": {"DSV41_SWA_META_FUSED": "1"},

@@ -276,7 +276,7 @@ class RowsImageTests(unittest.TestCase):
         labels = [re.search(r'LABEL dsv41.recipe.patches="([^"]+)"', df).group(1).split(",") for df in (e15, e16)]
         want = list(labels[0])
         want.insert(want.index("kbits") + 1, "rows")
-        self.assertEqual(labels[1], want)
+        self.assertEqual(labels[1], want + ["moe_prefill_tc"])  # e16 also prebuilds the prefill MoE kernel
         self.assertIn("cp /opt/dsv41-patch/sitecustomize.py /usr/lib/python3.12/sitecustomize.py", e16)
         self.assertIn('LABEL dsv41.recipe.git_rev="$DSV41_GIT_REV" dsv41.recipe.tree_diff_sha256="$DSV41_TREE_DIFF"', e16)
         self.assertIn("--memory 24g", e16)
