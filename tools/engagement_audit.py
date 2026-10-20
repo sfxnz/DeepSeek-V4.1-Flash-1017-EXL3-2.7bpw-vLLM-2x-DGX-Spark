@@ -56,6 +56,11 @@ PATCHES = {
     "engram_wkv_tp.py": {"DSV41_ENGRAM_WKV_TP": "1"},
     "fix_o_proj_woa_fp8.py": {},  # baked into the image at build time
     "drop_page_cache.py": {"DSV41_DROP_PAGE_CACHE": "1"},
+    "prefill_empty_cache.py": {"DSV41_PREFILL_EMPTY_CACHE_TOKENS": "8192"},
+    "fat_scratch_shared.py": {"DSV41_FAT_SCRATCH_SHARED": "1"},
+    "model_loop_release.py": {"DSV41_MODEL_LOOP_RELEASE": "1"},  # sitecustomize rewrite, every process
+    "attn_out_defer.py": {"DSV41_ATTN_OUT_DEFER": "1"},
+    "engram_post_inplace.py": {"DSV41_ENGRAM_POST_INPLACE": "1"},
     "nccl_eager_twin.py": {"DSV41_NCCL_EAGER_TWIN": "1"},
     "pm_qos.py": {"DSV41_PM_QOS_US": "20"},  # any other value: disarm markers only
     "ar_l2_prefetch.py": {"DSV41_AR_L2_PREFETCH": "1"},
