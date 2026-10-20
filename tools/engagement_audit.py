@@ -67,6 +67,9 @@ PATCHES = {
     "mhc_det.py": {"DSV41_MHC_DET_SPLITS": "16"},
     "mhc_det_overlap.py": {"DSV41_MHC_DET_SPLITS": "16", "DSV41_MHC_DET_OVERLAP": "1"},
     "chat_encoder_1017.py": {},  # sitecustomize rewrite, every process
+    "decoder_replay.py": {"DSV41_DECODER_REPLAY_ROWS": "2670"},  # other W: disarm markers only
+    "prefix_end_fallback.py": {"DSV41_PREFIX_END_FALLBACK": "1"},
+    "prefix_reply_retain.py": {"DSV41_PREFIX_REPLY_RETAIN": "1"},
 }
 # K coverage of the p2b dataflow lever (see the module docstring).
 DATAFLOW_GATE = {"DSV41_P2B_COOP": "2"}
