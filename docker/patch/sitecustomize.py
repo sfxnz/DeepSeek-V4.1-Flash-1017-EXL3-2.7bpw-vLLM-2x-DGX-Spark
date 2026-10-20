@@ -85,6 +85,23 @@ def _sm120_rewrite(rel, fn_name):
     return body
 
 
+# DeepseekV4Model.forward stops keeping the previous layer's outputs alive through each layer call
+# and the last DSpark tap's recon to the end of the forward (docker/patch/model_loop_release.py;
+# bit-identical, -400 MiB at every layer's prefill peak at 8190 rows). DSV41_MODEL_LOOP_RELEASE=1
+# rewrites models/deepseek_v4_1/nvidia/model.py here, before anything imports vLLM.
+def _p_model_loop_release():
+    import model_loop_release
+
+    if not model_loop_release.enabled():
+        if model_loop_release.restore(_VLLM, _rewrite) == "rewritten":
+            print("dsv41: model loop release off: model.py restored to the image's loop", flush=True)
+        raise _PatchSkip("DSV41_MODEL_LOOP_RELEASE is not 1")
+    return model_loop_release.install(_VLLM, _rewrite)
+
+
+_patch("model_loop_release", _p_model_loop_release)
+
+
 # vLLM PR #60996 packed KV group sizing (docker/patch/kv_packed_groups.py): one layer-pattern repeat
 # per KV-cache group, 50 groups on 46,080-byte blocks instead of 18 on 138,240 (3.875 GiB at
 # max-model-len 500,000: 1,471,832 tokens instead of 964,308, CPU planner). DSV41_KV_PACKED_GROUPS=1 (run.sh
@@ -441,7 +458,8 @@ _patch("cudagraph_worker_stub", _p_cudagraph_worker_stub)
 #    allocates from MemFree and does not reclaim clean page cache
 #    (DSV41_DROP_PAGE_CACHE=1).
 # 2) torch.cuda.empty_cache() after long prefill chunks while MemAvailable is
-#    under the floor (DSV41_PREFILL_EMPTY_CACHE_TOKENS / _MEMAVAIL_GIB).
+#    under the floor (DSV41_PREFILL_EMPTY_CACHE_TOKENS / _MEMAVAIL_GIB), held
+#    while a prompt is in flight (DSV41_PREFILL_EMPTY_CACHE_HOLD / _FLOOR_GIB / _GROWTH_MIB).
 try:
     from drop_page_cache import install as _install_dpc
 
@@ -454,6 +472,57 @@ try:
     _install_pec()
 except Exception as _pec_err:
     print(f"dsv41: prefill-empty-cache install skipped: {_pec_err!r}", flush=True)
+
+
+# 3) One vllm_exl3 fat-expert scratch set for every row bucket and K instead of
+#    one per (bucket, K) held for the process life (docker/patch/fat_scratch_shared.py,
+#    DSV41_FAT_SCRATCH_SHARED=1; bit-identical). Needs the plugin imported above.
+def _p_fat_scratch_shared():
+    import fat_scratch_shared
+
+    if not fat_scratch_shared.enabled():
+        raise _PatchSkip("DSV41_FAT_SCRATCH_SHARED is not 1")
+    detail = fat_scratch_shared.install()
+    if detail.startswith("disabled"):
+        raise RuntimeError(detail)
+    return detail
+
+
+_patch("fat_scratch_shared", _p_fat_scratch_shared)
+
+
+# 4) Eager prefill steps (> 64 tokens): the attention output buffer is allocated after the indexer and
+#    the projection outputs are dropped before o_proj (docker/patch/attn_out_defer.py,
+#    DSV41_ATTN_OUT_DEFER=1); the Engram post-wkv kernel writes its output in place and optionally runs
+#    the wkv GEMM per row chunk (docker/patch/engram_post_inplace.py, DSV41_ENGRAM_POST_INPLACE=1,
+#    DSV41_ENGRAM_WKV_ROWS=N, self-checked bitwise on the first eager calls). Decode and graph capture
+#    keep the stock code.
+def _p_attn_out_defer():
+    import attn_out_defer
+
+    if not attn_out_defer.enabled():
+        raise _PatchSkip("DSV41_ATTN_OUT_DEFER is not 1")
+    detail = attn_out_defer.install()
+    if detail.startswith("disabled"):
+        raise RuntimeError(detail)
+    return detail
+
+
+_patch("attn_out_defer", _p_attn_out_defer)
+
+
+def _p_engram_post_inplace():
+    import engram_post_inplace
+
+    if not engram_post_inplace.enabled():
+        raise _PatchSkip("DSV41_ENGRAM_POST_INPLACE is not 1 and DSV41_ENGRAM_WKV_ROWS is 0")
+    detail = engram_post_inplace.install()
+    if detail.startswith("disabled"):
+        raise RuntimeError(detail)
+    return detail
+
+
+_patch("engram_post_inplace", _p_engram_post_inplace)
 
 # FlashInfer SM120 DSV4 decode is compiled only for page_block_size=64.
 # Upstream V4.1 hardcodes SWA pages to 32 (DeepGEMM paged-MQA).

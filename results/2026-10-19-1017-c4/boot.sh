@@ -14,6 +14,11 @@
 #   - perf2 engram-io: DSV41_ENGRAM_PREFILL_AHEAD=1 (Engram prefill read-ahead, _DONTNEED=1).
 #   - perf2 decoder-skip: DSV41_DECODER_REPLAY_ROWS=2670 (exact CED decoder replay), DSV41_PREFIX_END_FALLBACK=1,
 #     DSV41_PREFIX_REPLY_RETAIN=1.
+#   - perf2 prefill-mem: DSV41_PREFILL_EMPTY_CACHE_HOLD=1, DSV41_PREFILL_EMPTY_CACHE_FLOOR_GIB=3,
+#     DSV41_PREFILL_EMPTY_CACHE_COUNT_PCP=1 (MemAvailable + the kernel's per-CPU free page lists),
+#     DSV41_PREFILL_EMPTY_CACHE_GROWTH_MIB=150, DSV41_FAT_SCRATCH_SHARED=1, DSV41_MODEL_LOOP_RELEASE=1,
+#     DSV41_ATTN_OUT_DEFER=1, DSV41_ENGRAM_POST_INPLACE=1 (spark1 headroom with decoder replay off is not
+#     solved: flags.md).
 # GPU evidence: results/2026-10-19-1017-perf2/ (boot I3 ran the kv-pack defaults with the later perf2 levers
 # off). Boot FINAL ran the full stack's defaults (the last of these PRs) with the 4-session resident soak.
 # Run with: SKIP_DOWNLOAD=1 AUDIT=strict results/2026-10-19-1017-c4/boot.sh
@@ -42,6 +47,14 @@ export DSV41_INDEXER_PREFILL_FACTOR=1
 export DSV41_INDEXER_EXPANDED_TABLE_LAZY=1
 export DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192
 export DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4
+export DSV41_PREFILL_EMPTY_CACHE_HOLD=1
+export DSV41_PREFILL_EMPTY_CACHE_FLOOR_GIB=3
+export DSV41_PREFILL_EMPTY_CACHE_GROWTH_MIB=150
+export DSV41_PREFILL_EMPTY_CACHE_COUNT_PCP=1
+export DSV41_FAT_SCRATCH_SHARED=1
+export DSV41_MODEL_LOOP_RELEASE=1
+export DSV41_ATTN_OUT_DEFER=1
+export DSV41_ENGRAM_POST_INPLACE=1
 export VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=256
 
 export DSV41_ENGRAM_DISK=1

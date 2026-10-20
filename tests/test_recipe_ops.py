@@ -342,10 +342,18 @@ ENGAGED_LOG = "\n".join(
         "at first use, threads=8, cpus=any, verify=4, dontneed=1, above 64 tokens)",
         # decoder replay, DSV41_DECODER_REPLAY_ROWS=2670 (every worker's model state)
         "(Worker_TP0 pid=1) dsv41: decoder replay armed (W=2670 exact (exact from 2414), cut=20)",
+        # perf2 prefill-mem: empty-cache hold and the shared vllm_exl3 fat scratch (every process)
+        "[dsv41-prefill-empty-cache] armed (threshold 8192 tokens, release when MemAvailable < 4.0 GiB; "
+        "hold mid-prefill, release there below 3.0 GiB or on 150 MiB of pool growth the step peaks do not explain)",
+        "dsv41: fat scratch shared engaged (one scratch set of 2048 rows for every row bucket and K)",
         # prefix-end fallback, DSV41_PREFIX_END_FALLBACK=1 (every process)
         "(EngineCore pid=1) dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)",
         # prefix reply retention, DSV41_PREFIX_REPLY_RETAIN=1 (every process)
         "(EngineCore pid=1) dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)",
+        # perf2 prefill-mem round 2: prefill transient cuts (model.py rewrite in every process; runtime patches)
+        "dsv41: model loop release engaged (model.py rewritten)",
+        "dsv41: attention out defer engaged (o_padded after the indexer above 64 eager rows)",
+        "dsv41: engram post engaged (in place on, wkv rows full, above 64 eager rows, self-check 2 calls)",
     ]
 )
 
