@@ -12,7 +12,13 @@
  * only succeeds from the page cache. Rows that miss get one
  * posix_fadvise(WILLNEED) each (their reads are then in flight together) and
  * a blocking pread afterwards. Without RWF_NOWAIT support every row is a
- * plain blocking pread. The bytes read are the same either way.
+ * plain blocking pread. The bytes read are the same either way. Flag bit 1
+ * (the prefill read-ahead, engram_prefill_ahead.py) also drops, with
+ * posix_fadvise(DONTNEED) after the dequant, the pages this call brought into
+ * the page cache (rows whose RWF_NOWAIT read missed); pages that were cached
+ * before the call stay cached, except a cached page next to a missed row that
+ * straddles a page boundary (1 in 16 rows at the real 664-byte w offset).
+ * Without RWF_NOWAIT nothing is dropped.
  *
  * Numerics: lut[256] is torch's float8_e4m3fn -> float32 table, built by the
  * caller in the serving process; the product is one IEEE f32 multiply; the
@@ -96,10 +102,11 @@ static int read_nowait(int fd, uint8_t *buf, size_t len, int64_t off, int64_t *c
     return -errno;
 }
 
-static void willneed(int fd, int64_t off, int64_t len, int64_t *calls) {
+/* Whole 4 KiB pages: DONTNEED leaves partial pages cached, so the span is page aligned. */
+static void advise(int fd, int64_t off, int64_t len, int advice, int64_t *calls) {
     int64_t a = off & ~(int64_t)4095;
     int64_t b = (off + len + 4095) & ~(int64_t)4095;
-    posix_fadvise(fd, (off_t)a, (off_t)(b - a), POSIX_FADV_WILLNEED);
+    posix_fadvise(fd, (off_t)a, (off_t)(b - a), advice);
     *calls += 1;
 }
 
@@ -110,7 +117,7 @@ static void willneed(int fd, int64_t off, int64_t len, int64_t *calls) {
  *        padding (the stock path pads the ids with -1) and come out zero.
  * lut:   256 f32, torch float8_e4m3fn -> float32.
  * sw/ss: scratch, n_tok * local_heads * dim and * sb bytes.
- * flags: bit 0 = try RWF_NOWAIT first.
+ * flags: bit 0 = try RWF_NOWAIT first; bit 1 = DONTNEED the pages that missed.
  * stats: ENG_NSTATS int64 counters (overwritten).
  * Returns 0, or -errno (the caller then disarms and uses the stock path).
  */
@@ -127,11 +134,16 @@ int eng_gather_bf16(int w_fd, int64_t w_off, int s_fd, int64_t s_off, int dim, i
     const int qb = dim / sb;
     int nowait = flags & 1;
     uint8_t *state = NULL; /* 0 unowned, 1 read done, 2 read pending */
+    uint8_t *miss = NULL;  /* flag bit 1: bit 0 = the w page missed, bit 1 = the s page */
     int rc = 0;
     st[ENG_ST_ROWS] = rows;
     if (rows == 0) goto done;
     state = (uint8_t *)malloc((size_t)rows);
     if (!state) return -ENOMEM;
+    if ((flags & 2) && !(miss = (uint8_t *)calloc((size_t)rows, 1))) {
+        rc = -ENOMEM;
+        goto done;
+    }
 
     for (int64_t r = 0; r < rows; r++) {
         const int t = (int)(r / local_heads), h = (int)(r % local_heads);
@@ -145,6 +157,7 @@ int eng_gather_bf16(int w_fd, int64_t w_off, int s_fd, int64_t s_off, int dim, i
         if (!nowait) continue;
         int a = read_nowait(w_fd, sw + r * dim, (size_t)dim, w_off + id * dim, &st[ENG_ST_SYSCALLS]);
         int b = a < 0 ? a : read_nowait(s_fd, ss + r * sb, (size_t)sb, s_off + id * sb, &st[ENG_ST_SYSCALLS]);
+        if (miss) miss[r] = (uint8_t)((a == 0) | ((b == 0) << 1));
         if (a == 1 && b == 1) {
             state[r] = 1;
         } else if (a < 0 || b < 0) {
@@ -163,8 +176,8 @@ int eng_gather_bf16(int w_fd, int64_t w_off, int s_fd, int64_t s_off, int dim, i
             const int t = (int)(r / local_heads), h = (int)(r % local_heads);
             const int64_t id = (int64_t)hash[(int64_t)t * tok_stride + h];
             st[ENG_ST_MISS] += 1;
-            willneed(w_fd, w_off + id * dim, dim, &st[ENG_ST_SYSCALLS]);
-            willneed(s_fd, s_off + id * sb, sb, &st[ENG_ST_SYSCALLS]);
+            advise(w_fd, w_off + id * dim, dim, POSIX_FADV_WILLNEED, &st[ENG_ST_SYSCALLS]);
+            advise(s_fd, s_off + id * sb, sb, POSIX_FADV_WILLNEED, &st[ENG_ST_SYSCALLS]);
         }
     }
     for (int64_t r = 0; r < rows; r++) {
@@ -189,8 +202,16 @@ int eng_gather_bf16(int w_fd, int64_t w_off, int s_fd, int64_t s_off, int dim, i
             for (int j = 0; j < qb; j++) o[b * qb + j] = f32_to_bf16_rne(lut[w[b * qb + j]] * scale);
         }
     }
+    for (int64_t r = 0; miss && r < rows; r++) {
+        if (!miss[r]) continue;
+        const int t = (int)(r / local_heads), h = (int)(r % local_heads);
+        const int64_t id = (int64_t)hash[(int64_t)t * tok_stride + h];
+        if (miss[r] & 1) advise(w_fd, w_off + id * dim, dim, POSIX_FADV_DONTNEED, &st[ENG_ST_SYSCALLS]);
+        if (miss[r] & 2) advise(s_fd, s_off + id * sb, sb, POSIX_FADV_DONTNEED, &st[ENG_ST_SYSCALLS]);
+    }
 done:
     st[ENG_ST_NOWAIT] = nowait;
+    free(miss);
     free(state);
     if (stats) memcpy(stats, st, sizeof st);
     return rc;

@@ -12,6 +12,8 @@ disk_file_rows_owned), on the real tables, for:
   stock    the engram_stage_fast body (pool, 2 futures, fut.exception() waits)
   native   eng_gather_bf16 per table, called inline on the main thread
   native2  eng_gather_bf16 per table on the stage pool (GIL released inside)
+  poll     eng_gather_tables_bf16 (DSV41_ENGRAM_NATIVE_POLL): both tables in one
+           call, misses re-probed without sleeping for --poll-us, then blocking
 
 Arms alternate inside every iteration (ABC, BCA, CAB ...). Each call gathers a
 fresh set of ids (hash rows are new every step). Page-cache scenarios:
@@ -90,6 +92,7 @@ def main() -> int:
     ap.add_argument("--lead-us", type=float, default=500.0)
     ap.add_argument("--noise", action="store_true")
     ap.add_argument("--pin", action="store_true", help="pinned staging buffers (needs CUDA)")
+    ap.add_argument("--poll-us", type=int, default=2000, help="poll arm: DSV41_ENGRAM_NATIVE_POLL_US")
     args = ap.parse_args()
 
     from vllm.models.deepseek_v4_1.common import engram as eng
@@ -122,6 +125,11 @@ def main() -> int:
 
     with tempfile.TemporaryDirectory() as tmpd:
         lib = build(Path(tmpd))
+    sys.path.insert(0, str(SRC.parent))
+    import engram_native_poll as enp
+
+    with tempfile.TemporaryDirectory() as tmpd:
+        poll_lib = enp.load(enp.build(Path(tmpd)))
     lut = torch.arange(256, dtype=torch.int32).to(torch.uint8).view(torch.float8_e4m3fn).to(torch.float32).contiguous()
     rng = random.Random(1234 + args.rank)
 
@@ -172,7 +180,20 @@ def main() -> int:
             if exc is not None:
                 raise exc
 
-    arms = {"stock": stock, "native": native, "native2": native2}
+    poll_tables = []
+    for t in tables:
+        d = t.embed_tokens.disk
+        poll_tables.append((d.w_fd, d.w_off, d.s_fd, d.s_off, dim, sb, t.v0, t.v1, t.layer_hash_index))
+    poller = enp.NativePoll(poll_tables, nl, h1 - h0, part, dim, max_n, lut.data_ptr(),
+                            [b.data_ptr() for b in rows_host], env={"DSV41_ENGRAM_NATIVE_POLL_US": str(args.poll_us)},
+                            lib=poll_lib)
+    poll_misses = []
+
+    def poll(n):
+        st = poller.gather(hash_host.data_ptr(), n)
+        poll_misses.append(st[2])
+
+    arms = {"stock": stock, "native": native, "native2": native2, "poll": poll}
 
     def page_spans(ids):
         for ti, t in enumerate(tables):
@@ -214,11 +235,14 @@ def main() -> int:
         load_host(ids, n)
         stock(n)
         ref = [b[:n].clone() for b in rows_host]
-        native(n)
-        for r, b in zip(ref, rows_host):
-            if not torch.equal(r.view(torch.int16), b[:n].view(torch.int16)):
-                print(json.dumps({"error": "native != stock", "n": n}))
-                return 1
+        for name, fn in (("native", native), ("poll", poll)):
+            for b in rows_host:
+                b[:n].view(torch.int16).fill_(0x5A5A)
+            fn(n)
+            for r, b in zip(ref, rows_host):
+                if not torch.equal(r.view(torch.int16), b[:n].view(torch.int16)):
+                    print(json.dumps({"error": f"{name} != stock", "n": n}))
+                    return 1
 
     out = {"args": vars(args), "torch": torch.__version__, "results": {}}
     names = list(arms)
@@ -226,6 +250,7 @@ def main() -> int:
         for n in args.tokens:
             times = {a: [] for a in names}
             misses = []
+            poll_misses.clear()
             total = args.warmup + args.iters
             sets = [[make_ids(n) for _ in names] for _ in range(total)]
             if scen == "hot":
@@ -257,6 +282,8 @@ def main() -> int:
                             misses.append(sum(st[2] for st in stats))
             out["results"][f"{scen}_n{n}"] = {a: summarize(v) for a, v in times.items()}
             out["results"][f"{scen}_n{n}"]["native_miss_rows_mean"] = statistics.fmean(misses) if misses else 0
+            out["results"][f"{scen}_n{n}"]["poll_miss_rows_mean"] = (
+                statistics.fmean(poll_misses[-args.iters:]) if poll_misses else 0)
     stop.set()
     print(json.dumps(out))
     return 0

@@ -25,6 +25,9 @@ DSV41_ENGRAM_CENSUS_EVERY calls (rows, page-cache misses, syscalls, us).
 
 DSV41_ENGRAM_EARLY_HASH=1 additionally moves the hash + DtoH ahead of the
 attention metadata (engram_early_hash.py), so the gather overlaps GPU work.
+DSV41_ENGRAM_NATIVE_POLL=1 gathers all tables in one call that polls the
+page-cache misses instead of sleeping on them (engram_native_poll.py,
+engram_poll.c); any failure there falls back to the per-table path below.
 
 The wrapper re-implements the stock stage() around its gather, so it only
 arms on the stock stage: when DSV41_ENGRAM_CPU_HASH=1 or DSV41_ENGRAM_DEFER=1
@@ -205,6 +208,22 @@ class _NativeStager:
         self.stats = (ctypes.c_int64 * NSTATS)()
         self.census_every = census_every()
         self.acc = [0, 0, 0, 0, 0.0]  # calls, rows, misses, syscalls, seconds
+        self.poll = None  # DSV41_ENGRAM_NATIVE_POLL=1: all tables in one pass, misses polled
+        if (os.environ.get("DSV41_ENGRAM_NATIVE_POLL", "0") or "0") == "1":
+            import engram_native_poll
+
+            self.poll = engram_native_poll.attach(self)
+
+    def _gather_poll(self, stager, n: int):
+        """engram_native_poll stats, or None after disarming it (this step goes per table)."""
+        try:
+            return self.poll.gather(stager.hash_host.data_ptr(), n)
+        except Exception as exc:  # noqa: BLE001
+            import engram_native_poll
+
+            engram_native_poll.drop(exc)
+            self.poll = None
+            return None
 
     def gather(self, stager, n: int) -> None:
         """Fill rows_host[i][:n] for every table from hash_host[:n]."""
@@ -212,7 +231,10 @@ class _NativeStager:
         base = stager.hash_host.data_ptr()
         stride = self.nl * self.heads_valid
         rows = misses = calls = 0
-        for w_fd, w_off, s_fd, s_off, dim, sb, v0, v1, layer, buf in self.tables:
+        polled = self._gather_poll(stager, n) if self.poll is not None else None
+        if polled is not None:
+            rows, misses, calls = polled[0], polled[2], polled[3]
+        for w_fd, w_off, s_fd, s_off, dim, sb, v0, v1, layer, buf in (self.tables if polled is None else ()):
             rc = self.lib.eng_gather_bf16(
                 w_fd, w_off, s_fd, s_off, dim, sb, v0, v1,
                 base + layer * self.heads_valid * 4, stride, n, self.heads_valid,

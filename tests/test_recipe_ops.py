@@ -337,6 +337,9 @@ ENGAGED_LOG = "\n".join(
         # perf2 prefill-moe: tensor-core routed-MoE prefill kernel, DSV41_MOE_PREFILL_TC=1 (each worker)
         "(Worker_TP0 pid=1) dsv41: moe prefill tc self-check ok (synthetic 256 rows vs stock: max_rel 0.000474, "
         "rms_rel 0.000825; K_gu/K_d 2/2; min rows 9, verify 2)",
+        # perf2 engram-io: Engram prefill read-ahead, DSV41_ENGRAM_PREFILL_AHEAD=1 (each worker)
+        "(Worker_TP0 pid=1) dsv41: engram prefill ahead armed (2 tables, read-ahead 8192 tokens = 96.0 MiB pinned "
+        "at first use, threads=8, cpus=any, verify=4, dontneed=1, above 64 tokens)",
     ]
 )
 
