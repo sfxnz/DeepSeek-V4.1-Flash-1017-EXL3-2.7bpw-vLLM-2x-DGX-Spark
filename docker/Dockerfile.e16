@@ -1,4 +1,5 @@
-# e16-rows (perf2 c4-kernels): e15-kbits + widen_p2b_rows.py, the native decode MoE past 8 rows.
+# e16-rows (perf2 c4-kernels, prefill-moe): e15-kbits + widen_p2b_rows.py, the native decode MoE past 8 rows,
+# and the prebuilt tensor-core prefill MoE extension (moe_prefill_tc.py; docker/Dockerfile.e16p is gone).
 #   - vllm_exl3 / vllm_exl3_c rebuilt from the same vllm-exl3 pin and the same p2b chain as
 #     docker/Dockerfile.e15, plus widen_p2b_rows.py: the native decode MoE takes 1..24 rows, and
 #     m * top_k in (64, 144] (9..24 rows at top-6) launches p2b_coop_dfw_kernel<BITS, 1>, the dataflow
@@ -39,9 +40,18 @@ RUN apt-get update \
  && python3 -c "import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); assert b'p2b_coop_dfw_kernelILi2ELi1E' in so and b'p2b_coop_dfw_kernelILi23ELi1E' in so and b'p2b coop dataflow wide kernel engaged' in so; assert vllm_exl3_c.P2B_WIDE_ROWS == 24; assert hasattr(e, '_native_moe_wide_rows'); print('vllm_exl3 rows cuda ok')" \
  && rm -rf /opt/vllm-exl3 /var/lib/apt/lists/*
 
+# Tensor-core routed-MoE prefill kernel (perf2 prefill-moe, DSV41_MOE_PREFILL_TC=1): prebuilt into
+# /opt/dsv41-moe-prefill-tc/<source hash>/ against the installed ExLlamaV3 headers. The serve mounts docker/patch
+# over /opt/dsv41-patch: with the same kernel sources the prebuilt module loads; edited sources compile at first
+# use (~1-2 min per rank).
+RUN TORCH_CUDA_ARCH_LIST=12.1a MAX_JOBS=4 python3 /opt/dsv41-patch/moe_prefill_tc.py \
+      --prebuild /opt/dsv41-moe-prefill-tc --arch 121a \
+ && python3 -c "import sys, torch; sys.path.insert(0, '/opt/dsv41-patch'); import moe_prefill_tc as m; tag = m.source_tag(); mod = m._load_prebuilt(tag); assert mod is not None and int(mod.ABI) == 1 and hasattr(mod, 'moe_prefill_tc'), tag; print('moe_prefill_tc prebuilt ok', tag)" \
+ && find /opt/dsv41-moe-prefill-tc -name '*.o' -delete
+
 RUN cp /opt/dsv41-patch/sitecustomize.py /usr/lib/python3.12/sitecustomize.py \
  && python3 -m py_compile /usr/lib/python3.12/sitecustomize.py
-LABEL dsv41.recipe.patches="shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack"
+LABEL dsv41.recipe.patches="shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack,moe_prefill_tc"
 # Build provenance: git HEAD and sha256 of `git diff HEAD --binary -- docker` (uncommitted build context).
 ARG DSV41_GIT_REV=unknown
 ARG DSV41_TREE_DIFF=unknown

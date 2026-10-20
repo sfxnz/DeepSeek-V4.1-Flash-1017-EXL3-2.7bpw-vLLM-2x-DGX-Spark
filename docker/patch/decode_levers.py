@@ -60,6 +60,10 @@
   MXFP8, read whole on every rank) becomes a ColumnParallelLinear with the
   output gathered: each rank reads half the weight, bit-identical output,
   checked against the replicated GEMM after loading (engram_wkv_tp.py).
+- DSV41_MOE_PREFILL_TC=1: routed-MoE prefill calls (>= DSV41_MOE_PREFILL_TC_MIN_ROWS rows) on the
+  tensor-core kernels of moe_prefill_tc.cuh, each EXL3 trellis tile decoded once per row chunk;
+  self-checked and verified against the stock path (moe_prefill_tc.py). Not a decode lever: it is
+  hooked here so the mounted patch dir arms it like the others.
 
 Top-level imports are stdlib only, so importing this module cannot fail.
 """
@@ -283,6 +287,14 @@ def _install_engram_native_stage(env) -> None:
     print(f"dsv41: engram native stage: {engram_native_stage.install()}", flush=True)
 
 
+def _install_moe_prefill_tc(env) -> None:
+    if (env.get("DSV41_MOE_PREFILL_TC", "0") or "0") != "1":
+        return
+    import moe_prefill_tc
+
+    print(f"dsv41: moe prefill tc: {moe_prefill_tc.install()}", flush=True)
+
+
 def install(env=None) -> None:
     env = os.environ if env is None else env
     for name, step in (
@@ -300,6 +312,7 @@ def install(env=None) -> None:
         ("swa-meta-fused", _install_swa_meta_fused),
         ("swa-meta-batched", _install_swa_meta_batched),
         ("engram-wkv-tp", _install_engram_wkv_tp),
+        ("moe-prefill-tc", _install_moe_prefill_tc),
     ):
         try:
             step(env)

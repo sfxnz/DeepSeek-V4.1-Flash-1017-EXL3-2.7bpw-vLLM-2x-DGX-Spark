@@ -49,6 +49,15 @@ RUN apt-get update \
  && python3 -c "import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); assert b'p2b_coop_dfw_kernelILi2ELi1E' in so and b'p2b_coop_dfw_kernelILi23ELi1E' in so and b'p2b coop dataflow wide kernel engaged' in so; assert vllm_exl3_c.P2B_WIDE_ROWS == 24; assert hasattr(e, '_native_moe_wide_rows'); print('vllm_exl3 rows cuda ok')" \
  && rm -rf /opt/exllamav3 /opt/vllm-exl3 /var/lib/apt/lists/*
 
+# Tensor-core routed-MoE prefill kernel (perf2 prefill-moe, DSV41_MOE_PREFILL_TC=1): prebuilt into
+# /opt/dsv41-moe-prefill-tc/<source hash>/ against the installed ExLlamaV3 headers. The serve mounts docker/patch
+# over /opt/dsv41-patch: with the same kernel sources the prebuilt module loads; edited sources compile at first
+# use (~1-2 min per rank).
+RUN TORCH_CUDA_ARCH_LIST=12.1a MAX_JOBS=4 python3 /opt/dsv41-patch/moe_prefill_tc.py \
+      --prebuild /opt/dsv41-moe-prefill-tc --arch 121a \
+ && python3 -c "import sys, torch; sys.path.insert(0, '/opt/dsv41-patch'); import moe_prefill_tc as m; tag = m.source_tag(); mod = m._load_prebuilt(tag); assert mod is not None and int(mod.ABI) == 1 and hasattr(mod, 'moe_prefill_tc'), tag; print('moe_prefill_tc prebuilt ok', tag)" \
+ && find /opt/dsv41-moe-prefill-tc -name '*.o' -delete
+
 ENV VLLM_PLUGINS=vllm_exl3
 ENV VLLM_EXL3_MOE_KERNEL=native
 ENV DSV41_ENGRAM_DISK=1
@@ -66,7 +75,7 @@ RUN python3 /opt/dsv41-patch/widen_b12x_smalls.py /usr/local/lib/python3.12/dist
 # flashinfer cute-dsl path at equal acceptance (2026-09-19 A/B, two 5-run
 # batches per image). Revisit only with a proper kernel-level A/B.
 # run.sh warns when IMAGE lacks this label (e.g. a stale local :latest).
-LABEL dsv41.recipe.patches="shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack"
+LABEL dsv41.recipe.patches="shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack,moe_prefill_tc"
 # Build provenance (docker build --build-arg DSV41_GIT_REV=$(git rev-parse HEAD)
 #   --build-arg DSV41_TREE_DIFF=$(git diff HEAD --binary -- docker | sha256sum | cut -c1-64)).
 ARG DSV41_GIT_REV=unknown

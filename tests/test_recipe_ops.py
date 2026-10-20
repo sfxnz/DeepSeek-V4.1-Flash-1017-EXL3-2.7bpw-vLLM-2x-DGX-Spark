@@ -334,6 +334,9 @@ ENGAGED_LOG = "\n".join(
         # PR #60996 packed KV groups and the lazy indexer table (sitecustomize, every process)
         "dsv41: kv packed groups engaged (kv_cache_utils rewritten)",
         "dsv41: indexer expanded block table lazy engaged (indexer rewritten)",
+        # perf2 prefill-moe: tensor-core routed-MoE prefill kernel, DSV41_MOE_PREFILL_TC=1 (each worker)
+        "(Worker_TP0 pid=1) dsv41: moe prefill tc self-check ok (synthetic 256 rows vs stock: max_rel 0.000474, "
+        "rms_rel 0.000825; K_gu/K_d 2/2; min rows 9, verify 2)",
     ]
 )
 
