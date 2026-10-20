@@ -22,7 +22,7 @@ class ParseTests(unittest.TestCase):
         self.assertIsNone(pq.requested_us({pq.ENV: ""}))
         self.assertIsNone(pq.requested_us({pq.ENV: "  "}))
         self.assertEqual(pq.requested_us({pq.ENV: "20"}), 20)
-        self.assertEqual(pq.requested_us({pq.ENV: "0"}), 0)
+        self.assertIsNone(pq.requested_us({pq.ENV: "0"}))  # the repo-wide off value
         for bad in ("-1", "2001", "fast"):
             with self.assertRaises(ValueError):
                 pq.requested_us({pq.ENV: bad})
@@ -78,18 +78,19 @@ class WiringTests(unittest.TestCase):
         self.assertIn('_patch("pm_qos", _p_pm_qos)', site)
         self.assertIn("pm_qos.install()", site)
 
-    def test_default_off_in_run_sh(self):
+    def test_default_on_in_run_sh(self):
         run = (ROOT / "run.sh").read_text()
-        self.assertIn("  DSV41_PM_QOS_US=\n", run)
+        self.assertIn("  DSV41_PM_QOS_US=\n", run)  # FORWARD_ENVS: empty takes the recipe.yaml default
+        self.assertIn('DSV41_PM_QOS_US="${DSV41_PM_QOS_US:-20}"', run)
 
-    def test_device_passed_to_both_ranks_only_when_set(self):
+    def test_device_passed_to_both_ranks_unless_off(self):
         import run_sh_harness as h
 
-        res = h.dry_run()
+        res = h.dry_run(DSV41_PM_QOS_US="0")
         self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
         for role in ("head", "worker"):
             self.assertNotIn("/dev/cpu_dma_latency", res[role], role)
-        res = h.dry_run(DSV41_PM_QOS_US="20")
+        res = h.dry_run()
         self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
         for role in ("head", "worker"):
             argv = res[role]

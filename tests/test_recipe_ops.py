@@ -358,6 +358,12 @@ ENGAGED_LOG = "\n".join(
         # perf2 dspark-adaptive: DSV41_DSPARK_ADAPTIVE=1 at k=5, the per-batch tiers' largest k (each worker)
         "(Worker_TP0 pid=1) dsv41: dspark adaptive verify armed (tau=0.15 verify_max=5 k=5, masking; "
         "masked rows reuse their anchor's experts in 40 MoE layers)",
+        # perf2 decode levers: round-35 KP add-ons on since perf2 (every process / each worker)
+        "dsv41: pm qos engaged: /dev/cpu_dma_latency <= 20 us, held by pid 1",
+        "(Worker_TP0 pid=1) dsv41: engram wkv column-parallel self-check bit-exact (language_model.model.layers.1.engram.wkv: "
+        "12800 of 25600 rows per rank, M 1/4/8/64)",
+        "(Worker_TP0 pid=1) dsv41: mhc det overlap engaged: target: layer_input right after the post; prenorm GEMM + "
+        "sinkhorn forked under the next all-reduce; split path bitwise equal to stock (fork and in place, T 1/4/16/24)",
     ]
 )
 

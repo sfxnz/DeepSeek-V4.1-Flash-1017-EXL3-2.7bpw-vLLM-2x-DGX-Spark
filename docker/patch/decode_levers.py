@@ -72,6 +72,16 @@
   confidence-head survival is >= DSV41_DSPARK_TAU (cap DSV41_DSPARK_VERIFY_MAX)
   at unchanged shapes; the other verify rows reuse their anchor's experts with
   weight 0 and their drafts are forced rejected (dspark_adaptive.py).
+- DSV41_ROUTER_GEMV=1: the bf16 x bf16 -> fp32 torch.mm of the router gates
+  (target [384, 5120], DSpark draft [128, 5120]) and of the compressor
+  kv_score ([1024 | 512, 5120]) at M <= 24 as one Triton kernel that
+  reproduces cuBLAS's per-M split-K slices and slice-sum order, bitwise; the
+  per-M split table comes from a self-test against cuBLAS (router_gemv.py).
+- DSV41_MAIN_PROJ_OVERLAP=1: the DSpark combine_hidden_states (cat of the
+  target aux hidden states, main_proj, main_norm) runs on a side stream from
+  the target's logits all-gather on, beside the all-gather and the sampler,
+  and propose() takes its result; same ops, bitwise, first steps verified
+  (main_proj_overlap.py).
 
 Top-level imports are stdlib only, so importing this module cannot fail.
 """
@@ -287,6 +297,22 @@ def _install_engram_wkv_tp(env) -> None:
     print(f"dsv41: engram wkv column-parallel: {engram_wkv_tp.install()}", flush=True)
 
 
+def _install_router_gemv(env) -> None:
+    if (env.get("DSV41_ROUTER_GEMV", "0") or "0") != "1":
+        return
+    import router_gemv
+
+    print(f"dsv41: router gemv: {router_gemv.install()}", flush=True)
+
+
+def _install_main_proj_overlap(env) -> None:
+    if (env.get("DSV41_MAIN_PROJ_OVERLAP", "0") or "0") != "1":
+        return
+    import main_proj_overlap
+
+    print(f"dsv41: main_proj overlap: {main_proj_overlap.install()}", flush=True)
+
+
 def _install_engram_native_stage(env) -> None:
     if (env.get("DSV41_ENGRAM_NATIVE_STAGE", "0") or "0") != "1":
         return
@@ -339,6 +365,8 @@ def install(env=None) -> None:
         ("engram-wkv-tp", _install_engram_wkv_tp),
         ("moe-prefill-tc", _install_moe_prefill_tc),
         ("dspark-adaptive", _install_dspark_adaptive),
+        ("router-gemv", _install_router_gemv),
+        ("main-proj-overlap", _install_main_proj_overlap),
     ):
         try:
             step(env)

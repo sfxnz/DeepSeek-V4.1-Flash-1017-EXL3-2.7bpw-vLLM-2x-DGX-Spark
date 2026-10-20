@@ -84,8 +84,10 @@ serve:
     DSV41_P2B_COOP: 2
     DSV41_DENSE_GEMV: 1
     DSV41_MHC_DET_SPLITS: 16
+    DSV41_MHC_DET_OVERLAP: 1
     DSV41_ENGRAM_NATIVE_STAGE: 1
     DSV41_ENGRAM_EARLY_HASH: 1
+    DSV41_ENGRAM_WKV_TP: 1
     DSV41_ATTN_T2R_DEDUP: 1
     DSV41_SWA_META_FUSED: 1
     DSV41_SWA_META_BATCHED: 1
@@ -100,6 +102,7 @@ serve:
     NCCL_LL128_BUFFSIZE: 262144
     NCCL_PROTO: ^LL128
     NCCL_MAX_NCHANNELS: 8
+    DSV41_PM_QOS_US: 20
     DSV41_DROP_PAGE_CACHE: 1
     DSV41_INDEXER_PREFILL_FACTOR: 1
     DSV41_INDEXER_EXPANDED_TABLE_LAZY: 1
@@ -138,6 +141,7 @@ readme:
     - Weight-load stream feed: "`DSV41_STREAM_FEED={DSV41_STREAM_FEED}`"
     - Decode levers: "`DSV41_WOA_PREPACK={DSV41_WOA_PREPACK}` (needs the `{IMAGE}` o_proj stage) `DSV41_DSPARK_SPARSE_MARKOV={DSV41_DSPARK_SPARSE_MARKOV}` `DSV41_DSPARK_SPARSE_MARKOV_TOPK={DSV41_DSPARK_SPARSE_MARKOV_TOPK}`"
     - Round-3 kernel bundle: "`DSV41_P2B_COOP={DSV41_P2B_COOP}` (coop dataflow MoE kernel, needs the `{IMAGE}` build) `DSV41_DENSE_GEMV={DSV41_DENSE_GEMV}` `DSV41_MHC_DET_SPLITS={DSV41_MHC_DET_SPLITS}` `DSV41_ENGRAM_NATIVE_STAGE={DSV41_ENGRAM_NATIVE_STAGE}` `DSV41_ENGRAM_EARLY_HASH={DSV41_ENGRAM_EARLY_HASH}` `DSV41_ATTN_T2R_DEDUP={DSV41_ATTN_T2R_DEDUP}` `DSV41_SWA_META_FUSED={DSV41_SWA_META_FUSED}` `DSV41_SWA_META_BATCHED={DSV41_SWA_META_BATCHED}` `DSV41_MOE_PREP_FUSED={DSV41_MOE_PREP_FUSED}` `DSV41_CANDIDATE_MASK_BOUNDED={DSV41_CANDIDATE_MASK_BOUNDED}` `DSV41_INDEXER_WP_GEMV={DSV41_INDEXER_WP_GEMV}` (set one to `0` to turn it off)"
+    - KP add-ons (round 35, on since perf2): "`DSV41_PM_QOS_US={DSV41_PM_QOS_US}` (a CPU wake-up latency request through `/dev/cpu_dma_latency`, host-wide while the serve runs) `DSV41_ENGRAM_WKV_TP={DSV41_ENGRAM_WKV_TP}` (Engram wkv column-parallel, half the rows per rank) `DSV41_MHC_DET_OVERLAP={DSV41_MHC_DET_OVERLAP}` (det mHC prenorm GEMM + sinkhorn under the next all-reduce); `0` turns one off"
     - Prefill MoE: "`DSV41_MOE_PREFILL_TC={DSV41_MOE_PREFILL_TC}` (tensor-core EXL3 routed-MoE kernel for calls of >= 9 rows, prebuilt in `{IMAGE}`; self-checked and verified against the stock path at boot; `0` = stock `exl3_moe` / fat path)"
     - Decoder replay (CED prefill skip): "`DSV41_DECODER_REPLAY_ROWS={DSV41_DECODER_REPLAY_ROWS}`: in eager prefill steps layer 20 writes its KV for every row and layers 20-39 run on kept rows only: W >= 2414 keeps each prompt's last W rows (exact), 128 keeps each chunk's last 128 rows (the upstream/DeepSeek approximation), 0 is off; SWA blocks of skipped rows stay out of the prefix cache, so a later prompt reuses a trimmed prompt's KV only if it diverges no earlier than 64 tokens before the prompt's last 128-token boundary (with the prefix-end fallback), or at a shared-prefix junction: the second request sharing a system prompt keeps up to 2542 more decoder rows ending there and the third hits it, as with stock e15"
     - Prefix-end fallback: "`DSV41_PREFIX_END_FALLBACK={DSV41_PREFIX_END_FALLBACK}`: SWA groups also keep the prefix-cache tail one 128-token hit unit below each prompt end (and shared-prefix junction), so every resend or follow-up that diverges at the prompt end hits within 192 tokens; e15 alone misses for about half of all prompt lengths (0 = stock)"
