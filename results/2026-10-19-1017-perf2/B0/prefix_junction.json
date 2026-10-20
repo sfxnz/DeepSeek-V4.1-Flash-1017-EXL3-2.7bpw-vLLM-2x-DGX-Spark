@@ -1,0 +1,66 @@
+[
+ {
+  "case": "e_shared_16k_prefix_new_tail",
+  "utc": "2026-10-19T17:41:57Z",
+  "prompt_tokens": 32184,
+  "completion_tokens": 28,
+  "ttft_s": 45.11,
+  "wall_s": 45.726,
+  "prefill_tok_s_from_ttft": 713.5,
+  "prefix_queries_delta": 32184.0,
+  "prefix_hits_delta": 0.0,
+  "hit_frac": 0.0,
+  "finish_reason": "stop",
+  "metrics_before": {
+   "vllm:prefix_cache_queries_total": 152383.0,
+   "vllm:prefix_cache_hits_total": 97536.0
+  },
+  "metrics_after": {
+   "vllm:prefix_cache_queries_total": 184567.0,
+   "vllm:prefix_cache_hits_total": 97536.0
+  },
+  "other_prefix_metrics_after": {
+   "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792431307.7867632,
+   "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792431307.7879632,
+   "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792431307.7893646,
+   "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792431307.7923634,
+   "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 97536.0,
+   "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792431307.8033633
+  },
+  "text": "The three invented words that appear most often are **keaveadrar**, **leagloust**, and **glinaplen**."
+ },
+ {
+  "case": "f_identical_to_e",
+  "utc": "2026-10-19T17:42:44Z",
+  "prompt_tokens": 32184,
+  "completion_tokens": 34,
+  "ttft_s": 24.969,
+  "wall_s": 25.978,
+  "prefill_tok_s_from_ttft": 1288.9,
+  "prefix_queries_delta": 32184.0,
+  "prefix_hits_delta": 16384.0,
+  "hit_frac": 0.5091,
+  "finish_reason": "stop",
+  "metrics_before": {
+   "vllm:prefix_cache_queries_total": 184567.0,
+   "vllm:prefix_cache_hits_total": 97536.0
+  },
+  "metrics_after": {
+   "vllm:prefix_cache_queries_total": 216751.0,
+   "vllm:prefix_cache_hits_total": 113920.0
+  },
+  "other_prefix_metrics_after": {
+   "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792431307.7867632,
+   "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792431307.7879632,
+   "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792431307.7893646,
+   "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792431307.7923634,
+   "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 113920.0,
+   "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792431307.8033633
+  },
+  "text": "The three invented words that appear most often are:\n\n1. **keaveadrar**\n2. **leagloust**\n3. **glinaplen**"
+ }
+]

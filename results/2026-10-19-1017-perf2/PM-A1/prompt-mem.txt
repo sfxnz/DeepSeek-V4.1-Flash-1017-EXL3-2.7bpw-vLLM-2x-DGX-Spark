@@ -1,0 +1,12 @@
+## head.live.log rank 0: 5 prompts >= 8000 tokens
+   1 tok=8117 steps=1 first=5.17 first3min=5.17 min=5.17@1 wall=3.9 start_utc=02:23:49 spark1_start_min_MiB=5255 spark1_prompt_min_MiB=5273 spark2_start_min_MiB=7673 spark2_prompt_min_MiB=7673 actions={'-': 1}
+   2 tok=32561 steps=4 first=3.53 first3min=3.53 min=3.53@1 wall=17.22 start_utc=02:23:55 spark1_start_min_MiB=3520 spark1_prompt_min_MiB=2233 spark2_start_min_MiB=7434 spark2_prompt_min_MiB=7434 actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   3 tok=16188 steps=2 first=3.39 first3min=3.39 min=3.39@1 wall=8.79 start_utc=02:24:18 spark1_start_min_MiB=3433 spark1_prompt_min_MiB=3433 spark2_start_min_MiB=7722 spark2_prompt_min_MiB=7722 actions={'-': 1, 'release': 1}
+   4 tok=16297 steps=2 first=4.76 first3min=4.76 min=4.76@1 wall=9.03 start_utc=02:24:29 spark1_start_min_MiB=4312 spark1_prompt_min_MiB=4312 spark2_start_min_MiB=7719 spark2_prompt_min_MiB=7719 actions={'-': 1, 'keep': 1}
+   5 tok=8188(open) steps=1 first=1.57 first3min=1.57 min=1.57@1 wall=3.63 start_utc=02:24:40 spark1_start_min_MiB=1182 spark1_prompt_min_MiB=1589 spark2_start_min_MiB=7716 spark2_prompt_min_MiB=7716 actions={'-': 1}
+## worker.live.log rank 1: 5 prompts >= 8000 tokens
+   1 tok=8117 steps=1 first=7.48 first3min=7.48 min=7.48@1 wall=3.9 start_utc=02:23:49 spark1_start_min_MiB=5255 spark1_prompt_min_MiB=5273 spark2_start_min_MiB=7673 spark2_prompt_min_MiB=7673 actions={'-': 1}
+   2 tok=32561 steps=4 first=7.34 first3min=7.31 min=7.31@2 wall=17.28 start_utc=02:23:55 spark1_start_min_MiB=3520 spark1_prompt_min_MiB=2233 spark2_start_min_MiB=7434 spark2_prompt_min_MiB=7434 actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   3 tok=16188 steps=2 first=7.55 first3min=7.55 min=7.55@1 wall=8.78 start_utc=02:24:18 spark1_start_min_MiB=3433 spark1_prompt_min_MiB=3433 spark2_start_min_MiB=7722 spark2_prompt_min_MiB=7722 actions={'-': 1, 'keep': 1}
+   4 tok=16297 steps=2 first=7.56 first3min=7.56 min=7.56@1 wall=8.87 start_utc=02:24:29 spark1_start_min_MiB=4312 spark1_prompt_min_MiB=4312 spark2_start_min_MiB=7719 spark2_prompt_min_MiB=7719 actions={'-': 1, 'keep': 1}
+   5 tok=16376(open) steps=2 first=7.57 first3min=7.57 min=7.57@1 wall=8.46 start_utc=02:24:40 spark1_start_min_MiB=1182 spark1_prompt_min_MiB=1182 spark2_start_min_MiB=7716 spark2_prompt_min_MiB=7716 actions={'-': 1, 'hold': 1}

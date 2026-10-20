@@ -1,0 +1,18 @@
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PROBE/head.log: 0 step lines
+run 1: prompt 32461 ttft 23.60 s pp 1375.6 tok/s; 0 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 
+   growth MiB:  
+   peak MiB:    
+   grown MiB:   
+   MemAvail GiB:  actions: 
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PROBE/worker.log: 17 step lines
+run 1: prompt 32461 ttft 23.60 s pp 1375.6 tok/s; 4 chunks, reserved growth 726 MiB, releases 1 ['grown']
+   intervals s: 6.48 7.68 5.08 4.84
+   growth MiB:  +0 +0 +726 +0
+   peak MiB:    1255 1255 1255 1227
+   grown MiB:   +414 +414 +0 +0
+   MemAvail GiB:6.79 6.75 6.95 6.99  actions: - grown hold keep
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PROBE/nvrm-spark1.txt: run 1 1
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PROBE/nvrm-spark2.txt: run 1 0
+## spark1 run 1: min MemFree 1975 MemAvailable 1390 MiB, max swap 9107 MiB; allocstall_normal +24 allocstall_movable +0 pgscan_direct +156 pgsteal_direct +146 compact_stall +32 compact_fail +32 pswpin +4595 pswpout +7056
+## spark2 run 1: min MemFree 6507 MemAvailable 6914 MiB, max swap 6046 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +133 pswpout +0

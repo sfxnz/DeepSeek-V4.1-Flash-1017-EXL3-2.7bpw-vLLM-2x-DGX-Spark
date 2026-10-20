@@ -1,0 +1,20 @@
+2026-10-20T01:44:11Z memsample pid 328157, procmem + live logs on both nodes
+2026-10-20T01:44:11Z cells done (sample)
+2026-10-20T01:44:12Z smoke start
+2026-10-20T01:44:13Z smoke end
+2026-10-20T01:44:13Z c1short start
+2026-10-20T01:44:35Z c1short end
+2026-10-20T01:44:35Z STD done (smoke c1short)
+2026-10-20T01:44:35Z lail5 start
+2026-10-20T01:45:57Z lail5 end
+2026-10-20T01:45:57Z c4distinct start
+2026-10-20T01:47:02Z c4distinct end
+2026-10-20T01:47:02Z micro start
+2026-10-20T01:50:08Z micro end
+2026-10-20T01:50:08Z STD done (c4distinct micro)
+2026-10-20T01:50:08Z gen102k start
+2026-10-20T01:50:08Z gen102k end
+2026-10-20T01:50:08Z logs
+2026-10-20T01:50:10Z SERVE DOWN after logs
+2026-10-20T01:50:10Z cells done (gen102k logs)
+2026-10-20T01:50:10Z PM-B4K chain done

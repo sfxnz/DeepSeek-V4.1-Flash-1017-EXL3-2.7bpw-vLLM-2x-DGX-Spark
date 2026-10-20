@@ -1,0 +1,31 @@
+# cmd: benches/micro.sh --contexts 4096 16384 65536 --runs 2
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration4 (HEAD 746ed86) host: spark1 start: 2026-10-20T01:47:02Z
+ctx=4096 pp_warm run=1 doc=4020 ttft=2.30s rate=1749.4 tok/s acc=-
+ctx=4096 pp_warm run=2 doc=4093 ttft=2.73s rate=1502.5 tok/s acc=-
+ctx=4096 pp_novel run=1 doc=4030 ttft=2.18s rate=1854.3 tok/s acc=-
+ctx=4096 pp_novel run=2 doc=4067 ttft=2.18s rate=1866.1 tok/s acc=-
+ctx=4096 tg run=1 doc=4022 ttft=2.29s rate=37.8 tok/s acc=2.0625
+ctx=4096 tg run=2 doc=4031 ttft=2.28s rate=43.5 tok/s acc=2.6153846153846154
+ctx=16384 pp_warm run=1 doc=16340 ttft=6.33s rate=2582.9 tok/s acc=-
+ctx=16384 pp_warm run=2 doc=16343 ttft=6.23s rate=2625.1 tok/s acc=-
+ctx=16384 pp_novel run=1 doc=16211 ttft=6.27s rate=2586.1 tok/s acc=-
+ctx=16384 pp_novel run=2 doc=16210 ttft=5.92s rate=2737.1 tok/s acc=-
+ctx=16384 tg run=1 doc=16306 ttft=6.21s rate=44.3 tok/s acc=2.769230769230769
+ctx=16384 tg run=2 doc=16080 ttft=6.15s rate=53.1 tok/s acc=2.909090909090909
+ctx=65536 pp_warm run=1 doc=65491 ttft=22.95s rate=2853.5 tok/s acc=-
+ctx=65536 pp_warm run=2 doc=64224 ttft=22.23s rate=2889.3 tok/s acc=-
+ctx=65536 pp_novel run=1 doc=65493 ttft=24.84s rate=2636.9 tok/s acc=-
+  cache-hit suspected (rate=3017); fresh doc, attempt 2
+  cache-hit suspected (rate=3094); fresh doc, attempt 3
+Traceback (most recent call last):
+  File "/home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration4/benches/micro.py", line 176, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration4/benches/micro.py", line 148, in main
+    res = stream_once(args.url, args.model, doc, 1,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration4/benches/micro.py", line 90, in stream_once
+    raise RuntimeError("no content token in stream")
+RuntimeError: no content token in stream
+rc=1
+# end: 2026-10-20T01:50:08Z

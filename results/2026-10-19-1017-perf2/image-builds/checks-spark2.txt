@@ -1,0 +1,9 @@
+## spark2 image checks 2026-10-20T04:08:39Z
+### dsv41-flash-exl3-sm121:e16-rows sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a
+patches=shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack,moe_prefill_tc git_rev=156a06a0d36291f0688781cc02de59e84b8e1c95 tree_diff=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+ls /opt/dsv41-moe-prefill-tc/: 022a960b5338 
+### dsv41-flash-exl3-sm121:e16-rows-d365c92 sha256:a7c4300af02c8969de2669c742f9619658a89cf25afe2823ef25af2a8ce8d3ac
+patches=shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack git_rev=d365c92687c4ead1a5b763be96718e8a74f52800 tree_diff=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+ls /opt/dsv41-moe-prefill-tc/: ls: cannot access '/opt/dsv41-moe-prefill-tc/': No such file or directory 
+/dev/nvme0n1p2  3.7T  3.5T   78G  98% /
+e16-rows IDs: spark1 sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a spark2 sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a EQUAL

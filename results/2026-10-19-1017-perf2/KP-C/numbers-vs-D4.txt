@@ -1,0 +1,38 @@
+# KP-C vs B0 (D4)
+
+## decode (agg tok/s | per-stream | ms/step | acc | TTFT p50)
+- code c=1: -   [B0 68.0 | 68.0 | 60.1 | 4.04 | 0.215]
+- lail_prose c=1: 40.4 | 40.4 | 49.8 | 2.03 | 0.259   [B0 38.9 | 38.9 | 52.0 | 2.02 | 0.256]  (+3.6% agg)
+- prose c=1: 51.6 | 51.6 | 52.0 | 2.69 | 0.200   [B0 49.6 | 49.6 | 54.5 | 2.71 | 0.199]  (+4.0% agg)
+- prose c=2: -   [B0 76.0 | 38.3 | 70.4 | 2.71 | 0.218]
+- prose_distinct c=4: 98.5 | 27.1 | 89.9 | 2.45 | 0.301   [B0 94.8 | 25.6 | 95.6 | 2.42 | 0.290]  (+3.9% agg)
+- structured c=1: 103.7 | 103.7 | 56.7 | 5.88 | 0.181   [B0 100.5 | 100.6 | 58.5 | 5.88 | 0.186]  (+3.1% agg)
+- structured c=2: -   [B0 181.1 | 90.6 | 64.9 | 5.88 | 0.200]
+- structured_distinct c=4: 201.3 | 50.7 | 78.7 | 3.99 | 0.382   [B0 198.1 | 49.9 | 80.1 | 3.99 | 0.381]  (+1.6% agg)
+
+## prefill micro (median tok/s; runs)
+- 4096 pp_novel: -    [B0 1819.7]
+- 4096 pp_warm: -    [B0 1729.6]
+- 4096 tg: -    [B0 41.2]
+- 16384 pp_novel: -    [B0 2564.1]
+- 16384 pp_warm: -    [B0 2375.9]
+- 16384 tg: -    [B0 46.2]
+- 65536 pp_novel: -    [B0 2955.6]
+- 65536 pp_warm: -    [B0 2842.7]
+- 65536 tg: -    [B0 38.6]
+
+## prefix cache (prompt, TTFT s, hits)
+
+## quality --quick
+- {"mode": "quick", "pass": true, "elapsed_s": 184.0, "nll": 0.144193, "decode_median_dlp": 0.00056, "decode_gen_nll": 0.19329, "tools_exact": 1.0, "tools_json": 1.0, "tools_nocall": 1.0, "needle": 6, "selfcons_identical": 6, "selfcons_aa_hazard": 0.01176, "selfcons_golden_hazard": 0.01324, "c2": true, "vision": true}
+
+## spec decode acceptance per draft position (accepted/drafts over the cell)
+- c4-: drafts 2639, per-pos [0.817, 0.6533, 0.5532, 0.0061, 0.0049]
+
+## MemAvailable minima per phase (MiB, memwatch 2 s)
+- smoke: spark1 5196 / spark2 8475 (2026-10-20T03:25:30Z .. 2026-10-20T03:25:31Z)
+- lail10: spark1 4458 / spark2 8096 (2026-10-20T03:25:31Z .. 2026-10-20T03:27:53Z)
+- c1p9: spark1 4071 / spark2 8193 (2026-10-20T03:27:53Z .. 2026-10-20T03:28:55Z)
+- c4distinct: spark1 4094 / spark2 8488 (2026-10-20T03:28:55Z .. 2026-10-20T03:29:58Z)
+- quality: spark1 2783 / spark2 6491 (2026-10-20T03:29:58Z .. 2026-10-20T03:33:03Z)
+

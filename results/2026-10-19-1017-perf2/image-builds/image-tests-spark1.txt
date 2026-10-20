@@ -1,0 +1,176 @@
+start 2026-10-20T04:05:24Z image tests on spark1 e16-rows sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a from /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-release (HEAD 156a06a, 0 changes); mount :ro, PYTHONDONTWRITEBYTECODE=1
+dsv41-patch skip model_loop_release: DSV41_MODEL_LOOP_RELEASE is not 1
+dsv41-patch skip kv_packed_groups: DSV41_KV_PACKED_GROUPS is not 1
+dsv41-patch skip indexer_expanded_lazy: DSV41_INDEXER_EXPANDED_TABLE_LAZY is not 1
+dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+dsv41-patch ok prefer_b12x_mxfp8
+dsv41-indexer-workspace: already applied
+dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+dsv41-patch ok persistent_topk: already applied
+dsv41-patch ok kpool_persistent_topk: already applied
+dsv41-patch ok indexer_ragged_decode: already applied
+INFO 10-20 04:05:27 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+INFO 10-20 04:05:27 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+WARNING 10-20 04:05:28 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+W1020 04:05:28.023000 1 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+WARNING 10-20 04:05:28 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-20 04:05:28 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+dsv41-patch ok load_general_plugins
+dsv41-patch ok exl3_weight_block_size
+dsv41-patch ok warmup_stubs
+dsv41-patch ok cudagraph_worker_stub
+dsv41-patch skip fat_scratch_shared: DSV41_FAT_SCRATCH_SHARED is not 1
+dsv41-patch skip attn_out_defer: DSV41_ATTN_OUT_DEFER is not 1
+dsv41-patch skip engram_post_inplace: DSV41_ENGRAM_POST_INPLACE is not 1 and DSV41_ENGRAM_WKV_ROWS is 0
+dsv41-patch ok swa_page_coerce
+dsv41-patch ok kernel_block_sizes
+dsv41-patch ok extra_page_bump
+dsv41-patch ok v41_config_vision
+dsv41-patch ok swa_image_width: already applied
+dsv41-patch ok attention_image_width: already applied
+dsv41-patch ok native_indexer_decode: already applied
+dsv41-patch ok indexer_adaptive: already applied
+dsv41-patch ok indexer_short_context: already applied
+dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+dsv41-patch ok decode_levers
+dsv41: lm_head mxfp8 self-disarmed (no lm_head.weight_scale under /tmp/tmptofr3nju)
+dsv41: lm_head mxfp8 self-disarmed (head_dtype override torch.float32 != torch.bfloat16)
+dsv41: lm_head mxfp8 enabled (b12x, (512, 512))
+dsv41: lm_head mxfp8 enabled (b12x, (512, 512))
+patched /tmp/tmp9puyl5h3/o_proj.py
+patched /tmp/tmph34u2za6/o_proj.py
+patched /tmp/tmp2xa__u0l/o_proj.py
+[woa-prepack] REJECTED (ValueError('self-test not bitwise equal (maxabs 1216.0)')); this layer keeps the fp32 scale (per-call repack)
+[woa-prepack] packed ue8m0 scale engaged: (2, 8, 2) stride=(16, 1, 8) dtype=torch.float32
+dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+dsv41: prefix-end fallback engaged: SWA boundaries [8999] also keep [8871] (interval 0)
+dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+dsv41: prefix reply retain: decode-filled blocks of 1 SWA groups enter the prefix cache
+dsv41: decoder replay junction anchor: first at J=16384 (prompt 64000, hit 0): rows [13842, 16384) run layers 20-39
+======================================================================
+ERROR: test_install_on_the_image_classes (test_decoder_replay.TorchTailTests.test_install_on_the_image_classes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/w/tests/test_decoder_replay.py", line 1760, in test_install_on_the_image_classes
+    detail = dr.install(env)
+             ^^^^^^^^^^^^^^^
+  File "/opt/dsv41-patch/decoder_replay.py", line 962, in install
+    from vllm.config.compilation import CUDAGraphMode
+ModuleNotFoundError: No module named 'vllm.config'; 'vllm' is not a package
+
+======================================================================
+ERROR: test_run_tail_gathers_runs_and_scatters (test_decoder_replay.TorchTailTests.test_run_tail_gathers_runs_and_scatters)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/w/tests/test_decoder_replay.py", line 1731, in test_run_tail_gathers_runs_and_scatters
+    out_h, out_pre, aux = dr.run_tail(core, h, pos, None, pre, pm, rm, r)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dsv41-patch/decoder_replay.py", line 860, in run_tail
+    from vllm.forward_context import override_forward_context
+ModuleNotFoundError: No module named 'vllm.forward_context'; 'vllm' is not a package
+
+======================================================================
+FAIL: test_dry_run_gives_both_ranks_the_same_tiered_configs (test_dspark_adaptive.SpecTierRunShTests.test_dry_run_gives_both_ranks_the_same_tiered_configs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/w/tests/test_dspark_adaptive.py", line 990, in test_dry_run_gives_both_ranks_the_same_tiered_configs
+    self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
+AssertionError: 1 != 0 : ==> role=head host=spark1
+dsv41-patch skip model_loop_release: DSV41_MODEL_LOOP_RELEASE is not 1
+dsv41-patch skip kv_packed_groups: DSV41_KV_PACKED_GROUPS is not 1
+dsv41-patch skip indexer_expanded_lazy: DSV41_INDEXER_EXPANDED_TABLE_LAZY is not 1
+dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+dsv41-patch ok prefer_b12x_mxfp8
+dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+dsv41-patch ok persistent_topk: already applied
+dsv41-patch ok kpool_persistent_topk: already applied
+dsv41-patch ok indexer_ragged_decode: already applied
+W1020 04:05:53.933000 529 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+dsv41-patch ok load_general_plugins
+dsv41-patch ok exl3_weight_block_size
+dsv41-patch ok warmup_stubs
+dsv41-patch ok cudagraph_worker_stub
+dsv41-patch skip fat_scratch_shared: DSV41_FAT_SCRATCH_SHARED is not 1
+dsv41-patch skip attn_out_defer: DSV41_ATTN_OUT_DEFER is not 1
+dsv41-patch skip engram_post_inplace: DSV41_ENGRAM_POST_INPLACE is not 1 and DSV41_ENGRAM_WKV_ROWS is 0
+dsv41-patch ok swa_page_coerce
+dsv41-patch ok kernel_block_sizes
+dsv41-patch ok extra_page_bump
+dsv41-patch ok v41_config_vision
+dsv41-patch ok swa_image_width: already applied
+dsv41-patch ok attention_image_width: already applied
+dsv41-patch ok native_indexer_decode: already applied
+dsv41-patch ok indexer_adaptive: already applied
+dsv41-patch ok indexer_short_context: already applied
+dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+dsv41-patch ok decode_levers
+dsv41-indexer-workspace: already applied is using GPUs or InfiniBand. This recipe needs exclusive GPUs on both Sparks. Do not start. Do not docker rm that container from this script.
+
+
+----------------------------------------------------------------------
+Ran 272 tests in 33.004s
+
+FAILED (failures=1, errors=2, skipped=2)
+
+  dsv41-indexer-workspace: already applied
+  INFO 10-20 04:05:41 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+  INFO 10-20 04:05:41 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+  WARNING 10-20 04:05:41 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+  WARNING 10-20 04:05:42 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+  WARNING 10-20 04:05:42 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+  dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+  dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+  greedy                       all m accepted  9
+  greedy                       rejected early  15
+  sampled                      all m accepted  2
+  sampled                      rejected early  22
+  sampled+block                all m accepted  2
+  sampled+block                rejected early  22
+  sampled+block+draft_logits   all m accepted  20
+  sampled+block+draft_logits   rejected early  4
+  sampled+draft_logits         all m accepted  14
+  sampled+draft_logits         rejected early  10
+  masked k=5 == truncated k'=m on every trial and mode
+
+real	0m38.334s
+user	0m0.006s
+sys	0m0.017s
+rc_docker_tests=1
+----------------------------------------------------------------------
+Ran 8 tests in 5.371s
+
+OK
+
+real	0m5.408s
+user	0m0.047s
+sys	0m0.018s
+rc_chat_encoder=0
+end 2026-10-20T04:06:08Z

@@ -1,0 +1,186 @@
+# KP-B = D4ENV + NCCL_EAGER_TWIN=1 PM_QOS_US=20 ENGRAM_WKV_TP=1 MHC_DET_OVERLAP=1 AR_L2_PREFETCH=1 ATTN_OUT_DEFER=0 (integration4 @746ed86). Reference column labelled B0 below = D4.
+# boot: all five KP levers engaged (boot-grep-boot.txt), attn_out_defer skipped; model load 97.29 GiB/rank (D4 97.44: -0.15 GiB = ~-154 MiB/rank); KV 1,471,832 2.94x; graphs head 0.72 / worker 1.68 GiB (D4 0.69 / 2.03)
+# quick PASS; identity re-gate vs D4 quick.json PASS (identity-vs-D4.txt); no trip
+
+# KP-B vs B0 (D4)
+
+## decode (agg tok/s | per-stream | ms/step | acc | TTFT p50)
+- code c=1: -   [B0 68.0 | 68.0 | 60.1 | 4.04 | 0.215]
+- lail_prose c=1: 41.6 | 41.6 | 49.7 | 2.09 | 0.253   [B0 38.9 | 38.9 | 52.0 | 2.02 | 0.256]  (+6.9% agg)
+- prose c=1: 51.1 | 51.1 | 51.9 | 2.72 | 0.195   [B0 49.6 | 49.6 | 54.5 | 2.71 | 0.199]  (+3.1% agg)
+- prose c=2: -   [B0 76.0 | 38.3 | 70.4 | 2.71 | 0.218]
+- prose_distinct c=4: 103.0 | 27.0 | 91.4 | 2.45 | 0.278   [B0 94.8 | 25.6 | 95.6 | 2.42 | 0.290]  (+8.7% agg)
+- structured c=1: 104.0 | 104.0 | 56.6 | 5.88 | 0.177   [B0 100.5 | 100.6 | 58.5 | 5.88 | 0.186]  (+3.4% agg)
+- structured c=2: -   [B0 181.1 | 90.6 | 64.9 | 5.88 | 0.200]
+- structured_distinct c=4: 202.9 | 51.1 | 77.9 | 3.99 | 0.379   [B0 198.1 | 49.9 | 80.1 | 3.99 | 0.381]  (+2.5% agg)
+
+## prefill micro (median tok/s; runs)
+- 4096 pp_novel: -    [B0 1819.7]
+- 4096 pp_warm: -    [B0 1729.6]
+- 4096 tg: -    [B0 41.2]
+- 16384 pp_novel: -    [B0 2564.1]
+- 16384 pp_warm: -    [B0 2375.9]
+- 16384 tg: -    [B0 46.2]
+- 65536 pp_novel: -    [B0 2955.6]
+- 65536 pp_warm: -    [B0 2842.7]
+- 65536 tg: -    [B0 38.6]
+
+## prefix cache (prompt, TTFT s, hits)
+
+## quality --quick
+- {"mode": "quick", "pass": true, "elapsed_s": 187.9, "nll": 0.144284, "decode_median_dlp": 0.0006, "decode_gen_nll": 0.22366, "tools_exact": 1.0, "tools_json": 1.0, "tools_nocall": 1.0, "needle": 6, "selfcons_identical": 4, "selfcons_aa_hazard": 0.01699, "selfcons_golden_hazard": 0.01616, "c2": true, "vision": true}
+
+## spec decode acceptance per draft position (accepted/drafts over the cell)
+- c4-: drafts 2644, per-pos [0.8109, 0.6581, 0.5499, 0.0087, 0.0057]
+
+## MemAvailable minima per phase (MiB, memwatch 2 s)
+- smoke: spark1 5683 / spark2 8638 (2026-10-20T02:40:23Z .. 2026-10-20T02:40:24Z)
+- lail10: spark1 3487 / spark2 8333 (2026-10-20T02:40:24Z .. 2026-10-20T02:42:43Z)
+- c1p9: spark1 3462 / spark2 8277 (2026-10-20T02:42:43Z .. 2026-10-20T02:43:44Z)
+- c4distinct: spark1 4697 / spark2 8325 (2026-10-20T02:43:44Z .. 2026-10-20T02:44:46Z)
+- quality: spark1 2865 / spark2 5819 (2026-10-20T02:44:46Z .. 2026-10-20T02:47:55Z)
+- probe: spark1 2058 / spark2 5409 (2026-10-20T02:47:55Z .. 2026-10-20T02:48:29Z)
+
+
+## spark1 MemAvailable distribution in decode cells (memwatch 2 s, MiB): KP-B vs D4
+lail10 KP-B: spark1 min 3487 p10 4861 median 4950 (n=69), spark2 min 8333
+lail10 D4: spark1 min 5147 p10 5227 median 5587 (n=73), spark2 min 8314
+c1 (KP-B c1p9, D4 c12) KP-B: spark1 min 3462 p10 3524 median 4522 (n=30), spark2 min 8277
+c1 (KP-B c1p9, D4 c12) D4: spark1 min 5155 p10 5272 median 5616 (n=67), spark2 min 8267
+c4distinct KP-B: spark1 min 4697 p10 4710 median 4808 (n=31), spark2 min 8325
+c4distinct D4: spark1 min 5730 p10 5737 median 5781 (n=33), spark2 min 8266
+quality KP-B: spark1 min 2865 p10 4078 median 4433 (n=94), spark2 min 5819
+quality D4: spark1 min 4202 p10 4864 median 5463 (n=94), spark2 min 6880
+
+## /proc probe during one 64K pp_novel (pp64k-probe.jsonl; procstat_sampler.py 1 Hz both nodes; no nvidia-smi)
+prompt 65058 tokens, 2026-10-20T02:48:00.441300Z -> 2026-10-20T02:48:24.060855Z (TTFT 23.62 s)
+
+## spark1: /proc/meminfo (MiB; delta vs before)
+field              before (02:47:58)   start+2s (02:48:02)     middle (02:48:12)     end-1s (02:48:23)   after+3s (02:48:27)
+MemFree                    3208 (+0)          1228 (-1980)           3914 (+706)          4264 (+1056)          4273 (+1065)
+MemAvailable               4006 (+0)          2037 (-1969)          5085 (+1079)          5584 (+1578)          5624 (+1618)
+Cached                     2793 (+0)            2805 (+12)           2923 (+130)            2833 (+40)            2851 (+58)
+AnonPages                  4679 (+0)            4710 (+31)           4225 (-454)           4208 (-471)           4254 (-425)
+Shmem                       419 (+0)              421 (+2)              421 (+2)              421 (+2)              421 (+2)
+Mlocked                      23 (+0)               23 (+0)               23 (+0)               23 (+0)               23 (+0)
+Unevictable                  23 (+0)               23 (+0)               23 (+0)               23 (+0)               23 (+0)
+SUnreclaim                 2415 (+0)             2415 (+0)             2419 (+4)             2419 (+4)             2419 (+4)
+KReclaimable                453 (+0)              453 (+0)              453 (+0)              453 (+0)              453 (+0)
+PageTables                   84 (+0)               84 (+0)               84 (+0)               84 (+0)               84 (+0)
+SecPageTables               299 (+0)              299 (+0)              300 (+1)              300 (+1)              300 (+1)
+VmallocUsed                 138 (+0)              138 (+0)              139 (+1)              138 (+0)              138 (+0)
+Percpu                       31 (+0)               31 (+0)               31 (+0)               31 (+0)               31 (+0)
+KernelStack                  28 (+0)               28 (+0)               28 (+0)               28 (+0)               28 (+0)
+AnonHugePages                 2 (+0)                2 (+0)                2 (+0)                2 (+0)                2 (+0)
+CmaFree                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+SwapFree                   6903 (+0)             6909 (+6)           6406 (-497)           6388 (-515)           6410 (-493)
+### spark1 VLLM::EngineCor:480191 (MiB)
+  VmRSS                     449 (+0)              453 (+3)            304 (-146)            300 (-150)            300 (-150)
+  VmSwap                    467 (+0)              464 (-3)            612 (+145)            617 (+149)            617 (+149)
+  RssAnon                   413 (+0)              416 (+2)            268 (-145)            264 (-150)            264 (-150)
+  RssFile                    30 (+0)               30 (+0)               29 (-1)               29 (-1)               29 (-1)
+  RssShmem                    5 (+0)                6 (+0)                6 (+0)                6 (+0)                6 (+0)
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                       4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+### spark1 VLLM::Worker_TP:480650 (MiB)
+  VmRSS                    1911 (+0)             1916 (+5)            1901 (-11)            1888 (-24)            1887 (-24)
+  VmSwap                   2309 (+0)             2306 (-3)             2315 (+5)            2324 (+15)            2324 (+15)
+  RssAnon                  1246 (+0)             1249 (+2)             1241 (-6)            1231 (-16)            1231 (-16)
+  RssFile                   354 (+0)              354 (+0)              346 (-8)             343 (-11)             342 (-12)
+  RssShmem                  310 (+0)              312 (+2)              312 (+2)              312 (+2)              312 (+2)
+  VmPin                     101 (+0)              101 (+0)              101 (+0)              101 (+0)              101 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                      13 (+0)               13 (+0)               13 (+0)               13 (+0)               13 (+0)
+### spark1 vllm:478417 (MiB)
+  VmRSS                     675 (+0)             685 (+10)            348 (-327)            342 (-333)            359 (-317)
+  VmSwap                    475 (+0)              474 (-1)            811 (+335)            816 (+341)            800 (+325)
+  RssAnon                   638 (+0)             648 (+10)            311 (-327)            306 (-332)            322 (-316)
+  RssFile                    37 (+0)               37 (+0)               36 (-1)               36 (-1)               36 (-1)
+  RssShmem                    0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                       5 (+0)                5 (+0)                5 (+0)                5 (+0)                5 (+0)
+
+## spark2: /proc/meminfo (MiB; delta vs before)
+field              before (02:47:58)   start+2s (02:48:02)     middle (02:48:12)     end-1s (02:48:23)   after+3s (02:48:27)
+MemFree                    1319 (+0)           1699 (+380)           2188 (+869)          2637 (+1318)          2657 (+1338)
+MemAvailable               5444 (+0)           5830 (+386)           6281 (+837)          7047 (+1603)          7068 (+1624)
+Cached                     6175 (+0)             6182 (+7)            6146 (-29)           6013 (-162)           6014 (-161)
+AnonPages                  2993 (+0)             2993 (+0)             2993 (+0)             2993 (+0)             2993 (+0)
+Shmem                       413 (+0)              415 (+2)              415 (+2)              415 (+2)              415 (+2)
+Mlocked                      24 (+0)               24 (+0)               24 (+0)               24 (+0)               24 (+0)
+Unevictable                  24 (+0)               24 (+0)               24 (+0)               24 (+0)               24 (+0)
+SUnreclaim                 2352 (+0)             2352 (+0)             2353 (+1)             2353 (+1)             2353 (+1)
+KReclaimable                361 (+0)              361 (+0)              362 (+1)              361 (+0)              361 (+0)
+PageTables                   54 (+0)               54 (+0)               54 (+0)               54 (+0)               54 (+0)
+SecPageTables               275 (+0)              275 (+0)              275 (+0)              275 (+0)              275 (+0)
+VmallocUsed                 129 (+0)              129 (+0)              129 (+0)              129 (+0)              129 (+0)
+Percpu                       35 (+0)               35 (+0)               35 (+0)               35 (+0)               35 (+0)
+KernelStack                  19 (+0)               19 (+0)               19 (+0)               19 (+0)               19 (+0)
+AnonHugePages                 2 (+0)                2 (+0)                2 (+0)                2 (+0)                2 (+0)
+CmaFree                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+SwapFree                  10255 (+0)            10255 (+0)            10255 (+0)            10256 (+1)            10256 (+1)
+### spark2 VLLM::Worker_TP:2552532 (MiB)
+  VmRSS                    3212 (+0)             3214 (+2)             3203 (-9)            3198 (-14)            3198 (-14)
+  VmSwap                   1092 (+0)             1092 (+0)             1092 (+0)             1092 (+0)             1092 (+0)
+  RssAnon                  2463 (+0)             2463 (+0)             2463 (+0)             2463 (+0)             2463 (+0)
+  RssFile                   444 (+0)              444 (+0)             433 (-11)             428 (-17)             428 (-17)
+  RssShmem                  304 (+0)              306 (+2)              306 (+2)              306 (+2)              306 (+2)
+  VmPin                     101 (+0)              101 (+0)              101 (+0)              101 (+0)              101 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                      13 (+0)               13 (+0)               13 (+0)               13 (+0)               13 (+0)
+### spark2 vllm:2547059 (MiB)
+  VmRSS                      19 (+0)               19 (+0)               19 (+0)               19 (-1)               19 (-1)
+  VmSwap                    950 (+0)              950 (+0)              950 (+0)              950 (+0)              950 (+0)
+  RssAnon                     4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+  RssFile                    15 (+0)               15 (+0)               15 (+0)               15 (-1)               15 (-1)
+  RssShmem                    0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                       4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+
+## probe prompt rank-0 step lines (head-t.log)
+2026-10-20T02:48:01.822426119Z (Worker_TP0 pid=694) [dsv41-prefill-empty-cache] step 100 longest 8188 in_flight 1 wall 1.19 s interval 7.27 s reserved 104.28 -> 104.28 GiB (+0 MiB) peak +1818 MiB grown +102 MiB MemAvailable 1.98 GiB action -
+2026-10-20T02:48:06.101031707Z (Worker_TP0 pid=694) [dsv41-prefill-empty-cache] step 101 longest 16376 in_flight 1 wall 2.39 s interval 2.53 s reserved 104.28 -> 104.28 GiB (+0 MiB, 101.98 GiB after release) peak +1818 MiB grown +102 MiB MemAvailable 1.99 GiB action floor
+2026-10-20T02:48:07.157360646Z (Worker_TP0 pid=694) [dsv41-prefill-empty-cache] step 102 longest 24564 in_flight 1 wall 0.98 s interval 2.81 s reserved 102.71 -> 104.31 GiB (+1644 MiB) peak +1827 MiB grown +0 MiB MemAvailable 5.31 GiB action hold
+2026-10-20T02:48:10.105601295Z (Worker_TP0 pid=694) [dsv41-prefill-empty-cache] step 103 longest 32752 in_flight 1 wall 2.89 s interval 2.95 s reserved 104.31 -> 104.43 GiB (+122 MiB) peak +1955 MiB grown -7 MiB MemAvailable 5.14 GiB action hold
+2026-10-20T02:48:12.656816756Z (Worker_TP0 pid=694) [dsv41-prefill-empty-cache] step 104 longest 40940 in_flight 1 wall 2.44 s interval 2.55 s reserved 104.43 -> 104.43 GiB (+0 MiB) peak +1955 MiB grown -7 MiB MemAvailable 4.25 GiB action hold
+2026-10-20T02:48:15.219629686Z (Worker_TP0 pid=694) [dsv41-prefill-empty-cache] step 105 longest 49128 in_flight 1 wall 2.43 s interval 2.56 s reserved 104.43 -> 104.43 GiB (+0 MiB) peak +1954 MiB grown -7 MiB MemAvailable 3.76 GiB action hold
+2026-10-20T02:48:17.811737058Z (Worker_TP0 pid=694) [dsv41-prefill-empty-cache] step 106 longest 57316 in_flight 1 wall 2.44 s interval 2.59 s reserved 104.43 -> 104.43 GiB (+0 MiB) peak +1955 MiB grown -7 MiB MemAvailable 3.21 GiB action hold
+2026-10-20T02:48:22.692671809Z (Worker_TP0 pid=694) [dsv41-prefill-empty-cache] step 107 longest 65058 in_flight 0 wall 4.77 s interval 4.88 s reserved 104.43 -> 104.43 GiB (+2 MiB) peak +1876 MiB grown -5 MiB MemAvailable 5.45 GiB action keep
+
+## spark1 memsample 1 Hz over the probe
+02:47:56 free=3190 avail=3989 cached=2793 swap=9480
+02:47:57 free=3188 avail=3987 cached=2793 swap=9480
+02:47:58 free=3209 avail=4008 cached=2793 swap=9480
+02:47:59 free=3221 avail=4019 cached=2793 swap=9480
+02:48:00 free=3197 avail=3995 cached=2793 swap=9480
+02:48:01 free=2114 avail=2957 cached=2840 swap=9474
+02:48:02 free=1228 avail=2037 cached=2805 swap=9474
+02:48:03 free=1239 avail=2048 cached=2805 swap=9474
+02:48:04 free=1146 avail=2093 cached=2944 swap=9474
+02:48:05 free=1266 avail=2076 cached=2806 swap=9474
+02:48:06 free=3203 avail=4012 cached=2806 swap=9473
+02:48:07 free=4284 avail=5437 cached=2810 swap=9761
+02:48:08 free=4241 avail=5393 cached=2810 swap=9756
+02:48:09 free=4058 avail=5340 cached=2948 swap=9762
+02:48:10 free=4093 avail=5257 cached=2814 swap=9977
+02:48:11 free=4102 avail=5251 cached=2814 swap=9977
+02:48:12 free=3769 avail=4815 cached=2885 swap=9977
+02:48:13 free=3529 avail=4364 cached=2820 swap=9977
+02:48:14 free=3524 avail=4349 cached=2821 swap=9977
+02:48:15 free=3020 avail=3850 cached=2827 swap=9977
+02:48:16 free=2999 avail=3829 cached=2827 swap=9976
+02:48:17 free=2716 avail=3640 cached=2921 swap=9976
+02:48:18 free=2463 avail=3298 cached=2831 swap=9976
+02:48:19 free=4327 avail=5164 cached=2833 swap=9976
+02:48:20 free=4339 avail=5659 cached=2833 swap=9995
+02:48:21 free=4282 avail=5602 cached=2833 swap=9995
+02:48:22 free=4260 avail=5580 cached=2833 swap=9995
+02:48:23 free=4327 avail=5647 cached=2833 swap=9994
+02:48:24 free=4275 avail=5595 cached=2833 swap=9978
+02:48:25 free=4255 avail=5604 cached=2849 swap=9974
+02:48:26 free=4275 avail=5626 cached=2851 swap=9973
+02:48:27 free=4219 avail=5407 cached=2851 swap=9973
+02:48:28 free=4190 avail=5242 cached=2851 swap=9973

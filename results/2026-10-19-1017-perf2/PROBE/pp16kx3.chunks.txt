@@ -1,0 +1,46 @@
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PROBE/head.log: 0 step lines
+run 1: prompt 16178 ttft 13.52 s pp 1196.6 tok/s; 0 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 
+   growth MiB:  
+   peak MiB:    
+   grown MiB:   
+   MemAvail GiB:  actions: 
+run 2: prompt 16306 ttft 12.68 s pp 1286.1 tok/s; 0 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 
+   growth MiB:  
+   peak MiB:    
+   grown MiB:   
+   MemAvail GiB:  actions: 
+run 3: prompt 16279 ttft 12.62 s pp 1289.8 tok/s; 0 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 
+   growth MiB:  
+   peak MiB:    
+   grown MiB:   
+   MemAvail GiB:  actions: 
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PROBE/worker.log: 17 step lines
+run 1: prompt 16178 ttft 13.52 s pp 1196.6 tok/s; 2 chunks, reserved growth 962 MiB, releases 0 []
+   intervals s: 7.38 5.17
+   growth MiB:  +962 +0
+   peak MiB:    1255 1225
+   grown MiB:   +414 +414
+   MemAvail GiB:6.81 6.89  actions: - keep
+run 2: prompt 16306 ttft 12.68 s pp 1286.1 tok/s; 2 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 5.63 7.03
+   growth MiB:  +0 +0
+   peak MiB:    1255 1244
+   grown MiB:   +414 +414
+   MemAvail GiB:6.81 6.91  actions: - keep
+run 3: prompt 16279 ttft 12.62 s pp 1289.8 tok/s; 2 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 6.12 6.90
+   growth MiB:  +0 +0
+   peak MiB:    1255 1240
+   grown MiB:   +414 +414
+   MemAvail GiB:6.80 6.89  actions: - keep
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PROBE/nvrm-spark1.txt: run 1 31; run 2 1; run 3 9
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PROBE/nvrm-spark2.txt: run 1 0; run 2 0; run 3 0
+## spark1 run 1: min MemFree 5732 MemAvailable 5288 MiB, max swap 9063 MiB; allocstall_normal +1600 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +2603 compact_fail +1633 pswpin +11770 pswpout +211922
+## spark1 run 2: min MemFree 4102 MemAvailable 3436 MiB, max swap 9021 MiB; allocstall_normal +21 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +615 compact_fail +21 pswpin +3644 pswpout +0
+## spark1 run 3: min MemFree 5169 MemAvailable 4502 MiB, max swap 9133 MiB; allocstall_normal +236 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +508 compact_fail +242 pswpin +12937 pswpout +16166
+## spark2 run 1: min MemFree 6613 MemAvailable 6950 MiB, max swap 6046 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +48 pswpout +0
+## spark2 run 2: min MemFree 6606 MemAvailable 6967 MiB, max swap 6046 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +31 pswpout +0
+## spark2 run 3: min MemFree 6539 MemAvailable 6924 MiB, max swap 6046 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +44 pswpout +0

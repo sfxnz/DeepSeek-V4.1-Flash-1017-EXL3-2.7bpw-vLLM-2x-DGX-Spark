@@ -1,0 +1,11 @@
+run 1: prompt 32461 ttft 23.60 s pp 1375.6 tok/s (2026-10-20T03:48:47.004298Z -> 2026-10-20T03:49:10.602785Z)
+Traceback (most recent call last):
+  File "/home/sfxnz/projects/data/dsv41-1017/perf2/prefill-mem/tools/pp_chunks.py", line 64, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/sfxnz/projects/data/dsv41-1017/perf2/prefill-mem/tools/pp_chunks.py", line 49, in main
+    res = micro.stream_once(url, a.model, doc, 1 + a.tail, 1800)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-probe/benches/micro.py", line 90, in stream_once
+    raise RuntimeError("no content token in stream")
+RuntimeError: no content token in stream

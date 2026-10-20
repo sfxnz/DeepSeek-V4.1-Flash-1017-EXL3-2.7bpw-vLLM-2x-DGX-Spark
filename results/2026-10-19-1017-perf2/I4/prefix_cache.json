@@ -1,0 +1,134 @@
+{
+ "seed": 87507521,
+ "doc_tokens": 32465,
+ "cases": [
+  {
+   "case": "a_novel",
+   "utc": "2026-10-19T21:33:52Z",
+   "prompt_tokens": 32486,
+   "completion_tokens": 64,
+   "ttft_s": 11.909,
+   "wall_s": 13.316,
+   "prefill_tok_s_from_ttft": 2727.8,
+   "prefix_queries_delta": 32486.0,
+   "prefix_hits_delta": 0.0,
+   "hit_frac": 0.0,
+   "finish_reason": "length",
+   "metrics_before": {
+    "vllm:prefix_cache_queries_total": 522539.0,
+    "vllm:prefix_cache_hits_total": 0.0
+   },
+   "metrics_after": {
+    "vllm:prefix_cache_queries_total": 555025.0,
+    "vllm:prefix_cache_hits_total": 0.0
+   },
+   "other_prefix_metrics_after": {
+    "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.212366,
+    "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.213565,
+    "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2145653,
+    "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2173648,
+    "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2287655
+   },
+   "text": "The three invented words that appear most often are:\n\n1. **kraist** (and variants like **kraistand**, **kraistus**)\n2. **brou** (and variants like **broubomes**, **brouvutrist**, **broukrimur**"
+  },
+  {
+   "case": "b_identical",
+   "utc": "2026-10-19T21:34:07Z",
+   "prompt_tokens": 32486,
+   "completion_tokens": 64,
+   "ttft_s": 0.718,
+   "wall_s": 2.084,
+   "prefill_tok_s_from_ttft": 45264.5,
+   "prefix_queries_delta": 32486.0,
+   "prefix_hits_delta": 32384.0,
+   "hit_frac": 0.9969,
+   "finish_reason": "length",
+   "metrics_before": {
+    "vllm:prefix_cache_queries_total": 555025.0,
+    "vllm:prefix_cache_hits_total": 0.0
+   },
+   "metrics_after": {
+    "vllm:prefix_cache_queries_total": 587511.0,
+    "vllm:prefix_cache_hits_total": 32384.0
+   },
+   "other_prefix_metrics_after": {
+    "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.212366,
+    "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.213565,
+    "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2145653,
+    "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2173648,
+    "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 32384.0,
+    "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2287655
+   },
+   "text": "The three invented words that appear most often are:\n\n1. **kraist** (and closely related forms like **kraistand**)\n2. **brou** (and related forms like **brouvutrist**, **broubomes**)\n3. **glou** (and related"
+  },
+  {
+   "case": "c_multiturn",
+   "utc": "2026-10-19T21:34:10Z",
+   "prompt_tokens": 32570,
+   "completion_tokens": 6,
+   "ttft_s": 0.394,
+   "wall_s": 0.55,
+   "prefill_tok_s_from_ttft": 82763.9,
+   "prefix_queries_delta": 32570.0,
+   "prefix_hits_delta": 32384.0,
+   "hit_frac": 0.9943,
+   "finish_reason": "stop",
+   "metrics_before": {
+    "vllm:prefix_cache_queries_total": 587511.0,
+    "vllm:prefix_cache_hits_total": 32384.0
+   },
+   "metrics_after": {
+    "vllm:prefix_cache_queries_total": 620081.0,
+    "vllm:prefix_cache_hits_total": 64768.0
+   },
+   "other_prefix_metrics_after": {
+    "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.212366,
+    "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.213565,
+    "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2145653,
+    "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2173648,
+    "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 64768.0,
+    "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2287655
+   },
+   "text": "glouveasind"
+  },
+  {
+   "case": "d_same_doc_new_question",
+   "utc": "2026-10-19T21:34:11Z",
+   "prompt_tokens": 32486,
+   "completion_tokens": 23,
+   "ttft_s": 0.299,
+   "wall_s": 0.716,
+   "prefill_tok_s_from_ttft": 108476.6,
+   "prefix_queries_delta": 32486.0,
+   "prefix_hits_delta": 32384.0,
+   "hit_frac": 0.9969,
+   "finish_reason": "stop",
+   "metrics_before": {
+    "vllm:prefix_cache_queries_total": 620081.0,
+    "vllm:prefix_cache_hits_total": 64768.0
+   },
+   "metrics_after": {
+    "vllm:prefix_cache_queries_total": 652567.0,
+    "vllm:prefix_cache_hits_total": 97152.0
+   },
+   "other_prefix_metrics_after": {
+    "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.212366,
+    "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.213565,
+    "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2145653,
+    "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2173648,
+    "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 97152.0,
+    "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2287655
+   },
+   "text": "No, the text does not contain any English sentences; it is composed entirely of invented, non-English words."
+  }
+ ]
+}

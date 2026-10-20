@@ -1,0 +1,529 @@
+# cmd: python3 tools/replay_ab.py compare /home/sfxnz/projects/data/dsv41-1017/perf2/integration/FINAL/prefix-B1.json /home/sfxnz/projects/data/dsv41-1017/perf2/integration/FINAL/prefix-B2.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-release (HEAD 4ae29a6) host: spark1 start: 2026-10-20T05:27:19Z
+{
+ "cold_r0": {
+  "prompt_tokens": [
+   19968,
+   19968
+  ],
+  "tokens": [
+   16,
+   16
+  ],
+  "first_divergence": 16,
+  "identical": true,
+  "max_abs_dlogprob": 0.41571567952632904,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r0": {
+  "prompt_tokens": [
+   19968,
+   19968
+  ],
+  "tokens": [
+   16,
+   16
+  ],
+  "first_divergence": 16,
+  "identical": true,
+  "max_abs_dlogprob": 0.15349000692367554,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19840.0,
+   19840.0
+  ]
+ },
+ "follow_r0": {
+  "prompt_tokens": [
+   19992,
+   19992
+  ],
+  "tokens": [
+   58,
+   49
+  ],
+  "first_divergence": 12,
+  "identical": false,
+  "max_abs_dlogprob": 0.2720554918050766,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19840.0,
+   19840.0
+  ]
+ },
+ "newq_r0": {
+  "prompt_tokens": [
+   19967,
+   19967
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.19157710671424866,
+  "min_top5_overlap": 0.6,
+  "hits": [
+   19840.0,
+   19840.0
+  ]
+ },
+ "cold_r1": {
+  "prompt_tokens": [
+   20097,
+   20097
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "identical": true,
+  "max_abs_dlogprob": 0.21305334568023682,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r1": {
+  "prompt_tokens": [
+   20097,
+   20097
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "identical": true,
+  "max_abs_dlogprob": 0.3108636140823364,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "follow_r1": {
+  "prompt_tokens": [
+   20121,
+   20121
+  ],
+  "tokens": [
+   64,
+   61
+  ],
+  "first_divergence": 7,
+  "identical": false,
+  "max_abs_dlogprob": 0.12278325110673904,
+  "min_top5_overlap": 0.6,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "newq_r1": {
+  "prompt_tokens": [
+   20096,
+   20096
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.07299802452325821,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "cold_r63": {
+  "prompt_tokens": [
+   19903,
+   19903
+  ],
+  "tokens": [
+   16,
+   16
+  ],
+  "first_divergence": 16,
+  "identical": true,
+  "max_abs_dlogprob": 0.16320163011550903,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r63": {
+  "prompt_tokens": [
+   19903,
+   19903
+  ],
+  "tokens": [
+   14,
+   16
+  ],
+  "first_divergence": 10,
+  "identical": false,
+  "max_abs_dlogprob": 0.04085078835487366,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19712.0,
+   19712.0
+  ]
+ },
+ "follow_r63": {
+  "prompt_tokens": [
+   19927,
+   19927
+  ],
+  "tokens": [
+   54,
+   61
+  ],
+  "first_divergence": 21,
+  "identical": false,
+  "max_abs_dlogprob": 0.4456341862678528,
+  "min_top5_overlap": 0.6,
+  "hits": [
+   19712.0,
+   19712.0
+  ]
+ },
+ "newq_r63": {
+  "prompt_tokens": [
+   19902,
+   19902
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.0334639772772789,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19712.0,
+   19712.0
+  ]
+ },
+ "cold_r64": {
+  "prompt_tokens": [
+   20160,
+   20160
+  ],
+  "tokens": [
+   18,
+   16
+  ],
+  "first_divergence": 0,
+  "identical": false,
+  "max_abs_dlogprob": 0.0,
+  "min_top5_overlap": 1.0,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r64": {
+  "prompt_tokens": [
+   20160,
+   20160
+  ],
+  "tokens": [
+   16,
+   16
+  ],
+  "first_divergence": 16,
+  "identical": true,
+  "max_abs_dlogprob": 0.11720770597457886,
+  "min_top5_overlap": 0.6,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "follow_r64": {
+  "prompt_tokens": [
+   20184,
+   20184
+  ],
+  "tokens": [
+   64,
+   64
+  ],
+  "first_divergence": 6,
+  "identical": false,
+  "max_abs_dlogprob": 0.08306806534528732,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   20096.0,
+   20096.0
+  ]
+ },
+ "newq_r64": {
+  "prompt_tokens": [
+   20159,
+   20159
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.014298032969236374,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "cold_r65": {
+  "prompt_tokens": [
+   19777,
+   19777
+  ],
+  "tokens": [
+   11,
+   16
+  ],
+  "first_divergence": 6,
+  "identical": false,
+  "max_abs_dlogprob": 0.03348076343536377,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r65": {
+  "prompt_tokens": [
+   19777,
+   19777
+  ],
+  "tokens": [
+   11,
+   13
+  ],
+  "first_divergence": 7,
+  "identical": false,
+  "max_abs_dlogprob": 0.08720484375953674,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19712.0,
+   19712.0
+  ]
+ },
+ "follow_r65": {
+  "prompt_tokens": [
+   19801,
+   19801
+  ],
+  "tokens": [
+   53,
+   64
+  ],
+  "first_divergence": 17,
+  "identical": false,
+  "max_abs_dlogprob": 0.5349124222993851,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19712.0,
+   19712.0
+  ]
+ },
+ "newq_r65": {
+  "prompt_tokens": [
+   19776,
+   19776
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.01579447276890278,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19584.0,
+   19584.0
+  ]
+ },
+ "cold_r127": {
+  "prompt_tokens": [
+   20095,
+   20095
+  ],
+  "tokens": [
+   13,
+   11
+  ],
+  "first_divergence": 7,
+  "identical": false,
+  "max_abs_dlogprob": 0.00941765308380127,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r127": {
+  "prompt_tokens": [
+   20095,
+   20095
+  ],
+  "tokens": [
+   11,
+   11
+  ],
+  "first_divergence": 11,
+  "identical": true,
+  "max_abs_dlogprob": 0.3240111172199249,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "follow_r127": {
+  "prompt_tokens": [
+   20119,
+   20119
+  ],
+  "tokens": [
+   64,
+   64
+  ],
+  "first_divergence": 6,
+  "identical": false,
+  "max_abs_dlogprob": 0.07796934992074966,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "newq_r127": {
+  "prompt_tokens": [
+   20094,
+   20094
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.017447708174586296,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "sib1": {
+  "prompt_tokens": [
+   16245,
+   16245
+  ],
+  "tokens": [
+   14,
+   14
+  ],
+  "first_divergence": 14,
+  "identical": true,
+  "max_abs_dlogprob": 0.21232515573501587,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "sib2": {
+  "prompt_tokens": [
+   16243,
+   16243
+  ],
+  "tokens": [
+   35,
+   27
+  ],
+  "first_divergence": 0,
+  "identical": false,
+  "max_abs_dlogprob": 0.0,
+  "min_top5_overlap": 1.0,
+  "hits": [
+   16128.0,
+   16128.0
+  ]
+ },
+ "sib3": {
+  "prompt_tokens": [
+   16246,
+   16246
+  ],
+  "tokens": [
+   16,
+   16
+  ],
+  "first_divergence": 16,
+  "identical": true,
+  "max_abs_dlogprob": 0.15301407873630524,
+  "min_top5_overlap": 0.6,
+  "hits": [
+   16128.0,
+   16128.0
+  ]
+ },
+ "reply_turn": {
+  "prompt_tokens": [
+   19989,
+   19989
+  ],
+  "tokens": [
+   249,
+   258
+  ],
+  "first_divergence": 103,
+  "identical": false,
+  "max_abs_dlogprob": 0.12389495968818665,
+  "min_top5_overlap": 0.4,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "reply": {
+  "prompt_tokens": [
+   20254,
+   20263
+  ],
+  "tokens": [
+   64,
+   64
+  ],
+  "first_divergence": 1,
+  "identical": false,
+  "max_abs_dlogprob": 0.0004144171252846718,
+  "min_top5_overlap": 1.0,
+  "hits": [
+   20096.0,
+   20096.0
+  ]
+ }
+}
+identical greedy tokens: 15/29; per-arm hit checks failed: none
+rc=1
+# end: 2026-10-20T05:27:19Z

@@ -1,0 +1,19 @@
+2026-10-20T02:23:47Z memsample pid 466303, procmem + live logs on both nodes
+2026-10-20T02:23:48Z smoke start
+2026-10-20T02:23:49Z smoke end
+2026-10-20T02:23:49Z cells done (sample smoke)
+2026-10-20T02:23:49Z gen start
+2026-10-20T02:24:18Z gen end
+2026-10-20T02:24:18Z pp16k start
+2026-10-20T02:24:39Z pp16k end
+2026-10-20T02:24:39Z pp64k start
+2026-10-20T02:24:49Z pp64k end
+2026-10-20T02:24:49Z quality start
+2026-10-20T02:24:49Z quality end
+2026-10-20T02:24:49Z soak start
+2026-10-20T02:24:49Z soak end
+2026-10-20T02:24:49Z cells done (pp16k pp64k quality soak)
+2026-10-20T02:24:49Z logs
+2026-10-20T02:24:51Z SERVE DOWN after logs
+2026-10-20T02:24:51Z cells done (logs)
+2026-10-20T02:24:52Z PM-A1 chain done

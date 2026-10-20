@@ -1,0 +1,26 @@
+# KP-C vs B0 (KP-B)
+
+## decode (agg tok/s | per-stream | ms/step | acc | TTFT p50)
+- lail_prose c=1: 40.4 | 40.4 | 49.8 | 2.03 | 0.259   [B0 41.6 | 41.6 | 49.7 | 2.09 | 0.253]  (-3.1% agg)
+- prose c=1: 51.6 | 51.6 | 52.0 | 2.69 | 0.200   [B0 51.1 | 51.1 | 51.9 | 2.72 | 0.195]  (+0.9% agg)
+- prose_distinct c=4: 98.5 | 27.1 | 89.9 | 2.45 | 0.301   [B0 103.0 | 27.0 | 91.4 | 2.45 | 0.278]  (-4.4% agg)
+- structured c=1: 103.7 | 103.7 | 56.7 | 5.88 | 0.181   [B0 104.0 | 104.0 | 56.6 | 5.88 | 0.177]  (-0.3% agg)
+- structured_distinct c=4: 201.3 | 50.7 | 78.7 | 3.99 | 0.382   [B0 202.9 | 51.1 | 77.9 | 3.99 | 0.379]  (-0.8% agg)
+
+## prefill micro (median tok/s; runs)
+
+## prefix cache (prompt, TTFT s, hits)
+
+## quality --quick
+- {"mode": "quick", "pass": true, "elapsed_s": 184.0, "nll": 0.144193, "decode_median_dlp": 0.00056, "decode_gen_nll": 0.19329, "tools_exact": 1.0, "tools_json": 1.0, "tools_nocall": 1.0, "needle": 6, "selfcons_identical": 6, "selfcons_aa_hazard": 0.01176, "selfcons_golden_hazard": 0.01324, "c2": true, "vision": true}
+
+## spec decode acceptance per draft position (accepted/drafts over the cell)
+- c4-: drafts 2639, per-pos [0.817, 0.6533, 0.5532, 0.0061, 0.0049]
+
+## MemAvailable minima per phase (MiB, memwatch 2 s)
+- smoke: spark1 5196 / spark2 8475 (2026-10-20T03:25:30Z .. 2026-10-20T03:25:31Z)
+- lail10: spark1 4458 / spark2 8096 (2026-10-20T03:25:31Z .. 2026-10-20T03:27:53Z)
+- c1p9: spark1 4071 / spark2 8193 (2026-10-20T03:27:53Z .. 2026-10-20T03:28:55Z)
+- c4distinct: spark1 4094 / spark2 8488 (2026-10-20T03:28:55Z .. 2026-10-20T03:29:58Z)
+- quality: spark1 2783 / spark2 6491 (2026-10-20T03:29:58Z .. 2026-10-20T03:33:03Z)
+

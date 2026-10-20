@@ -1,0 +1,19 @@
+2026-10-20T03:11:41Z memsample pid 614813, procmem + live logs on both nodes
+2026-10-20T03:11:41Z smoke start
+2026-10-20T03:11:42Z smoke end
+2026-10-20T03:11:42Z pp32kx3 start
+2026-10-20T03:12:03Z pp32kx3 end
+2026-10-20T03:12:03Z pp64kx3 start
+2026-10-20T03:12:03Z pp64kx3 end
+2026-10-20T03:12:03Z gen102k start
+2026-10-20T03:12:03Z gen102k end
+2026-10-20T03:12:03Z cells done (sample smoke pp32kx3 pp64kx3 gen102k)
+2026-10-20T03:12:03Z c1short start
+2026-10-20T03:12:03Z c1short end
+2026-10-20T03:12:03Z c4distinct start
+2026-10-20T03:12:03Z c4distinct end
+2026-10-20T03:12:03Z STD done (c1short c4distinct)
+2026-10-20T03:12:03Z logs
+2026-10-20T03:12:05Z SERVE DOWN after logs
+2026-10-20T03:12:05Z cells done (logs)
+2026-10-20T03:12:06Z NOREL chain done

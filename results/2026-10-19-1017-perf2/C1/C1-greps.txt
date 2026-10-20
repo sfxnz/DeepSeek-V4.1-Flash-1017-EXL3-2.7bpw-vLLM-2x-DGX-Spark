@@ -1,0 +1,29 @@
+# empty_cache hook lines (head / worker)
+(Worker_TP0 pid=674) [dsv41-prefill-empty-cache] step 304 longest 130966 in_flight 0 wall 0.62 s interval 2.71 s reserved 103.27 -> 103.27 GiB (+0 MiB) MemAvailable 6.75 GiB action keep
+(Worker_TP0 pid=674) [dsv41-prefill-empty-cache] step 305 longest 1030 in_flight 0 wall 0.58 s interval 6.24 s reserved 103.27 -> 103.27 GiB (+0 MiB) MemAvailable 6.68 GiB action -
+(Worker_TP0 pid=674) [dsv41-prefill-empty-cache] step 306 longest 1041 in_flight 0 wall 0.58 s interval 5.16 s reserved 103.27 -> 103.27 GiB (+0 MiB) MemAvailable 6.63 GiB action -
+(Worker_TP0 pid=674) [dsv41-prefill-empty-cache] step 307 longest 1138 in_flight 0 wall 0.57 s interval 4.54 s reserved 103.27 -> 103.27 GiB (+0 MiB) MemAvailable 6.66 GiB action -
+(Worker_TP0 pid=674) [dsv41-prefill-empty-cache] step 308 longest 1252 in_flight 0 wall 0.57 s interval 5.59 s reserved 103.27 -> 103.27 GiB (+0 MiB) MemAvailable 6.60 GiB action -
+(Worker_TP1 pid=465) [dsv41-prefill-empty-cache] step 304 longest 130966 in_flight 0 wall 0.61 s interval 2.71 s reserved 104.76 -> 104.76 GiB (+0 MiB) MemAvailable 6.65 GiB action keep
+(Worker_TP1 pid=465) [dsv41-prefill-empty-cache] step 305 longest 1030 in_flight 0 wall 0.58 s interval 6.24 s reserved 104.76 -> 104.76 GiB (+0 MiB) MemAvailable 6.67 GiB action -
+(Worker_TP1 pid=465) [dsv41-prefill-empty-cache] step 306 longest 1041 in_flight 0 wall 0.58 s interval 5.16 s reserved 104.76 -> 104.76 GiB (+0 MiB) MemAvailable 6.59 GiB action -
+(Worker_TP1 pid=465) [dsv41-prefill-empty-cache] step 307 longest 1138 in_flight 0 wall 0.57 s interval 4.54 s reserved 104.76 -> 104.76 GiB (+0 MiB) MemAvailable 6.69 GiB action -
+(Worker_TP1 pid=465) [dsv41-prefill-empty-cache] step 308 longest 1252 in_flight 0 wall 0.57 s interval 5.59 s reserved 104.76 -> 104.76 GiB (+0 MiB) MemAvailable 6.67 GiB action -
+# prefill read-ahead census: lines, waits > 100 ms
+310
+0 waits > 100 ms
+# iteration lines (only with EXTRA_ARGS=--enable-logging-iteration-details): context-token histogram
+   2389 0
+    245 2048
+     22 8190
+     15 1075
+      3 40
+      2 756
+      2 653
+      2 39
+      2 1038
+      2 1030
+      1 8091
+      1 8004
+# disarm / failure lines
+      1 (Worker_TP0 pid=674) Traceback (most recent call last):

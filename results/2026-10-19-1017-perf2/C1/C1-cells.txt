@@ -1,0 +1,7 @@
+2026-10-19T23:25:56Z C1 start recipe=/home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 HEAD=ca42873 dirty=''
+2026-10-19T23:25:57Z C1 solo start
+2026-10-19T23:27:45Z C1 dec start
+2026-10-19T23:30:09Z C1 dec-aa start
+2026-10-19T23:32:30Z C1 turns start
+2026-10-19T23:34:22Z C1 cells done
+2026-10-19T23:34:23Z C1 done

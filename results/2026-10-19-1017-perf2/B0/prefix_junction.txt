@@ -1,0 +1,7 @@
+# cmd: python3 /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/tools/prefix_junction_test.py /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/prefix_cache.json /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/prefix_junction.json
+# cwd: /home/sfxnz/projects/ai-lab/recipes/DeepSeek-V4.1-Flash-1017-2X-DGX-SPARKS-EXL3 (HEAD 20ee8ba) host: spark1 start: 2026-10-19T17:41:55Z
+seed=35199468 shared_tokens=16470 tail_tokens=15693 (doc reproduced: 32593 tokens, prev 32593)
+e_shared_16k_prefix_new_tail: prompt=32184 ttft=45.11s rate=713.5 tok/s queries+=32184 hits+=0 hit_frac=0.0 text='The three invented words that appear most often are **keaveadrar**, **leagloust*'
+f_identical_to_e: prompt=32184 ttft=24.969s rate=1288.9 tok/s queries+=32184 hits+=16384 hit_frac=0.5091 text='The three invented words that appear most often are:\n\n1. **keaveadrar**\n2. **lea'
+rc=0
+# end: 2026-10-19T17:43:11Z

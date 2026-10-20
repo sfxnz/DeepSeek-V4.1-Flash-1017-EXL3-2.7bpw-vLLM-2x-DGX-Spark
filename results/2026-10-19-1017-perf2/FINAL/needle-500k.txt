@@ -1,0 +1,7 @@
+# cmd: python3 /home/sfxnz/projects/data/dsv41-1017/phased/tools/long_needle.py /home/sfxnz/projects/data/dsv41-1017/perf2/integration/FINAL/needle-500k.json 500000
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-release (HEAD 4ae29a6) host: spark1 start: 2026-10-20T05:40:43Z
+[needle 500000@0.1] found=True prompt_tokens=499342 181.6s answer='HWQ-6256-JT' code=HWQ-6256-JT
+[needle 500000@0.5] found=True prompt_tokens=499340 180.3s answer='HWQ-6256-JT' code=HWQ-6256-JT
+[needle 500000@0.9] found=True prompt_tokens=499342 181.1s answer='HWQ-6256-JT' code=HWQ-6256-JT
+rc=0
+# end: 2026-10-20T05:49:51Z

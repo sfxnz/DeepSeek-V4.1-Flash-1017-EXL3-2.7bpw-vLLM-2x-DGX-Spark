@@ -1,0 +1,118 @@
+start 2026-10-20T03:59:36Z host spark2 REV 156a06a0d36291f0688781cc02de59e84b8e1c95 DIFF 0000000000000000000000000000000000000000000000000000000000000000 (doc: no .git on the rsync copy)
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.e16
+#1 transferring dockerfile: 5.09kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/dsv41-flash-exl3-sm121:e15-kbits
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/dsv41-flash-exl3-sm121:e15-kbits
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 2.46MB 0.0s done
+#5 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/dsv41-flash-exl3-sm121:e15-kbits
+#4 CACHED
+
+#6 [2/5] COPY patch /opt/dsv41-patch
+#6 DONE 0.1s
+
+#7 [3/5] RUN apt-get update  && apt-get install -y --no-install-recommends git  && git clone https://github.com/vcruz305/vllm-exl3.git /opt/vllm-exl3  && git -C /opt/vllm-exl3 checkout "d3cfd394920360d69f820d2dc96f8292a9e10283"  && python3 /opt/dsv41-patch/fix_vllm_exl3_setup.py /opt/vllm-exl3/setup.py  && python3 /opt/dsv41-patch/widen_p2b_shapes.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_mrow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_cfg1.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_codebook.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_fshift.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_srcsort.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_coop.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_dataflow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_kbits.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_rows.py /opt/vllm-exl3  && TORCH_CUDA_ARCH_LIST=12.1a python3 -m pip install --no-build-isolation --no-deps --force-reinstall /opt/vllm-exl3  && python3 -c "import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); assert b'p2b_coop_dfw_kernelILi2ELi1E' in so and b'p2b_coop_dfw_kernelILi23ELi1E' in so and b'p2b coop dataflow wide kernel engaged' in so; assert vllm_exl3_c.P2B_WIDE_ROWS == 24; assert hasattr(e, '_native_moe_wide_rows'); print('vllm_exl3 rows cuda ok')"  && rm -rf /opt/vllm-exl3 /var/lib/apt/lists/*
+#7 15.40 Ign:1 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  InRelease
+#7 15.40 Ign:2 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble InRelease
+#7 20.41 Ign:3 http://ports.ubuntu.com/ubuntu-ports noble InRelease
+#7 30.42 Ign:4 http://ports.ubuntu.com/ubuntu-ports noble-updates InRelease
+#7 40.43 Ign:5 http://ports.ubuntu.com/ubuntu-ports noble-backports InRelease
+#7 46.43 Ign:1 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  InRelease
+#7 46.44 Ign:2 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble InRelease
+#7 50.44 Ign:6 http://ports.ubuntu.com/ubuntu-ports noble-security InRelease
+#7 63.45 Ign:2 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble InRelease
+#7 65.46 Ign:3 http://ports.ubuntu.com/ubuntu-ports noble InRelease
+#7 68.46 Ign:1 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  InRelease
+#7 80.47 Ign:4 http://ports.ubuntu.com/ubuntu-ports noble-updates InRelease
+#7 87.47 Err:1 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  InRelease
+#7 87.47   Temporary failure resolving 'developer.download.nvidia.com'
+#7 87.48 Err:2 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble InRelease
+#7 87.48   Temporary failure resolving 'ppa.launchpadcontent.net'
+#7 95.49 Ign:5 http://ports.ubuntu.com/ubuntu-ports noble-backports InRelease
+#7 105.5 Ign:6 http://ports.ubuntu.com/ubuntu-ports noble-security InRelease
+#7 115.5 Ign:3 http://ports.ubuntu.com/ubuntu-ports noble InRelease
+#7 125.5 Ign:4 http://ports.ubuntu.com/ubuntu-ports noble-updates InRelease
+#7 135.5 Ign:5 http://ports.ubuntu.com/ubuntu-ports noble-backports InRelease
+#7 145.5 Ign:6 http://ports.ubuntu.com/ubuntu-ports noble-security InRelease
+#7 155.6 Err:3 http://ports.ubuntu.com/ubuntu-ports noble InRelease
+#7 155.6   Temporary failure resolving 'ports.ubuntu.com'
+#7 165.6 Err:4 http://ports.ubuntu.com/ubuntu-ports noble-updates InRelease
+#7 165.6   Temporary failure resolving 'ports.ubuntu.com'
+#7 175.6 Err:5 http://ports.ubuntu.com/ubuntu-ports noble-backports InRelease
+#7 175.6   Temporary failure resolving 'ports.ubuntu.com'
+#7 185.6 Err:6 http://ports.ubuntu.com/ubuntu-ports noble-security InRelease
+#7 185.6   Temporary failure resolving 'ports.ubuntu.com'
+#7 185.6 Reading package lists...
+#7 185.6 W: Failed to fetch https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa/InRelease  Temporary failure resolving 'developer.download.nvidia.com'
+#7 185.6 W: Failed to fetch https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/dists/noble/InRelease  Temporary failure resolving 'ppa.launchpadcontent.net'
+#7 185.6 W: Failed to fetch http://ports.ubuntu.com/ubuntu-ports/dists/noble/InRelease  Temporary failure resolving 'ports.ubuntu.com'
+#7 185.6 W: Failed to fetch http://ports.ubuntu.com/ubuntu-ports/dists/noble-updates/InRelease  Temporary failure resolving 'ports.ubuntu.com'
+#7 185.6 W: Failed to fetch http://ports.ubuntu.com/ubuntu-ports/dists/noble-backports/InRelease  Temporary failure resolving 'ports.ubuntu.com'
+#7 185.6 W: Failed to fetch http://ports.ubuntu.com/ubuntu-ports/dists/noble-security/InRelease  Temporary failure resolving 'ports.ubuntu.com'
+#7 185.6 W: Some index files failed to download. They have been ignored, or old ones used instead.
+#7 185.6 Reading package lists...
+#7 185.6 Building dependency tree...
+#7 185.6 Reading state information...
+#7 185.7 git is already the newest version (1:2.43.0-1ubuntu7.3).
+#7 185.7 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+#7 185.7 Cloning into '/opt/vllm-exl3'...
+#7 195.7 fatal: unable to access 'https://github.com/vcruz305/vllm-exl3.git/': Could not resolve host: github.com
+#7 ERROR: process "/bin/sh -c apt-get update  && apt-get install -y --no-install-recommends git  && git clone https://github.com/vcruz305/vllm-exl3.git /opt/vllm-exl3  && git -C /opt/vllm-exl3 checkout \"$VLLM_EXL3_REF\"  && python3 /opt/dsv41-patch/fix_vllm_exl3_setup.py /opt/vllm-exl3/setup.py  && python3 /opt/dsv41-patch/widen_p2b_shapes.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_mrow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_cfg1.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_codebook.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_fshift.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_srcsort.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_coop.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_dataflow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_kbits.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_rows.py /opt/vllm-exl3  && TORCH_CUDA_ARCH_LIST=12.1a python3 -m pip install --no-build-isolation --no-deps --force-reinstall /opt/vllm-exl3  && python3 -c \"import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); assert b'p2b_coop_dfw_kernelILi2ELi1E' in so and b'p2b_coop_dfw_kernelILi23ELi1E' in so and b'p2b coop dataflow wide kernel engaged' in so; assert vllm_exl3_c.P2B_WIDE_ROWS == 24; assert hasattr(e, '_native_moe_wide_rows'); print('vllm_exl3 rows cuda ok')\"  && rm -rf /opt/vllm-exl3 /var/lib/apt/lists/*" did not complete successfully: exit code: 128
+------
+ > [3/5] RUN apt-get update  && apt-get install -y --no-install-recommends git  && git clone https://github.com/vcruz305/vllm-exl3.git /opt/vllm-exl3  && git -C /opt/vllm-exl3 checkout "d3cfd394920360d69f820d2dc96f8292a9e10283"  && python3 /opt/dsv41-patch/fix_vllm_exl3_setup.py /opt/vllm-exl3/setup.py  && python3 /opt/dsv41-patch/widen_p2b_shapes.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_mrow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_cfg1.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_codebook.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_fshift.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_srcsort.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_coop.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_dataflow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_kbits.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_rows.py /opt/vllm-exl3  && TORCH_CUDA_ARCH_LIST=12.1a python3 -m pip install --no-build-isolation --no-deps --force-reinstall /opt/vllm-exl3  && python3 -c "import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); assert b'p2b_coop_dfw_kernelILi2ELi1E' in so and b'p2b_coop_dfw_kernelILi23ELi1E' in so and b'p2b coop dataflow wide kernel engaged' in so; assert vllm_exl3_c.P2B_WIDE_ROWS == 24; assert hasattr(e, '_native_moe_wide_rows'); print('vllm_exl3 rows cuda ok')"  && rm -rf /opt/vllm-exl3 /var/lib/apt/lists/*:
+185.6 W: Failed to fetch http://ports.ubuntu.com/ubuntu-ports/dists/noble-backports/InRelease  Temporary failure resolving 'ports.ubuntu.com'
+185.6 W: Failed to fetch http://ports.ubuntu.com/ubuntu-ports/dists/noble-security/InRelease  Temporary failure resolving 'ports.ubuntu.com'
+185.6 W: Some index files failed to download. They have been ignored, or old ones used instead.
+185.6 Reading package lists...
+185.6 Building dependency tree...
+185.6 Reading state information...
+185.7 git is already the newest version (1:2.43.0-1ubuntu7.3).
+185.7 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+185.7 Cloning into '/opt/vllm-exl3'...
+195.7 fatal: unable to access 'https://github.com/vcruz305/vllm-exl3.git/': Could not resolve host: github.com
+------
+Dockerfile.e16:24
+--------------------
+  23 |     ARG VLLM_EXL3_REF=d3cfd394920360d69f820d2dc96f8292a9e10283
+  24 | >>> RUN apt-get update \
+  25 | >>>  && apt-get install -y --no-install-recommends git \
+  26 | >>>  && git clone https://github.com/vcruz305/vllm-exl3.git /opt/vllm-exl3 \
+  27 | >>>  && git -C /opt/vllm-exl3 checkout "$VLLM_EXL3_REF" \
+  28 | >>>  && python3 /opt/dsv41-patch/fix_vllm_exl3_setup.py /opt/vllm-exl3/setup.py \
+  29 | >>>  && python3 /opt/dsv41-patch/widen_p2b_shapes.py /opt/vllm-exl3 \
+  30 | >>>  && python3 /opt/dsv41-patch/widen_p2b_mrow.py /opt/vllm-exl3 \
+  31 | >>>  && python3 /opt/dsv41-patch/widen_p2b_cfg1.py /opt/vllm-exl3 \
+  32 | >>>  && python3 /opt/dsv41-patch/widen_p2b_codebook.py /opt/vllm-exl3 \
+  33 | >>>  && python3 /opt/dsv41-patch/widen_p2b_fshift.py /opt/vllm-exl3 \
+  34 | >>>  && python3 /opt/dsv41-patch/widen_p2b_srcsort.py /opt/vllm-exl3 \
+  35 | >>>  && python3 /opt/dsv41-patch/widen_p2b_coop.py /opt/vllm-exl3 \
+  36 | >>>  && python3 /opt/dsv41-patch/widen_p2b_dataflow.py /opt/vllm-exl3 \
+  37 | >>>  && python3 /opt/dsv41-patch/widen_p2b_kbits.py /opt/vllm-exl3 \
+  38 | >>>  && python3 /opt/dsv41-patch/widen_p2b_rows.py /opt/vllm-exl3 \
+  39 | >>>  && TORCH_CUDA_ARCH_LIST=12.1a python3 -m pip install --no-build-isolation --no-deps --force-reinstall /opt/vllm-exl3 \
+  40 | >>>  && python3 -c "import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); assert b'p2b_coop_dfw_kernelILi2ELi1E' in so and b'p2b_coop_dfw_kernelILi23ELi1E' in so and b'p2b coop dataflow wide kernel engaged' in so; assert vllm_exl3_c.P2B_WIDE_ROWS == 24; assert hasattr(e, '_native_moe_wide_rows'); print('vllm_exl3 rows cuda ok')" \
+  41 | >>>  && rm -rf /opt/vllm-exl3 /var/lib/apt/lists/*
+  42 |     
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c apt-get update  && apt-get install -y --no-install-recommends git  && git clone https://github.com/vcruz305/vllm-exl3.git /opt/vllm-exl3  && git -C /opt/vllm-exl3 checkout \"$VLLM_EXL3_REF\"  && python3 /opt/dsv41-patch/fix_vllm_exl3_setup.py /opt/vllm-exl3/setup.py  && python3 /opt/dsv41-patch/widen_p2b_shapes.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_mrow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_cfg1.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_codebook.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_fshift.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_srcsort.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_coop.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_dataflow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_kbits.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_rows.py /opt/vllm-exl3  && TORCH_CUDA_ARCH_LIST=12.1a python3 -m pip install --no-build-isolation --no-deps --force-reinstall /opt/vllm-exl3  && python3 -c \"import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); assert b'p2b_coop_dfw_kernelILi2ELi1E' in so and b'p2b_coop_dfw_kernelILi23ELi1E' in so and b'p2b coop dataflow wide kernel engaged' in so; assert vllm_exl3_c.P2B_WIDE_ROWS == 24; assert hasattr(e, '_native_moe_wide_rows'); print('vllm_exl3 rows cuda ok')\"  && rm -rf /opt/vllm-exl3 /var/lib/apt/lists/*" did not complete successfully: exit code: 128
+
+real	3m16.259s
+user	0m0.249s
+sys	0m0.289s
+rc=1
+end 2026-10-20T04:02:52Z
+NOTE 2026-10-20T04:08:50Z: this spark2 chain A build FAILED (rc=1, git clone github.com: Could not resolve host; spark2 has no default route: enP7s7 10.20.20.195/24 dynamic noprefixroute, no 'default via'). Per main agent (option a) the spark2 e16-rows image was TRANSFERRED, not built: docker save dsv41-flash-exl3-sm121:e16-rows on spark1 | ssh spark2 (10.100.8.2) docker load, 04:05:56-04:08:24Z, rc=0 (transfer-e16-spark2.log). spark2 e16-rows = sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a, identical to spark1's build (build-e16-spark1-156a06a.log); its labels are spark1's (git_rev 156a06a, tree_diff e3b0c442...). Rollback e16-rows-d365c92 = a7c4300af02c kept.

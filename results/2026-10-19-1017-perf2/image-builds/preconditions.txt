@@ -1,0 +1,121 @@
+## spark1 2026-10-20T03:58:44Z
+conduit matrixconduit/matrix-conduit:latest
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p2  3.7T  3.3T  256G  93% /
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          65        2         196.4GB   104.2GB (53%)
+Containers      2         1         642B      642B (100%)
+Local Volumes   1         0         5.445GB   5.445GB (100%)
+Build Cache     477       0         15.72GB   2.318GB
+dsv41-flash-exl3-sm121:e15-kbits -> sha256:7e2cec199bed2c6691a2e3e60deaa66ebbe4ab4a14f942e1e88662135a87dc67 created 2026-10-17T16:40:24.314110858Z git_rev 0c918d2cd3099bb7d714f227326778ce4aee8757 patches shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack
+dsv41-flash-exl3-sm121:e16-rows -> sha256:ac651e4f21b3fc3a93c50c1faa9d4d37e3f66008e0ecd7c1b9c6c7bad18671b8 created 2026-10-19T18:45:36.929491444Z git_rev d365c92687c4ead1a5b763be96718e8a74f52800 patches shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack
+dsv41-flash-exl3-sm121:e16-rows-d365c92 -> 
+vllm/vllm-openai@sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58 -> sha256:714a937591e162044e9142b0ba2ed18bd21734edcffb59f651db6ced941a2040 created 2026-09-10T06:39:05.749634247Z git_rev <no value> patches <no value>
+## spark2 2026-10-20T03:58:45Z
+Usage:  docker [OPTIONS] COMMAND
+
+A self-sufficient runtime for containers
+
+Common Commands:
+  run         Create and run a new container from an image
+  exec        Execute a command in a running container
+  ps          List containers
+  build       Build an image from a Dockerfile
+  bake        Build from a file
+  pull        Download an image from a registry
+  push        Upload an image to a registry
+  images      List images
+  login       Authenticate to a registry
+  logout      Log out from a registry
+  search      Search Docker Hub for images
+  version     Show the Docker version information
+  info        Display system-wide information
+
+Management Commands:
+  builder     Manage builds
+  buildx*     Docker Buildx
+  compose*    Docker Compose
+  container   Manage containers
+  context     Manage contexts
+  image       Manage images
+  manifest    Manage Docker image manifests and manifest lists
+  network     Manage networks
+  plugin      Manage plugins
+  system      Manage Docker
+  volume      Manage volumes
+
+Swarm Commands:
+  swarm       Manage Swarm
+
+Commands:
+  attach      Attach local standard input, output, and error streams to a running container
+  commit      Create a new image from a container's changes
+  cp          Copy files/folders between a container and the local filesystem
+  create      Create a new container
+  diff        Inspect changes to files or directories on a container's filesystem
+  events      Get real time events from the server
+  export      Export a container's filesystem as a tar archive
+  history     Show the history of an image
+  import      Import the contents from a tarball to create a filesystem image
+  inspect     Return low-level information on Docker objects
+  kill        Kill one or more running containers
+  load        Load an image from a tar archive or STDIN
+  logs        Fetch the logs of a container
+  pause       Pause all processes within one or more containers
+  port        List port mappings or a specific mapping for the container
+  rename      Rename a container
+  restart     Restart one or more containers
+  rm          Remove one or more containers
+  rmi         Remove one or more images
+  save        Save one or more images to a tar archive (streamed to STDOUT by default)
+  start       Start one or more stopped containers
+  stats       Display a live stream of container(s) resource usage statistics
+  stop        Stop one or more running containers
+  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+  top         Display the running processes of a container
+  unpause     Unpause all processes within one or more containers
+  update      Update configuration of one or more containers
+  wait        Block until one or more containers stop, then print their exit codes
+
+Global Options:
+      --config string      Location of client config files (default
+                           "/home/sfxnz/.docker")
+  -c, --context string     Name of the context to use to connect to the
+                           daemon (overrides DOCKER_HOST env var and
+                           default context set with "docker context use")
+  -D, --debug              Enable debug mode
+  -H, --host string        Daemon socket to connect to
+  -l, --log-level string   Set the logging level ("debug", "info",
+                           "warn", "error", "fatal") (default "info")
+      --tls                Use TLS; implied by --tlsverify
+      --tlscacert string   Trust certs signed only by this CA (default
+                           "/home/sfxnz/.docker/ca.pem")
+      --tlscert string     Path to TLS certificate file (default
+                           "/home/sfxnz/.docker/cert.pem")
+      --tlskey string      Path to TLS key file (default
+                           "/home/sfxnz/.docker/key.pem")
+      --tlsverify          Use TLS and verify the remote
+  -v, --version            Print version information and quit
+
+Run 'docker COMMAND --help' for more information on a command.
+
+For more help on how to use Docker, head to https://docs.docker.com/go/guides/
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p2  3.7T  3.5T   78G  98% /
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          57        1         136.8GB   113.3GB (82%)
+Containers      1         0         61.17MB   61.17MB (100%)
+Local Volumes   1         0         3.602GB   3.602GB (100%)
+Build Cache     192       0         10.26GB   45.1MB
+dsv41-flash-exl3-sm121:e15-kbits -> sha256:7e2cec199bed2c6691a2e3e60deaa66ebbe4ab4a14f942e1e88662135a87dc67 created 2026-10-17T16:40:24.314110858Z git_rev 0c918d2cd3099bb7d714f227326778ce4aee8757 patches shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack
+dsv41-flash-exl3-sm121:e16-rows -> sha256:a7c4300af02c8969de2669c742f9619658a89cf25afe2823ef25af2a8ce8d3ac created 2026-10-19T19:40:35.906067729+01:00 git_rev d365c92687c4ead1a5b763be96718e8a74f52800 patches shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack
+dsv41-flash-exl3-sm121:e16-rows-d365c92 -> 
+vllm/vllm-openai@sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58 -> sha256:714a937591e162044e9142b0ba2ed18bd21734edcffb59f651db6ced941a2040 created 2026-09-10T06:39:05.749634247Z git_rev <no value> patches <no value>
+## spark2 docker ps (re-run)
+(end of list)
+## tag rollback image 2026-10-20T03:58:58Z
+spark1 tagged: sha256:ac651e4f21b3fc3a93c50c1faa9d4d37e3f66008e0ecd7c1b9c6c7bad18671b8
+spark2 tagged: sha256:a7c4300af02c8969de2669c742f9619658a89cf25afe2823ef25af2a8ce8d3ac
+rsync rc=0 2026-10-20T03:59:20Z
+docker/ tree checksum spark1 b5eb4e402f8ec17426e9b7b9541a6523dfe79fb3f408b89e6a34e549ae6d9052 spark2 b5eb4e402f8ec17426e9b7b9541a6523dfe79fb3f408b89e6a34e549ae6d9052 IDENTICAL
+git ls-files docker index hash 6cf3bbc63177e5f8 (HEAD 156a06a, 0 changes)

@@ -1,0 +1,1 @@
+bash /home/sfxnz/projects/data/dsv41-1017/perf2/integration/FINAL/boot-FINAL.sh  (worktree /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-release HEAD 4ae29a6, 0 changes; started 2026-10-20T04:44:18Z via setsid -f; caller env had no DSV41_/NUM_SPEC/MAX_NUM/KV/IMAGE vars)

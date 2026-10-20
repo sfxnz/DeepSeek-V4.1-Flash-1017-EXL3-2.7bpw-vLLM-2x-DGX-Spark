@@ -1,0 +1,50 @@
+start 2026-10-20T04:05:56Z spark1 dsv41-flash-exl3-sm121:e16-rows sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a size 23665630002 B
+spark2 before: dsv41-flash-exl3-sm121:e16-rows sha256:a7c4300af02c8969de2669c742f9619658a89cf25afe2823ef25af2a8ce8d3ac; df: /dev/nvme0n1p2  3.7T  3.5T   78G  98% /
+04:05:57 spark2 avail 78G
+04:06:00 spark2 avail 78G
+04:06:04 spark2 avail 78G
+04:06:07 spark2 avail 78G
+04:06:10 spark2 avail 78G
+04:06:14 spark2 avail 78G
+04:06:17 spark2 avail 78G
+04:06:20 spark2 avail 78G
+04:06:24 spark2 avail 78G
+04:06:27 spark2 avail 78G
+04:06:30 spark2 avail 78G
+04:06:34 spark2 avail 78G
+04:06:37 spark2 avail 78G
+04:06:40 spark2 avail 78G
+04:06:44 spark2 avail 78G
+04:06:47 spark2 avail 78G
+04:06:50 spark2 avail 78G
+04:06:54 spark2 avail 78G
+04:06:57 spark2 avail 78G
+04:07:00 spark2 avail 78G
+04:07:04 spark2 avail 78G
+04:07:07 spark2 avail 78G
+04:07:10 spark2 avail 78G
+04:07:14 spark2 avail 78G
+04:07:17 spark2 avail 78G
+04:07:20 spark2 avail 78G
+04:07:24 spark2 avail 78G
+04:07:27 spark2 avail 78G
+04:07:30 spark2 avail 78G
+04:07:34 spark2 avail 78G
+04:07:37 spark2 avail 78G
+04:07:41 spark2 avail 78G
+04:07:44 spark2 avail 78G
+04:07:47 spark2 avail 78G
+04:07:51 spark2 avail 75G
+04:07:54 spark2 avail 73G
+04:07:57 spark2 avail 71G
+04:08:01 spark2 avail 69G
+04:08:04 spark2 avail 66G
+04:08:07 spark2 avail 64G
+04:08:11 spark2 avail 62G
+04:08:14 spark2 avail 60G
+04:08:17 spark2 avail 57G
+04:08:21 spark2 avail 56G
+The image dsv41-flash-exl3-sm121:e16-rows already exists, renaming the old one with ID sha256:a7c4300af02c8969de2669c742f9619658a89cf25afe2823ef25af2a8ce8d3ac to empty string
+Loaded image: dsv41-flash-exl3-sm121:e16-rows
+pipeline rc=0 end 2026-10-20T04:08:24Z
+spark2 after: df: /dev/nvme0n1p2  3.7T  3.5T   78G  98% /

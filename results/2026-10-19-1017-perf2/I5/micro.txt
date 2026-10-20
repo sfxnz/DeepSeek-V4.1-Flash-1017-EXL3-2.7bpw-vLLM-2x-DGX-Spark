@@ -1,0 +1,72 @@
+# cmd: benches/micro.sh --contexts 4096 16384 --runs 2
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 (HEAD ca42873) host: spark1 start: 2026-10-19T22:36:27Z
+ctx=4096 pp_warm run=1 doc=2626 ttft=1.84s rate=1426.3 tok/s acc=-
+ctx=4096 pp_warm run=2 doc=3980 ttft=2.61s rate=1528.3 tok/s acc=-
+ctx=4096 pp_novel run=1 doc=4035 ttft=2.53s rate=1593.7 tok/s acc=-
+ctx=4096 pp_novel run=2 doc=3983 ttft=2.50s rate=1597.1 tok/s acc=-
+ctx=4096 tg run=1 doc=3975 ttft=2.61s rate=53.7 tok/s acc=3.4
+ctx=4096 tg run=2 doc=3997 ttft=2.81s rate=39.8 tok/s acc=2.1333333333333333
+ctx=16384 pp_warm run=1 doc=16364 ttft=11.26s rate=1454.0 tok/s acc=-
+ctx=16384 pp_warm run=2 doc=16024 ttft=15.69s rate=1021.4 tok/s acc=-
+ctx=16384 pp_novel run=1 doc=16190 ttft=10.71s rate=1511.6 tok/s acc=-
+ctx=16384 pp_novel run=2 doc=16221 ttft=10.35s rate=1567.7 tok/s acc=-
+ctx=16384 tg run=1 doc=16014 ttft=10.25s rate=36.0 tok/s acc=2.125
+ctx=16384 tg run=2 doc=16375 ttft=10.83s rate=43.5 tok/s acc=2.4615384615384617
+SUMMARY [
+ {
+  "ctx": 4096,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 1477.3,
+  "median_ttft_s": 2.23,
+  "doc_tokens": 2626,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 4096,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 1595.4,
+  "median_ttft_s": 2.52,
+  "doc_tokens": 4035,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 4096,
+  "phase": "tg",
+  "median_rate_tok_s": 46.7,
+  "median_ttft_s": 2.71,
+  "doc_tokens": 3975,
+  "acceptance_len": 2.77,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 1237.7,
+  "median_ttft_s": 13.47,
+  "doc_tokens": 16364,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 1539.6,
+  "median_ttft_s": 10.53,
+  "doc_tokens": 16190,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "tg",
+  "median_rate_tok_s": 39.7,
+  "median_ttft_s": 10.54,
+  "doc_tokens": 16014,
+  "acceptance_len": 2.29,
+  "runs": 2
+ }
+]
+rc=0
+# end: 2026-10-19T22:37:55Z

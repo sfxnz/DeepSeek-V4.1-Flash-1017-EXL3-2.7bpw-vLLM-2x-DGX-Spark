@@ -1,0 +1,20 @@
+# env of the serve (head container)
+DSV41_MOE_PREFILL_TC=1
+DSV41_PREFILL_EMPTY_CACHE_FLOOR_GIB=3
+DSV41_ENGRAM_PREFILL_AHEAD=1
+DSV41_PREFILL_EMPTY_CACHE_GROWTH_MIB=150
+DSV41_DECODER_REPLAY_ROWS=2670
+DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192
+DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4
+DSV41_PREFILL_EMPTY_CACHE_HOLD=1
+DSV41_SCHED_DECODE_STEPS=1
+DSV41_SCHED_PREFILL_CAP=2048
+# lever lines (head, counted)
+      1 dsv41: decoder replay armed (W=2670 exact (exact from 2414), cut=20, layers 20-39 on kept rows in eager prefill steps, valid tail 384 rows, junction runs 2542 rows)
+      1 dsv41: decoder replay prefix-cache guard armed (43 SWA groups; SWA blocks below prompt_len - 384 stay out of the prefix cache when a prefill skips rows; junction anchors keep [J-256, J+peek), 0 = none)
+      1 dsv41: engram prefill ahead armed (2 tables, read-ahead 8192 tokens = 96.0 MiB pinned at first use, threads=8, cpus=any, verify=4, dontneed=1, above 64 tokens)
+      4 dsv41: sched prefill cap armed (cap 2048 tokens per prefilling request while the scheduler holds > 1 request; 1 decode-only step(s) after each step that carried prefill while a request decodes)
+      1 dsv41: sched prefill cap: decoder replay tail of 2670 rows, cap x 21/40 while a chunk reaches it
+# lever lines (worker, counted)
+      1 dsv41: decoder replay armed (W=2670 exact (exact from 2414), cut=20, layers 20-39 on kept rows in eager prefill steps, valid tail 384 rows, junction runs 2542 rows)
+      3 dsv41: sched prefill cap armed (cap 2048 tokens per prefilling request while the scheduler holds > 1 request; 1 decode-only step(s) after each step that carried prefill while a request decodes)

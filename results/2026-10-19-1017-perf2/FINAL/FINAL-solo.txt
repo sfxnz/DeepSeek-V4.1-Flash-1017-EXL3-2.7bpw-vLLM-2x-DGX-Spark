@@ -1,0 +1,8 @@
+solo s0.0: 192 tokens, TTFT 0.34 s
+solo s1.0: 192 tokens, TTFT 0.18 s
+solo s2.0: 192 tokens, TTFT 0.17 s
+solo t0.0: 93 tokens, TTFT 0.80 s
+solo t0.1: 96 tokens, TTFT 0.82 s
+solo t0.2: 96 tokens, TTFT 0.75 s
+solo p65536: 51 tokens, TTFT 21.95 s
+solo p131072: 49 tokens, TTFT 43.28 s

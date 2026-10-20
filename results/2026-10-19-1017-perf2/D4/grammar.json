@@ -1,0 +1,76 @@
+{
+ "c1": [
+  {
+   "prompt": "Describe a fictional librarian as JSON with a name, an age and a few tags.",
+   "status": 200,
+   "wall_s": 3.49,
+   "content": "{\n  \"name\": \"Elara Voss\",\n  \"age\": 47,\n  \"tags\": [\n    \"keeper of forbidden archives\",\n    \"whisper-quiet\",\n    \"cat companion\",\n    \"nocturnal\",\n    \"meticulous cataloger\"\n  ]\n}",
+   "completion_tokens": 61,
+   "finish_reason": "stop",
+   "schema_error": null,
+   "ok": true
+  },
+  {
+   "prompt": "Describe a fictional mountain guide as JSON with a name, an age and a few tags.",
+   "status": 200,
+   "wall_s": 2.11,
+   "content": "{\n  \"name\": \"Elias Thornwood\",\n  \"age\": 47,\n  \"tags\": [\n    \"mountain guide\",\n    \"veteran climber\",\n    \"wilderness survival expert\",\n    \"storyteller\",\n    \"patient mentor\"\n  ]\n}",
+   "completion_tokens": 59,
+   "finish_reason": "stop",
+   "schema_error": null,
+   "ok": true
+  },
+  {
+   "prompt": "Describe a fictional chef as JSON with a name, an age and a few tags.",
+   "status": 200,
+   "wall_s": 1.12,
+   "content": "{\n  \"name\": \"Marisol Vega\",\n  \"age\": 38,\n  \"tags\": [\n    \"fusion cuisine\",\n    \"fermentation enthusiast\",\n    \"farm-to-table advocate\",\n    \"James Beard nominee\"\n  ]\n}",
+   "completion_tokens": 50,
+   "finish_reason": "stop",
+   "schema_error": null,
+   "ok": true
+  }
+ ],
+ "c4": [
+  {
+   "prompt": "Describe a fictional librarian as JSON with a name, an age and a few tags.",
+   "status": 200,
+   "wall_s": 2.51,
+   "content": "{\n  \"name\": \"Elara Voss\",\n  \"age\": 47,\n  \"tags\": [\n    \"Keeper of the Whispering Archive\",\n    \"Collector of forgotten languages\",\n    \"Night-shift cataloguer\",\n    \"Tea enthusiast\",\n    \"Guardian of the Restricted Stacks\"\n  ]\n}",
+   "completion_tokens": 69,
+   "finish_reason": "stop",
+   "schema_error": null,
+   "ok": true
+  },
+  {
+   "prompt": "Describe a fictional mountain guide as JSON with a name, an age and a few tags.",
+   "status": 200,
+   "wall_s": 2.02,
+   "content": "{\n  \"name\": \"Elias Thornwood\",\n  \"age\": 47,\n  \"tags\": [\n    \"veteran mountaineer\",\n    \"storm-reader\",\n    \"patient teacher\",\n    \"high-altitude specialist\"\n  ]\n}",
+   "completion_tokens": 54,
+   "finish_reason": "stop",
+   "schema_error": null,
+   "ok": true
+  },
+  {
+   "prompt": "Describe a fictional chef as JSON with a name, an age and a few tags.",
+   "status": 200,
+   "wall_s": 2.2,
+   "content": "{\n  \"name\": \"Marisol Vega\",\n  \"age\": 38,\n  \"tags\": [\n    \"fusion cuisine\",\n    \"fermentation enthusiast\",\n    \"farm-to-table advocate\",\n    \"James Beard nominee\",\n    \"fiery temper\"\n  ]\n}",
+   "completion_tokens": 56,
+   "finish_reason": "stop",
+   "schema_error": null,
+   "ok": true
+  },
+  {
+   "prompt": "Describe a fictional pilot as JSON with a name, an age and a few tags.",
+   "status": 200,
+   "wall_s": 2.28,
+   "content": "{\n  \"name\": \"Captain Elara Voss\",\n  \"age\": 34,\n  \"tags\": [\n    \"ace pilot\",\n    \"hot-headed\",\n    \"loyal to her crew\",\n    \"fearless in combat\",\n    \"haunted by her past\"\n  ]\n}",
+   "completion_tokens": 62,
+   "finish_reason": "stop",
+   "schema_error": null,
+   "ok": true
+  }
+ ]
+}

@@ -1,0 +1,529 @@
+# cmd: python3 tools/replay_ab.py compare /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I5/prefix-A.json /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I4/prefix-B.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 (HEAD ca42873) host: spark1 start: 2026-10-19T22:36:02Z
+{
+ "cold_r0": {
+  "prompt_tokens": [
+   19968,
+   19968
+  ],
+  "tokens": [
+   16,
+   16
+  ],
+  "first_divergence": 16,
+  "identical": true,
+  "max_abs_dlogprob": 0.3291752338409424,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r0": {
+  "prompt_tokens": [
+   19968,
+   19968
+  ],
+  "tokens": [
+   16,
+   16
+  ],
+  "first_divergence": 16,
+  "identical": true,
+  "max_abs_dlogprob": 0.17482620477676392,
+  "min_top5_overlap": 1.0,
+  "hits": [
+   19840.0,
+   19840.0
+  ]
+ },
+ "follow_r0": {
+  "prompt_tokens": [
+   19992,
+   19992
+  ],
+  "tokens": [
+   51,
+   43
+  ],
+  "first_divergence": 17,
+  "identical": false,
+  "max_abs_dlogprob": 0.24979418516159058,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19840.0,
+   19840.0
+  ]
+ },
+ "newq_r0": {
+  "prompt_tokens": [
+   19967,
+   19967
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.007254673168063164,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19840.0,
+   19840.0
+  ]
+ },
+ "cold_r1": {
+  "prompt_tokens": [
+   20097,
+   20097
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "identical": true,
+  "max_abs_dlogprob": 0.23132777214050293,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r1": {
+  "prompt_tokens": [
+   20097,
+   20097
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "identical": true,
+  "max_abs_dlogprob": 0.3459388017654419,
+  "min_top5_overlap": 0.6,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "follow_r1": {
+  "prompt_tokens": [
+   20121,
+   20121
+  ],
+  "tokens": [
+   60,
+   58
+  ],
+  "first_divergence": 7,
+  "identical": false,
+  "max_abs_dlogprob": 0.07510800659656525,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "newq_r1": {
+  "prompt_tokens": [
+   20096,
+   20096
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.027603309601545334,
+  "min_top5_overlap": 1.0,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "cold_r63": {
+  "prompt_tokens": [
+   19903,
+   19903
+  ],
+  "tokens": [
+   16,
+   14
+  ],
+  "first_divergence": 10,
+  "identical": false,
+  "max_abs_dlogprob": 0.16081532835960388,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r63": {
+  "prompt_tokens": [
+   19903,
+   19903
+  ],
+  "tokens": [
+   14,
+   14
+  ],
+  "first_divergence": 14,
+  "identical": true,
+  "max_abs_dlogprob": 0.34115293622016907,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19712.0,
+   19712.0
+  ]
+ },
+ "follow_r63": {
+  "prompt_tokens": [
+   19927,
+   19927
+  ],
+  "tokens": [
+   64,
+   64
+  ],
+  "first_divergence": 43,
+  "identical": false,
+  "max_abs_dlogprob": 0.582363486289978,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19712.0,
+   19712.0
+  ]
+ },
+ "newq_r63": {
+  "prompt_tokens": [
+   19902,
+   19902
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.04599585756659508,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19712.0,
+   19712.0
+  ]
+ },
+ "cold_r64": {
+  "prompt_tokens": [
+   20160,
+   20160
+  ],
+  "tokens": [
+   18,
+   16
+  ],
+  "first_divergence": 0,
+  "identical": false,
+  "max_abs_dlogprob": 0.0,
+  "min_top5_overlap": 1.0,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r64": {
+  "prompt_tokens": [
+   20160,
+   20160
+  ],
+  "tokens": [
+   13,
+   16
+  ],
+  "first_divergence": 6,
+  "identical": false,
+  "max_abs_dlogprob": 0.10496920347213745,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "follow_r64": {
+  "prompt_tokens": [
+   20184,
+   20184
+  ],
+  "tokens": [
+   55,
+   64
+  ],
+  "first_divergence": 6,
+  "identical": false,
+  "max_abs_dlogprob": 0.09856776148080826,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   20096.0,
+   20096.0
+  ]
+ },
+ "newq_r64": {
+  "prompt_tokens": [
+   20159,
+   20159
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.005035024369135499,
+  "min_top5_overlap": 1.0,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "cold_r65": {
+  "prompt_tokens": [
+   19777,
+   19777
+  ],
+  "tokens": [
+   13,
+   13
+  ],
+  "first_divergence": 13,
+  "identical": true,
+  "max_abs_dlogprob": 0.30089789628982544,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r65": {
+  "prompt_tokens": [
+   19777,
+   19777
+  ],
+  "tokens": [
+   11,
+   14
+  ],
+  "first_divergence": 6,
+  "identical": false,
+  "max_abs_dlogprob": 0.05804342031478882,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19712.0,
+   19712.0
+  ]
+ },
+ "follow_r65": {
+  "prompt_tokens": [
+   19801,
+   19801
+  ],
+  "tokens": [
+   64,
+   64
+  ],
+  "first_divergence": 34,
+  "identical": false,
+  "max_abs_dlogprob": 0.5305140018463135,
+  "min_top5_overlap": 0.6,
+  "hits": [
+   19712.0,
+   19712.0
+  ]
+ },
+ "newq_r65": {
+  "prompt_tokens": [
+   19776,
+   19776
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.016157452948391438,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19584.0,
+   19584.0
+  ]
+ },
+ "cold_r127": {
+  "prompt_tokens": [
+   20095,
+   20095
+  ],
+  "tokens": [
+   11,
+   11
+  ],
+  "first_divergence": 11,
+  "identical": true,
+  "max_abs_dlogprob": 0.11184950172901154,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend_r127": {
+  "prompt_tokens": [
+   20095,
+   20095
+  ],
+  "tokens": [
+   11,
+   11
+  ],
+  "first_divergence": 11,
+  "identical": true,
+  "max_abs_dlogprob": 0.3240102529525757,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "follow_r127": {
+  "prompt_tokens": [
+   20119,
+   20119
+  ],
+  "tokens": [
+   64,
+   64
+  ],
+  "first_divergence": 6,
+  "identical": false,
+  "max_abs_dlogprob": 0.1558968648314476,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "newq_r127": {
+  "prompt_tokens": [
+   20094,
+   20094
+  ],
+  "tokens": [
+   3,
+   3
+  ],
+  "first_divergence": 3,
+  "identical": true,
+  "max_abs_dlogprob": 0.05377151072025299,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "sib1": {
+  "prompt_tokens": [
+   16245,
+   16245
+  ],
+  "tokens": [
+   14,
+   14
+  ],
+  "first_divergence": 14,
+  "identical": true,
+  "max_abs_dlogprob": 0.43900516629219055,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "sib2": {
+  "prompt_tokens": [
+   16243,
+   16243
+  ],
+  "tokens": [
+   23,
+   23
+  ],
+  "first_divergence": 23,
+  "identical": true,
+  "max_abs_dlogprob": 0.35357505083084106,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   16128.0,
+   16128.0
+  ]
+ },
+ "sib3": {
+  "prompt_tokens": [
+   16246,
+   16246
+  ],
+  "tokens": [
+   22,
+   20
+  ],
+  "first_divergence": 13,
+  "identical": false,
+  "max_abs_dlogprob": 0.28339003026485443,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   16128.0,
+   16128.0
+  ]
+ },
+ "reply_turn": {
+  "prompt_tokens": [
+   19989,
+   19989
+  ],
+  "tokens": [
+   253,
+   253
+  ],
+  "first_divergence": 253,
+  "identical": true,
+  "max_abs_dlogprob": 0.2643214762210846,
+  "min_top5_overlap": 0.4,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "reply": {
+  "prompt_tokens": [
+   20258,
+   20258
+  ],
+  "tokens": [
+   64,
+   64
+  ],
+  "first_divergence": 17,
+  "identical": false,
+  "max_abs_dlogprob": 0.18632139265537262,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   20096.0,
+   20096.0
+  ]
+ }
+}
+identical greedy tokens: 17/29; per-arm hit checks failed: none
+rc=1
+# end: 2026-10-19T22:36:02Z

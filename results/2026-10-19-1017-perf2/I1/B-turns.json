@@ -1,0 +1,1522 @@
+{
+ "turn1": {
+  "text": "Based on the text, the word that appears most often is **\"their\"**.",
+  "prompt_tokens": 20017,
+  "tokens": [
+   "Based",
+   " on",
+   " the",
+   " text",
+   ",",
+   " the",
+   " word",
+   " that",
+   " appears",
+   " most",
+   " often",
+   " is",
+   " **",
+   "\"",
+   "their",
+   "\"",
+   "**.",
+   "<\uff5cend\u2581of\u2581sentence\uff5c>"
+  ],
+  "logprobs": [
+   -0.0940869078040123,
+   -7.152555099310121e-07,
+   -0.10073605924844742,
+   -0.007968895137310028,
+   -0.16817477345466614,
+   -0.00032062159152701497,
+   -0.00026794656878337264,
+   -0.006148234009742737,
+   -3.576272320060525e-06,
+   -3.576272320060525e-06,
+   -0.006719730328768492,
+   -3.194758028257638e-05,
+   -0.002557104919105768,
+   -0.007276816759258509,
+   -0.005154534243047237,
+   -9.727005090098828e-05,
+   -0.0021012388169765472,
+   -0.0006000387365929782
+  ],
+  "top": [
+   [
+    "Based",
+    "their",
+    "The",
+    "\"",
+    "\"The"
+   ],
+   [
+    " on",
+    " upon",
+    " solely",
+    " \u0639\u0644\u0649",
+    "on"
+   ],
+   [
+    " the",
+    " a",
+    " my",
+    " an",
+    " this"
+   ],
+   [
+    " text",
+    " provided",
+    " passage",
+    " analysis",
+    " scrambled"
+   ],
+   [
+    ",",
+    " provided",
+    " you",
+    " above",
+    " in"
+   ],
+   [
+    " the",
+    " analyzing",
+    " I",
+    " **",
+    " in"
+   ],
+   [
+    " word",
+    " single",
+    " most",
+    " one",
+    " words"
+   ],
+   [
+    " that",
+    " **",
+    " \"",
+    " appears",
+    " appearing"
+   ],
+   [
+    " appears",
+    " app",
+    " most",
+    " **",
+    " appear"
+   ],
+   [
+    " most",
+    " **",
+    " the",
+    " appears",
+    " with"
+   ],
+   [
+    " often",
+    " frequently",
+    " \u0447\u0430\u0441\u0442\u043e",
+    "often",
+    " is"
+   ],
+   [
+    " is",
+    " in",
+    " appears",
+    " seems",
+    " ("
+   ],
+   [
+    " **",
+    " \"",
+    ":\n\n",
+    " \u201c",
+    ":"
+   ],
+   [
+    "\"",
+    "their",
+    "\u201c",
+    "the",
+    " \""
+   ],
+   [
+    "their",
+    "the",
+    "and",
+    "from",
+    "at"
+   ],
+   [
+    "\"",
+    ".\"",
+    ",\"",
+    " \"",
+    "\u201d"
+   ],
+   [
+    "**.",
+    "**.\n\n",
+    "**,",
+    "**",
+    "**.:"
+   ],
+   [
+    "<\uff5cend\u2581of\u2581sentence\uff5c>",
+    " It",
+    " \n\n",
+    "  \n\n",
+    " This"
+   ]
+  ],
+  "hits": 0.0
+ },
+ "resend": {
+  "text": "Based on the text, the word that appears most often is **\"their\"**.",
+  "prompt_tokens": 20017,
+  "tokens": [
+   "Based",
+   " on",
+   " the",
+   " text",
+   ",",
+   " the",
+   " word",
+   " that",
+   " appears",
+   " most",
+   " often",
+   " is",
+   " **",
+   "\"",
+   "their",
+   "\"",
+   "**.",
+   "<\uff5cend\u2581of\u2581sentence\uff5c>"
+  ],
+  "logprobs": [
+   -0.09471679478883743,
+   -1.1920928244535389e-07,
+   -0.20199209451675415,
+   -0.010185997933149338,
+   -0.2570471465587616,
+   -0.0002498314715921879,
+   -0.00029059001826681197,
+   -0.0033080638386309147,
+   -2.50339189733495e-06,
+   -1.7881377516459906e-06,
+   -0.004081491846591234,
+   -1.7165990357170813e-05,
+   -0.0013750869547948241,
+   -0.004774835426360369,
+   -0.005622880533337593,
+   -0.00010966652916977182,
+   -0.0019106481922790408,
+   -0.00027366707217879593
+  ],
+  "top": [
+   [
+    "Based",
+    "their",
+    "\"",
+    "The",
+    "Analy"
+   ],
+   [
+    " on",
+    " upon",
+    "on",
+    " \u0639\u0644\u0649",
+    " solely"
+   ],
+   [
+    " the",
+    " a",
+    " an",
+    " my",
+    " analyzing"
+   ],
+   [
+    " text",
+    " provided",
+    " analysis",
+    " passage",
+    " scrambled"
+   ],
+   [
+    ",",
+    " provided",
+    " you",
+    " above",
+    " analysis"
+   ],
+   [
+    " the",
+    " analyzing",
+    " I",
+    " **",
+    " in"
+   ],
+   [
+    " word",
+    " single",
+    " most",
+    " one",
+    "word"
+   ],
+   [
+    " that",
+    " **",
+    " \"",
+    " appears",
+    " appearing"
+   ],
+   [
+    " appears",
+    " app",
+    " appear",
+    " **",
+    " most"
+   ],
+   [
+    " most",
+    " **",
+    " the",
+    "most",
+    " appears"
+   ],
+   [
+    " often",
+    " frequently",
+    " \u0447\u0430\u0441\u0442\u043e",
+    "often",
+    " is"
+   ],
+   [
+    " is",
+    " in",
+    " appears",
+    " seems",
+    " ("
+   ],
+   [
+    " **",
+    " \"",
+    ":\n\n",
+    " \u201c",
+    ":"
+   ],
+   [
+    "\"",
+    "their",
+    "\u201c",
+    "the",
+    "from"
+   ],
+   [
+    "their",
+    "the",
+    "and",
+    "from",
+    "that"
+   ],
+   [
+    "\"",
+    ".\"",
+    ",\"",
+    " \"",
+    "\u201d"
+   ],
+   [
+    "**.",
+    "**.\n\n",
+    "**,",
+    "**",
+    "**.:"
+   ],
+   [
+    "<\uff5cend\u2581of\u2581sentence\uff5c>",
+    " It",
+    " \n\n",
+    "  \n\n",
+    " In"
+   ]
+  ],
+  "hits": 0.0
+ },
+ "continue": {
+  "text": "A second frequent word is **\"from\"**. It likely repeats because the text is generated filler that leans heavily on prepositional phrases (\"from X,\" \"of X,\" \"at X,\" \"on X\"), and \"from\" is a common connector used to chain clauses together\u2014so it recurs as a structural glue word",
+  "prompt_tokens": 20051,
+  "tokens": [
+   "A",
+   " second",
+   " frequent",
+   " word",
+   " is",
+   " **",
+   "\"",
+   "from",
+   "\"",
+   "**.",
+   " It",
+   " likely",
+   " repeats",
+   " because",
+   " the",
+   " text",
+   " is",
+   " generated",
+   " filler",
+   " that",
+   " leans",
+   " heavily",
+   " on",
+   " preposition",
+   "al",
+   " phrases",
+   " (\"",
+   "from",
+   " X",
+   ",\"",
+   " \"",
+   "of",
+   " X",
+   ",\"",
+   " \"",
+   "at",
+   " X",
+   ",\"",
+   " \"",
+   "on",
+   " X",
+   "\"),",
+   " and",
+   " \"",
+   "from",
+   "\"",
+   " is",
+   " a",
+   " common",
+   " connector",
+   " used",
+   " to",
+   " chain",
+   " clauses",
+   " together",
+   "\u2014",
+   "so",
+   " it",
+   " recurs",
+   " as",
+   " a",
+   " structural",
+   " glue",
+   " word"
+  ],
+  "logprobs": [
+   -2.0265558760002023e-06,
+   -0.20275907218456268,
+   -0.27450206875801086,
+   -1.7881377516459906e-06,
+   -1.847726889536716e-05,
+   0.0,
+   -9.60780744208023e-05,
+   -0.7469393014907837,
+   -0.061980050057172775,
+   -0.8118659853935242,
+   -0.004153435584157705,
+   -0.13626931607723236,
+   -2.264974000354414e-06,
+   -1.8954096958623268e-05,
+   -0.004169343505054712,
+   -0.048899900168180466,
+   -0.6300413012504578,
+   -0.5340437293052673,
+   -0.3002373278141022,
+   -1.345743179321289,
+   -0.05031415447592735,
+   -0.00012337400403339416,
+   0.0,
+   -0.01753225177526474,
+   -1.1920928244535389e-07,
+   -0.04903543367981911,
+   -0.1705688089132309,
+   -0.00010358751023886725,
+   -0.08644115179777145,
+   -0.12041372805833817,
+   -1.4305104514278355e-06,
+   -0.4263852536678314,
+   -0.3657374680042267,
+   -0.00013457823661156,
+   -1.597391747054644e-05,
+   -0.034367647022008896,
+   -2.0265558760002023e-06,
+   -0.11021973937749863,
+   -5.2927523938706145e-05,
+   -0.7303404808044434,
+   -3.576278118089249e-07,
+   -0.5454632043838501,
+   -0.10078036040067673,
+   -0.0014992436626926064,
+   -1.1920928244535389e-07,
+   -5.006777428206988e-06,
+   -0.06656181812286377,
+   -0.387372225522995,
+   -0.033132247626781464,
+   -0.9651859998703003,
+   -0.31429409980773926,
+   -0.0006486457423307002,
+   -0.557340681552887,
+   -0.23675958812236786,
+   -0.052821360528469086,
+   -0.30807146430015564,
+   -0.17828188836574554,
+   -0.04532204568386078,
+   -0.01838558539748192,
+   -0.039968207478523254,
+   -0.003325529396533966,
+   -0.0993865355849266,
+   -0.033870629966259,
+   -0.06201500818133354
+  ],
+  "top": [
+   [
+    "A",
+    "Another",
+    "The",
+    "Based",
+    "\u4e00\u4e2a"
+   ],
+   [
+    " second",
+    " strong",
+    " likely",
+    " good",
+    " plausible"
+   ],
+   [
+    " frequent",
+    " very",
+    " highly",
+    " frequently",
+    " heavily"
+   ],
+   [
+    " word",
+    " function",
+    " candidate",
+    " content",
+    " contender"
+   ],
+   [
+    " is",
+    " in",
+    " (",
+    " would",
+    "\u2014"
+   ],
+   [
+    " **",
+    " likely",
+    " **_",
+    " \"",
+    "**"
+   ],
+   [
+    "\"",
+    "\u201c",
+    "\"'",
+    "and",
+    "\"\""
+   ],
+   [
+    "from",
+    "and",
+    "at",
+    "on",
+    "was"
+   ],
+   [
+    "\"",
+    ".\"",
+    ",\"",
+    "\"\u2014",
+    "\u3002\""
+   ],
+   [
+    "**.",
+    "**",
+    "**.\n\n",
+    "**,",
+    "**:"
+   ],
+   [
+    " It",
+    " \n\n",
+    "  \n\n",
+    " In",
+    " A"
+   ],
+   [
+    " likely",
+    " repeats",
+    " might",
+    " may",
+    " recurs"
+   ],
+   [
+    " repeats",
+    " recurs",
+    " repeat",
+    " repe",
+    " repeated"
+   ],
+   [
+    " because",
+    " so",
+    " often",
+    " for",
+    " a"
+   ],
+   [
+    " the",
+    " this",
+    " much",
+    " large",
+    " a"
+   ],
+   [
+    " text",
+    " passage",
+    " constructed",
+    " fabricated",
+    " invented"
+   ],
+   [
+    " is",
+    " appears",
+    " seems",
+    " reads",
+    " uses"
+   ],
+   [
+    " generated",
+    " built",
+    " largely",
+    " full",
+    " written"
+   ],
+   [
+    " filler",
+    " from",
+    " to",
+    " pseudo",
+    " by"
+   ],
+   [
+    " that",
+    " (",
+    "/p",
+    " prose",
+    "/l"
+   ],
+   [
+    " leans",
+    " relies",
+    " strings",
+    " heavily",
+    " chains"
+   ],
+   [
+    " heavily",
+    " on",
+    " hard",
+    " toward",
+    "he"
+   ],
+   [
+    " on",
+    " (",
+    "\u2014",
+    " \u0639\u0644\u0649",
+    " of"
+   ],
+   [
+    " preposition",
+    " a",
+    " common",
+    " pre",
+    " English"
+   ],
+   [
+    "al",
+    "-heavy",
+    "-led",
+    "-driven",
+    "-based"
+   ],
+   [
+    " phrases",
+    " phrasing",
+    " and",
+    " scaffolding",
+    " phrase"
+   ],
+   [
+    " (\"",
+    " (",
+    " and",
+    ",",
+    "\u2014"
+   ],
+   [
+    "from",
+    "of",
+    "...",
+    "X",
+    "\u2026"
+   ],
+   [
+    " X",
+    " ...",
+    " \u2026",
+    "...",
+    " the"
+   ],
+   [
+    ",\"",
+    " to",
+    "...",
+    " at",
+    "\","
+   ],
+   [
+    " \"",
+    " patterns",
+    "\u00a0",
+    " \u201c",
+    " often"
+   ],
+   [
+    "of",
+    "from",
+    "at",
+    "by",
+    "on"
+   ],
+   [
+    " X",
+    " Y",
+    " from",
+    "/",
+    "/as"
+   ],
+   [
+    ",\"",
+    "\"),",
+    "\")",
+    " at",
+    ","
+   ],
+   [
+    " \"",
+    " etc",
+    " and",
+    " at",
+    " by"
+   ],
+   [
+    "at",
+    "on",
+    "by",
+    "with",
+    "to"
+   ],
+   [
+    " X",
+    " Y",
+    "/",
+    "/to",
+    "/by"
+   ],
+   [
+    ",\"",
+    "\"),",
+    "\")",
+    "\");",
+    "\")."
+   ],
+   [
+    " \"",
+    " etc",
+    " and",
+    ")",
+    "),"
+   ],
+   [
+    "on",
+    "by",
+    "with",
+    "in",
+    "to"
+   ],
+   [
+    " X",
+    "/by",
+    "/",
+    " their",
+    "/X"
+   ],
+   [
+    "\"),",
+    ",\"",
+    "\")",
+    "\");",
+    "\")."
+   ],
+   [
+    " and",
+    " so",
+    " producing",
+    " using",
+    " which"
+   ],
+   [
+    " \"",
+    " **",
+    " the",
+    " *",
+    " pre"
+   ],
+   [
+    "from",
+    " from",
+    "their",
+    "of",
+    "for"
+   ],
+   [
+    "\"",
+    "\"\u2014",
+    ",\"",
+    " \"",
+    "\u201d"
+   ],
+   [
+    " is",
+    " serves",
+    " functions",
+    " fits",
+    " in"
+   ],
+   [
+    " a",
+    " one",
+    " being",
+    " the",
+    " an"
+   ],
+   [
+    " common",
+    " natural",
+    " very",
+    " versatile",
+    " default"
+   ],
+   [
+    " connector",
+    " preposition",
+    " connective",
+    " building",
+    " way"
+   ],
+   [
+    " used",
+    " for",
+    " in",
+    " introducing",
+    ";"
+   ],
+   [
+    " to",
+    " over",
+    " repeatedly",
+    " constantly",
+    " again"
+   ],
+   [
+    " chain",
+    " string",
+    " link",
+    " build",
+    " introduce"
+   ],
+   [
+    " clauses",
+    " these",
+    " those",
+    " pseudo",
+    " noun"
+   ],
+   [
+    " together",
+    " and",
+    "\u2014",
+    " about",
+    " \u2014"
+   ],
+   [
+    "\u2014",
+    " \u2014",
+    " in",
+    ",",
+    "."
+   ],
+   [
+    "so",
+    "especially",
+    "much",
+    "often",
+    "app"
+   ],
+   [
+    " it",
+    " as",
+    " the",
+    " its",
+    " a"
+   ],
+   [
+    " recurs",
+    " surfaces",
+    " appears",
+    " shows",
+    " keeps"
+   ],
+   [
+    " as",
+    " naturally",
+    " mechanically",
+    " whenever",
+    " constantly"
+   ],
+   [
+    " a",
+    " the",
+    " part",
+    " structural",
+    " scaffolding"
+   ],
+   [
+    " structural",
+    " cheap",
+    " low",
+    " generic",
+    " default"
+   ],
+   [
+    " glue",
+    " linking",
+    " building",
+    " connector",
+    " hinge"
+   ],
+   [
+    " word",
+    " rather",
+    " in",
+    " even",
+    " throughout"
+   ]
+  ],
+  "hits": 19968.0
+ },
+ "diverge": {
+  "text": "A second frequent word is **\"their\"** \u2014 it appears many times throughout the passage.\n\nIt likely repeats because the text seems to be generated filler (pseudo-language) built from a small set of recurring tokens, and \"their\" functions as a common connective/possessive placeholder that fits into many sentence positions.",
+  "prompt_tokens": 20042,
+  "tokens": [
+   "A",
+   " second",
+   " frequent",
+   " word",
+   " is",
+   " **",
+   "\"",
+   "their",
+   "\"",
+   "**",
+   " \u2014",
+   " it",
+   " appears",
+   " many",
+   " times",
+   " throughout",
+   " the",
+   " passage",
+   ".\n\n",
+   "It",
+   " likely",
+   " repeats",
+   " because",
+   " the",
+   " text",
+   " seems",
+   " to",
+   " be",
+   " generated",
+   " filler",
+   " (",
+   "p",
+   "seudo",
+   "-language",
+   ")",
+   " built",
+   " from",
+   " a",
+   " small",
+   " set",
+   " of",
+   " recurring",
+   " tokens",
+   ",",
+   " and",
+   " \"",
+   "their",
+   "\"",
+   " functions",
+   " as",
+   " a",
+   " common",
+   " connective",
+   "/",
+   "poss",
+   "essive",
+   " placeholder",
+   " that",
+   " fits",
+   " into",
+   " many",
+   " sentence",
+   " positions",
+   "."
+  ],
+  "logprobs": [
+   -0.0005834784242324531,
+   -0.08756472915410995,
+   -0.1404131054878235,
+   -0.0041678003035485744,
+   -5.495397272170521e-05,
+   -6.079655122448457e-06,
+   -0.20183564722537994,
+   -0.013585961423814297,
+   -0.31343141198158264,
+   -0.5067877173423767,
+   -0.39278268814086914,
+   -0.01064220443367958,
+   -0.3156663179397583,
+   -0.5506762266159058,
+   -0.003983065020292997,
+   -0.0676560252904892,
+   -0.00399220734834671,
+   -0.04868464171886444,
+   -0.3146727383136749,
+   -0.3380909562110901,
+   -0.023582803085446358,
+   -2.0265558760002023e-06,
+   -9.298280929215252e-06,
+   -0.0010569468140602112,
+   -0.0008812834857963026,
+   -0.27377888560295105,
+   -0.0007512131123803556,
+   -0.0035537441726773977,
+   -0.21902598440647125,
+   -0.259743869304657,
+   -0.9320143461227417,
+   -0.001488054753281176,
+   -0.0005529781919904053,
+   -0.022569691762328148,
+   -1.2957440614700317,
+   -0.20011867582798004,
+   -0.027201324701309204,
+   -0.00011431517486926168,
+   -0.0853067934513092,
+   -0.6241875886917114,
+   -1.1920928244535389e-07,
+   -0.08243861794471741,
+   -0.7744020223617554,
+   -0.20498062670230865,
+   -0.0008843801915645599,
+   -0.478161096572876,
+   -1.1920928244535389e-07,
+   -1.1920928244535389e-07,
+   -0.5825014114379883,
+   -0.0010062160436064005,
+   -7.712543447269127e-05,
+   -0.7404773235321045,
+   -0.40175822377204895,
+   -0.20144003629684448,
+   -0.10579069703817368,
+   -1.7881377516459906e-06,
+   -0.7997461557388306,
+   -0.20562903583049774,
+   -0.6168205142021179,
+   -0.6367870569229126,
+   -0.0009115354623645544,
+   -0.04695431515574455,
+   -0.030919726938009262,
+   -0.27008023858070374
+  ],
+  "top": [
+   [
+    "A",
+    "I",
+    "Based",
+    "One",
+    "The"
+   ],
+   [
+    " second",
+    " strong",
+    " likely",
+    " plausible",
+    " reasonable"
+   ],
+   [
+    " frequent",
+    " frequently",
+    " very",
+    " likely",
+    " highly"
+   ],
+   [
+    " word",
+    "-looking",
+    " candidate",
+    "\u2011",
+    "-se"
+   ],
+   [
+    " is",
+    " appears",
+    " (",
+    " would",
+    " in"
+   ],
+   [
+    " **",
+    " likely",
+    " \"",
+    " \u201c",
+    " probably"
+   ],
+   [
+    "\"",
+    "\u201c",
+    "their",
+    "\u201d",
+    "gl"
+   ],
+   [
+    "their",
+    "from",
+    "the",
+    "gl",
+    "was"
+   ],
+   [
+    "\"",
+    ".\"",
+    ",\"",
+    "\"\u2014",
+    ".\u201d"
+   ],
+   [
+    "**",
+    "**.",
+    "**.\n\n",
+    "**,",
+    "**:"
+   ],
+   [
+    " \u2014",
+    " (",
+    "\u2014",
+    ";",
+    " (\""
+   ],
+   [
+    " it",
+    " and",
+    " likely",
+    " but",
+    " in"
+   ],
+   [
+    " appears",
+    " recurs",
+    " repeats",
+    " also",
+    " shows"
+   ],
+   [
+    " many",
+    " very",
+    " throughout",
+    " repeatedly",
+    " dozens"
+   ],
+   [
+    " times",
+    " dozens",
+    ",",
+    " throughout",
+    " hundreds"
+   ],
+   [
+    " throughout",
+    " across",
+    " in",
+    ",",
+    " ("
+   ],
+   [
+    " the",
+    ".\n\n",
+    " (",
+    ".",
+    ","
+   ],
+   [
+    " passage",
+    " text",
+    " sample",
+    " passages",
+    " gib"
+   ],
+   [
+    ".\n\n",
+    " (",
+    ".",
+    ",",
+    " (\""
+   ],
+   [
+    "It",
+    "Why",
+    "**",
+    "A",
+    "One"
+   ],
+   [
+    " likely",
+    " might",
+    " may",
+    " probably",
+    " plaus"
+   ],
+   [
+    " repeats",
+    " recurs",
+    " repe",
+    " repeated",
+    " repeat"
+   ],
+   [
+    " because",
+    " for",
+    " so",
+    " often",
+    " ("
+   ],
+   [
+    " the",
+    " this",
+    " much",
+    " it",
+    ":\n"
+   ],
+   [
+    " text",
+    " invented",
+    " fabricated",
+    " constructed",
+    " passage"
+   ],
+   [
+    " seems",
+    " is",
+    " reads",
+    " looks",
+    " uses"
+   ],
+   [
+    " to",
+    " generated",
+    " built",
+    " constructed",
+    " designed"
+   ],
+   [
+    " be",
+    " imitate",
+    " mimic",
+    " use",
+    " contain"
+   ],
+   [
+    " generated",
+    " built",
+    " pseudo",
+    " a",
+    " constructed"
+   ],
+   [
+    " filler",
+    " pseudo",
+    " placeholder",
+    " nonsense",
+    " ("
+   ],
+   [
+    " (",
+    " prose",
+    " that",
+    " with",
+    "/p"
+   ],
+   [
+    "p",
+    "often",
+    "or",
+    "the",
+    "a"
+   ],
+   [
+    "seudo",
+    "seud",
+    " pseudo",
+    " pseud",
+    "se"
+   ],
+   [
+    "-language",
+    "-English",
+    "-text",
+    "-",
+    "-L"
+   ],
+   [
+    ")",
+    " with",
+    " built",
+    " mixed",
+    "),"
+   ],
+   [
+    " built",
+    " that",
+    " with",
+    " in",
+    " modeled"
+   ],
+   [
+    " from",
+    " around",
+    " partly",
+    " by",
+    " on"
+   ],
+   [
+    " a",
+    " recurring",
+    " common",
+    " small",
+    " templates"
+   ],
+   [
+    " small",
+    " limited",
+    " fixed",
+    " recurring",
+    " pool"
+   ],
+   [
+    " set",
+    " pool",
+    " vocabulary",
+    " stock",
+    " recurring"
+   ],
+   [
+    " of",
+    "of",
+    " stock",
+    "\n",
+    "\u0e02\u0e2d\u0e07"
+   ],
+   [
+    " recurring",
+    " common",
+    " stock",
+    " recycled",
+    " function"
+   ],
+   [
+    " tokens",
+    " stems",
+    " function",
+    " syllables",
+    " word"
+   ],
+   [
+    ",",
+    ".",
+    " and",
+    " combined",
+    ";"
+   ],
+   [
+    " and",
+    " many",
+    " with",
+    " including",
+    " so"
+   ],
+   [
+    " \"",
+    " **",
+    " function",
+    " possess",
+    " possessive"
+   ],
+   [
+    "their",
+    "**",
+    "gl",
+    "leur",
+    "th"
+   ],
+   [
+    "\"",
+    ",\"",
+    "\u201d",
+    "\"\u2014",
+    "'"
+   ],
+   [
+    " functions",
+    " is",
+    " serves",
+    " acts",
+    " may"
+   ],
+   [
+    " as",
+    " gram",
+    " there",
+    " like",
+    " in"
+   ],
+   [
+    " a",
+    " an",
+    " one",
+    " the",
+    " both"
+   ],
+   [
+    " common",
+    " generic",
+    " convenient",
+    " high",
+    " versatile"
+   ],
+   [
+    " connective",
+    " connector",
+    " glue",
+    " grammatical",
+    " connecting"
+   ],
+   [
+    "/",
+    "/d",
+    "/f",
+    "/dist",
+    "/article"
+   ],
+   [
+    "poss",
+    "pron",
+    "placeholder",
+    "function",
+    "functional"
+   ],
+   [
+    "essive",
+    "essor",
+    "ess",
+    " determ",
+    " Determ"
+   ],
+   [
+    " placeholder",
+    " slot",
+    " filler",
+    " word",
+    " particle"
+   ],
+   [
+    " that",
+    " inserted",
+    ".",
+    " in",
+    " sl"
+   ],
+   [
+    " fits",
+    " can",
+    " the",
+    " gets",
+    " slots"
+   ],
+   [
+    " into",
+    " almost",
+    " gram",
+    " between",
+    " synt"
+   ],
+   [
+    " many",
+    " almost",
+    " nearly",
+    " noun",
+    "many"
+   ],
+   [
+    " sentence",
+    " syntactic",
+    " phrase",
+    " grammatical",
+    " noun"
+   ],
+   [
+    " positions",
+    " slots",
+    " frames",
+    " templates",
+    " patterns"
+   ],
+   [
+    ".",
+    ",",
+    " without",
+    " (",
+    " gram"
+   ]
+  ],
+  "hits": 0.0
+ }
+}

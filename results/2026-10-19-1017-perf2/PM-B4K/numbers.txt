@@ -1,0 +1,94 @@
+# PM-B4K = D4ENV + MAX_NUM_BATCHED_TOKENS=4096 (integration4 @746ed86, KV 4160749568 default). Reference column labelled B0 below = D4.
+# boot: KV 1,793,682 tok 3.59x (D4 1,471,832 2.94x, same bytes); model load 97.19 GiB/rank (D4 97.44); graphs head 0.94 / worker 2.06 GiB (D4 0.69 / 2.03)
+# MEMWATCH TRIP 01:50:07Z in micro 64K pp_novel run 2 attempt 3 (6th consecutive 64K prompt) -> micro 64K pp_novel run 2 + 64K tg + gen102k not measured (no retry). trip.txt
+# 64K pp_novel attempts 1-2 (3017 / 3094 tok/s) were full 16-chunk prefills that micro.py's PP_CACHE_LIMIT=3000 rejected as suspected cache hits
+
+# PM-B4K vs B0 (D4)
+
+## decode (agg tok/s | per-stream | ms/step | acc | TTFT p50)
+- code c=1: -   [B0 68.0 | 68.0 | 60.1 | 4.04 | 0.215]
+- lail_prose c=1: 38.8 | 38.8 | 51.2 | 1.98 | 0.257   [B0 38.9 | 38.9 | 52.0 | 2.02 | 0.256]  (-0.4% agg)
+- prose c=1: 53.1 | 53.1 | 55.6 | 3.03 | 0.198   [B0 49.6 | 49.6 | 54.5 | 2.71 | 0.199]  (+7.1% agg)
+- prose c=2: -   [B0 76.0 | 38.3 | 70.4 | 2.71 | 0.218]
+- prose_distinct c=4: 101.4 | 26.2 | 93.8 | 2.44 | 0.461   [B0 94.8 | 25.6 | 95.6 | 2.42 | 0.290]  (+7.0% agg)
+- structured c=1: -   [B0 100.5 | 100.6 | 58.5 | 5.88 | 0.186]
+- structured c=2: -   [B0 181.1 | 90.6 | 64.9 | 5.88 | 0.200]
+- structured_distinct c=4: 198.9 | 50.2 | 79.5 | 3.99 | 0.387   [B0 198.1 | 49.9 | 80.1 | 3.99 | 0.381]  (+0.4% agg)
+
+## prefill micro (median tok/s; runs)
+- 4096 pp_novel: 1860.2 [1854.3, 1866.1]   [B0 1819.7] (+2.2%)
+- 4096 pp_warm: 1626.0 [1749.4, 1502.5]   [B0 1729.6] (-6.0%)
+- 4096 tg: 40.6 [37.8, 43.5]   [B0 41.2] (-1.5%)
+- 16384 pp_novel: 2661.6 [2586.1, 2737.1]   [B0 2564.1] (+3.8%)
+- 16384 pp_warm: 2604.0 [2582.9, 2625.1]   [B0 2375.9] (+9.6%)
+- 16384 tg: 48.7 [44.3, 53.1]   [B0 46.2] (+5.4%)
+- 65536 pp_novel: 2636.9 [2636.9]   [B0 2955.6] (-10.8%)
+- 65536 pp_warm: 2871.4 [2853.5, 2889.3]   [B0 2842.7] (+1.0%)
+- 65536 tg: -    [B0 38.6]
+
+## prefix cache (prompt, TTFT s, hits)
+
+## quality --quick
+- not run
+
+## spec decode acceptance per draft position (accepted/drafts over the cell)
+- c4-: drafts 2646, per-pos [0.8228, 0.6568, 0.5374, 0.0068, 0.0057]
+
+## MemAvailable minima per phase (MiB, memwatch 2 s)
+- smoke: spark1 5876 / spark2 9045 (2026-10-20T01:44:12Z .. 2026-10-20T01:44:13Z)
+- c1short: spark1 5421 / spark2 8671 (2026-10-20T01:44:13Z .. 2026-10-20T01:44:35Z)
+- lail5: spark1 4931 / spark2 8651 (2026-10-20T01:44:35Z .. 2026-10-20T01:45:57Z)
+- c4distinct: spark1 5088 / spark2 8635 (2026-10-20T01:45:57Z .. 2026-10-20T01:47:02Z)
+- micro: spark1 1305 / spark2 8372 (2026-10-20T01:47:02Z .. 2026-10-20T01:50:08Z)
+
+
+## per-64K-prompt MemAvailable (step lines, GiB; memsample 1 Hz node minima MiB)
+## PM-B4K/head.live.log rank 0: 6 prompts >= 40000 tokens
+   1 tok=65472(open) steps=16 first=6.19 first3min=5.10 min=3.53@6 wall=20.8 start_utc=01:47:58 spark1_start_min_MiB=4077 spark1_prompt_min_MiB=3578 spark2_start_min_MiB=8815 spark2_prompt_min_MiB=8642 actions={'-': 2, 'hold': 13, 'grown': 1}
+   2 tok=64228 steps=16 first=6.06 first3min=5.85 min=5.03@12 wall=19.82 start_utc=01:48:21 spark1_start_min_MiB=6175 spark1_prompt_min_MiB=5155 spark2_start_min_MiB=9329 spark2_prompt_min_MiB=8812 actions={'-': 2, 'hold': 12, 'grown': 1, 'keep': 1}
+   3 tok=65472(open) steps=16 first=4.32 first3min=2.99 min=2.99@3 wall=19.13 start_utc=01:48:43 spark1_start_min_MiB=3061 spark1_prompt_min_MiB=3061 spark2_start_min_MiB=8730 spark2_prompt_min_MiB=8417 actions={'-': 2, 'floor': 1, 'hold': 10, 'grown': 3}
+   4 tok=65302 steps=16 first=5.79 first3min=4.96 min=2.72@14 wall=14.24 start_utc=01:49:09 spark1_start_min_MiB=4154 spark1_prompt_min_MiB=2831 spark2_start_min_MiB=8632 spark2_prompt_min_MiB=8632 actions={'-': 2, 'hold': 6, 'floor': 7, 'keep': 1}
+   5 tok=65244 steps=16 first=5.30 first3min=4.25 min=1.91@15 wall=14.59 start_utc=01:49:30 spark1_start_min_MiB=3390 spark1_prompt_min_MiB=1972 spark2_start_min_MiB=8706 spark2_prompt_min_MiB=8367 actions={'-': 2, 'hold': 7, 'floor': 6, 'keep': 1}
+   6 tok=49104(open) steps=12 first=4.94 first3min=3.63 min=1.23@11 wall=8.18 start_utc=01:49:52 spark1_start_min_MiB=2432 spark1_prompt_min_MiB=1259 spark2_start_min_MiB=8375 spark2_prompt_min_MiB=8375 actions={'-': 2, 'hold': 2, 'floor': 8}
+## PM-B4K/worker.live.log rank 1: 6 prompts >= 40000 tokens
+   1 tok=65472(open) steps=16 first=8.69 first3min=8.66 min=8.44@16 wall=20.8 start_utc=01:47:58 spark1_start_min_MiB=4077 spark1_prompt_min_MiB=3578 spark2_start_min_MiB=8815 spark2_prompt_min_MiB=8642 actions={'-': 2, 'hold': 13, 'grown': 1}
+   2 tok=64228 steps=16 first=9.13 first3min=9.12 min=8.60@16 wall=20.47 start_utc=01:48:21 spark1_start_min_MiB=6175 spark1_prompt_min_MiB=5155 spark2_start_min_MiB=9329 spark2_prompt_min_MiB=8812 actions={'-': 2, 'hold': 13, 'keep': 1}
+   3 tok=65472(open) steps=16 first=8.59 first3min=8.58 min=8.54@11 wall=21.59 start_utc=01:48:43 spark1_start_min_MiB=3061 spark1_prompt_min_MiB=3061 spark2_start_min_MiB=8730 spark2_prompt_min_MiB=8657 actions={'-': 2, 'hold': 14}
+   4 tok=65302 steps=16 first=8.54 first3min=8.54 min=8.52@9 wall=20.05 start_utc=01:49:09 spark1_start_min_MiB=4154 spark1_prompt_min_MiB=2831 spark2_start_min_MiB=8632 spark2_prompt_min_MiB=8632 actions={'-': 2, 'hold': 13, 'keep': 1}
+   5 tok=65244 steps=16 first=8.56 first3min=8.56 min=8.20@16 wall=19.57 start_utc=01:49:30 spark1_start_min_MiB=3390 spark1_prompt_min_MiB=1972 spark2_start_min_MiB=8706 spark2_prompt_min_MiB=8367 actions={'-': 2, 'hold': 13, 'keep': 1}
+   6 tok=49104(open) steps=12 first=8.21 first3min=8.20 min=8.20@3 wall=13.97 start_utc=01:49:52 spark1_start_min_MiB=2432 spark1_prompt_min_MiB=1259 spark2_start_min_MiB=8375 spark2_prompt_min_MiB=8375 actions={'-': 2, 'hold': 10}
+
+## D4 per-64K-prompt (step lines only; no memsample on D4)
+## D4/head-final.log rank 0: 6 prompts >= 40000 tokens
+   1 tok=65479 steps=8 first=2.49 first3min=1.52 min=1.52@2 wall=11.3  actions={'-': 1, 'floor': 6, 'keep': 1}
+   2 tok=65015 steps=8 first=4.77 first3min=3.53 min=2.18@7 wall=13.88  actions={'-': 1, 'hold': 2, 'floor': 4, 'keep': 1}
+   3 tok=65411 steps=8 first=3.66 first3min=1.91 min=1.60@4 wall=10.55  actions={'-': 1, 'floor': 6, 'keep': 1}
+   4 tok=65461 steps=8 first=4.57 first3min=2.74 min=1.65@6 wall=12.2  actions={'-': 1, 'hold': 1, 'floor': 5, 'release': 1}
+   5 tok=65489 steps=8 first=1.69 first3min=1.69 min=1.68@4 wall=10.55  actions={'-': 1, 'floor': 6, 'release': 1}
+   6 tok=65500 steps=8 first=1.71 first3min=1.71 min=1.71@1 wall=10.56  actions={'-': 1, 'floor': 6, 'keep': 1}
+## D4/worker-final.log rank 1: 6 prompts >= 40000 tokens
+   1 tok=65479 steps=8 first=7.70 first3min=7.64 min=7.46@7 wall=21.69  actions={'-': 1, 'hold': 6, 'keep': 1}
+   2 tok=65015 steps=8 first=6.94 first3min=6.39 min=6.39@3 wall=20.76  actions={'-': 1, 'hold': 6, 'keep': 1}
+   3 tok=65411 steps=8 first=6.41 first3min=6.41 min=6.41@1 wall=20.53  actions={'-': 1, 'hold': 6, 'keep': 1}
+   4 tok=65461 steps=8 first=6.40 first3min=6.40 min=6.40@1 wall=20.55  actions={'-': 1, 'hold': 6, 'keep': 1}
+   5 tok=65489 steps=8 first=6.40 first3min=6.40 min=6.40@1 wall=20.86  actions={'-': 1, 'hold': 6, 'keep': 1}
+   6 tok=65500 steps=8 first=6.43 first3min=6.43 min=6.43@1 wall=20.81  actions={'-': 1, 'hold': 6, 'keep': 1}
+
+## memsample per-phase minima
+phase | spark1 min MemAvail (at) / swap max / +allocstalls | spark2 min MemAvail (at) / swap max / +allocstalls
+smoke [01:44:12..01:44:13] | 5870 (01:44:13) / 8362 / +0 | 8770 (01:44:13) / 6003 / +0
+c1short [01:44:13..01:44:35] | 5395 (01:44:35) / 8362 / +0 | 8658 (01:44:14) / 5991 / +0
+lail5 [01:44:35..01:45:57] | 4905 (01:44:40) / 8202 / +0 | 8637 (01:44:36) / 5991 / +0
+c4distinct [01:45:57..01:47:02] | 4841 (01:47:02) / 8188 / +0 | 8635 (01:46:45) / 5990 / +0
+micro [01:47:02..01:50:08] | 1259 (01:50:05) / 9151 / +6044 | 8367 (01:49:51) / 5990 / +0
+gen102k [01:50:08..01:50:08] | 6298 (01:50:08) / 5667 / +0 | 8422 (01:50:08) / 5979 / +0
+
+## hold_steps (threshold 4096)
+head.live.log rank 0: 127 prefill steps, actions {'-': 35, 'hold': 55, 'keep': 7, 'floor': 23, 'release': 2, 'grown': 5}
+  growth on steps after an in-flight step (>= 4096 tokens): 104 steps, sum 17120 MiB, largest [1224, 1124, 742, 702, 682, 642, 642, 522]
+  MemAvailable on steps with +0 MiB pool growth: min 2.38 max 6.14 GiB (70 steps)
+  hold steps below a 3.0 GiB floor: 0 of 55
+worker.live.log rank 1: 127 prefill steps, actions {'-': 35, 'hold': 82, 'keep': 9, 'grown': 1}
+  growth on steps after an in-flight step (>= 4096 tokens): 104 steps, sum 1302 MiB, largest [480, 422, 260, 40, 40, 40, 20, 0]
+  MemAvailable on steps with +0 MiB pool growth: min 8.19 max 9.16 GiB (116 steps)
+  hold steps below a 3.0 GiB floor: 0 of 82

@@ -1,0 +1,10 @@
+2026-10-19T17:05:38Z TRIP s1=1286 s2=5787 floor=1536 -> ./stop.sh
+Stopping dsv41-flash-exl3
+Stopped local dsv41-flash-exl3
+Stopping dsv41-flash-exl3 on spark2
+Stopped remote dsv41-flash-exl3
+2026-10-19T17:22:47Z TRIP s1=852 s2=926 floor=1536 -> ./stop.sh
+Stopping dsv41-flash-exl3
+Stopped local dsv41-flash-exl3
+Stopping dsv41-flash-exl3 on spark2
+Stopped remote dsv41-flash-exl3

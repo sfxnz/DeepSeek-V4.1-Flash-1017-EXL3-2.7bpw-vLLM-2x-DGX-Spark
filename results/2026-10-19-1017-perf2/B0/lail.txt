@@ -1,0 +1,25 @@
+# cmd: python3 tools/measure_lail_prose.py --runs 3
+# cwd: /home/sfxnz/projects/ai-lab/recipes/DeepSeek-V4.1-Flash-1017-2X-DGX-SPARKS-EXL3 (HEAD 20ee8ba) host: spark1 start: 2026-10-19T16:51:43Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=512 temperature=0.2 runs=3 phase=lail_prose c=1
+run=1 {"ttft_s": 0.325902565382421, "decode_s": 13.296698428690434, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 248, "lail_tok_s": 38.50579922120005, "recipe_tok_s": 38.43059258209614, "tokens_per_chunk": 2.064516129032258, "repeat_ratio": 0.002457002457002457, "collapsed": false, "preview": "The KV cache is the product, not a leftover after util. Once you internalize that inversion, the whole tuning conversation changes shape. You stop asking \"how much context can I afford?\" and start asking \"which contexts are worth keeping re", "acceptance_len": 2.0688259109311744, "draft_acceptance_rate": 0.3562753036437247}
+run=2 {"ttft_s": 0.3154857140034437, "decode_s": 14.026321047917008, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 262, "lail_tok_s": 36.50280057407035, "recipe_tok_s": 36.431506041699116, "tokens_per_chunk": 1.9541984732824427, "repeat_ratio": 0.002421307506053269, "collapsed": false, "preview": "The KV cache is the product, not a leftover after util. Once you internalize that, the whole tuning conversation shifts: you stop asking \"how much cache can I afford to keep\" and start asking \"what is the cache worth per byte, and which byt", "acceptance_len": 1.9578544061302683, "draft_acceptance_rate": 0.31928480204342274}
+run=3 {"ttft_s": 0.31459069112315774, "decode_s": 12.98210264602676, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 244, "lail_tok_s": 39.43891170485393, "recipe_tok_s": 39.36188258043039, "tokens_per_chunk": 2.098360655737705, "repeat_ratio": 0.002506265664160401, "collapsed": false, "preview": "The scheduler's admission policy is where this becomes visible. When four tabs each hold a 40k-token system prompt and the agent forks a fifth, the prefill cost of the new tab is not the cost of the prompt \u2014 it's the cost of the prompt minu", "acceptance_len": 2.102880658436214, "draft_acceptance_rate": 0.3676268861454047}
+natural phase=lail_prose completion_tokens=512 finish_reason=length
+SUMMARY {
+  "phase": "lail_prose",
+  "concurrency": 1,
+  "max_tokens": 512,
+  "temperature": 0.2,
+  "n": 3,
+  "median_lail_tok_s": 38.50579922120005,
+  "median_recipe_tok_s": 38.43059258209614,
+  "median_ttft_s": 0.3154857140034437,
+  "median_completion_tokens": 512,
+  "natural_completion_tokens": 512,
+  "natural_finish_reason": "length",
+  "post_eos_fraction": 0.0,
+  "median_acceptance_len": 2.0688259109311744,
+  "median_draft_acceptance_rate": 0.3562753036437247
+}
+rc=0
+# end: 2026-10-19T16:52:38Z

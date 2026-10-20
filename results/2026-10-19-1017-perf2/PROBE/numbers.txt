@@ -1,0 +1,258 @@
+# PROBE = D4ENV + DSV41_DECODER_REPLAY_ROWS=0 + DSV41_PREFILL_MEM_PROBE=1 from /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-probe @d1fa19d (clean).
+# cells: sample smoke pp16kx3 pp32kx3 logs; MEMWATCH TRIP 2026-10-20T03:49:21Z (MemAvailable s1 1140 @03:49:19, 1186 @03:49:21; s2 7.1 GiB) in pp32kx3 run 2, chunk 2 (rank-0 probe step 17). 16K x3 and 32K run 1 done.
+# probe-lines.txt = all probe lines from the live logs (head.log was empty after the watchdog stop; probe-lines-from-docker-logs.txt has the worker only)
+
+## prompts
+run 1: prompt 32461 ttft 23.60 s pp 1375.6 tok/s (2026-10-20T03:48:47.004298Z -> 2026-10-20T03:49:10.602785Z)
+run 1: prompt 16178 ttft 13.52 s pp 1196.6 tok/s (2026-10-20T03:48:07.435030Z -> 2026-10-20T03:48:20.968027Z)
+run 2: prompt 16306 ttft 12.68 s pp 1286.1 tok/s (2026-10-20T03:48:21.155758Z -> 2026-10-20T03:48:33.835576Z)
+run 3: prompt 16279 ttft 12.62 s pp 1289.8 tok/s (2026-10-20T03:48:33.940265Z -> 2026-10-20T03:48:46.561706Z)
+
+## rank-0 hook step lines (pool, MemAvailable, action)
+2026-10-20T03:48:06.649095700Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 5 longest 201 in_flight 0 wall 0.11 s interval 34.94 s reserved 102.89 -> 102.89 GiB (+0 MiB) peak +31 MiB grown +20 MiB MemAvailable 4.76 GiB action -
+2026-10-20T03:48:14.043086546Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 6 longest 8188 in_flight 1 wall 6.58 s interval 7.39 s reserved 102.89 -> 103.83 GiB (+962 MiB) peak +1255 MiB grown +414 MiB MemAvailable 5.19 GiB action -
+2026-10-20T03:48:19.203614799Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 7 longest 16178 in_flight 0 wall 4.99 s interval 5.15 s reserved 103.83 -> 103.83 GiB (+0 MiB) peak +1225 MiB grown +414 MiB MemAvailable 5.16 GiB action keep
+2026-10-20T03:48:24.826530082Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 8 longest 8188 in_flight 1 wall 3.63 s interval 5.63 s reserved 103.83 -> 103.83 GiB (+0 MiB) peak +1255 MiB grown +414 MiB MemAvailable 3.52 GiB action -
+2026-10-20T03:48:33.581923792Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 9 longest 16306 in_flight 0 wall 3.19 s interval 7.03 s reserved 103.83 -> 103.83 GiB (+0 MiB, 102.31 GiB after release) peak +1244 MiB grown +414 MiB MemAvailable 3.36 GiB action release
+2026-10-20T03:48:37.970921298Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 10 longest 8188 in_flight 1 wall 4.01 s interval 6.12 s reserved 103.21 -> 103.53 GiB (+326 MiB) peak +1255 MiB grown +0 MiB MemAvailable 4.65 GiB action -
+2026-10-20T03:48:44.876289730Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 11 longest 16279 in_flight 0 wall 3.16 s interval 6.90 s reserved 103.53 -> 103.53 GiB (+0 MiB) peak +1240 MiB grown +0 MiB MemAvailable 4.47 GiB action keep
+2026-10-20T03:48:51.336238243Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 12 longest 8188 in_flight 1 wall 4.29 s interval 6.46 s reserved 103.53 -> 103.53 GiB (+0 MiB) peak +1255 MiB grown +0 MiB MemAvailable 1.67 GiB action -
+2026-10-20T03:48:59.045256791Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 13 longest 16376 in_flight 1 wall 3.27 s interval 7.70 s reserved 103.53 -> 103.55 GiB (+20 MiB) peak +1255 MiB grown +20 MiB MemAvailable 5.66 GiB action hold
+2026-10-20T03:49:04.118651516Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 14 longest 24564 in_flight 1 wall 4.97 s interval 5.08 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1255 MiB grown +20 MiB MemAvailable 5.66 GiB action hold
+2026-10-20T03:49:08.958194272Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 15 longest 32461 in_flight 0 wall 4.73 s interval 4.84 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1227 MiB grown +20 MiB MemAvailable 5.28 GiB action keep
+2026-10-20T03:49:14.465619753Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 16 longest 8188 in_flight 1 wall 3.58 s interval 5.51 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1255 MiB grown +20 MiB MemAvailable 2.43 GiB action -
+2026-10-20T03:49:21.416702728Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] step 17 longest 16376 in_flight 1 wall 3.22 s interval 6.95 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1255 MiB grown +20 MiB MemAvailable 4.50 GiB action hold
+
+## all probe lines (both ranks)
+2026-10-20T03:47:11.471589169Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 1 longest 4093 memfree 4.58 -> 5.89 GiB pool 101.99 -> 102.87 GiB unexplained -2244 MiB dev_free 5.89 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4798/434/22
+2026-10-20T03:47:13.930864253Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 2 longest 501 memfree 5.88 -> 5.73 GiB pool 102.87 -> 102.87 GiB unexplained +151 MiB dev_free 5.73 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4834/438/22
+2026-10-20T03:47:28.508767472Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 3 longest 1378 memfree 5.67 -> 3.91 GiB pool 102.87 -> 102.87 GiB unexplained +1806 MiB dev_free 3.91 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4923/446/22
+2026-10-20T03:47:30.885015014Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe flush 1 after step 3: MemFree 3.91 GiB; sync+0 MiB; gc+0 MiB; host cache+0 MiB; mempool trim+0 MiB; graph mem trim+0 MiB; stack limit+0 MiB; settle 2 s -44 MiB (max +12 MiB at 0.1 s)
+2026-10-20T03:47:31.710857288Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 4 longest 211 memfree 5.90 -> 5.96 GiB pool 102.87 -> 102.89 GiB unexplained -78 MiB dev_free 5.96 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4937/447/23
+2026-10-20T03:48:06.649123284Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 5 longest 201 memfree 5.28 -> 5.28 GiB pool 102.89 -> 102.89 GiB unexplained -2 MiB dev_free 5.28 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4953/448/23
+2026-10-20T03:48:14.047273756Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 6 longest 8188 memfree 5.24 -> 5.73 GiB pool 102.89 -> 103.83 GiB unexplained -1466 MiB dev_free 5.73 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4966/449/23
+2026-10-20T03:48:19.203616447Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 7 longest 16178 memfree 5.73 -> 5.69 GiB pool 103.83 -> 103.83 GiB unexplained +42 MiB dev_free 5.69 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4978/450/23
+2026-10-20T03:48:24.826559474Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 8 longest 8188 memfree 5.72 -> 4.17 GiB pool 103.83 -> 103.83 GiB unexplained +1587 MiB dev_free 4.17 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4991/452/23
+2026-10-20T03:48:28.649986677Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe flush 2 after step 8: MemFree 4.17 GiB; sync-44 MiB; gc+0 MiB; host cache+0 MiB; mempool trim+0 MiB; graph mem trim+0 MiB; stack limit+0 MiB; settle 2 s -34 MiB (max +0 MiB at 0.0 s)
+2026-10-20T03:48:33.582268305Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 9 longest 16306 memfree 4.10 -> 4.01 GiB pool 103.83 -> 103.83 GiB unexplained +94 MiB dev_free 5.33 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5004/453/24
+2026-10-20T03:48:37.971058562Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 10 longest 8188 memfree 6.44 -> 5.30 GiB pool 103.21 -> 103.53 GiB unexplained +847 MiB dev_free 5.30 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5019/454/24
+2026-10-20T03:48:38.602657608Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe release 1 after step 9 (release, 1554 MiB released; GiB): +0.00s free 5.33 pool 102.31; +0.10s free 6.45 pool 103.21; +0.32s free 6.45 pool 103.21; +0.32s free 6.45 pool 103.21; +0.52s free 6.17 pool 103.21; +0.83s free 5.56 pool 103.21; +1.45s free 6.05 pool 103.53; +1.55s free 5.87 pool 103.53; +2.06s free 5.30 pool 103.53; +3.06s free 5.30 pool 103.53; +4.02s free 5.30 pool 103.53; +5.02s free 5.30 pool 103.53
+2026-10-20T03:48:41.697623744Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe flush 3 after step 10: MemFree 5.30 GiB; sync-38 MiB; gc+0 MiB; host cache+0 MiB; mempool trim+0 MiB; graph mem trim+0 MiB; stack limit+0 MiB; settle 2 s -12 MiB (max +0 MiB at 0.0 s)
+2026-10-20T03:48:44.876656899Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 11 longest 16279 memfree 5.25 -> 5.12 GiB pool 103.53 -> 103.53 GiB unexplained +133 MiB dev_free 5.12 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5032/455/25
+2026-10-20T03:48:51.336282116Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 12 longest 8188 memfree 5.04 -> 2.31 GiB pool 103.53 -> 103.53 GiB unexplained +2801 MiB dev_free 2.31 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5045/456/25
+2026-10-20T03:48:55.746326396Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe flush 4 after step 12: MemFree 2.31 GiB; sync-78 MiB; gc+0 MiB; host cache+0 MiB; mempool trim+0 MiB; graph mem trim+0 MiB; stack limit+0 MiB; settle 2 s -35 MiB (max +15 MiB at 0.2 s)
+2026-10-20T03:48:59.045465400Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 13 longest 16376 memfree 2.20 -> 6.07 GiB pool 103.53 -> 103.55 GiB unexplained -3985 MiB dev_free 6.07 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5059/457/26
+2026-10-20T03:49:04.118679276Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 14 longest 24564 memfree 6.07 -> 6.06 GiB pool 103.55 -> 103.55 GiB unexplained +15 MiB dev_free 6.06 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5072/458/26
+2026-10-20T03:49:08.958229680Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 15 longest 32461 memfree 6.05 -> 5.86 GiB pool 103.55 -> 103.55 GiB unexplained +198 MiB dev_free 5.86 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5085/459/26
+2026-10-20T03:49:14.465652873Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 16 longest 8188 memfree 5.76 -> 3.05 GiB pool 103.55 -> 103.55 GiB unexplained +2774 MiB dev_free 3.05 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5098/460/26
+2026-10-20T03:49:18.185245901Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe flush 5 after step 16: MemFree 3.05 GiB; sync-20 MiB; gc+0 MiB; host cache+0 MiB; mempool trim+0 MiB; graph mem trim+0 MiB; stack limit+0 MiB; settle 2 s -14 MiB (max +0 MiB at 0.0 s)
+2026-10-20T03:49:21.416977513Z (Worker_TP0 pid=656) [dsv41-prefill-empty-cache] probe step 17 longest 16376 memfree 3.02 -> 5.10 GiB pool 103.55 -> 103.55 GiB unexplained -2135 MiB dev_free 5.11 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5112/461/27
+2026-10-20T03:47:11.466623339Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 1 longest 4093 memfree 8.47 -> 7.79 GiB pool 101.99 -> 102.87 GiB unexplained -203 MiB dev_free 7.79 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4800/435/22
+2026-10-20T03:47:13.921676052Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 2 longest 501 memfree 7.81 -> 7.33 GiB pool 102.87 -> 102.87 GiB unexplained +491 MiB dev_free 7.33 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4840/439/22
+2026-10-20T03:47:28.499680538Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 3 longest 1378 memfree 7.35 -> 7.33 GiB pool 102.87 -> 102.87 GiB unexplained +24 MiB dev_free 7.33 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4933/447/22
+2026-10-20T03:47:31.701048303Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 4 longest 211 memfree 7.35 -> 7.34 GiB pool 102.87 -> 102.89 GiB unexplained -16 MiB dev_free 7.34 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4946/448/22
+2026-10-20T03:48:06.638902335Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 5 longest 201 memfree 7.73 -> 7.73 GiB pool 102.89 -> 102.89 GiB unexplained -0 MiB dev_free 7.73 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4961/449/22
+2026-10-20T03:48:14.015976568Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 6 longest 8188 memfree 7.71 -> 6.48 GiB pool 102.89 -> 103.83 GiB unexplained +296 MiB dev_free 6.48 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4973/451/22
+2026-10-20T03:48:19.183455357Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 7 longest 16178 memfree 6.48 -> 6.56 GiB pool 103.83 -> 103.83 GiB unexplained -78 MiB dev_free 6.56 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4985/452/22
+2026-10-20T03:48:24.817113491Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 8 longest 8188 memfree 6.57 -> 6.46 GiB pool 103.83 -> 103.83 GiB unexplained +113 MiB dev_free 6.46 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 4998/453/22
+2026-10-20T03:48:31.844092022Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 9 longest 16306 memfree 6.46 -> 6.55 GiB pool 103.83 -> 103.83 GiB unexplained -94 MiB dev_free 6.55 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5009/454/22
+2026-10-20T03:48:37.961602656Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 10 longest 8188 memfree 6.54 -> 6.42 GiB pool 103.83 -> 103.83 GiB unexplained +121 MiB dev_free 6.42 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5023/455/22
+2026-10-20T03:48:44.865512208Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 11 longest 16279 memfree 6.42 -> 6.51 GiB pool 103.83 -> 103.83 GiB unexplained -92 MiB dev_free 6.51 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5035/456/22
+2026-10-20T03:48:51.346899342Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 12 longest 8188 memfree 6.54 -> 6.39 GiB pool 103.83 -> 103.83 GiB unexplained +151 MiB dev_free 6.39 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5047/457/22
+2026-10-20T03:49:00.768644315Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 13 longest 16376 memfree 6.41 -> 6.34 GiB pool 103.83 -> 103.83 GiB unexplained +65 MiB dev_free 7.93 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5058/458/22
+2026-10-20T03:49:04.109053220Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 14 longest 24564 memfree 7.24 -> 6.54 GiB pool 103.00 -> 103.71 GiB unexplained -8 MiB dev_free 6.54 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5072/460/22
+2026-10-20T03:49:05.771968689Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe release 1 after step 13 (grown, 1554 MiB released; GiB): +0.00s free 7.93 pool 102.31; +0.11s free 7.24 pool 103.00; +0.21s free 6.90 pool 103.31; +0.32s free 6.49 pool 103.71; +0.52s free 6.49 pool 103.71; +0.83s free 6.51 pool 103.71; +1.03s free 6.51 pool 103.71; +1.54s free 6.52 pool 103.71; +2.04s free 6.53 pool 103.71; +3.09s free 6.53 pool 103.71; +4.00s free 6.57 pool 103.71; +5.01s free 6.57 pool 103.71
+2026-10-20T03:49:08.948449579Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 15 longest 32461 memfree 6.54 -> 6.58 GiB pool 103.71 -> 103.71 GiB unexplained -37 MiB dev_free 6.58 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5083/461/22
+2026-10-20T03:49:14.456538747Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 16 longest 8188 memfree 6.58 -> 6.49 GiB pool 103.71 -> 103.71 GiB unexplained +93 MiB dev_free 6.49 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5096/462/22
+2026-10-20T03:49:21.407604830Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] probe step 17 longest 16376 memfree 6.49 -> 6.50 GiB pool 103.71 -> 103.71 GiB unexplained -10 MiB dev_free 6.50 GiB mempool 0/0 MiB thr 0 MiB graphmem 0 MiB stack 1408 B pinned - MiB gc 5108/463/22
+
+## spark1 memsample 1 Hz 03:48:06..03:49:23
+03:48:06 free=5394 avail=4860 cached=1178 swap=8205
+03:48:07 free=5367 avail=4835 cached=1183 swap=8203
+03:48:08 free=5732 avail=5479 cached=1246 swap=8228
+03:48:09 free=5899 avail=5313 cached=1008 swap=8463
+03:48:10 free=5926 avail=5427 cached=1016 swap=8608
+03:48:11 free=5939 avail=5424 cached=1010 swap=8808
+03:48:12 free=5977 avail=5436 cached=1048 swap=9050
+03:48:13 free=5871 avail=5313 cached=1003 swap=9063
+03:48:14 free=5867 avail=5311 cached=1006 swap=9058
+03:48:15 free=5839 avail=5299 cached=1021 swap=9052
+03:48:16 free=5834 avail=5294 cached=1021 swap=9050
+03:48:17 free=5833 avail=5293 cached=1021 swap=9049
+03:48:18 free=5827 avail=5288 cached=1022 swap=9036
+03:48:19 free=5935 avail=5448 cached=1022 swap=9033
+03:48:20 free=5873 avail=5387 cached=1022 swap=9032
+03:48:21 free=5262 avail=4643 cached=1144 swap=9023
+03:48:22 free=4319 avail=3652 cached=1046 swap=9021
+03:48:23 free=4301 avail=3634 cached=1049 swap=9017
+03:48:24 free=4274 avail=3607 cached=1049 swap=9012
+03:48:25 free=4257 avail=3592 cached=1052 swap=9009
+03:48:26 free=4229 avail=3564 cached=1050 swap=9007
+03:48:27 free=4213 avail=3548 cached=1050 swap=9007
+03:48:28 free=4196 avail=3530 cached=1050 swap=9006
+03:48:29 free=4157 avail=3492 cached=1050 swap=9005
+03:48:30 free=4129 avail=3464 cached=1050 swap=9004
+03:48:31 free=4102 avail=3436 cached=1050 swap=9004
+03:48:32 free=4103 avail=3437 cached=1050 swap=9003
+03:48:33 free=6658 avail=5993 cached=1050 swap=9003
+03:48:34 free=6506 avail=5915 cached=1037 swap=9069
+03:48:35 free=5428 avail=4760 cached=1044 swap=9133
+03:48:36 free=5426 avail=4758 cached=1044 swap=9133
+03:48:37 free=5425 avail=4757 cached=1044 swap=9132
+03:48:38 free=5422 avail=4755 cached=1044 swap=9131
+03:48:39 free=5386 avail=4719 cached=1044 swap=9131
+03:48:40 free=5377 avail=4709 cached=1044 swap=9130
+03:48:41 free=5375 avail=4707 cached=1045 swap=9129
+03:48:42 free=5357 avail=4689 cached=1045 swap=9129
+03:48:43 free=5312 avail=4644 cached=1045 swap=9110
+03:48:44 free=5242 avail=4575 cached=1045 swap=9097
+03:48:45 free=5198 avail=4530 cached=1045 swap=9096
+03:48:46 free=5169 avail=4502 cached=1046 swap=9087
+03:48:47 free=3128 avail=2523 cached=1172 swap=9086
+03:48:48 free=2481 avail=1826 cached=1071 swap=9085
+03:48:49 free=2456 avail=1801 cached=1071 swap=9085
+03:48:50 free=2405 avail=1750 cached=1071 swap=9084
+03:48:51 free=2363 avail=1709 cached=1071 swap=9084
+03:48:52 free=2327 avail=1673 cached=1071 swap=9084
+03:48:53 free=2300 avail=1646 cached=1073 swap=9083
+03:48:54 free=2267 avail=1614 cached=1074 swap=9081
+03:48:55 free=1975 avail=1390 cached=1210 swap=9080
+03:48:56 free=6312 avail=5889 cached=1080 swap=9107
+03:48:57 free=6281 avail=5858 cached=1080 swap=9106
+03:48:59 free=6215 avail=5792 cached=1080 swap=9106
+03:49:00 free=6140 avail=5497 cached=1094 swap=9100
+03:49:01 free=5877 avail=5268 cached=1163 swap=9100
+03:49:02 free=4749 avail=4110 cached=1102 swap=9099
+03:49:03 free=6272 avail=5633 cached=1102 swap=9099
+03:49:04 free=6200 avail=5798 cached=1102 swap=9098
+03:49:05 free=6148 avail=5686 cached=1102 swap=9098
+03:49:06 free=6095 avail=5590 cached=1102 swap=9097
+03:49:07 free=6070 avail=5544 cached=1102 swap=9097
+03:49:08 free=6041 avail=5487 cached=1102 swap=9096
+03:49:09 free=5989 avail=5379 cached=1102 swap=9096
+03:49:10 free=5932 avail=5293 cached=1103 swap=9095
+03:49:11 free=5230 avail=4686 cached=1211 swap=9095
+03:49:12 free=3222 avail=2591 cached=1117 swap=9095
+03:49:13 free=3197 avail=2566 cached=1117 swap=9095
+03:49:14 free=3156 avail=2524 cached=1117 swap=9094
+03:49:15 free=3121 avail=2489 cached=1117 swap=9094
+03:49:16 free=3101 avail=2470 cached=1117 swap=9094
+03:49:17 free=3085 avail=2454 cached=1117 swap=9094
+03:49:18 free=3088 avail=2456 cached=1117 swap=9094
+03:49:19 free=1762 avail=1135 cached=1125 swap=9093
+03:49:20 free=1773 avail=1146 cached=1125 swap=9093
+03:49:21 free=1800 avail=1173 cached=1125 swap=9093
+03:49:22 free=8338 avail=7852 cached=851 swap=5748
+
+## /proc probe for 32K run 1
+prompt 32461 tokens, 2026-10-20T03:48:47.004298Z -> 2026-10-20T03:49:10.602785Z (TTFT 23.60 s)
+
+## spark1: /proc/meminfo (MiB; delta vs before)
+field              before (03:48:45)   start+2s (03:48:49)     middle (03:48:59)     end-1s (03:49:10)   after+3s (03:49:14)
+MemFree                    5242 (+0)          2481 (-2761)           6215 (+973)           5932 (+690)          3156 (-2086)
+MemAvailable               4574 (+0)          1826 (-2748)          5792 (+1218)           5293 (+719)          2524 (-2050)
+Cached                     1045 (+0)            1071 (+26)            1080 (+35)            1103 (+58)            1117 (+72)
+AnonPages                  4951 (+0)            4961 (+10)            4941 (-10)             4951 (+0)             4956 (+5)
+Shmem                       382 (+0)              383 (+1)              383 (+1)              383 (+1)              383 (+1)
+Mlocked                      23 (+0)               23 (+0)               23 (+0)               23 (+0)               23 (+0)
+Unevictable                  23 (+0)               23 (+0)               23 (+0)               23 (+0)               23 (+0)
+SUnreclaim                 2404 (+0)             2404 (+0)             2404 (+0)             2404 (+0)             2404 (+0)
+KReclaimable                430 (+0)              430 (+0)              430 (+0)              430 (+0)              430 (+0)
+PageTables                   84 (+0)               84 (+0)               84 (+0)               84 (+0)               84 (+0)
+SecPageTables               299 (+0)              299 (+0)              299 (+0)              299 (+0)              299 (+0)
+VmallocUsed                 138 (+0)              138 (+0)              137 (-1)              138 (+0)              138 (+0)
+Percpu                       31 (+0)               31 (+0)               31 (+0)               31 (+0)               31 (+0)
+KernelStack                  28 (+0)               28 (+0)               28 (+0)               28 (+0)               28 (+0)
+AnonHugePages                 2 (+0)                2 (+0)                2 (+0)                2 (+0)                2 (+0)
+CmaFree                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+SwapFree                   7286 (+0)            7298 (+12)             7277 (-9)             7288 (+2)             7289 (+3)
+### spark1 VLLM::EngineCor:709627 (MiB)
+  VmRSS                     641 (+0)              642 (+1)              642 (+1)              642 (+1)              643 (+2)
+  VmSwap                    263 (+0)              263 (-1)              263 (-1)              263 (-1)              263 (-1)
+  RssAnon                   611 (+0)              612 (+1)              612 (+1)              612 (+1)              613 (+1)
+  RssFile                    25 (+0)               25 (+0)               25 (+0)               25 (+0)               25 (+0)
+  RssShmem                    3 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                       4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+### spark1 VLLM::Worker_TP:709987 (MiB)
+  VmRSS                    2361 (+0)             2362 (+0)            2336 (-26)            2339 (-23)            2339 (-23)
+  VmSwap                   1784 (+0)             1784 (-1)            1810 (+25)            1808 (+23)            1808 (+23)
+  RssAnon                  1763 (+0)             1763 (+0)            1738 (-26)            1740 (-24)            1740 (-24)
+  RssFile                   304 (+0)              304 (+0)              304 (+0)              304 (+0)              304 (+0)
+  RssShmem                  293 (+0)              294 (+0)              294 (+0)              294 (+0)              294 (+0)
+  VmPin                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                      13 (+0)               13 (+0)               13 (+0)               13 (+0)               13 (+0)
+### spark1 vllm:707839 (MiB)
+  VmRSS                     607 (+0)              615 (+7)              615 (+7)              615 (+7)              616 (+8)
+  VmSwap                    521 (+0)              520 (-1)              520 (-1)              520 (-1)              520 (-1)
+  RssAnon                   576 (+0)              583 (+7)              583 (+7)              583 (+7)              584 (+8)
+  RssFile                    31 (+0)               31 (+0)               31 (+0)               31 (+0)               31 (+0)
+  RssShmem                    0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                       5 (+0)                5 (+0)                5 (+0)                5 (+0)                5 (+0)
+
+## spark2: /proc/meminfo (MiB; delta vs before)
+field              before (03:48:45)   start+2s (03:48:49)     middle (03:48:59)     end-1s (03:49:10)   after+3s (03:49:14)
+MemFree                    6673 (+0)           6532 (-141)           6493 (-180)            6734 (+61)            6641 (-32)
+MemAvailable               7058 (+0)           6939 (-119)           6910 (-148)           7159 (+101)            7086 (+28)
+Cached                     2433 (+0)            2455 (+22)            2465 (+32)            2474 (+41)            2494 (+61)
+AnonPages                  2992 (+0)             2992 (+0)             2992 (+0)             2993 (+1)             2993 (+1)
+Shmem                       381 (+0)              381 (+0)              381 (+0)              381 (+0)              381 (+0)
+Mlocked                      24 (+0)               24 (+0)               24 (+0)               24 (+0)               24 (+0)
+Unevictable                  24 (+0)               24 (+0)               24 (+0)               24 (+0)               24 (+0)
+SUnreclaim                 2345 (+0)             2345 (+0)             2346 (+1)             2344 (-1)             2344 (-1)
+KReclaimable                300 (+0)              300 (+0)              299 (-1)              299 (-1)              299 (-1)
+PageTables                   54 (+0)               55 (+1)               54 (+0)               54 (+0)               54 (+0)
+SecPageTables               275 (+0)              275 (+0)              275 (+0)              275 (+0)              275 (+0)
+VmallocUsed                 129 (+0)              129 (+0)              129 (+0)              129 (+0)              129 (+0)
+Percpu                       35 (+0)               35 (+0)               35 (+0)               35 (+0)               35 (+0)
+KernelStack                  20 (+0)               20 (+0)               20 (+0)               20 (+0)               20 (+0)
+AnonHugePages                22 (+0)               22 (+0)               22 (+0)               22 (+0)               22 (+0)
+CmaFree                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+SwapFree                  10337 (+0)            10337 (+0)            10337 (+0)            10338 (+1)            10338 (+1)
+### spark2 VLLM::Worker_TP:2743029 (MiB)
+  VmRSS                    3253 (+0)             3253 (+0)             3250 (-4)             3251 (-2)             3251 (-2)
+  VmSwap                   1108 (+0)             1108 (+0)             1108 (+0)             1108 (-1)             1108 (-1)
+  RssAnon                  2450 (+0)             2450 (+0)             2450 (+0)             2450 (+0)             2450 (+0)
+  RssFile                   511 (+0)              511 (+0)              507 (-4)              509 (-3)              509 (-3)
+  RssShmem                  291 (+0)              292 (+0)              292 (+0)              292 (+0)              292 (+0)
+  VmPin                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                      13 (+0)               13 (+0)               13 (+0)               13 (+0)               13 (+0)
+### spark2 vllm:2737572 (MiB)
+  VmRSS                      27 (+0)               27 (+0)               27 (+0)               27 (+0)               27 (+0)
+  VmSwap                    950 (+0)              950 (+0)              950 (+0)              950 (+0)              950 (+0)
+  RssAnon                     4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+  RssFile                    22 (+0)               22 (+0)               22 (+0)               22 (+0)               22 (+0)
+  RssShmem                    0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                       4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+
+## memwatch
+2026-10-20T03:48:40Z s1=4717 s2=6976 swap1=9130 swap2=6046 up=1
+2026-10-20T03:48:42Z s1=4689 s2=7018 swap1=9129 swap2=6046 up=1
+2026-10-20T03:48:44Z s1=4585 s2=7037 swap1=9097 swap2=6046 up=1
+2026-10-20T03:48:46Z s1=4510 s2=7060 swap1=9094 swap2=6046 up=1
+2026-10-20T03:48:48Z s1=1834 s2=7059 swap1=9086 swap2=6046 up=1
+2026-10-20T03:48:50Z s1=1758 s2=6934 swap1=9085 swap2=6046 up=1
+2026-10-20T03:48:52Z s1=1673 s2=6948 swap1=9084 swap2=6046 up=1
+2026-10-20T03:48:54Z s1=1612 s2=6958 swap1=9081 swap2=6046 up=1
+2026-10-20T03:48:56Z s1=4011 s2=7014 swap1=9080 swap2=6046 up=1
+2026-10-20T03:48:58Z s1=5820 s2=6957 swap1=9106 swap2=6046 up=1
+2026-10-20T03:49:00Z s1=5463 s2=6946 swap1=9100 swap2=6046 up=1
+2026-10-20T03:49:02Z s1=4189 s2=7160 swap1=9099 swap2=6046 up=1
+2026-10-20T03:49:04Z s1=5686 s2=7113 swap1=9098 swap2=6046 up=1
+2026-10-20T03:49:06Z s1=5570 s2=7151 swap1=9097 swap2=6046 up=1
+2026-10-20T03:49:09Z s1=5409 s2=7174 swap1=9096 swap2=6045 up=1
+2026-10-20T03:49:11Z s1=4974 s2=7160 swap1=9095 swap2=6045 up=1
+2026-10-20T03:49:13Z s1=2567 s2=7230 swap1=9095 swap2=6045 up=1
+2026-10-20T03:49:15Z s1=2489 s2=7064 swap1=9094 swap2=6045 up=1
+2026-10-20T03:49:17Z s1=2465 s2=7097 swap1=9094 swap2=6045 up=1
+2026-10-20T03:49:19Z s1=1140 s2=7124 swap1=9093 swap2=6045 up=1
+2026-10-20T03:49:21Z s1=1186 s2=7126 swap1=9093 swap2=6045 up=1
+2026-10-20T03:49:21Z TRIP s1=1186 s2=7126 floor=1536 -> ./stop.sh
+2026-10-20T03:49:29Z s1=117538 s2=119524 swap1=5689 swap2=2501 up=0

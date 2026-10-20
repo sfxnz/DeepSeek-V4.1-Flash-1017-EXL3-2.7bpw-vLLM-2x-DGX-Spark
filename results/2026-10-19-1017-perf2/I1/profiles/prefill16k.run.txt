@@ -1,0 +1,55 @@
+== prefill16k 2026-10-19T19:29:41Z host=spark1 payload: python3 /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/tools/profile_payload.py prefill --doc /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I1/profiles/doc16k.txt
+== MemAvailable before: s1=5870 s2=6868 MiB
+== start_profile 2026-10-19T19:29:41Z
+ rc=0
+== payload rc=0 tripped=0 2026-10-19T19:29:50Z
+{
+ "mode": "prefill",
+ "wall_s": 6.488,
+ "streams": [
+  {
+   "ttft_s": 6.488,
+   "wall_s": 6.488,
+   "content_chunks": 1,
+   "usage": {
+    "prompt_tokens": 16046,
+    "total_tokens": 16047,
+    "completion_tokens": 1,
+    "completion_tokens_details": {
+     "reasoning_tokens": 0
+    }
+   },
+   "utc_start": "19:29:49"
+  }
+ ]
+}
+== stop_profile 2026-10-19T19:29:50Z (MemAvailable s1=5712 s2=6473)
+ stop_profile rc=0 after 1 s
+== MemAvailable after stop+flush: s1=6432 s2=6631 MiB; window min: s1=3859 s2=6421
+== traces rank0 (spark1)
+total 1160
+drwxr-xr-x 2 root root    4096 Oct 19 19:29 .
+drwxrwxrwt 1 root root    4096 Oct 19 19:29 ..
+-rw-r--r-- 1 root root 1171451 Oct 19 19:29 dp0_pp0_tp0_dcp0_ep0_rank0.1792438190718658410.pt.trace.json.gz
+-rw-r--r-- 1 root root       1 Oct 19 19:29 profiler_out_0.txt
+-rw-r--r-- 1 root root     790 Oct 19 19:29 spark1_1.async_llm.1792438190177756470.pt.trace.json.gz
+== traces rank1 (spark2)
+total 1140
+drwxr-xr-x 2 root root    4096 Oct 19 19:29 .
+drwxrwxrwt 1 root root    4096 Oct 19 19:29 ..
+-rw-r--r-- 1 root root 1155220 Oct 19 19:29 dp0_pp0_tp1_dcp0_ep1_rank1.1792438190297886331.pt.trace.json.gz
+== docker cp rank0 -> spark1:/home/sfxnz/projects/data/dsv41-traces/perf2-I1/prefill16k/rank0 2026-10-19T19:30:06Z
+total 1160
+drwxr-xr-x 2 sfxnz sfxnz    4096 Oct 19 20:29 .
+drwxrwxr-x 3 sfxnz sfxnz    4096 Oct 19 20:30 ..
+-rw-r--r-- 1 sfxnz sfxnz 1171451 Oct 19 20:29 dp0_pp0_tp0_dcp0_ep0_rank0.1792438190718658410.pt.trace.json.gz
+-rw-r--r-- 1 sfxnz sfxnz       1 Oct 19 20:29 profiler_out_0.txt
+-rw-r--r-- 1 sfxnz sfxnz     790 Oct 19 20:29 spark1_1.async_llm.1792438190177756470.pt.trace.json.gz
+== docker cp rank1 -> spark2:/home/sfxnz/projects/data/dsv41-traces/perf2-I1/prefill16k/rank1 2026-10-19T19:30:06Z
+total 1140
+drwxr-xr-x 2 sfxnz sfxnz    4096 Oct 19 20:29 .
+drwxrwxr-x 3 sfxnz sfxnz    4096 Oct 19 20:30 ..
+-rw-r--r-- 1 sfxnz sfxnz 1155220 Oct 19 20:29 dp0_pp0_tp1_dcp0_ep1_rank1.1792438190297886331.pt.trace.json.gz
+== MemAvailable after cp: s1=6474 s2=6644 MiB 2026-10-19T19:30:07Z
+== copies verified (sizes match); cleared /tmp/dsv41-traces in both containers
+== done prefill16k 2026-10-19T19:30:08Z stop_rc=0 payload_rc=0 tripped=0

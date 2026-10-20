@@ -1,0 +1,46 @@
+# cmd: python3 bench_decode.py --phase prose --concurrency 1 --runs 5
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 (HEAD ca42873) host: spark1 start: 2026-10-19T22:36:02Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=200 runs=5 concurrency=[1] phases=['prose']
+phase=prose c=1 run=1 wall=5.88s agg=45.39 tok/s per_stream=[45.40] ttft=[1.500] acc=2.577 ms_step=[56.8]
+phase=prose c=1 run=2 wall=4.32s agg=48.20 tok/s per_stream=[48.21] ttft=[0.188] acc=2.577 ms_step=[53.4]
+phase=prose c=1 run=3 wall=4.21s agg=49.57 tok/s per_stream=[49.58] ttft=[0.196] acc=2.584 ms_step=[52.1]
+phase=prose c=1 run=4 wall=4.24s agg=49.10 tok/s per_stream=[49.11] ttft=[0.190] acc=2.584 ms_step=[52.6]
+phase=prose c=1 run=5 wall=4.21s agg=49.45 tok/s per_stream=[49.45] ttft=[0.189] acc=2.610 ms_step=[52.8]
+natural phase=prose completion_tokens=91 finish_reason=stop
+SUMMARY [
+  {
+    "phase": "prose",
+    "concurrency": 1,
+    "median_decode_tok_s": 49.10906191879417,
+    "median_ttft_s": 0.1896008071489632,
+    "median_agg_tok_s": 49.102501007354206,
+    "median_completion_tokens": 200,
+    "n": 5,
+    "acceptance_len": 2.58656330749354,
+    "draft_acceptance_rate": 0.52885443583118,
+    "run_acceptance_len": [
+      2.5769,
+      2.5769,
+      2.5844,
+      2.5844,
+      2.6104
+    ],
+    "median_run_acceptance_len": 2.5844155844155843,
+    "median_ms_per_step": 52.783218859209576,
+    "ttft_s_p50": 0.1896008071489632,
+    "ttft_s_p90": 0.9782419411465527,
+    "ttft_s_p99": 1.4474659591168164,
+    "inter_chunk_ms_p50": 51.7346179112792,
+    "inter_chunk_ms_p90": 62.76200572028756,
+    "inter_chunk_ms_p99": 107.90971415117382,
+    "finish_reasons": {
+      "length": 5
+    },
+    "natural_completion_tokens": 91,
+    "natural_finish_reason": "stop",
+    "natural_covers_max": false,
+    "post_eos_fraction": 0.545
+  }
+]
+rc=0
+# end: 2026-10-19T22:36:27Z

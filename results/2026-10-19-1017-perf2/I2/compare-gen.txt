@@ -1,0 +1,57 @@
+# cmd: python3 tools/replay_ab.py compare /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I2/A-gen.json /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I1/B-gen.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration (HEAD ff424e8) host: spark1 start: 2026-10-19T19:57:05Z
+{
+ "gen8192": {
+  "prompt_tokens": [
+   8117,
+   8117
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "max_abs_dlogprob": 0.16003617644309998,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "gen32768": {
+  "prompt_tokens": [
+   32561,
+   32561
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "max_abs_dlogprob": 0.25176137685775757,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "gen102400": {
+  "prompt_tokens": [
+   102344,
+   102344
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "max_abs_dlogprob": 0.22539150714874268,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ }
+}
+rc=0
+# end: 2026-10-19T19:57:05Z

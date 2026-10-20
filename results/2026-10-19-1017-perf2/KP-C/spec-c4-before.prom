@@ -1,0 +1,16 @@
+vllm:spec_decode_num_drafts_total{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017"} 3822.0
+vllm:spec_decode_num_drafts_created{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017"} 1.7924666722238724e+09
+vllm:spec_decode_num_draft_tokens_total{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017"} 19110.0
+vllm:spec_decode_num_draft_tokens_created{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017"} 1.792466672226673e+09
+vllm:spec_decode_num_accepted_tokens_total{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017"} 5726.0
+vllm:spec_decode_num_accepted_tokens_created{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017"} 1.792466672227677e+09
+vllm:spec_decode_num_accepted_tokens_per_pos_total{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017",position="0"} 2596.0
+vllm:spec_decode_num_accepted_tokens_per_pos_total{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017",position="1"} 1480.0
+vllm:spec_decode_num_accepted_tokens_per_pos_total{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017",position="2"} 779.0
+vllm:spec_decode_num_accepted_tokens_per_pos_total{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017",position="3"} 477.0
+vllm:spec_decode_num_accepted_tokens_per_pos_total{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017",position="4"} 394.0
+vllm:spec_decode_num_accepted_tokens_per_pos_created{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017",position="0"} 1.7924666722314749e+09
+vllm:spec_decode_num_accepted_tokens_per_pos_created{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017",position="1"} 1.7924666722320747e+09
+vllm:spec_decode_num_accepted_tokens_per_pos_created{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017",position="2"} 1.7924666722326758e+09
+vllm:spec_decode_num_accepted_tokens_per_pos_created{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017",position="3"} 1.7924666722332764e+09
+vllm:spec_decode_num_accepted_tokens_per_pos_created{engine="0",model_name="deepseek-ai/DeepSeek-V4.1-Flash-1017",position="4"} 1.7924666722358716e+09

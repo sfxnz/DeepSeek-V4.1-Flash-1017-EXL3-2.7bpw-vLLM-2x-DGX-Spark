@@ -1,0 +1,66 @@
+[
+ {
+  "case": "e_shared_16k_prefix_new_tail",
+  "utc": "2026-10-19T19:21:59Z",
+  "prompt_tokens": 32387,
+  "completion_tokens": 64,
+  "ttft_s": 11.623,
+  "wall_s": 13.087,
+  "prefill_tok_s_from_ttft": 2786.4,
+  "prefix_queries_delta": 32387.0,
+  "prefix_hits_delta": 0.0,
+  "hit_frac": 0.0,
+  "finish_reason": "length",
+  "metrics_before": {
+   "vllm:prefix_cache_queries_total": 650793.0,
+   "vllm:prefix_cache_hits_total": 65024.0
+  },
+  "metrics_after": {
+   "vllm:prefix_cache_queries_total": 683180.0,
+   "vllm:prefix_cache_hits_total": 65024.0
+  },
+  "other_prefix_metrics_after": {
+   "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792437085.7477396,
+   "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792437085.7491395,
+   "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792437085.7509394,
+   "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792437085.7541397,
+   "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 65024.0,
+   "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792437085.76554
+  },
+  "text": "The three invented words that appear most often are:\n\n1. **each** \u2013 appears very frequently throughout the text.\n2. **this** \u2013 also appears extremely often.\n3. **from** \u2013 appears many times as well.\n\n(Note: These are being treated as invented/nonsense words per the premise of the"
+ },
+ {
+  "case": "f_identical_to_e",
+  "utc": "2026-10-19T19:22:13Z",
+  "prompt_tokens": 32387,
+  "completion_tokens": 63,
+  "ttft_s": 11.364,
+  "wall_s": 12.897,
+  "prefill_tok_s_from_ttft": 2849.9,
+  "prefix_queries_delta": 32387.0,
+  "prefix_hits_delta": 0.0,
+  "hit_frac": 0.0,
+  "finish_reason": "stop",
+  "metrics_before": {
+   "vllm:prefix_cache_queries_total": 683180.0,
+   "vllm:prefix_cache_hits_total": 65024.0
+  },
+  "metrics_after": {
+   "vllm:prefix_cache_queries_total": 715567.0,
+   "vllm:prefix_cache_hits_total": 65024.0
+  },
+  "other_prefix_metrics_after": {
+   "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792437085.7477396,
+   "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792437085.7491395,
+   "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792437085.7509394,
+   "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792437085.7541397,
+   "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 65024.0,
+   "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792437085.76554
+  },
+  "text": "The three invented words that appear most often are:\n\n1. **each** \u2013 appears very frequently throughout the text.\n2. **from** \u2013 also appears very frequently.\n3. **this** \u2013 appears very frequently as well.\n\nThese three are the most recurrent invented (non-English) tokens in the passage."
+ }
+]

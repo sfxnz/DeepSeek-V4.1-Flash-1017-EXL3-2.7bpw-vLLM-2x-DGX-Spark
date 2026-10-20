@@ -1,0 +1,74 @@
+# cmd: python3 tools/replay_ab.py compare /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I2/A-turns.json /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I1/B-turns.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration (HEAD ff424e8) host: spark1 start: 2026-10-19T19:57:05Z
+{
+ "turn1": {
+  "prompt_tokens": [
+   20017,
+   20017
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "max_abs_dlogprob": 0.19009990245103836,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "resend": {
+  "prompt_tokens": [
+   20017,
+   20017
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "max_abs_dlogprob": 0.22549965977668762,
+  "min_top5_overlap": 0.6,
+  "hits": [
+   16384.0,
+   0.0
+  ]
+ },
+ "continue": {
+  "prompt_tokens": [
+   20051,
+   20051
+  ],
+  "tokens": [
+   64,
+   64
+  ],
+  "first_divergence": 9,
+  "max_abs_dlogprob": 0.22040796279907227,
+  "min_top5_overlap": 0.6,
+  "hits": [
+   19968.0,
+   19968.0
+  ]
+ },
+ "diverge": {
+  "prompt_tokens": [
+   20042,
+   20042
+  ],
+  "tokens": [
+   54,
+   64
+  ],
+  "first_divergence": 6,
+  "max_abs_dlogprob": 0.01938501000404358,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   16384.0,
+   0.0
+  ]
+ }
+}
+rc=0
+# end: 2026-10-19T19:57:05Z

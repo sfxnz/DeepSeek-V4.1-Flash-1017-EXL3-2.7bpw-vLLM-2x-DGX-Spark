@@ -1,0 +1,100 @@
+==> role=head host=spark1
+==> Preflight spark1
+==> Ensuring image dsv41-flash-exl3-sm121:e16-rows
+==> Using pinned snapshot /tmp/tmp6qif3out/hf/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq
+==> Preflight dryrun-no-such-host
+==> Ensuring image dsv41-flash-exl3-sm121:e16-rows
+==> Using pinned snapshot /tmp/tmp6qif3out/hf/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq
+==> Starting worker on dryrun-no-such-host first
+==> role=worker host=spark1
+==> Ensuring image dsv41-flash-exl3-sm121:e16-rows
+==> Using pinned snapshot /tmp/tmp6qif3out/hf/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq
+==> Starting dsv41-dryrun-harness rank=1 model=/cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq ctx=500000 quant=exl3 engram_disk=1
+0000000000000000000000000000000000000000000000000000000000000000
+==> Worker rank 1 is up. Head should start next.
+==> Worker is connecting to 10.100.8.1:29524. Starting head.
+==> Ensuring image dsv41-flash-exl3-sm121:e16-rows
+==> Using pinned snapshot /tmp/tmp6qif3out/hf/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq
+==> Starting dsv41-dryrun-harness rank=0 model=/cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq ctx=500000 quant=exl3 engram_disk=1
+0000000000000000000000000000000000000000000000000000000000000000
+==> Waiting for http://127.0.0.1:55073/health and /v1/models
+==> Ready → http://127.0.0.1:55073/v1  (context=500000)
+{"data":[{"id":"deepseek-ai/DeepSeek-V4.1-Flash-1017"}]}
+
+WARNING: dsv41-flash-exl3-sm121:e16-rows has no dsv41.recipe.patches label: not built from this repo's docker/Dockerfile, or built before the label existed. Rebuild: docker build -f docker/Dockerfile -t dsv41-flash-exl3-sm121:e16-rows docker
+WARNING: dsv41-flash-exl3-sm121:e16-rows has no dsv41.recipe.patches label: not built from this repo's docker/Dockerfile, or built before the label existed. Rebuild: docker build -f docker/Dockerfile -t dsv41-flash-exl3-sm121:e16-rows docker
+WARNING: dsv41-flash-exl3-sm121:e16-rows has no dsv41.recipe.patches label: not built from this repo's docker/Dockerfile, or built before the label existed. Rebuild: docker build -f docker/Dockerfile -t dsv41-flash-exl3-sm121:e16-rows docker
+WARNING: dsv41-flash-exl3-sm121:e16-rows has no dsv41.recipe.patches label: not built from this repo's docker/Dockerfile, or built before the label existed. Rebuild: docker build -f docker/Dockerfile -t dsv41-flash-exl3-sm121:e16-rows docker
+WARNING audit head: missing 'dsv41: lm_head mxfp8 enabled' (lmhead_mxfp8.py)
+WARNING audit head: missing 'dsv41: engram prefetch v3 armed' (engram_prefetch_v3.py)
+WARNING audit head: missing 'dsv41: engram gather v2 self-check bit-exact' (engram_gather_v2.py)
+WARNING audit head: missing 'dsv41: engram native stage self-check bit-exact' (engram_native_stage.py)
+WARNING audit head: missing 'dsv41: engram early hash matches the stock hash' (engram_early_hash.py)
+WARNING audit head: missing 'dsv41: engram prefill ahead armed' (engram_prefill_ahead.py)
+WARNING audit head: missing 'dsv41: moe prep fused self-check bit-exact' (moe_prep_fused.py)
+WARNING audit head: missing 'dsv41: moe prefill tc self-check ok' (moe_prefill_tc.py)
+WARNING audit head: missing 'dsv41: candidate mask bounded self-check bit-exact' (candidate_mask_bounded.py)
+WARNING audit head: missing 'dsv41: indexer weights_proj GEMV self-check bit-exact' (indexer_wp_gemv.py)
+WARNING audit head: missing 'dsv41: swa metadata fused self-check bit-exact' (swa_meta_fused.py)
+WARNING audit head: missing 'dsv41: swa metadata batched self-check bit-exact' (swa_meta_batched.py)
+WARNING audit head: missing 'dsv41: kv packed groups engaged' (kv_packed_groups.py)
+WARNING audit head: missing 'dsv41: indexer expanded block table lazy engaged' (indexer_expanded_lazy.py)
+WARNING audit head: missing 'dsv41: attention t2r dedup reuse bit-exact' (attn_t2r_dedup.py)
+WARNING audit head: missing 'dsv41: engram wkv column-parallel self-check bit-exact' (engram_wkv_tp.py)
+WARNING audit head: missing '[woa-requant] fp8 einsum engaged' (fix_o_proj_woa_fp8.py)
+WARNING audit head: missing 'dropped page cache of' (drop_page_cache.py)
+WARNING audit head: missing '[dsv41-prefill-empty-cache] armed' (prefill_empty_cache.py)
+WARNING audit head: missing 'dsv41: fat scratch shared engaged' (fat_scratch_shared.py)
+WARNING audit head: missing 'dsv41: model loop release engaged' (model_loop_release.py)
+WARNING audit head: missing 'dsv41: attention out defer engaged' (attn_out_defer.py)
+WARNING audit head: missing 'dsv41: engram post engaged' (engram_post_inplace.py)
+WARNING audit head: missing 'dsv41: pm qos engaged' (pm_qos.py)
+WARNING audit head: missing 'dsv41: p2b coop dataflow kernel engaged (DSV41_P2B_COOP=2)' (widen_p2b_dataflow.py)
+WARNING audit head: missing 'dense GEMV armed' (dense_gemv.py)
+WARNING audit head: missing 'dsv41: mhc det engaged' (mhc_det.py)
+WARNING audit head: missing 'dsv41: mhc det overlap engaged' (mhc_det_overlap.py)
+WARNING audit head: missing 'dsv41: chat encoder 1017 parity engaged' (chat_encoder_1017.py)
+WARNING audit head: missing 'dsv41: dspark adaptive verify armed' (dspark_adaptive.py)
+WARNING audit head: missing 'dsv41: decoder replay armed' (decoder_replay.py)
+WARNING audit head: missing 'dsv41: prefix-end fallback armed' (prefix_end_fallback.py)
+WARNING audit head: missing 'dsv41: prefix reply retain armed' (prefix_reply_retain.py)
+WARNING audit head: missing 'dsv41: sched prefill cap armed' (sched_prefill_cap.py)
+WARNING audit head: missing 'Breakable CUDA graph enabled' (vllm)
+WARNING audit head: missing 'dsv41: exl3 routed experts K_gu/K_d=2/2 ' (p2b dataflow K)
+WARNING audit worker: missing 'dsv41: lm_head mxfp8 enabled' (lmhead_mxfp8.py)
+WARNING audit worker: missing 'dsv41: engram prefetch v3 armed' (engram_prefetch_v3.py)
+WARNING audit worker: missing 'dsv41: engram gather v2 self-check bit-exact' (engram_gather_v2.py)
+WARNING audit worker: missing 'dsv41: engram native stage self-check bit-exact' (engram_native_stage.py)
+WARNING audit worker: missing 'dsv41: engram early hash matches the stock hash' (engram_early_hash.py)
+WARNING audit worker: missing 'dsv41: engram prefill ahead armed' (engram_prefill_ahead.py)
+WARNING audit worker: missing 'dsv41: moe prep fused self-check bit-exact' (moe_prep_fused.py)
+WARNING audit worker: missing 'dsv41: moe prefill tc self-check ok' (moe_prefill_tc.py)
+WARNING audit worker: missing 'dsv41: candidate mask bounded self-check bit-exact' (candidate_mask_bounded.py)
+WARNING audit worker: missing 'dsv41: indexer weights_proj GEMV self-check bit-exact' (indexer_wp_gemv.py)
+WARNING audit worker: missing 'dsv41: swa metadata fused self-check bit-exact' (swa_meta_fused.py)
+WARNING audit worker: missing 'dsv41: swa metadata batched self-check bit-exact' (swa_meta_batched.py)
+WARNING audit worker: missing 'dsv41: kv packed groups engaged' (kv_packed_groups.py)
+WARNING audit worker: missing 'dsv41: indexer expanded block table lazy engaged' (indexer_expanded_lazy.py)
+WARNING audit worker: missing 'dsv41: attention t2r dedup reuse bit-exact' (attn_t2r_dedup.py)
+WARNING audit worker: missing 'dsv41: engram wkv column-parallel self-check bit-exact' (engram_wkv_tp.py)
+WARNING audit worker: missing '[woa-requant] fp8 einsum engaged' (fix_o_proj_woa_fp8.py)
+WARNING audit worker: missing 'dropped page cache of' (drop_page_cache.py)
+WARNING audit worker: missing '[dsv41-prefill-empty-cache] armed' (prefill_empty_cache.py)
+WARNING audit worker: missing 'dsv41: fat scratch shared engaged' (fat_scratch_shared.py)
+WARNING audit worker: missing 'dsv41: model loop release engaged' (model_loop_release.py)
+WARNING audit worker: missing 'dsv41: attention out defer engaged' (attn_out_defer.py)
+WARNING audit worker: missing 'dsv41: engram post engaged' (engram_post_inplace.py)
+WARNING audit worker: missing 'dsv41: pm qos engaged' (pm_qos.py)
+WARNING audit worker: missing 'dsv41: p2b coop dataflow kernel engaged (DSV41_P2B_COOP=2)' (widen_p2b_dataflow.py)
+WARNING audit worker: missing 'dense GEMV armed' (dense_gemv.py)
+WARNING audit worker: missing 'dsv41: mhc det engaged' (mhc_det.py)
+WARNING audit worker: missing 'dsv41: mhc det overlap engaged' (mhc_det_overlap.py)
+WARNING audit worker: missing 'dsv41: chat encoder 1017 parity engaged' (chat_encoder_1017.py)
+WARNING audit worker: missing 'dsv41: dspark adaptive verify armed' (dspark_adaptive.py)
+WARNING audit worker: missing 'dsv41: decoder replay armed' (decoder_replay.py)
+WARNING audit worker: missing 'dsv41: prefix-end fallback armed' (prefix_end_fallback.py)
+WARNING audit worker: missing 'dsv41: prefix reply retain armed' (prefix_reply_retain.py)
+WARNING audit worker: missing 'dsv41: sched prefill cap armed' (sched_prefill_cap.py)
+WARNING audit worker: missing 'Breakable CUDA graph enabled' (vllm)
+WARNING audit worker: missing 'dsv41: exl3 routed experts K_gu/K_d=2/2 ' (p2b dataflow K)
+AUDIT=strict: a patch did not engage (see above). The serve is up; ./stop.sh tears it down.

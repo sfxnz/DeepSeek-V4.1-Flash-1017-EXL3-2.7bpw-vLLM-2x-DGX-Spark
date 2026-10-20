@@ -1,0 +1,3 @@
+bash /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/boot-B0.sh  (HEAD 20ee8ba, started 2026-10-19T16:33:51Z on spark1 via setsid -f; output -> boot.txt)
+env: SKIP_DOWNLOAD=1 AUDIT=strict FORCE_UNSAFE_CTX=1 MAX_NUM_SEQS=4 MAX_MODEL_LEN=524288 EXTRA_ARGS='--profiler-config {"profiler":"torch","torch_profiler_dir":"/tmp/dsv41-traces","torch_profiler_dump_cuda_time_total":false}' ./run.sh
+derived: KV_CACHE_MEMORY=4160749568 MAX_NUM_BATCHED_TOKENS=8192 NUM_SPECULATIVE_TOKENS=3 capture [1,3,4,6,8,9,12,16]; FORCE_UNSAFE_CTX=1 for this campaign boot only

@@ -1,0 +1,54 @@
+## (a) test_decoder_replay alone, new e16-rows 04:09:31
+----------------------------------------------------------------------
+Ran 72 tests in 1.424s
+
+FAILED (failures=1, skipped=1)
+## (b) test_dspark_adaptive alone, new e16-rows
+FAIL: test_dry_run_gives_both_ranks_the_same_tiered_configs (test_dspark_adaptive.SpecTierRunShTests.test_dry_run_gives_both_ranks_the_same_tiered_configs)
+Ran 44 tests in 18.780s
+FAILED (failures=1, skipped=1)
+## (c) host: test_dspark_adaptive.SpecTierRunShTests + test_decoder_replay
+Ran 116 tests in 2.587s
+OK (skipped=25)
+## (d) the 3 failing tests on the OLD image e16-rows-d365c92 04:11:26
+WARNING 10-20 04:11:29 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-20 04:11:30 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-20 04:11:30 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+FAIL: test_dry_run_gives_both_ranks_the_same_tiered_configs (test_dspark_adaptive.SpecTierRunShTests.test_dry_run_gives_both_ranks_the_same_tiered_configs)
+AssertionError: 1 != 0 : ==> role=head host=spark1
+Ran 7 tests in 6.936s
+FAILED (failures=1)
+## (e) same on e15-kbits
+WARNING 10-20 04:11:42 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-20 04:11:42 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-20 04:11:42 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+FAIL: test_dry_run_gives_both_ranks_the_same_tiered_configs (test_dspark_adaptive.SpecTierRunShTests.test_dry_run_gives_both_ranks_the_same_tiered_configs)
+AssertionError: 1 != 0 : ==> role=head host=spark1
+Ran 7 tests in 7.336s
+FAILED (failures=1)
+## (f) full doc list on NEW e16-rows with -e DSV41_DECODER_REPLAY_ROWS=0 (sitecustomize skips replay at interpreter start) 04:12:37
+WARNING 10-20 04:12:40 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-20 04:12:40 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-20 04:12:40 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+ERROR: test_install_on_the_image_classes (test_decoder_replay.TorchTailTests.test_install_on_the_image_classes)
+ModuleNotFoundError: No module named 'vllm.config'; 'vllm' is not a package
+ERROR: test_run_tail_gathers_runs_and_scatters (test_decoder_replay.TorchTailTests.test_run_tail_gathers_runs_and_scatters)
+ModuleNotFoundError: No module named 'vllm.forward_context'; 'vllm' is not a package
+FAIL: test_dry_run_gives_both_ranks_the_same_tiered_configs (test_dspark_adaptive.SpecTierRunShTests.test_dry_run_gives_both_ranks_the_same_tiered_configs)
+AssertionError: 1 != 0 : ==> role=head host=spark1
+dsv41-indexer-workspace: already applied is using GPUs or InfiniBand. This recipe needs exclusive GPUs on both Sparks. Do not start. Do not docker rm that container from this script.
+Ran 272 tests in 32.409s
+FAILED (failures=1, errors=2, skipped=2)
+  WARNING 10-20 04:12:53 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+  WARNING 10-20 04:12:54 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+  WARNING 10-20 04:12:54 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+## (g) test_decoder_replay alone on NEW e16-rows with -e DSV41_DECODER_REPLAY_ROWS=0 04:13:29
+WARNING 10-20 04:13:33 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-20 04:13:33 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-20 04:13:33 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+Ran 72 tests in 1.492s
+OK (skipped=1)
+## (h) the doc list minus test_decoder_replay, plus test_decoder_replay in its own process (both with default env)
+FAIL: test_dry_run_gives_both_ranks_the_same_tiered_configs (test_dspark_adaptive.SpecTierRunShTests.test_dry_run_gives_both_ranks_the_same_tiered_configs)
+Ran 200 tests in 31.511s
+FAILED (failures=1, skipped=1)

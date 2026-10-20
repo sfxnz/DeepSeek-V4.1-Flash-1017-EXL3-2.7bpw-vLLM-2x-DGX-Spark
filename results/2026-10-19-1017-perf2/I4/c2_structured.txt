@@ -1,0 +1,46 @@
+# cmd: python3 bench_decode.py --phase structured --concurrency 2 --runs 5
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration2 (HEAD 2844fce) host: spark1 start: 2026-10-19T21:28:16Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=200 runs=5 concurrency=[2] phases=['structured']
+phase=structured c=2 run=1 wall=4.42s agg=107.33 tok/s per_stream=[47.81,63.20] ttft=[0.150,1.267] acc=3.961 ms_step=[82.8,62.7]
+phase=structured c=2 run=2 wall=3.52s agg=121.51 tok/s per_stream=[60.95,62.62] ttft=[0.144,0.337] acc=3.961 ms_step=[65.0,63.2]
+phase=structured c=2 run=3 wall=3.50s agg=122.08 tok/s per_stream=[61.12,62.98] ttft=[0.145,0.343] acc=3.961 ms_step=[64.8,62.9]
+phase=structured c=2 run=4 wall=3.52s agg=121.37 tok/s per_stream=[60.88,62.53] ttft=[0.145,0.337] acc=3.961 ms_step=[65.1,63.3]
+phase=structured c=2 run=5 wall=2.99s agg=140.81 tok/s per_stream=[70.43,70.42] ttft=[0.168,0.168] acc=3.961 ms_step=[56.2,56.2]
+natural phase=structured completion_tokens=200 finish_reason=length
+SUMMARY [
+  {
+    "phase": "structured",
+    "concurrency": 2,
+    "median_decode_tok_s": 62.576504032810284,
+    "median_ttft_s": 0.16801056452095509,
+    "median_agg_tok_s": 121.51012309651868,
+    "median_completion_tokens": 200.0,
+    "n": 10,
+    "acceptance_len": 3.9607843137254903,
+    "draft_acceptance_rate": 0.9869281045751634,
+    "run_acceptance_len": [
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608
+    ],
+    "median_run_acceptance_len": 3.9607843137254903,
+    "median_ms_per_step": 63.295107655570746,
+    "ttft_s_p50": 0.16801056452095509,
+    "ttft_s_p90": 0.43567911665886605,
+    "ttft_s_p99": 1.1839369274117053,
+    "inter_chunk_ms_p50": 61.631669057533145,
+    "inter_chunk_ms_p90": 64.84085703268647,
+    "inter_chunk_ms_p99": 73.67273926734937,
+    "finish_reasons": {
+      "length": 10
+    },
+    "natural_completion_tokens": 200,
+    "natural_finish_reason": "length",
+    "natural_covers_max": true,
+    "post_eos_fraction": 0.0
+  }
+]
+rc=0
+# end: 2026-10-19T21:28:36Z

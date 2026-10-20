@@ -1,0 +1,11 @@
+# cmd: python3 tools/c4_mixed.py compare /home/sfxnz/projects/data/dsv41-1017/perf2/c4-sched/runs/C0-solo.json /home/sfxnz/projects/data/dsv41-1017/perf2/c4-sched/runs/C1-solo.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 (HEAD ca42873) host: spark1 start: 2026-10-19T23:37:37Z
+{
+ "verdicts": {
+  "near_tie": 5,
+  "diverged": 3
+ },
+ "solo_exact": false
+}
+rc=0
+# end: 2026-10-19T23:37:37Z

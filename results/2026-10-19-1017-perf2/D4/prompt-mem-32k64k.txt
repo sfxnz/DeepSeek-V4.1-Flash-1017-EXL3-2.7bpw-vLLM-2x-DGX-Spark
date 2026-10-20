@@ -1,0 +1,20 @@
+## D4/head-final.log rank 0: 9 prompts >= 30000 tokens
+   1 tok=32296 steps=4 first=4.84 first3min=4.75 min=4.71@4 pool=103.56->103.56 (max 103.56, low 103.56) GiB wall=10.42  actions={'-': 1, 'hold': 2, 'keep': 1}
+   2 tok=32173 steps=4 first=4.81 first3min=4.62 min=4.62@2 pool=103.56->103.91 (max 103.91, low 103.56) GiB wall=10.63  actions={'-': 1, 'hold': 2, 'keep': 1}
+   3 tok=32666 steps=4 first=4.18 first3min=4.12 min=4.12@2 pool=103.91->103.84 (max 103.91, low 102.16) GiB wall=12.57  actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   4 tok=65479 steps=8 first=2.49 first3min=1.52 min=1.52@2 pool=103.71->103.82 (max 103.82, low 102.14) GiB wall=11.3  actions={'-': 1, 'floor': 6, 'keep': 1}
+   5 tok=65015 steps=8 first=4.77 first3min=3.53 min=2.18@7 pool=103.82->103.90 (max 103.90, low 102.16) GiB wall=13.88  actions={'-': 1, 'hold': 2, 'floor': 4, 'keep': 1}
+   6 tok=65411 steps=8 first=3.66 first3min=1.91 min=1.60@4 pool=103.90->103.84 (max 103.90, low 102.16) GiB wall=10.55  actions={'-': 1, 'floor': 6, 'keep': 1}
+   7 tok=65461 steps=8 first=4.57 first3min=2.74 min=1.65@6 pool=103.84->103.84 (max 103.84, low 102.16) GiB wall=12.2  actions={'-': 1, 'hold': 1, 'floor': 5, 'release': 1}
+   8 tok=65489 steps=8 first=1.69 first3min=1.69 min=1.68@4 pool=103.04->103.79 (max 103.79, low 102.14) GiB wall=10.55  actions={'-': 1, 'floor': 6, 'release': 1}
+   9 tok=65500 steps=8 first=1.71 first3min=1.71 min=1.71@1 pool=103.04->103.84 (max 103.84, low 102.14) GiB wall=10.56  actions={'-': 1, 'floor': 6, 'keep': 1}
+## D4/worker-final.log rank 1: 9 prompts >= 30000 tokens
+   1 tok=32296 steps=4 first=7.53 first3min=7.08 min=6.91@4 pool=103.56->103.56 (max 103.56, low 103.56) GiB wall=10.43  actions={'-': 1, 'hold': 2, 'keep': 1}
+   2 tok=32173 steps=4 first=7.01 first3min=7.01 min=7.01@1 pool=103.56->103.91 (max 103.91, low 103.56) GiB wall=10.63  actions={'-': 1, 'hold': 2, 'keep': 1}
+   3 tok=32666 steps=4 first=7.95 first3min=7.84 min=7.47@4 pool=103.91->103.84 (max 103.91, low 102.16) GiB wall=13.09  actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   4 tok=65479 steps=8 first=7.70 first3min=7.64 min=7.46@7 pool=103.55->103.87 (max 103.87, low 103.55) GiB wall=21.69  actions={'-': 1, 'hold': 6, 'keep': 1}
+   5 tok=65015 steps=8 first=6.94 first3min=6.39 min=6.39@3 pool=103.87->103.87 (max 103.87, low 103.87) GiB wall=20.76  actions={'-': 1, 'hold': 6, 'keep': 1}
+   6 tok=65411 steps=8 first=6.41 first3min=6.41 min=6.41@1 pool=103.87->103.87 (max 103.87, low 103.87) GiB wall=20.53  actions={'-': 1, 'hold': 6, 'keep': 1}
+   7 tok=65461 steps=8 first=6.40 first3min=6.40 min=6.40@1 pool=103.87->103.87 (max 103.87, low 103.87) GiB wall=20.55  actions={'-': 1, 'hold': 6, 'keep': 1}
+   8 tok=65489 steps=8 first=6.40 first3min=6.40 min=6.40@1 pool=103.87->103.87 (max 103.87, low 103.87) GiB wall=20.86  actions={'-': 1, 'hold': 6, 'keep': 1}
+   9 tok=65500 steps=8 first=6.43 first3min=6.43 min=6.43@1 pool=103.87->103.87 (max 103.87, low 103.87) GiB wall=20.81  actions={'-': 1, 'hold': 6, 'keep': 1}

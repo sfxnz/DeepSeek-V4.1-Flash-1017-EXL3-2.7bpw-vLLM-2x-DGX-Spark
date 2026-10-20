@@ -1,0 +1,45 @@
+# I1 vs B0 (/home/sfxnz/projects/data/dsv41-1017/perf2/baseline)
+
+## decode (agg tok/s | per-stream | ms/step | acc | TTFT p50)
+- lail_prose c=1: 37.9 | 37.9 | 53.6 | 2.02 | 0.263   [B0 38.5 | 38.5 | 53.7 | 2.07 | 0.315]  (-1.7% agg)
+- prose c=1: 47.6 | 47.6 | 53.2 | 2.54 | 0.192   [B0 49.0 | 49.0 | 52.7 | 2.59 | 0.245]  (-2.9% agg)
+- prose c=2: 78.2 | 39.1 | 66.7 | 2.60 | 0.209   [B0 73.2 | 37.8 | 68.1 | 2.61 | 0.359]  (+6.9% agg)
+- prose c=4: 117.3 | 30.3 | 87.0 | 2.67 | 0.214   [B0 83.8 | 21.3 | 122.8 | 2.62 | 0.319]  (+39.9% agg)
+- prose_distinct c=4: 91.1 | 24.1 | 101.2 | 2.41 | 0.290   [B0 61.4 | 16.0 | 158.0 | 2.47 | 0.438]  (+48.3% agg)
+- structured c=1: 74.4 | 74.4 | 53.2 | 3.96 | 0.139   [B0 75.6 | 75.6 | 52.6 | 3.98 | 0.222]  (-1.6% agg)
+- structured c=2: 122.0 | 62.1 | 63.8 | 3.96 | 0.238   [B0 128.7 | 65.0 | 61.3 | 3.98 | 0.251]  (-5.2% agg)
+- structured c=4: 219.8 | 55.0 | 72.0 | 3.96 | 0.248   [B0 159.9 | 40.0 | 99.2 | 3.96 | 0.480]  (+37.4% agg)
+- structured_distinct c=4: 197.2 | 49.2 | 80.9 | 3.98 | 0.353   [B0 140.3 | 35.1 | 113.8 | 3.99 | 0.502]  (+40.6% agg)
+
+## prefill micro (median tok/s; runs)
+- 4096 pp_novel: 1888.2 [1888.1, 1888.2]   [B0 783.3] (+141.1%)
+- 4096 pp_warm: 1781.3 [1794.7, 1768.0]   [B0 686.9] (+159.3%)
+- 4096 tg: 44.2 [41.0, 47.5]   [B0 47.2] (-6.4%)
+- 16384 pp_novel: 1497.8 [1479.0, 1516.7]   [B0 642.8] (+133.0%)
+- 16384 pp_warm: 2013.3 [1514.9, 2511.7]   [B0 610.6] (+229.7%)
+- 16384 tg: 38.8 [42.1, 35.5]   [B0 38.0] (+2.1%)
+- 65536 pp_novel: 2806.8 [2694.6, 2918.9]   [B0 542.5] (+417.4%)
+- 65536 pp_warm: 2722.1 [2723.8, 2720.4]   [B0 601.0] (+352.9%)
+- 65536 tg: 41.0 [40.3, 41.7]   [B0 44.0] (-6.8%)
+
+## prefix cache (prompt, TTFT s, hits)
+- a_novel: 32591 tok, 11.709 s, hits 0   [B0 32614 tok, 46.621 s, hits 0]
+- b_identical: 32591 tok, 0.928 s, hits 32512   [B0 32614 tok, 0.853 s, hits 32512]
+- c_multiturn: 32675 tok, 0.399 s, hits 32512   [B0 32696 tok, 0.621 s, hits 32512]
+- d_same_doc_new_question: 32591 tok, 11.727 s, hits 0   [B0 32614 tok, 0.425 s, hits 32512]
+- e_shared_16k_prefix_new_tail: 32387 tok, 11.623 s, hits 0   [B0 32184 tok, 45.11 s, hits 0]
+- f_identical_to_e: 32387 tok, 11.364 s, hits 0   [B0 32184 tok, 24.969 s, hits 16384]
+
+## quality --quick
+- {"mode": "quick", "pass": true, "elapsed_s": 198.5, "nll": 0.14465, "decode_median_dlp": 0.00063, "decode_gen_nll": 0.19741, "tools_exact": 1.0, "tools_json": 1.0, "tools_nocall": 1.0, "needle": 6, "selfcons_identical": 5, "selfcons_aa_hazard": 0.01351, "selfcons_golden_hazard": 0.01693, "c2": true, "vision": true}
+
+## MemAvailable minima per phase (MiB, memwatch 2 s)
+- smoke: spark1 5874 / spark2 8770 (2026-10-19T19:12:31Z .. 2026-10-19T19:12:32Z)
+- c1: spark1 4119 / spark2 8425 (2026-10-19T19:12:32Z .. 2026-10-19T19:15:11Z)
+- c2: spark1 4671 / spark2 8536 (2026-10-19T19:15:11Z .. 2026-10-19T19:16:02Z)
+- c4: spark1 3497 / spark2 8791 (2026-10-19T19:16:02Z .. 2026-10-19T19:17:48Z)
+- micro: spark1 2681 / spark2 6998 (2026-10-19T19:17:48Z .. 2026-10-19T19:21:24Z)
+- prefix: spark1 6028 / spark2 7035 (2026-10-19T19:21:24Z .. 2026-10-19T19:22:27Z)
+- quality: spark1 4205 / spark2 5500 (2026-10-19T19:22:27Z .. 2026-10-19T19:25:46Z)
+- B-arm: spark1 3619 / spark2 5852 (2026-10-19T19:30:51Z .. 2026-10-19T19:32:18Z)
+

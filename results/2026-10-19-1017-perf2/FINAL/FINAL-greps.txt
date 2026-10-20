@@ -1,0 +1,17 @@
+# empty_cache hook lines (head / worker)
+(Worker_TP0 pid=637) [dsv41-prefill-empty-cache] held #1 mid-prefill (longest seq 16376, MemAvailable 5.77 GiB >= floor 3.0 GiB)
+(Worker_TP0 pid=637) [dsv41-prefill-empty-cache] empty_cache #3 (longest seq 49128, MemAvailable 2.45 GiB, below the 3.0 GiB floor mid-prefill)
+(Worker_TP0 pid=637) [dsv41-prefill-empty-cache] empty_cache #10 (longest seq 64729, MemAvailable 3.16 GiB)
+(Worker_TP0 pid=637) [dsv41-prefill-empty-cache] held #100 mid-prefill (longest seq 16376, MemAvailable 4.39 GiB >= floor 3.0 GiB)
+(Worker_TP0 pid=637) [dsv41-prefill-empty-cache] empty_cache #15 (longest seq 112640, MemAvailable 4.85 GiB, held pool grew 166 MiB beyond its need mid-prefill (cap 150 MiB))
+[dsv41-prefill-empty-cache] armed (threshold 8192 tokens, release when MemAvailable < 4.0 GiB; hold mid-prefill, release there below 3.0 GiB or on 150 MiB of pool growth the step peaks do not explain)
+(Worker_TP1 pid=465) [dsv41-prefill-empty-cache] skipped #1 (longest seq 16340, MemAvailable 6.16 GiB >= 4.0 GiB)
+(Worker_TP1 pid=465) [dsv41-prefill-empty-cache] empty_cache #1 (longest seq 16376, MemAvailable 6.41 GiB, held pool grew 253 MiB beyond its need mid-prefill (cap 150 MiB))
+(Worker_TP1 pid=465) [dsv41-prefill-empty-cache] held #1 mid-prefill (longest seq 24564, MemAvailable 7.53 GiB >= floor 3.0 GiB)
+(Worker_TP1 pid=465) [dsv41-prefill-empty-cache] held #100 mid-prefill (longest seq 16376, MemAvailable 6.76 GiB >= floor 3.0 GiB)
+# prefill read-ahead census: lines, waits > 100 ms
+1168
+0 waits > 100 ms
+# iteration lines (only with EXTRA_ARGS=--enable-logging-iteration-details): context-token histogram
+# disarm / failure lines
+      1 (Worker_TP0 pid=637) Traceback (most recent call last):

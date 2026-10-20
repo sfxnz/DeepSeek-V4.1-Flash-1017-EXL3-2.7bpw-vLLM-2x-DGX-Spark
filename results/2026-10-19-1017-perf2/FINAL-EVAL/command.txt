@@ -1,0 +1,2 @@
+bash /home/sfxnz/projects/data/dsv41-1017/perf2/integration/FINAL-EVAL/boot-EVAL.sh  (worktree /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-release HEAD 4ae29a6, 0 changes; started 2026-10-20T06:04:39Z via setsid -f)
+export SKIP_DOWNLOAD=1 AUDIT=strict MAX_NUM_BATCHED_TOKENS=512 LANGUAGE_MODEL_ONLY=1

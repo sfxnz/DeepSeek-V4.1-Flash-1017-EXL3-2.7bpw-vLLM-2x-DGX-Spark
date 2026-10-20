@@ -1,0 +1,42 @@
+# I5 vs B0 (/home/sfxnz/projects/data/dsv41-1017/perf2/integration/I4)
+
+## decode (agg tok/s | per-stream | ms/step | acc | TTFT p50)
+- lail_prose c=1: -   [B0 37.1 | 37.1 | 53.4 | 1.98 | 0.259]
+- prose c=1: 49.1 | 49.1 | 52.8 | 2.59 | 0.190   [B0 48.5 | 48.5 | 52.9 | 2.63 | 0.199]  (+1.2% agg)
+- prose c=2: -   [B0 80.4 | 40.6 | 65.1 | 2.66 | 0.226]
+- prose c=4: -   [B0 120.1 | 31.0 | 84.3 | 2.60 | 0.274]
+- prose_distinct c=4: -   [B0 89.0 | 24.5 | 100.8 | 2.45 | 0.322]
+- structured c=1: -   [B0 75.1 | 75.1 | 52.7 | 3.96 | 0.143]
+- structured c=2: -   [B0 121.5 | 62.6 | 63.3 | 3.96 | 0.168]
+- structured c=4: -   [B0 223.4 | 55.9 | 70.9 | 3.97 | 0.281]
+- structured_distinct c=4: -   [B0 202.3 | 51.4 | 77.4 | 3.98 | 0.225]
+
+## prefill micro (median tok/s; runs)
+- 4096 pp_novel: 1595.4 [1593.7, 1597.1]   [B0 1851.4] (-13.8%)
+- 4096 pp_warm: 1477.3 [1426.3, 1528.3]   [B0 1708.0] (-13.5%)
+- 4096 tg: 46.8 [53.7, 39.8]   [B0 44.5] (+5.2%)
+- 16384 pp_novel: 1539.7 [1511.6, 1567.7]   [B0 2544.1] (-39.5%)
+- 16384 pp_warm: 1237.7 [1454.0, 1021.4]   [B0 2110.2] (-41.3%)
+- 16384 tg: 39.8 [36.0, 43.5]   [B0 36.2] (+9.9%)
+- 65536 pp_novel: 1580.4 [1579.0, 1581.8]   [B0 2849.1] (-44.5%)
+- 65536 pp_warm: 1387.4 [1542.9, 1231.9]   [B0 2805.9] (-50.6%)
+- 65536 tg: 44.3 [49.1, 39.5]   [B0 42.2] (+5.0%)
+
+## prefix cache (prompt, TTFT s, hits)
+- a_novel: -   [B0 32486 tok, 11.909 s, hits 0]
+- b_identical: -   [B0 32486 tok, 0.718 s, hits 32384]
+- c_multiturn: -   [B0 32570 tok, 0.394 s, hits 32384]
+- d_same_doc_new_question: -   [B0 32486 tok, 0.299 s, hits 32384]
+- e_shared_16k_prefix_new_tail: -   [B0 32296 tok, 12.296 s, hits 0]
+- f_identical_to_e: -   [B0 32296 tok, 0.359 s, hits 32128]
+
+## quality --quick
+- not run
+
+## MemAvailable minima per phase (MiB, memwatch 2 s)
+- smoke: spark1 6159 / spark2 8943 (2026-10-19T22:32:40Z .. 2026-10-19T22:32:41Z)
+- A-arm: spark1 1278 / spark2 6886 (2026-10-19T22:32:41Z .. 2026-10-19T22:36:02Z)
+- c1short: spark1 5304 / spark2 6658 (2026-10-19T22:36:02Z .. 2026-10-19T22:36:27Z)
+- micro416: spark1 2322 / spark2 6848 (2026-10-19T22:36:27Z .. 2026-10-19T22:37:55Z)
+- micro64: spark1 2319 / spark2 6898 (2026-10-19T22:37:55Z .. 2026-10-19T22:42:20Z)
+

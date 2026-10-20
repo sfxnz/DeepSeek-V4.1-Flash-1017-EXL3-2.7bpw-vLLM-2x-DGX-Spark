@@ -1,0 +1,80 @@
+# I1 prefill16k rank0  /home/sfxnz/projects/data/dsv41-traces/perf2-I1/prefill16k/rank0/dp0_pp0_tp0_dcp0_ep0_rank0.1792438190718658410.nul2space.pt.trace.json.gz
+
+## execute_context_1(8190)_generation_0(0): wall 2977.6 ms = busy 2523.2 + idle 454.4; host before first op 178.9 ms; kernel sum 2525.6 ms; layers 24 engram layers [1, 14, 20]
+kernel time by bucket (ms, sum over streams):
+      913.3  routed_moe:glue(gather/index_add/sort/copy/fill)  (n=800)
+      318.8  nccl_allreduce  (n=48)
+      248.3  sparse_attention(prefill kernel+topk meta)  (n=87)
+      211.2  dense_mxfp8_gemm(attn proj, idx wq_b, engram wkv)  (n=67)
+      139.2  mhc(mhc_post)  (n=40)
+      113.0  dense_wo_a(DeepGEMM fp8xfp4)  (n=26)
+      108.3  shared_expert(mxfp8 gemm+act+quant)  (n=100)
+       93.3  mhc(mhc_pre)  (n=41)
+       88.3  engram_wkv_gemm(mxfp8)  (n=3)
+       65.0  quant_glue(mxfp8/inv-rope fp8)  (n=70)
+       64.7  mhc(mhc_prenorm)  (n=41)
+       64.5  attn_glue(qnorm/rope/kv insert)  (n=58)
+       49.8  other_glue(eltwise/copy/metadata)  (n=450)
+       19.7  engram_gpu(hash/H2D/AG/post-wkv)  (n=18)
+       12.6  router(gate gemm+topk)  (n=40)
+        7.1  compressor(+fp32/tf32 gemm)  (n=16)
+        6.2  indexer(mqa logits/topk/q/mask)  (n=19)
+        2.2  norm/embedding  (n=8)
+        0.0  post_forward(lm_head+DSpark drafter+sampler)  (n=2)
+device-idle by cause (ms): engram_host_gather(hash D2H -> rows H2D) 433.2 (n=1); host_python(no cpu_op open) 8.1 (n=96); host_in_op:aten::item 2.5 (n=8); host_in_op:aten::select 1.7 (n=10); host_in_op:aten::slice 1.6 (n=10); host_in_op:aten::repeat_interleave 1.3 (n=3); host_in_op:aten::pin_memory 0.5 (n=2); host_in_op:aten::copy_ 0.4 (n=2); host_in_op:aten::empty 0.2 (n=1); host_in_op:aten::ge 0.2 (n=7); host_in_op:aten::unsqueeze 0.2 (n=1); host_in_op:aten::sum 0.1 (n=2); host_in_op:aten::arange 0.0 (n=1); host_in_op:aten::sub 0.0 (n=1); host_in_op:vllm::all_reduce 0.0 (n=1)
+largest idle gaps:
+     433.2 ms at +29.8 ms layer 0: engram_host_gather(hash D2H -> rows H2D) | prev Memcpy DtoH (Device -> Pinned) | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+       1.5 ms at +5.5 ms layer 0: host_in_op:aten::item | prev _compute_slot_mappings_kernel | next at::native::unrolled_elementwise_kernel<at::native | op aten::item | rt 
+       1.5 ms at +0.0 ms layer 0: host_python(no cpu_op open) | prev at::native::vectorized_elementwise_kernel<2, at::n | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+       1.0 ms at +11.6 ms layer 0: host_in_op:aten::select | prev Kernel | next Memcpy DtoD (Device -> Device) | op aten::select | rt 
+       0.7 ms at +9.0 ms layer 0: host_in_op:aten::item | prev Kernel | next Memcpy DtoD (Device -> Device) | op aten::item | rt 
+       0.7 ms at +1.6 ms layer 0: host_python(no cpu_op open) | prev _apply_write_kernel | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+       0.6 ms at +7.0 ms layer 0: host_in_op:aten::repeat_interleave | prev (anonymous namespace)::elementwise_kernel_with_ind | next at::native::unrolled_elementwise_kernel<at::native | op aten::repeat_interleave | rt 
+       0.6 ms at +7.8 ms layer 0: host_in_op:aten::repeat_interleave | prev compute_cuda_kernel<int>(int const*, long const*,  | next at::native::_scatter_gather_elementwise_kernel<128 | op aten::repeat_interleave | rt 
+       0.4 ms at +4.3 ms layer 0: host_in_op:aten::pin_memory | prev at::native::vectorized_elementwise_kernel<4, at::n | next Memcpy HtoD (Pinned -> Device) | op aten::is_pinned | rt 
+       0.4 ms at +20.4 ms layer 0: host_python(no cpu_op open) | prev at::native::vectorized_elementwise_kernel<4, at::n | next Memcpy DtoD (Device -> Device) | op  | rt 
+       0.4 ms at +20.0 ms layer 0: host_python(no cpu_op open) | prev Kernel | next at::native::vectorized_elementwise_kernel<4, at::n | op  | rt 
+       0.4 ms at +5.1 ms layer 0: host_in_op:aten::slice | prev _gather_block_tables_kernel | next _compute_slot_mappings_kernel | op aten::as_strided | rt 
+host syncs on the main thread: {'cudaEventSynchronize': 1} (CPU wait 6.5 ms); in layers 1 (per layer min/median/max [0, 0.0, 1]), post-forward 0; D2H copies 4 (median/layer 0.0); aten::item 370
+  syncs by enclosing op (outer > inner): <no cpu_op> > - x1
+  per-layer sync counts: 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+kernel time by launching module (outermost cpu_op), ms: vllm::moe_forward_shared 1034.2; <no cpu_op> 683.9; vllm::all_reduce 318.6; vllm::mm_mxfp8 299.5; _C::fused_deepseek_v4_qnorm_rope_kv_rope_quant_insert 60.6; vllm::fused_inv_rope_fp8_quant_kernel 38.7; vllm::mxfp8_quantize 26.3; aten::add 22.8; vllm::all_gather 9.9; aten::copy_ 6.8; vllm::sparse_attn_indexer 4.8; aten::zeros 4.6; aten::mm 4.1; aten::cat 2.3; aten::contiguous 2.1; aten::mean 1.9; aten::linear 1.9; _C::rms_norm 1.7; _C::vocab_parallel_embedding 0.5; aten::ge 0.1
+
+## execute_context_1(7856)_generation_0(0): wall 3252.4 ms = busy 3159.1 + idle 93.3; host before first op 1684.1 ms; kernel sum 3162.2 ms; layers 40 engram layers [1, 14]
+kernel time by bucket (ms, sum over streams):
+     1197.4  routed_moe:glue(gather/index_add/sort/copy/fill)  (n=1600)
+      378.7  nccl_allreduce  (n=81)
+      336.1  sparse_attention(prefill kernel+topk meta)  (n=141)
+      236.3  dense_mxfp8_gemm(attn proj, idx wq_b, engram wkv)  (n=129)
+      179.6  mhc(mhc_post)  (n=83)
+      122.1  shared_expert(mxfp8 gemm+act+quant)  (n=200)
+      121.5  dense_wo_a(DeepGEMM fp8xfp4)  (n=40)
+      115.0  mhc(mhc_pre)  (n=81)
+       82.7  mhc(mhc_prenorm)  (n=81)
+       75.7  quant_glue(mxfp8/inv-rope fp8)  (n=123)
+       70.6  attn_glue(qnorm/rope/kv insert)  (n=89)
+       70.5  post_forward(lm_head+DSpark drafter+sampler)  (n=221)
+       59.3  engram_wkv_gemm(mxfp8)  (n=2)
+       42.9  other_glue(eltwise/copy/metadata)  (n=854)
+       33.0  indexer(mqa logits/topk/q/mask)  (n=77)
+       19.2  engram_gpu(hash/H2D/AG/post-wkv)  (n=17)
+       16.2  router(gate gemm+topk)  (n=80)
+        5.1  compressor(+fp32/tf32 gemm)  (n=15)
+        0.5  norm/embedding  (n=1)
+device-idle by cause (ms): allocator(cuMemCreate/Map/cudaMalloc) 82.2 (n=4); host_in_op:_C::fused_deepseek_v4_qnorm_rope_kv_rope 1.9 (n=1); engram_host_gather(hash D2H -> rows H2D) 0.7 (n=1); host_python(no cpu_op open) 0.5 (n=3); moe_host_path(sync -> relaunch, in moe_forward_shared) 0.1 (n=2)
+largest idle gaps:
+      60.3 ms at +3109.4 ms layer 40: allocator(cuMemCreate/Map/cudaMalloc) | prev vllm::rms_norm_kernel<c10::BFloat16, 8, 2, true>(c | next at::native::index_elementwise_kernel<128, 4, at::n | op  | rt cuMemUnmap
+      10.2 ms at +3171.5 ms layer 40: allocator(cuMemCreate/Map/cudaMalloc) | prev _post_update_kernel | next at::native::(anonymous namespace)::CatArrayBatched | op aten::cat | rt cuMemCreate
+       7.7 ms at +3183.8 ms layer 40: allocator(cuMemCreate/Map/cudaMalloc) | prev at::native::(anonymous namespace)::CatArrayBatched | next kernel_cutlass_kernel_flashinferquantizationkernel | op aten::empty | rt cuMemCreate
+       4.0 ms at +3193.4 ms layer 40: allocator(cuMemCreate/Map/cudaMalloc) | prev kernel_cutlass_kernel_flashinferquantizationkernel | next kernel_cutlass_kernel_flashinfergemmkernelsdense_b | op aten::empty | rt cuMemCreate
+       1.9 ms at +3228.6 ms layer 40: host_in_op:_C::fused_deepseek_v4_qnorm_rope_kv_rope | prev at::native::vectorized_elementwise_kernel<4, at::n | next vllm::deepseek_v4_fused_ops::fusedDeepseekV4QNormR | op aten::empty | rt 
+       0.7 ms at +11.5 ms layer 0: engram_host_gather(hash D2H -> rows H2D) | prev Memcpy DtoH (Device -> Pinned) | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+       0.3 ms at +3247.0 ms layer 40: host_python(no cpu_op open) | prev vllm::vocab_embedding::vocab_parallel_embedding_ke | next ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKe | op  | rt 
+       0.2 ms at +3169.7 ms layer 40: host_python(no cpu_op open) | prev at::native::index_elementwise_kernel<128, 4, at::n | next dsv41_gemv::gemv_kernel<3, 2, 512, 1, 0, 8>(dsv41_ | op  | rt 
+       0.0 ms at +2367.9 ms layer 34: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev Memset (Device) | next at_cuda_detail::cub::detail::radix_sort::DeviceRad | op aten::empty | rt 
+       0.0 ms at +3171.4 ms layer 40: host_python(no cpu_op open) | prev Memcpy DtoH (Device -> Pinned) | next _post_update_kernel | op  | rt 
+       0.0 ms at +2367.7 ms layer 34: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev at::native::(anonymous namespace)::fill_reverse_in | next Memset (Device) | op aten::empty | rt 
+host syncs on the main thread: {'cudaEventSynchronize': 1, 'cudaStreamSynchronize': 11} (CPU wait 1798.8 ms); in layers 1 (per layer min/median/max [0, 0.0, 1]), post-forward 11; D2H copies 4 (median/layer 0.0); aten::item 672
+  syncs by enclosing op (outer > inner): <no cpu_op> > - x12
+  per-layer sync counts: 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+kernel time by launching module (outermost cpu_op), ms: vllm::moe_forward_shared 1335.7; <no cpu_op> 863.2; vllm::all_reduce 378.7; vllm::mm_mxfp8 328.5; _C::fused_deepseek_v4_qnorm_rope_kv_rope_quant_insert 73.2; vllm::fused_inv_rope_fp8_quant_kernel 48.7; vllm::sparse_attn_indexer 31.1; vllm::mxfp8_quantize 30.6; aten::add 28.7; vllm::all_gather 9.4; aten::copy_ 7.1; aten::zeros 4.4; aten::mm 3.7; aten::mean 3.5; aten::index_copy 2.9; aten::linear 2.6; aten::contiguous 2.3; aten::cat 2.2; _C::rms_norm 1.5; aten::index_select 1.4

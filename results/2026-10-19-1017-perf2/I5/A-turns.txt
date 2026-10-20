@@ -1,0 +1,8 @@
+# cmd: python3 tools/replay_ab.py turns --out /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I5/A-turns.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 (HEAD ca42873) host: spark1 start: 2026-10-19T22:33:12Z
+turn1 20017 tokens, hits 0.0 | Based on the text, the word that appears most often is **"their"**.
+resend 20017 tokens, hits 19840.0 | Based on the text, the word that appears most often is **"their"**.
+continue 20051 tokens, hits 19968.0 | A second frequent word is **"from"** (along with other high-frequency function w
+diverge 20042 tokens, hits 19840.0 | A second frequent word is **“their.”** It likely repeats because the passage is 
+rc=0
+# end: 2026-10-19T22:33:37Z

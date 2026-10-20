@@ -1,0 +1,2 @@
+cells: min s1=1338 s2=6411 MiB
+quality: min s1=3537 s2=6482 MiB

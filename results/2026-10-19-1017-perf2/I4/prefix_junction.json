@@ -1,0 +1,66 @@
+[
+ {
+  "case": "e_shared_16k_prefix_new_tail",
+  "utc": "2026-10-19T21:34:15Z",
+  "prompt_tokens": 32296,
+  "completion_tokens": 64,
+  "ttft_s": 12.296,
+  "wall_s": 13.71,
+  "prefill_tok_s_from_ttft": 2626.6,
+  "prefix_queries_delta": 32296.0,
+  "prefix_hits_delta": 0.0,
+  "hit_frac": 0.0,
+  "finish_reason": "length",
+  "metrics_before": {
+   "vllm:prefix_cache_queries_total": 652567.0,
+   "vllm:prefix_cache_hits_total": 97152.0
+  },
+  "metrics_after": {
+   "vllm:prefix_cache_queries_total": 684863.0,
+   "vllm:prefix_cache_hits_total": 97152.0
+  },
+  "other_prefix_metrics_after": {
+   "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.212366,
+   "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.213565,
+   "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2145653,
+   "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2173648,
+   "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 97152.0,
+   "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2287655
+  },
+  "text": "The three invented words that appear most often are:\n\n1. **kraist** (and closely related forms like **kraistand**, **kraistand**)\n2. **brou** (and variants such as **broust**, **broubund**, **brouthur**)\n3"
+ },
+ {
+  "case": "f_identical_to_e",
+  "utc": "2026-10-19T21:34:29Z",
+  "prompt_tokens": 32296,
+  "completion_tokens": 64,
+  "ttft_s": 0.359,
+  "wall_s": 1.62,
+  "prefill_tok_s_from_ttft": 90084.1,
+  "prefix_queries_delta": 32296.0,
+  "prefix_hits_delta": 32128.0,
+  "hit_frac": 0.9948,
+  "finish_reason": "length",
+  "metrics_before": {
+   "vllm:prefix_cache_queries_total": 684863.0,
+   "vllm:prefix_cache_hits_total": 97152.0
+  },
+  "metrics_after": {
+   "vllm:prefix_cache_queries_total": 717159.0,
+   "vllm:prefix_cache_hits_total": 129280.0
+  },
+  "other_prefix_metrics_after": {
+   "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.212366,
+   "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.213565,
+   "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2145653,
+   "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2173648,
+   "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 129280.0,
+   "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792444972.2287655
+  },
+  "text": "The three invented words that appear most often are:\n\n1. **kraist** (and variants like **kraistand**)\n2. **brou** (and variants like **broust**, **broubund**)\n3. **glou** (and variants like **glous**, **"
+ }
+]

@@ -1,0 +1,43 @@
+# cmd: python3 tools/replay_ab.py compare /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I5/A-gen.json /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I5/A2-gen.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 (HEAD ca42873) host: spark1 start: 2026-10-19T22:36:02Z
+{
+ "gen8192": {
+  "prompt_tokens": [
+   8117,
+   8117
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "identical": true,
+  "max_abs_dlogprob": 0.11389869451522827,
+  "min_top5_overlap": 0.8,
+  "hits": [
+   0.0,
+   7936.0
+  ]
+ },
+ "gen32768": {
+  "prompt_tokens": [
+   32561,
+   32561
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 18,
+  "identical": true,
+  "max_abs_dlogprob": 0.26113903522491455,
+  "min_top5_overlap": 0.6,
+  "hits": [
+   0.0,
+   32384.0
+  ]
+ }
+}
+identical greedy tokens: 2/2; per-arm hit checks failed: none
+rc=0
+# end: 2026-10-19T22:36:02Z

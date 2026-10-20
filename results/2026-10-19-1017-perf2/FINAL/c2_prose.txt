@@ -1,0 +1,46 @@
+# cmd: python3 bench_decode.py --phase prose --concurrency 2 --runs 5
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-release (HEAD 4ae29a6) host: spark1 start: 2026-10-20T04:57:43Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=200 runs=5 concurrency=[2] phases=['prose']
+phase=prose c=2 run=1 wall=6.48s agg=69.81 tok/s per_stream=[32.51,39.17] ttft=[0.164,1.403] acc=2.645 ms_step=[81.4,67.5]
+phase=prose c=2 run=2 wall=5.59s agg=74.57 tok/s per_stream=[38.67,37.29] ttft=[0.251,0.251] acc=2.649 ms_step=[68.5,71.0]
+phase=prose c=2 run=3 wall=4.67s agg=89.16 tok/s per_stream=[47.70,44.58] ttft=[0.206,0.206] acc=3.208 ms_step=[67.3,72.0]
+phase=prose c=2 run=4 wall=5.56s agg=75.09 tok/s per_stream=[37.69,38.32] ttft=[0.155,0.367] acc=2.660 ms_step=[70.6,69.4]
+phase=prose c=2 run=5 wall=5.63s agg=73.30 tok/s per_stream=[40.43,36.66] ttft=[0.203,0.204] acc=2.568 ms_step=[63.5,70.0]
+natural phase=prose completion_tokens=80 finish_reason=stop
+SUMMARY [
+  {
+    "phase": "prose",
+    "concurrency": 2,
+    "median_decode_tok_s": 38.49034768898177,
+    "median_ttft_s": 0.2060085549019277,
+    "median_agg_tok_s": 74.56869712758468,
+    "median_completion_tokens": 200.0,
+    "n": 10,
+    "acceptance_len": 2.728512960436562,
+    "draft_acceptance_rate": 0.3457025920873124,
+    "run_acceptance_len": [
+      2.6447,
+      2.649,
+      3.208,
+      2.66,
+      2.5677
+    ],
+    "median_run_acceptance_len": 2.6490066225165565,
+    "median_ms_per_step": 69.73420192227344,
+    "ttft_s_p50": 0.2060085549019277,
+    "ttft_s_p90": 0.4706570073962208,
+    "ttft_s_p99": 1.309901324482635,
+    "inter_chunk_ms_p50": 67.45136994868517,
+    "inter_chunk_ms_p90": 79.56507103517652,
+    "inter_chunk_ms_p99": 152.04054052010144,
+    "finish_reasons": {
+      "length": 10
+    },
+    "natural_completion_tokens": 80,
+    "natural_finish_reason": "stop",
+    "natural_covers_max": false,
+    "post_eos_fraction": 0.6
+  }
+]
+rc=0
+# end: 2026-10-20T04:58:13Z

@@ -1,0 +1,105 @@
+# cmd: benches/micro.sh --contexts 4096 16384 65536 --runs 2
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration2 (HEAD 2844fce) host: spark1 start: 2026-10-19T21:30:22Z
+ctx=4096 pp_warm run=1 doc=4015 ttft=2.41s rate=1670.7 tok/s acc=-
+ctx=4096 pp_warm run=2 doc=4011 ttft=2.30s rate=1745.3 tok/s acc=-
+ctx=4096 pp_novel run=1 doc=4085 ttft=2.23s rate=1831.3 tok/s acc=-
+ctx=4096 pp_novel run=2 doc=4070 ttft=2.18s rate=1871.6 tok/s acc=-
+ctx=4096 tg run=1 doc=3987 ttft=2.27s rate=45.4 tok/s acc=2.6153846153846154
+ctx=4096 tg run=2 doc=4046 ttft=2.32s rate=43.5 tok/s acc=2.357142857142857
+ctx=16384 pp_warm run=1 doc=16168 ttft=9.46s rate=1709.7 tok/s acc=-
+ctx=16384 pp_warm run=2 doc=16367 ttft=6.52s rate=2510.7 tok/s acc=-
+ctx=16384 pp_novel run=1 doc=16284 ttft=6.42s rate=2539.0 tok/s acc=-
+ctx=16384 pp_novel run=2 doc=16331 ttft=6.41s rate=2549.1 tok/s acc=-
+ctx=16384 tg run=1 doc=16010 ttft=6.61s rate=36.1 tok/s acc=2.0625
+ctx=16384 tg run=2 doc=16044 ttft=6.41s rate=36.4 tok/s acc=2.0625
+ctx=65536 pp_warm run=1 doc=65483 ttft=31.24s rate=2096.0 tok/s acc=-
+ctx=65536 pp_warm run=2 doc=63953 ttft=22.85s rate=2798.9 tok/s acc=-
+ctx=65536 pp_novel run=1 doc=65437 ttft=22.84s rate=2864.8 tok/s acc=-
+ctx=65536 pp_novel run=2 doc=65381 ttft=22.79s rate=2869.6 tok/s acc=-
+ctx=65536 tg run=1 doc=65505 ttft=23.24s rate=42.1 tok/s acc=2.2
+ctx=65536 tg run=2 doc=65454 ttft=22.87s rate=38.6 tok/s acc=2.125
+SUMMARY [
+ {
+  "ctx": 4096,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 1708.0,
+  "median_ttft_s": 2.35,
+  "doc_tokens": 4015,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 4096,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 1851.4,
+  "median_ttft_s": 2.2,
+  "doc_tokens": 4085,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 4096,
+  "phase": "tg",
+  "median_rate_tok_s": 44.4,
+  "median_ttft_s": 2.29,
+  "doc_tokens": 3987,
+  "acceptance_len": 2.49,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 2110.2,
+  "median_ttft_s": 7.99,
+  "doc_tokens": 16168,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 2544.1,
+  "median_ttft_s": 6.41,
+  "doc_tokens": 16284,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "tg",
+  "median_rate_tok_s": 36.3,
+  "median_ttft_s": 6.51,
+  "doc_tokens": 16010,
+  "acceptance_len": 2.06,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 2447.5,
+  "median_ttft_s": 27.05,
+  "doc_tokens": 65483,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 2867.2,
+  "median_ttft_s": 22.81,
+  "doc_tokens": 65437,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "tg",
+  "median_rate_tok_s": 40.4,
+  "median_ttft_s": 23.05,
+  "doc_tokens": 65505,
+  "acceptance_len": 2.16,
+  "runs": 2
+ }
+]
+rc=0
+# end: 2026-10-19T21:33:52Z

@@ -1,0 +1,101 @@
+ctx=4096 pp_warm run=1 doc=4005 ttft=2.43s rate=1649.7 tok/s acc=-
+ctx=4096 pp_warm run=2 doc=3983 ttft=2.28s rate=1750.7 tok/s acc=-
+ctx=4096 pp_novel run=1 doc=3975 ttft=2.18s rate=1826.1 tok/s acc=-
+ctx=4096 pp_novel run=2 doc=4022 ttft=2.19s rate=1834.6 tok/s acc=-
+ctx=4096 tg run=1 doc=1830 ttft=1.37s rate=47.7 tok/s acc=2.6923076923076925
+ctx=4096 tg run=2 doc=4091 ttft=2.31s rate=45.2 tok/s acc=2.4615384615384617
+ctx=16384 pp_warm run=1 doc=16123 ttft=8.29s rate=1945.6 tok/s acc=-
+ctx=16384 pp_warm run=2 doc=16021 ttft=6.34s rate=2528.2 tok/s acc=-
+ctx=16384 pp_novel run=1 doc=16238 ttft=6.26s rate=2595.2 tok/s acc=-
+ctx=16384 pp_novel run=2 doc=16374 ttft=6.66s rate=2459.6 tok/s acc=-
+ctx=16384 tg run=1 doc=16162 ttft=9.79s rate=48.5 tok/s acc=3.272727272727273
+ctx=16384 tg run=2 doc=16380 ttft=6.79s rate=49.2 tok/s acc=2.4615384615384617
+ctx=65536 pp_warm run=1 doc=65506 ttft=23.35s rate=2805.5 tok/s acc=-
+ctx=65536 pp_warm run=2 doc=65497 ttft=23.17s rate=2826.4 tok/s acc=-
+ctx=65536 pp_novel run=1 doc=65475 ttft=22.75s rate=2878.2 tok/s acc=-
+ctx=65536 pp_novel run=2 doc=65433 ttft=22.04s rate=2969.1 tok/s acc=-
+ctx=65536 tg run=1 doc=65331 ttft=22.98s rate=36.5 tok/s acc=2.1764705882352944
+ctx=65536 tg run=2 doc=65269 ttft=23.41s rate=43.0 tok/s acc=2.2857142857142856
+SUMMARY [
+ {
+  "ctx": 4096,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 1700.2,
+  "median_ttft_s": 2.35,
+  "doc_tokens": 4005,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 4096,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 1830.3,
+  "median_ttft_s": 2.19,
+  "doc_tokens": 3975,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 4096,
+  "phase": "tg",
+  "median_rate_tok_s": 46.4,
+  "median_ttft_s": 1.84,
+  "doc_tokens": 1830,
+  "acceptance_len": 2.58,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 2236.9,
+  "median_ttft_s": 7.31,
+  "doc_tokens": 16123,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 2527.4,
+  "median_ttft_s": 6.46,
+  "doc_tokens": 16238,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 16384,
+  "phase": "tg",
+  "median_rate_tok_s": 48.8,
+  "median_ttft_s": 8.29,
+  "doc_tokens": 16162,
+  "acceptance_len": 2.87,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 2816.0,
+  "median_ttft_s": 23.26,
+  "doc_tokens": 65506,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 2923.6,
+  "median_ttft_s": 22.39,
+  "doc_tokens": 65475,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "tg",
+  "median_rate_tok_s": 39.8,
+  "median_ttft_s": 23.2,
+  "doc_tokens": 65331,
+  "acceptance_len": 2.23,
+  "runs": 2
+ }
+]

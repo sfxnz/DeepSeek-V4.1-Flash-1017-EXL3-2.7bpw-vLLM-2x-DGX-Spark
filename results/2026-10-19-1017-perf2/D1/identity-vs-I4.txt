@@ -1,0 +1,13 @@
+PASS vision value=Red limit=red
+PASS c2 value=['323', '252'] limit=None
+PASS nll.mean_nll value=0.143497 limit=0.15373
+PASS decode.median_abs_dlogprob value=0.00087 limit=0.05049
+PASS decode.gen_nll_prefill value=0.22316 limit=0.36603
+PASS selfcons.golden_hazard value=0.00976 limit=0.0217
+PASS selfcons.aa_hazard value=0.00808 limit=0.0217
+PASS tools.json_valid value=1.0 limit=1.0
+PASS tools.exact_args value=1.0 limit=1.0
+PASS tools.no_call value=1.0 limit=1.0
+PASS needle.found value=6 limit=6
+QUALITY {"mode": "quick", "pass": true, "elapsed_s": 197.2, "nll": 0.143497, "decode_median_dlp": 0.00087, "decode_gen_nll": 0.22316, "tools_exact": 1.0, "tools_json": 1.0, "tools_nocall": 1.0, "needle": 6, "selfcons_identical": 7, "selfcons_aa_hazard": 0.00808, "selfcons_golden_hazard": 0.00976, "c2": true, "vision": true}
+rc=0
