@@ -51,6 +51,11 @@
   is_valid_token, the lens tail and the SWA indices/lens in one Triton kernel
   instead of compare + copy + fill + the stock kernel (15 builds a target
   step; integer math, bit-exact; swa_meta_fused.py).
+- DSV41_SWA_META_BATCHED=1 (with DSV41_SWA_META_FUSED=1): the causal SWA
+  groups of one target build_attn_metadata call get their decode window rows
+  from one launch over (tokens, groups) instead of one fused launch each (43
+  groups with DSV41_KV_PACKED_GROUPS=1; same integer math, own buffers per
+  group, verified against the fused launches; swa_meta_batched.py).
 - DSV41_ENGRAM_WKV_TP=1: the Engram wkv (ReplicatedLinear [25600, 6144]
   MXFP8, read whole on every rank) becomes a ColumnParallelLinear with the
   output gathered: each rank reads half the weight, bit-identical output,
@@ -242,6 +247,18 @@ def _install_swa_meta_fused(env) -> None:
     print(f"dsv41: swa metadata fused: {swa_meta_fused.install()}", flush=True)
 
 
+def _install_swa_meta_batched(env) -> None:
+    if (env.get("DSV41_SWA_META_BATCHED", "0") or "0") != "1":
+        return
+    import swa_meta_batched
+
+    if not swa_meta_batched.enabled(env):
+        # It rides on the fused build: DSV41_SWA_META_FUSED=0 turns both off.
+        print("dsv41: swa metadata batched: off (needs DSV41_SWA_META_FUSED=1)", flush=True)
+        return
+    print(f"dsv41: swa metadata batched: {swa_meta_batched.install()}", flush=True)
+
+
 def _install_moe_prep_fused(env) -> None:
     if (env.get("DSV41_MOE_PREP_FUSED", "0") or "0") != "1":
         return
@@ -281,6 +298,7 @@ def install(env=None) -> None:
         ("candidate-mask-bounded", _install_candidate_mask_bounded),
         ("indexer-wp-gemv", _install_indexer_wp_gemv),
         ("swa-meta-fused", _install_swa_meta_fused),
+        ("swa-meta-batched", _install_swa_meta_batched),
         ("engram-wkv-tp", _install_engram_wkv_tp),
     ):
         try:

@@ -30,7 +30,7 @@ The 2× DGX Spark recipe is [sfxnz/DeepSeek-V4.1-Flash-1017-EXL3-2.7bpw-vLLM-2x-
 
 ## Results
 
-Measured on 2× DGX Spark at the recipe's release defaults (DSpark k=3, KV pool 3.875 GiB = 1,108,848 tokens, 1.06× one 1,048,576-token request), boot D1, 2026-10-18:
+Measured on 2× DGX Spark at the 2026-10-18 release defaults (DSpark k=3, `MAX_NUM_SEQS=2`, 1,048,576-token window, KV pool 3.875 GiB = 1,108,848 tokens, 1.06× one 1M request), boot D1, 2026-10-18. The recipe now defaults to four sessions at a 500,000-token window from the same pool (packed KV groups); its boots are in the recipe's `results/2026-10-19-1017-perf2/`. Boot D1:
 
 | Cell | Result |
 |---|---|

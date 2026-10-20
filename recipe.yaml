@@ -38,12 +38,14 @@ serve:
     HCA: rocep1s0f1
     TP: *tp
     NNODES: *nnodes
-    MAX_MODEL_LEN: 1048576
-    MAX_NUM_SEQS: 2
+    MAX_MODEL_LEN: 500000
+    MAX_NUM_SEQS: 4
     UTIL: 0.75
     KV_CACHE_DTYPE: fp8
     KV_CACHE_MEMORY: 4160749568
+    DSV41_KV_PACKED_GROUPS: 1
     BLOCK_SIZE: 64
+    PREFIX_CACHE_RETENTION_INTERVAL: 4096
     NUM_SPECULATIVE_TOKENS: 3
     SPEC: dspark
     LOAD_FORMAT: auto
@@ -51,6 +53,7 @@ serve:
     DSV41_ENGRAM_DISK: 1
     LANGUAGE_MODEL_ONLY: 0
     MM_ENCODER_TP_MODE: data
+    MM_PROCESSOR_CACHE_GB: 1
     MAX_NUM_BATCHED_TOKENS: 8192
     FORCE_UNSAFE_CTX: 0
     FORCE_UNSAFE_ENGRAM: 0
@@ -81,6 +84,7 @@ serve:
     DSV41_ENGRAM_EARLY_HASH: 1
     DSV41_ATTN_T2R_DEDUP: 1
     DSV41_SWA_META_FUSED: 1
+    DSV41_SWA_META_BATCHED: 1
     DSV41_MOE_PREP_FUSED: 1
     DSV41_CANDIDATE_MASK_BOUNDED: 1
     DSV41_INDEXER_WP_GEMV: 1
@@ -90,6 +94,7 @@ serve:
     NCCL_MAX_NCHANNELS: 8
     DSV41_DROP_PAGE_CACHE: 1
     DSV41_INDEXER_PREFILL_FACTOR: 1
+    DSV41_INDEXER_EXPANDED_TABLE_LAZY: 1
     DSV41_PREFILL_EMPTY_CACHE_TOKENS: 8192
     DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB: 4
     VLLM_SPARSE_INDEXER_MAX_LOGITS_MB: 256
@@ -104,22 +109,25 @@ readme:
     - "`--max-num-batched-tokens`": "{MAX_NUM_BATCHED_TOKENS}"
     - "`--kv-cache-dtype`": "`{KV_CACHE_DTYPE}`"
     - "`--kv-cache-memory`": "{KV_CACHE_MEMORY}"
+    - KV cache groups: "packed, one layer-pattern repeat per group (`DSV41_KV_PACKED_GROUPS={DSV41_KV_PACKED_GROUPS}`, vLLM PR #60996): 50 groups on 46,080-byte blocks; `0` restores the image's 18 groups on 138,240-byte blocks"
     - "`--quantization`": "`{QUANTIZATION}`"
     - Engram: "disk (`DSV41_ENGRAM_DISK={DSV41_ENGRAM_DISK}`)"
     - "`--block-size`": "{BLOCK_SIZE}"
+    - "`--prefix-cache-retention-interval`": "{PREFIX_CACHE_RETENTION_INTERVAL} (sliding-window prefix-cache checkpoint every 4096 tokens; vLLM's default 0 keeps only the replay boundary)"
     - Speculative: "DSpark-{NUM_SPECULATIVE_TOKENS} (`SPEC={SPEC}`)"
-    - CUDA graphs: "`FULL_AND_PIECEWISE`, capture sizes {1} ∪ {s·k, s·(k+1)} for s ≤ `--max-num-seqs` (`[1,3,4,6,8]` at k=3) (`ENFORCE_EAGER={ENFORCE_EAGER}`, `DSV41_ALLOW_CUDA_GRAPHS={DSV41_ALLOW_CUDA_GRAPHS}`)"
+    - CUDA graphs: "`FULL_AND_PIECEWISE`, capture sizes {1} ∪ {s·k, s·(k+1)} for s ≤ `--max-num-seqs` (`[1,3,4,6,8,9,12,16]` at k=3) (`ENFORCE_EAGER={ENFORCE_EAGER}`, `DSV41_ALLOW_CUDA_GRAPHS={DSV41_ALLOW_CUDA_GRAPHS}`)"
     - Engram prefetch / census / gather: "`DSV41_ENGRAM_PREFETCH={DSV41_ENGRAM_PREFETCH}` `DSV41_ENGRAM_CENSUS={DSV41_ENGRAM_CENSUS}` `DSV41_ENGRAM_GATHER_V2={DSV41_ENGRAM_GATHER_V2}`"
     - Engram prefill read-ahead: "`DSV41_ENGRAM_WILLNEED={DSV41_ENGRAM_WILLNEED}` (gv2 calls with >= 512 rows fadvise their pages before the preadv loop)"
     - lm_head: "MXFP8 (`DSV41_LMHEAD_MXFP8={DSV41_LMHEAD_MXFP8}`), needs an lm_head-MXFP8 pack (`{SNAPSHOT_SHA}` is one: `tools/build_pack_1017.py` converts source shard 43); self-disarms on a bf16-head pack"
     - Weight-load stream feed: "`DSV41_STREAM_FEED={DSV41_STREAM_FEED}`"
     - Decode levers: "`DSV41_WOA_PREPACK={DSV41_WOA_PREPACK}` (needs the `{IMAGE}` o_proj stage) `DSV41_DSPARK_SPARSE_MARKOV={DSV41_DSPARK_SPARSE_MARKOV}` `DSV41_DSPARK_SPARSE_MARKOV_TOPK={DSV41_DSPARK_SPARSE_MARKOV_TOPK}`"
-    - Round-3 kernel bundle: "`DSV41_P2B_COOP={DSV41_P2B_COOP}` (coop dataflow MoE kernel, needs the `{IMAGE}` build) `DSV41_DENSE_GEMV={DSV41_DENSE_GEMV}` `DSV41_MHC_DET_SPLITS={DSV41_MHC_DET_SPLITS}` `DSV41_ENGRAM_NATIVE_STAGE={DSV41_ENGRAM_NATIVE_STAGE}` `DSV41_ENGRAM_EARLY_HASH={DSV41_ENGRAM_EARLY_HASH}` `DSV41_ATTN_T2R_DEDUP={DSV41_ATTN_T2R_DEDUP}` `DSV41_SWA_META_FUSED={DSV41_SWA_META_FUSED}` `DSV41_MOE_PREP_FUSED={DSV41_MOE_PREP_FUSED}` `DSV41_CANDIDATE_MASK_BOUNDED={DSV41_CANDIDATE_MASK_BOUNDED}` `DSV41_INDEXER_WP_GEMV={DSV41_INDEXER_WP_GEMV}` (set one to `0` to turn it off)"
+    - Round-3 kernel bundle: "`DSV41_P2B_COOP={DSV41_P2B_COOP}` (coop dataflow MoE kernel, needs the `{IMAGE}` build) `DSV41_DENSE_GEMV={DSV41_DENSE_GEMV}` `DSV41_MHC_DET_SPLITS={DSV41_MHC_DET_SPLITS}` `DSV41_ENGRAM_NATIVE_STAGE={DSV41_ENGRAM_NATIVE_STAGE}` `DSV41_ENGRAM_EARLY_HASH={DSV41_ENGRAM_EARLY_HASH}` `DSV41_ATTN_T2R_DEDUP={DSV41_ATTN_T2R_DEDUP}` `DSV41_SWA_META_FUSED={DSV41_SWA_META_FUSED}` `DSV41_SWA_META_BATCHED={DSV41_SWA_META_BATCHED}` `DSV41_MOE_PREP_FUSED={DSV41_MOE_PREP_FUSED}` `DSV41_CANDIDATE_MASK_BOUNDED={DSV41_CANDIDATE_MASK_BOUNDED}` `DSV41_INDEXER_WP_GEMV={DSV41_INDEXER_WP_GEMV}` (set one to `0` to turn it off)"
     - NCCL AR-tail set: "`NCCL_BUFFSIZE={NCCL_BUFFSIZE}` `NCCL_LL128_BUFFSIZE={NCCL_LL128_BUFFSIZE}` `NCCL_PROTO={NCCL_PROTO}` `NCCL_MAX_NCHANNELS={NCCL_MAX_NCHANNELS}`"
-    - Memory hygiene: "`DSV41_DROP_PAGE_CACHE={DSV41_DROP_PAGE_CACHE}` `DSV41_INDEXER_PREFILL_FACTOR={DSV41_INDEXER_PREFILL_FACTOR}` `DSV41_PREFILL_EMPTY_CACHE_TOKENS={DSV41_PREFILL_EMPTY_CACHE_TOKENS}` `DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB={DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB}` `VLLM_SPARSE_INDEXER_MAX_LOGITS_MB={VLLM_SPARSE_INDEXER_MAX_LOGITS_MB}`"
+    - Memory hygiene: "`DSV41_DROP_PAGE_CACHE={DSV41_DROP_PAGE_CACHE}` `DSV41_INDEXER_PREFILL_FACTOR={DSV41_INDEXER_PREFILL_FACTOR}` `DSV41_INDEXER_EXPANDED_TABLE_LAZY={DSV41_INDEXER_EXPANDED_TABLE_LAZY}` `DSV41_PREFILL_EMPTY_CACHE_TOKENS={DSV41_PREFILL_EMPTY_CACHE_TOKENS}` `DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB={DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB}` `VLLM_SPARSE_INDEXER_MAX_LOGITS_MB={VLLM_SPARSE_INDEXER_MAX_LOGITS_MB}`"
     - Tokenizers / tools / reasoning: "`deepseek_v41`"
     - Vision: "on (`LANGUAGE_MODEL_ONLY={LANGUAGE_MODEL_ONLY}`)"
     - "`--mm-encoder-tp-mode`": "{MM_ENCODER_TP_MODE}"
+    - "`--mm-processor-cache-gb`": "{MM_PROCESSOR_CACHE_GB} (vLLM default 4, mirrored in the API server and EngineCore on the head)"
     - Default thinking: "`thinking=false`, `reasoning_effort=low`"
     - Post-ready: "engagement audit of both ranks' logs (`AUDIT={AUDIT}`; `strict` fails the boot, `off` skips), then greedy, t=0.7, ~3k/~1k/~300-token nonce prefill and small-image warmup requests (`WARMUP={WARMUP}`)"
     - API: "`http://<head>:{PORT}/v1`"
@@ -128,7 +136,7 @@ readme:
 
 measured:
   decode:
-    conditions: "1017 release, boot D1 (2026-10-18 18:23Z, one boot, 2 nodes): `SKIP_DOWNLOAD=1 AUDIT=strict KV_CACHE_MEMORY=4160749568 ./run.sh` (boot-d1/command.txt; that KV value is now the default), image dsv41-flash-exl3-sm121:e15-kbits (sha256:7e2cec199bed), pack sfxnz/DeepSeek-V4.1-Flash-1017-EXL3 @ 2.7bpw-mcg-hq, release defaults otherwise (DSpark-3 greedy verify + captures [1,3,4,6,8], the round-34/35 levers on, vision on, Engram on disk). Audit ok on head and worker, 40 per-rank boot lines \"routed experts K_gu/K_d\" matching the allocation, smokes 323 / Red, warmup ok. Each row is the median of the per-run values. bench_decode.py = streamed greedy 200 tokens thinking off, ignore_eos, 9 runs at c=1 (boot-d1/bench_decode.txt), 5 runs at c=2 (boot-d1/bench_decode_c2.txt); the prose natural run stops at 83 tokens. L.A.I.L prose = tools/measure_lail_prose.py 512 tokens temperature 0.2, 3 runs (boot-d1/e2e.txt). Quality: quality_eval --full PASS; results/2026-10-18-1017/quality-baseline/full.json is the 1017 baseline. Sept 2.0 bpw pack history: github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark @ 3de9146."
+    conditions: "1017 release, boot D1 (2026-10-18 18:23Z, one boot, 2 nodes): `SKIP_DOWNLOAD=1 AUDIT=strict KV_CACHE_MEMORY=4160749568 ./run.sh` (boot-d1/command.txt; that KV value is now the default), image dsv41-flash-exl3-sm121:e15-kbits (sha256:7e2cec199bed), pack sfxnz/DeepSeek-V4.1-Flash-1017-EXL3 @ 2.7bpw-mcg-hq, release defaults otherwise (DSpark-3 greedy verify + captures [1,3,4,6,8], the round-34/35 levers on, vision on, Engram on disk). Audit ok on head and worker, 40 per-rank boot lines \"routed experts K_gu/K_d\" matching the allocation, smokes 323 / Red, warmup ok. Each row is the median of the per-run values. bench_decode.py = streamed greedy 200 tokens thinking off, ignore_eos, 9 runs at c=1 (boot-d1/bench_decode.txt), 5 runs at c=2 (boot-d1/bench_decode_c2.txt); the prose natural run stops at 83 tokens. L.A.I.L prose = tools/measure_lail_prose.py 512 tokens temperature 0.2, 3 runs (boot-d1/e2e.txt). Quality: quality_eval --full PASS; results/2026-10-18-1017/quality-baseline/full.json is the 1017 baseline. Sept 2.0 bpw pack history: github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark @ 3de9146. These rows predate the 4-session defaults (D1 ran MAX_NUM_SEQS=2, MAX_MODEL_LEN=1048576, the image's 18 KV groups); c=3/c=4 rows and a re-measure on the current defaults are pending."
     units: {decode: tok/s per stream (median), aggregate: tok/s, ttft_p50: s}
     rows:
       - {phase: prose, concurrency: 1, decode: "49.6", aggregate: "49.6", ttft_p50: "0.24", evidence: results/2026-10-18-1017/boot-d1/bench_decode.txt}

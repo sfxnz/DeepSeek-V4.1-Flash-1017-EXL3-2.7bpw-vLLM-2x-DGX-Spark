@@ -33,7 +33,7 @@ Components (vendored data in tests/quality/, see tests/quality/README.md):
   mmlu       MMLU 4 x 57 subjects                               (--full only)
 
 Chat requests use chat_template_kwargs {thinking: false, reasoning_effort:
-low} except gsm8k_think. Concurrency never exceeds 2 (MAX_NUM_SEQS=2); nll,
+low} except gsm8k_think. Concurrency never exceeds 2 (the c2 component); nll,
 decode, selfcons and needle run at c=1. Never run this next to a bench.
 
   python3 tests/quality_eval.py --quick --out q.json

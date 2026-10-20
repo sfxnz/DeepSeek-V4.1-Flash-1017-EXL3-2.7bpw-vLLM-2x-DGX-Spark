@@ -46,6 +46,9 @@ PATCHES = {
     "candidate_mask_bounded.py": {"DSV41_CANDIDATE_MASK_BOUNDED": "1"},
     "indexer_wp_gemv.py": {"DSV41_INDEXER_WP_GEMV": "1"},
     "swa_meta_fused.py": {"DSV41_SWA_META_FUSED": "1"},
+    "swa_meta_batched.py": {"DSV41_SWA_META_FUSED": "1", "DSV41_SWA_META_BATCHED": "1"},
+    "kv_packed_groups.py": {"DSV41_KV_PACKED_GROUPS": "1"},  # sitecustomize rewrite, every process
+    "indexer_expanded_lazy.py": {"DSV41_INDEXER_EXPANDED_TABLE_LAZY": "1"},  # sitecustomize rewrite, every process
     "attn_t2r_dedup.py": {"DSV41_ATTN_T2R_DEDUP": "1"},
     "engram_wkv_tp.py": {"DSV41_ENGRAM_WKV_TP": "1"},
     "fix_o_proj_woa_fp8.py": {},  # baked into the image at build time

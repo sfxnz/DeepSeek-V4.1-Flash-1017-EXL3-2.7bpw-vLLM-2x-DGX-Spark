@@ -85,6 +85,41 @@ def _sm120_rewrite(rel, fn_name):
     return body
 
 
+# vLLM PR #60996 packed KV group sizing (docker/patch/kv_packed_groups.py): one layer-pattern repeat
+# per KV-cache group, 50 groups on 46,080-byte blocks instead of 18 on 138,240 (3.875 GiB at
+# max-model-len 500,000: 1,471,832 tokens instead of 964,308, CPU planner). DSV41_KV_PACKED_GROUPS=1 (run.sh
+# default) rewrites v1/core/kv_cache_utils.py here, before anything imports vLLM; 0 keeps the image's
+# planner. Required: an anchor miss is image drift.
+def _p_kv_packed_groups():
+    import kv_packed_groups
+
+    if not kv_packed_groups.enabled():
+        kv_packed_groups.refuse_stale(_VLLM)
+        raise _PatchSkip("DSV41_KV_PACKED_GROUPS is not 1")
+    return kv_packed_groups.install(_VLLM, _rewrite)
+
+
+_patch("kv_packed_groups", _p_kv_packed_groups, required=True)
+
+
+# Indexer expanded block table on first use (docker/patch/indexer_expanded_lazy.py): each indexer
+# builder allocates B x (blocks per max-length request) x 4 B in __init__ that only the flattened decode
+# branch reads, and SM120 native decode never takes it (122 MiB per ratio-2 and 244 MiB per ratio-1
+# builder at 500,000 / 8192). DSV41_INDEXER_EXPANDED_TABLE_LAZY=1 (run.sh default) rewrites
+# v1/attention/backends/mla/indexer.py before kernel_block_sizes below imports it; 0 keeps the stock
+# allocation. Required: an anchor miss is image drift.
+def _p_indexer_expanded_lazy():
+    import indexer_expanded_lazy
+
+    if not indexer_expanded_lazy.enabled():
+        indexer_expanded_lazy.refuse_stale(_VLLM)
+        raise _PatchSkip("DSV41_INDEXER_EXPANDED_TABLE_LAZY is not 1")
+    return indexer_expanded_lazy.install(_VLLM, _rewrite)
+
+
+_patch("indexer_expanded_lazy", _p_indexer_expanded_lazy, required=True)
+
+
 # --- pfg8 load tracer (Round 31): when DSV41_LOAD_PF_G8=1, sample the worker
 # process every 10s during weight load: RSS, gc type census (top objects by
 # retained count), torch tensor count, and main-thread stack. Writes
@@ -265,6 +300,18 @@ _patch(
     _sm120_rewrite("model_executor/layers/sparse_attn_indexer_kpool.py", "patch_kpool_persistent_topk_source"),
     required=True,
 )
+
+
+# Ragged decode batches in the sparse indexer (docker/patch/indexer_ragged_decode.py): vLLM 0.32rc1's
+# needs_padded_path guard (sparse_attn_indexer.py:795-808). Uniform decode lengths with a token count
+# that is not a multiple of the decode requests crash the uniform reshape; MAX_NUM_SEQS=4 adds batch shapes.
+def _p_indexer_ragged_decode():
+    import indexer_ragged_decode
+
+    return _rewrite(f"{_VLLM}/{indexer_ragged_decode.REL}", indexer_ragged_decode.patch_source)
+
+
+_patch("indexer_ragged_decode", _p_indexer_ragged_decode, required=True)
 
 # PF-G8 loader re-index (results/2026-09-21-pfg8/BOOT-CHAIN-AUDIT.md):
 # DSV41_LOAD_PF_G8=1 serves a G8 pack (trellis [NT/8][KT][8W]) — the loader

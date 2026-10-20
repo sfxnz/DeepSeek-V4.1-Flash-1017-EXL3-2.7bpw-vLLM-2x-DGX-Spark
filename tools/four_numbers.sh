@@ -29,8 +29,8 @@
 # early exit the EXIT trap writes a PARTIAL marker and best-effort partial
 # JSON via tools/four_numbers_parse.py — partial data is never lost.
 #
-# Capture order is serialized on purpose (MAX_NUM_SEQS=2; concurrent
-# prefill chunks contaminate each other): provenance -> prose 9x -> micro
+# Capture order is serialized on purpose (concurrent prefill chunks
+# contaminate each other): provenance -> prose 9x -> micro
 # 8k+32k -> free both nodes (after micro's 32k tg phase) -> L.A.I.L 3x ->
 # prose_long c=1/c=2 5x -> warm-prefix -> disarm scan. Runtime budget ~20-25 min (estimate;
 # re-measure on the first campaign run).
