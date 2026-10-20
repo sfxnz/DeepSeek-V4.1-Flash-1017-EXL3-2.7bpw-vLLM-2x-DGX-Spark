@@ -1,0 +1,103 @@
+== decode_c4 2026-10-19T19:30:15Z host=spark1 payload: python3 /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/tools/profile_payload.py c4 --max-tokens 64
+== MemAvailable before: s1=6965 s2=6507 MiB
+  pre rank1: total 8
+  pre rank1: drwxr-xr-x 2 root root 4096 Oct 19 19:30 .
+  pre rank1: drwxrwxrwt 1 root root 4096 Oct 19 19:29 ..
+  pre rank0: total 8
+  pre rank0: drwxr-xr-x 2 root root 4096 Oct 19 19:30 .
+  pre rank0: drwxrwxrwt 1 root root 4096 Oct 19 19:29 ..
+== start_profile 2026-10-19T19:30:16Z
+ rc=0
+== payload rc=0 tripped=0 2026-10-19T19:30:20Z
+{
+ "mode": "c4",
+ "wall_s": 3.417,
+ "streams": [
+  {
+   "ttft_s": 0.585,
+   "wall_s": 3.002,
+   "content_chunks": 27,
+   "usage": {
+    "prompt_tokens": 29,
+    "total_tokens": 93,
+    "completion_tokens": 64,
+    "completion_tokens_details": {
+     "reasoning_tokens": 0
+    }
+   },
+   "utc_start": "19:30:19"
+  },
+  {
+   "ttft_s": 0.585,
+   "wall_s": 3.416,
+   "content_chunks": 33,
+   "usage": {
+    "prompt_tokens": 32,
+    "total_tokens": 96,
+    "completion_tokens": 64,
+    "completion_tokens_details": {
+     "reasoning_tokens": 0
+    }
+   },
+   "utc_start": "19:30:19"
+  },
+  {
+   "ttft_s": 0.585,
+   "wall_s": 3.289,
+   "content_chunks": 31,
+   "usage": {
+    "prompt_tokens": 29,
+    "total_tokens": 93,
+    "completion_tokens": 64,
+    "completion_tokens_details": {
+     "reasoning_tokens": 0
+    }
+   },
+   "utc_start": "19:30:19"
+  },
+  {
+   "ttft_s": 0.27,
+   "wall_s": 2.638,
+   "content_chunks": 25,
+   "usage": {
+    "prompt_tokens": 35,
+    "total_tokens": 99,
+    "completion_tokens": 64,
+    "completion_tokens_details": {
+     "reasoning_tokens": 0
+    }
+   },
+   "utc_start": "19:30:18"
+  }
+ ]
+}
+== stop_profile 2026-10-19T19:30:20Z (MemAvailable s1=7112 s2=6482)
+ stop_profile rc=0 after 4 s
+== MemAvailable after stop+flush: s1=6545 s2=6407 MiB; window min: s1=6557 s2=6234
+== traces rank0 (spark1)
+total 7280
+drwxr-xr-x 2 root root    4096 Oct 19 19:30 .
+drwxrwxrwt 1 root root    4096 Oct 19 19:30 ..
+-rw-r--r-- 1 root root 7436401 Oct 19 19:30 dp0_pp0_tp0_dcp0_ep0_rank0.1792438220993685452.pt.trace.json.gz
+-rw-r--r-- 1 root root       1 Oct 19 19:30 profiler_out_0.txt
+-rw-r--r-- 1 root root     746 Oct 19 19:30 spark1_1.async_llm.1792438220258159643.pt.trace.json.gz
+== traces rank1 (spark2)
+total 7328
+drwxr-xr-x 2 root root    4096 Oct 19 19:30 .
+drwxrwxrwt 1 root root    4096 Oct 19 19:30 ..
+-rw-r--r-- 1 root root 7494840 Oct 19 19:30 dp0_pp0_tp1_dcp0_ep1_rank1.1792438220926940912.pt.trace.json.gz
+== docker cp rank0 -> spark1:/home/sfxnz/projects/data/dsv41-traces/perf2-I1/decode_c4/rank0 2026-10-19T19:30:39Z
+total 7280
+drwxr-xr-x 2 sfxnz sfxnz    4096 Oct 19 20:30 .
+drwxrwxr-x 3 sfxnz sfxnz    4096 Oct 19 20:30 ..
+-rw-r--r-- 1 sfxnz sfxnz 7436401 Oct 19 20:30 dp0_pp0_tp0_dcp0_ep0_rank0.1792438220993685452.pt.trace.json.gz
+-rw-r--r-- 1 sfxnz sfxnz       1 Oct 19 20:30 profiler_out_0.txt
+-rw-r--r-- 1 sfxnz sfxnz     746 Oct 19 20:30 spark1_1.async_llm.1792438220258159643.pt.trace.json.gz
+== docker cp rank1 -> spark2:/home/sfxnz/projects/data/dsv41-traces/perf2-I1/decode_c4/rank1 2026-10-19T19:30:39Z
+total 7328
+drwxr-xr-x 2 sfxnz sfxnz    4096 Oct 19 20:30 .
+drwxrwxr-x 3 sfxnz sfxnz    4096 Oct 19 20:30 ..
+-rw-r--r-- 1 sfxnz sfxnz 7494840 Oct 19 20:30 dp0_pp0_tp1_dcp0_ep1_rank1.1792438220926940912.pt.trace.json.gz
+== MemAvailable after cp: s1=6518 s2=6407 MiB 2026-10-19T19:30:40Z
+== copies verified (sizes match); cleared /tmp/dsv41-traces in both containers
+== done decode_c4 2026-10-19T19:30:41Z stop_rc=0 payload_rc=0 tripped=0

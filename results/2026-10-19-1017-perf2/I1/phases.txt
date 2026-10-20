@@ -1,0 +1,17 @@
+2026-10-19T19:12:31Z smoke start
+2026-10-19T19:12:32Z smoke end
+2026-10-19T19:12:32Z c1 start
+2026-10-19T19:15:11Z c1 end
+2026-10-19T19:15:11Z c2 start
+2026-10-19T19:16:02Z c2 end
+2026-10-19T19:16:02Z c4 start
+2026-10-19T19:17:48Z c4 end
+2026-10-19T19:17:48Z micro start
+2026-10-19T19:21:24Z micro end
+2026-10-19T19:21:24Z prefix start
+2026-10-19T19:22:27Z prefix end
+2026-10-19T19:22:27Z quality start
+2026-10-19T19:25:46Z quality end
+2026-10-19T19:25:46Z STD done (smoke c1 c2 c4 micro prefix quality)
+2026-10-19T19:30:51Z B-arm start
+2026-10-19T19:32:18Z B-arm end

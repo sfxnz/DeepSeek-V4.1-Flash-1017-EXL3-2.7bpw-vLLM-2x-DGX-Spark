@@ -1,0 +1,4 @@
+bash /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I3/boot-I3.sh  (worktree HEAD ff424e8, 0 changes; started 2026-10-19T20:36:31Z via setsid -f)
+export SKIP_DOWNLOAD=1 AUDIT=strict IMAGE=dsv41-flash-exl3-sm121:e16-rows DSV41_MOE_PREFILL_TC=1 DSV41_ENGRAM_PREFILL_AHEAD=1
+export DSV41_DECODER_REPLAY_ROWS=0 DSV41_MOE_PREFILL_TC=0 DSV41_P2B_WIDE=0 DSV41_ENGRAM_PREFILL_AHEAD=0
+net: DSV41_DECODER_REPLAY_ROWS=0 DSV41_MOE_PREFILL_TC=0 DSV41_P2B_WIDE=0 DSV41_ENGRAM_PREFILL_AHEAD=0 (later exports override the I1 ones)

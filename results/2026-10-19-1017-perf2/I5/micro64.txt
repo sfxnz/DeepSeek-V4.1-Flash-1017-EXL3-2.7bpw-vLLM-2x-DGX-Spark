@@ -1,0 +1,39 @@
+# cmd: benches/micro.sh --contexts 65536 --runs 2
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 (HEAD ca42873) host: spark1 start: 2026-10-19T22:37:55Z
+ctx=65536 pp_warm run=1 doc=65380 ttft=42.38s rate=1542.9 tok/s acc=-
+ctx=65536 pp_warm run=2 doc=64014 ttft=51.97s rate=1231.9 tok/s acc=-
+ctx=65536 pp_novel run=1 doc=65362 ttft=41.40s rate=1579.0 tok/s acc=-
+ctx=65536 pp_novel run=2 doc=65394 ttft=41.34s rate=1581.8 tok/s acc=-
+ctx=65536 tg run=1 doc=63721 ttft=41.43s rate=49.1 tok/s acc=2.5384615384615383
+ctx=65536 tg run=2 doc=63740 ttft=41.76s rate=39.5 tok/s acc=2.1875
+SUMMARY [
+ {
+  "ctx": 65536,
+  "phase": "pp_warm",
+  "median_rate_tok_s": 1387.4,
+  "median_ttft_s": 47.17,
+  "doc_tokens": 65380,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "pp_novel",
+  "median_rate_tok_s": 1580.4,
+  "median_ttft_s": 41.37,
+  "doc_tokens": 65362,
+  "acceptance_len": 0.0,
+  "runs": 2
+ },
+ {
+  "ctx": 65536,
+  "phase": "tg",
+  "median_rate_tok_s": 44.3,
+  "median_ttft_s": 41.6,
+  "doc_tokens": 63721,
+  "acceptance_len": 2.36,
+  "runs": 2
+ }
+]
+rc=0
+# end: 2026-10-19T22:42:20Z

@@ -1,0 +1,40 @@
+{
+ "gen8192": {
+  "prompt_tokens": [
+   8117,
+   8117
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 0,
+  "identical": false,
+  "max_abs_dlogprob": 0.0,
+  "min_top5_overlap": 1.0,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ },
+ "gen32768": {
+  "prompt_tokens": [
+   32561,
+   32561
+  ],
+  "tokens": [
+   18,
+   18
+  ],
+  "first_divergence": 0,
+  "identical": false,
+  "max_abs_dlogprob": 0.0,
+  "min_top5_overlap": 1.0,
+  "hits": [
+   0.0,
+   0.0
+  ]
+ }
+}
+identical greedy tokens: 0/2; per-arm hit checks failed: none
+rc=1

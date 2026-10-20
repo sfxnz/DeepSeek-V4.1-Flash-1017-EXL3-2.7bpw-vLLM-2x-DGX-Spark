@@ -1,0 +1,32 @@
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PM-A1/head.log: 0 step lines
+run 1: prompt 16188 ttft 10.68 s pp 1516.0 tok/s; 0 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 
+   growth MiB:  
+   peak MiB:    
+   grown MiB:   
+   MemAvail GiB:  actions: 
+run 2: prompt 16297 ttft 10.72 s pp 1520.2 tok/s; 0 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 
+   growth MiB:  
+   peak MiB:    
+   grown MiB:   
+   MemAvail GiB:  actions: 
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PM-A1/worker.log: 16 step lines
+run 1: prompt 16188 ttft 10.68 s pp 1516.0 tok/s; 2 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 7.05 4.83
+   growth MiB:  +0 +0
+   peak MiB:    1255 1226
+   grown MiB:   +2 +2
+   MemAvail GiB:7.55 7.64  actions: - keep
+run 2: prompt 16297 ttft 10.72 s pp 1520.2 tok/s; 2 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 5.47 5.39
+   growth MiB:  +0 +0
+   peak MiB:    1255 1243
+   grown MiB:   +2 +2
+   MemAvail GiB:7.56 7.66  actions: - keep
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PM-A1/nvrm-spark1.txt: run 1 0; run 2 8
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PM-A1/nvrm-spark2.txt: run 1 0; run 2 0
+## spark1 run 1: min MemFree 3481 MemAvailable 3433 MiB, max swap 8303 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +869 pswpout +0
+## spark1 run 2: min MemFree 4351 MemAvailable 4312 MiB, max swap 8407 MiB; allocstall_normal +392 allocstall_movable +0 pgscan_direct +1580 pgsteal_direct +493 compact_stall +1475 compact_fail +404 pswpin +30270 pswpout +29577
+## spark2 run 1: min MemFree 6840 MemAvailable 7722 MiB, max swap 6105 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +23 pswpout +0
+## spark2 run 2: min MemFree 6786 MemAvailable 7719 MiB, max swap 6105 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +22 pswpout +0

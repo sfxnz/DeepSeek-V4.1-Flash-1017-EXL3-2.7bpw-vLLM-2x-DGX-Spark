@@ -1,0 +1,130 @@
+{
+ "collectives": [
+  5796,
+  5796
+ ],
+ "matched": 5796,
+ "op_or_grid_mismatch": 0,
+ "floor_us_p10_of_min": 19.68,
+ "classes": [
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "graph",
+   "grid": [
+    5,
+    1,
+    1
+   ],
+   "n": 4960,
+   "skew_median_us(+=rank1 late)": -3.9,
+   "abs_skew_mean_us": 35.5,
+   "frac_rank1_late": 0.33,
+   "r0_dur_median_us": 22.9,
+   "r1_dur_median_us": 26.9,
+   "r0_wait_over_floor_ms": 92.541,
+   "r1_wait_over_floor_ms": 127.736
+  },
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "graph",
+   "grid": [
+    3,
+    1,
+    1
+   ],
+   "n": 441,
+   "skew_median_us(+=rank1 late)": 1.0,
+   "abs_skew_mean_us": 59.6,
+   "frac_rank1_late": 0.578,
+   "r0_dur_median_us": 24.4,
+   "r1_dur_median_us": 23.4,
+   "r0_wait_over_floor_ms": 29.008,
+   "r1_wait_over_floor_ms": 17.995
+  },
+  {
+   "op": "AllGather_RING_LL",
+   "where": "graph",
+   "grid": [
+    6,
+    1,
+    1
+   ],
+   "n": 124,
+   "skew_median_us(+=rank1 late)": -1.3,
+   "abs_skew_mean_us": 5.5,
+   "frac_rank1_late": 0.419,
+   "r0_dur_median_us": 19.1,
+   "r1_dur_median_us": 20.2,
+   "r0_wait_over_floor_ms": 0.251,
+   "r1_wait_over_floor_ms": 0.341
+  },
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "eager",
+   "grid": [
+    8,
+    1,
+    1
+   ],
+   "n": 81,
+   "skew_median_us(+=rank1 late)": -13.6,
+   "abs_skew_mean_us": 453.1,
+   "frac_rank1_late": 0.309,
+   "r0_dur_median_us": 68.3,
+   "r1_dur_median_us": 83.2,
+   "r0_wait_over_floor_ms": 11.591,
+   "r1_wait_over_floor_ms": 41.759
+  },
+  {
+   "op": "AllGather_RING_LL",
+   "where": "eager",
+   "grid": [
+    8,
+    1,
+    1
+   ],
+   "n": 65,
+   "skew_median_us(+=rank1 late)": -64.3,
+   "abs_skew_mean_us": 80.7,
+   "frac_rank1_late": 0.169,
+   "r0_dur_median_us": 45.2,
+   "r1_dur_median_us": 107.2,
+   "r0_wait_over_floor_ms": 2.862,
+   "r1_wait_over_floor_ms": 6.519
+  },
+  {
+   "op": "AllGather_RING_LL",
+   "where": "graph",
+   "grid": [
+    8,
+    1,
+    1
+   ],
+   "n": 63,
+   "skew_median_us(+=rank1 late)": -57.4,
+   "abs_skew_mean_us": 73.7,
+   "frac_rank1_late": 0.095,
+   "r0_dur_median_us": 33.1,
+   "r1_dur_median_us": 90.6,
+   "r0_wait_over_floor_ms": 1.679,
+   "r1_wait_over_floor_ms": 5.436
+  },
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "eager",
+   "grid": [
+    5,
+    1,
+    1
+   ],
+   "n": 62,
+   "skew_median_us(+=rank1 late)": 24.9,
+   "abs_skew_mean_us": 85.2,
+   "frac_rank1_late": 0.839,
+   "r0_dur_median_us": 45.6,
+   "r1_dur_median_us": 21.3,
+   "r0_wait_over_floor_ms": 3.14,
+   "r1_wait_over_floor_ms": 2.533
+  }
+ ]
+}

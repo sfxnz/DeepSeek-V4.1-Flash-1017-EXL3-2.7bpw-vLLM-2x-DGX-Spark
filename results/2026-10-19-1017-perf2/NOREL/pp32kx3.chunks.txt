@@ -1,0 +1,18 @@
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/NOREL/head.log: 0 step lines
+run 1: prompt 32653 ttft 14.22 s pp 2296.1 tok/s; 0 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 
+   growth MiB:  
+   peak MiB:    
+   grown MiB:   
+   MemAvail GiB:  actions: 
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/NOREL/worker.log: 12 step lines
+run 1: prompt 32653 ttft 14.22 s pp 2296.1 tok/s; 5 chunks, reserved growth 662 MiB, releases 0 []
+   intervals s: 3.58 3.17 2.54 5.18 2.11
+   growth MiB:  +382 +0 +0 +280 +0
+   peak MiB:    1024 1024 1143 1428 1024
+   grown MiB:   +339 +338 +219 +214 +214
+   MemAvail GiB:7.13 7.16 7.13 6.95 6.86  actions: - - - - -
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/NOREL/nvrm-spark1.txt: run 1 8
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/NOREL/nvrm-spark2.txt: run 1 0
+## spark1 run 1: min MemFree 3104 MemAvailable 2437 MiB, max swap 8393 MiB; allocstall_normal +441 allocstall_movable +0 pgscan_direct +38329 pgsteal_direct +21465 compact_stall +1955 compact_fail +448 pswpin +2851 pswpout +54528
+## spark2 run 1: min MemFree 6673 MemAvailable 7116 MiB, max swap 6033 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +22 pswpout +0

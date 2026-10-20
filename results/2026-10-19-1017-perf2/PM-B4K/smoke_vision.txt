@@ -1,0 +1,8 @@
+# cmd: python3 smoke_vision.py
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration4 (HEAD 746ed86) host: spark1 start: 2026-10-20T01:44:12Z
+{
+  "content": "Red",
+  "finish_reason": "stop"
+}
+rc=0
+# end: 2026-10-20T01:44:12Z

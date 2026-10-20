@@ -1,0 +1,68 @@
+# cmd: python3 tools/replay_ab.py prefix --replay-rows 2670 --retention 4096 --out /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I4/prefix-B.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration2 (HEAD 2844fce) host: spark1 start: 2026-10-19T21:37:49Z
+cold_r0 19968 tokens, hits 0.0 | The word that appears most often in the text is **"the"**.
+PASS cold_r0: hits 0.0, expected 0
+resend_r0 19968 tokens, hits 19840.0 | The word that appears most often in the text is **"the"**.
+PASS resend_r0: hits 19840.0, expected 19840
+follow_r0 19992 tokens, hits 19840.0 | A second frequent word is **“the”** — it repeats because it’s the most common En
+PASS follow_r0: hits 19840.0, expected 19840
+newq_r0 19967 tokens, hits 19840.0 | No.
+PASS newq_r0: hits 19840.0, expected 19840
+cold_r1 20097 tokens, hits 0.0 | Based on the text, the word that appears most often is **"that"**.
+PASS cold_r1: hits 0.0, expected 0
+resend_r1 20097 tokens, hits 19968.0 | Based on the text, the word that appears most often is **"that"**.
+PASS resend_r1: hits 19968.0, expected 19968
+follow_r1 20121 tokens, hits 19968.0 | A second frequent word is **"that"** — it recurs constantly because the passage 
+PASS follow_r1: hits 19968.0, expected 19968
+newq_r1 20096 tokens, hits 19968.0 | No.
+PASS newq_r1: hits 19968.0, expected 19968
+cold_r63 19903 tokens, hits 0.0 | The word that appears most often in the text is "x".
+PASS cold_r63: hits 0.0, expected 0
+resend_r63 19903 tokens, hits 19712.0 | The word that appears most often in the text is "x".
+PASS resend_r63: hits 19712.0, expected 19712
+follow_r63 19927 tokens, hits 19712.0 | A second frequent word is **"that"** — it recurs because the text is built from 
+PASS follow_r63: hits 19712.0, expected 19712
+newq_r63 19902 tokens, hits 19712.0 | No.
+PASS newq_r63: hits 19712.0, expected 19712
+cold_r64 20160 tokens, hits 0.0 | The word that appears most often in the text is **"their"**.
+PASS cold_r64: hits 0.0, expected 0
+resend_r64 20160 tokens, hits 19968.0 | The word that appears most often in the text is **"their"**.
+PASS resend_r64: hits 19968.0, expected 19968
+follow_r64 20184 tokens, hits 20096.0 | A second frequent word is **"their"** — it appears throughout the passage, often
+PASS follow_r64: hits 20096.0, expected 20096
+newq_r64 20159 tokens, hits 19968.0 | No.
+PASS newq_r64: hits 19968.0, expected 19968
+cold_r65 19777 tokens, hits 0.0 | The word that appears most often is **"x"**.
+PASS cold_r65: hits 0.0, expected 0
+resend_r65 19777 tokens, hits 19712.0 | The word that appears most often in the text is "x".
+PASS resend_r65: hits 19712.0, expected 19712
+follow_r65 19801 tokens, hits 19712.0 | A second frequent word is **"their"** — it appears throughout the passage as a p
+PASS follow_r65: hits 19712.0, expected 19712
+newq_r65 19776 tokens, hits 19584.0 | No.
+PASS newq_r65: hits 19584.0, expected 19584
+cold_r127 20095 tokens, hits 0.0 | The word that appears most often is "x".
+PASS cold_r127: hits 0.0, expected 0
+resend_r127 20095 tokens, hits 19968.0 | The word that appears most often is "x".
+PASS resend_r127: hits 19968.0, expected 19968
+follow_r127 20119 tokens, hits 19968.0 | A second frequent word is **“from”** — it recurs because the passage is built fr
+PASS follow_r127: hits 19968.0, expected 19968
+newq_r127 20094 tokens, hits 19968.0 | No.
+PASS newq_r127: hits 19968.0, expected 19968
+sib1 16245 tokens, hits 0.0 | The word that appears most often in the text is “their.”
+sib2 16243 tokens, hits 16128.0 | The first paragraph contains the words "vaisteas," "dedoul," and "geatrelu."
+sib3 16246 tokens, hits 16128.0 | The text above is prose, as it consists of continuous paragraphs of sentences ra
+PASS sib1: hits 0.0, expected 0
+PASS sib2: hits 16128.0, expected 16128
+PASS sib3: hits 16128.0, expected 16128
+reply_turn 19989 tokens, hits 0.0 | 1. loufanes
+2. bais
+3. rushem
+4. saifaithest
+5. bratepear
+6. treatrous
+7. kraipl
+reply 20258 tokens, hits 20096.0 | A strong candidate for a second frequent word is **"plosom"** (or the closely re
+PASS reply: hits 20096.0, expected 20096
+prefix checks: 28/28 pass
+rc=0
+# end: 2026-10-19T21:39:16Z

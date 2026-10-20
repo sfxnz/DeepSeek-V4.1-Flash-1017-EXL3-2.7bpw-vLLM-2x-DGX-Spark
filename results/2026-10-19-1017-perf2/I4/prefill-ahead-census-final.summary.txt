@@ -1,0 +1,8 @@
+head: lines 413; chunks>=2048 rows 270: read-ahead covered 218 (ahead==n 159, partial 59), uncovered/first 52
+  covered: wait median 0.0 max 0.0 ms; exposed stage-hash_sync median 0.2 max 11.5 ms; job median 532.9 max 2096.5 ms
+  uncovered (first chunk, sync C gather): gather median 372.2 max 500.6 ms; exposed median 372.5 ms; n median 8190.0
+  partial: [(8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12)]
+worker: lines 413; chunks>=2048 rows 270: read-ahead covered 218 (ahead==n 159, partial 59), uncovered/first 52
+  covered: wait median 0.0 max 0.0 ms; exposed stage-hash_sync median 0.2 max 13.1 ms; job median 424.1 max 830.5 ms
+  uncovered (first chunk, sync C gather): gather median 317.4 max 408.1 ms; exposed median 318.9 ms; n median 8190.0
+  partial: [(8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12), (8184, 8172, 12)]

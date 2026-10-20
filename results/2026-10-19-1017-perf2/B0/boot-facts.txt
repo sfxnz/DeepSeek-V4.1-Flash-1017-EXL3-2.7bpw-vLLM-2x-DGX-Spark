@@ -1,0 +1,10 @@
+# Boot B0 facts (from head-boot.log / worker-boot.log / boot.txt / memwatch-boot.log), recorded by G0
+command: see command.txt (boot-B0.sh); run.sh rc=0; API ready 16:45:0x Z; audit (AUDIT=strict): "audit ok: every expected patch engaged on head, worker"
+Model loading: head (rank 0) 97.73 GiB in 504.53 s; worker (rank 1) 97.73 GiB in 280.64 s
+Initial free memory at KV reservation: head 108.94 GiB, worker 113.32 GiB (D1: 110.12 / 113.64); KV reserved 3.88 GiB (4160749568 B) both
+GPU KV cache size: 975,641 tokens, Maximum concurrency for 524,288 tokens per request: 1.86x  (memory report prediction: 975,641 / 1.86x)
+cudagraph_capture_sizes [1, 3, 4, 6, 8, 9, 12, 16]; FULL_AND_PIECEWISE; head: PIECEWISE 8/8, FULL 4/4, dspark FULL 4/4
+Graph capturing finished: head 13 s, took 0.30 GiB; worker 13 s, took 1.83 GiB (UMA cudaMemGetInfo deltas; D1 5 s, 1.65/0.35 GiB at 5+2+2 graphs)
+Torch profiler endpoint enabled on both ranks + AsyncLLM frontend (trace dir /tmp/dsv41-traces in each container)
+Warmup (run.sh): greedy 1.7 s '323'; t=0.7 1.5 s; prefill(~3k) 12.0 s; prefill-300 2.0 s; prefill-1000 17.3 s; vision 1.1 s 'Red'
+MemAvailable minimum during boot window (16:33:51Z..16:46Z, memwatch 2 s samples): spark1 3967 MiB at 16:45:27Z (during run.sh warmup prefills), spark2 5438 MiB at 16:45:43Z (D1: 4.6/5.4 GiB)

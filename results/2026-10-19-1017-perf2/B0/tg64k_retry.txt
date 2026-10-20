@@ -1,0 +1,6 @@
+# cmd: python3 /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/tools/tg64k_once.py
+# cwd: /home/sfxnz/projects/ai-lab/recipes/DeepSeek-V4.1-Flash-1017-2X-DGX-SPARKS-EXL3 (HEAD 20ee8ba) host: spark1 start: 2026-10-19T17:44:21Z
+ctx=65536 tg run=1 doc=63999 ttft=94.07s rate=44.0 tok/s acc=2.2
+{"ttft_s": 94.06791748292744, "wall_s": 94.79464259091765, "prompt_tokens": 64003, "completion_tokens": 33, "decode_s": 0.7267251079902053, "doc_tokens": 63999, "rate": 44.033155932230834, "acceptance_len": 2.2, "draft_acceptance_rate": 0.4, "seed": 274775393}
+rc=0
+# end: 2026-10-19T17:45:56Z

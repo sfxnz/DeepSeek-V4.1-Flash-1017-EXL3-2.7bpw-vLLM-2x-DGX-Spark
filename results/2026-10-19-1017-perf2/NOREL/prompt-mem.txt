@@ -1,0 +1,6 @@
+## head.live.log rank 0: 2 prompts >= 8000 tokens
+   1 tok=32653 steps=4 first=4.45 first3min=2.42 min=2.42@3 pool=103.07->103.71 (max 103.71, low 103.44) GiB wall=13.14 start_utc=03:11:42 spark1_start_min_MiB=3501 spark1_prompt_min_MiB=2437 spark2_start_min_MiB=7289 spark2_prompt_min_MiB=7116 actions={'-': 4}
+   2 tok=24564(open) steps=3 first=2.05 first3min=0.76 min=0.76@2 pool=103.71->103.71 (max 103.71, low 103.71) GiB wall=6.17 start_utc=03:11:56 spark1_start_min_MiB=652 spark1_prompt_min_MiB=652 spark2_start_min_MiB=7009 spark2_prompt_min_MiB=7009 actions={'-': 3}
+## worker.live.log rank 1: 2 prompts >= 8000 tokens
+   1 tok=32653 steps=4 first=7.13 first3min=7.13 min=6.95@4 pool=103.07->103.71 (max 103.71, low 103.44) GiB wall=13.13 start_utc=03:11:42 spark1_start_min_MiB=3501 spark1_prompt_min_MiB=2437 spark2_start_min_MiB=7289 spark2_prompt_min_MiB=7116 actions={'-': 4}
+   2 tok=24564(open) steps=3 first=6.86 first3min=6.84 min=6.84@2 pool=103.71->103.71 (max 103.71, low 103.71) GiB wall=6.17 start_utc=03:11:56 spark1_start_min_MiB=652 spark1_prompt_min_MiB=652 spark2_start_min_MiB=7009 spark2_prompt_min_MiB=7009 actions={'-': 3}

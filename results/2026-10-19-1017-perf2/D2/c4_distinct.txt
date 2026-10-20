@@ -1,0 +1,75 @@
+# cmd: python3 /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/tools/bench_distinct.py --concurrency 4 --runs 5
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 (HEAD ca42873) host: spark1 start: 2026-10-20T00:22:34Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=200 runs=5 concurrency=4 phases=['prose', 'structured'] prompts=DISTINCT per stream
+phase=prose_distinct c=4 run=1 wall=9.15s agg=94.32 tok/s per_stream=[26.56,24.41,23.95,23.58] ttft=[0.714,0.164,0.714,0.713] acc=2.582 ms_step=[97.2,105.8,107.8,109.5]
+phase=prose_distinct c=4 run=2 wall=8.61s agg=95.83 tok/s per_stream=[27.33,26.88,26.23,23.96] ttft=[0.299,0.300,0.300,0.299] acc=2.679 ms_step=[98.0,99.7,102.1,111.8]
+phase=prose_distinct c=4 run=3 wall=9.26s agg=91.50 tok/s per_stream=[24.78,26.17,22.94,23.45] ttft=[0.343,0.770,0.177,0.769] acc=2.551 ms_step=[102.9,97.5,111.2,108.8]
+phase=prose_distinct c=4 run=4 wall=9.16s agg=91.48 tok/s per_stream=[27.40,27.40,25.18,22.87] ttft=[0.456,0.457,0.161,0.457] acc=2.682 ms_step=[97.9,97.9,106.5,117.3]
+phase=prose_distinct c=4 run=5 wall=9.34s agg=88.00 tok/s per_stream=[27.30,23.09,22.32,22.00] ttft=[0.290,0.289,0.291,0.289] acc=2.403 ms_step=[88.0,104.1,107.7,109.2]
+phase=structured_distinct c=4 run=1 wall=3.29s agg=258.18 tok/s per_stream=[64.58,64.58,64.57,64.57] ttft=[0.208,0.209,0.208,0.209] acc=5.941 ms_step=[92.0,92.0,92.0,92.0]
+phase=structured_distinct c=4 run=2 wall=3.28s agg=261.98 tok/s per_stream=[65.55,65.54,65.53,65.53] ttft=[0.240,0.240,0.239,0.241] acc=5.941 ms_step=[90.6,90.6,90.7,90.7]
+phase=structured_distinct c=4 run=3 wall=3.30s agg=261.75 tok/s per_stream=[65.47,65.46,65.46,65.46] ttft=[0.254,0.255,0.255,0.255] acc=5.941 ms_step=[90.7,90.8,90.8,90.8]
+phase=structured_distinct c=4 run=4 wall=3.30s agg=261.25 tok/s per_stream=[65.37,65.36,65.35,65.34] ttft=[0.258,0.257,0.257,0.257] acc=5.941 ms_step=[90.9,90.9,90.9,90.9]
+phase=structured_distinct c=4 run=5 wall=3.29s agg=262.55 tok/s per_stream=[65.69,65.67,65.67,65.65] ttft=[0.254,0.254,0.254,0.254] acc=5.941 ms_step=[90.4,90.5,90.5,90.5]
+SUMMARY [
+  {
+    "phase": "prose_distinct",
+    "concurrency": 4,
+    "median_decode_tok_s": 24.596617498119286,
+    "median_ttft_s": 0.2996387635357678,
+    "median_agg_tok_s": 91.49810678656448,
+    "median_completion_tokens": 200.0,
+    "n": 20,
+    "acceptance_len": 2.575272261370916,
+    "draft_acceptance_rate": 0.3150544522741832,
+    "run_acceptance_len": [
+      2.582,
+      2.6789,
+      2.551,
+      2.6821,
+      2.403
+    ],
+    "median_run_acceptance_len": 2.581993569131833,
+    "median_ms_per_step": 104.91651750375087,
+    "ttft_s_p50": 0.2996387635357678,
+    "ttft_s_p90": 0.719422089168802,
+    "ttft_s_p99": 0.7693665733886883,
+    "inter_chunk_ms_p50": 99.82661926187575,
+    "inter_chunk_ms_p90": 123.89098606072366,
+    "inter_chunk_ms_p99": 142.59252769406888,
+    "finish_reasons": {
+      "length": 20
+    }
+  },
+  {
+    "phase": "structured_distinct",
+    "concurrency": 4,
+    "median_decode_tok_s": 65.46178127260262,
+    "median_ttft_s": 0.25383890233933926,
+    "median_agg_tok_s": 261.74875010768164,
+    "median_completion_tokens": 200.0,
+    "n": 20,
+    "acceptance_len": 5.9411764705882355,
+    "draft_acceptance_rate": 0.9882352941176471,
+    "run_acceptance_len": [
+      5.9412,
+      5.9412,
+      5.9412,
+      5.9412,
+      5.9412
+    ],
+    "median_run_acceptance_len": 5.9411764705882355,
+    "median_ms_per_step": 90.75794083184937,
+    "ttft_s_p50": 0.25383890233933926,
+    "ttft_s_p90": 0.25703252530656756,
+    "ttft_s_p99": 0.2577424695296213,
+    "inter_chunk_ms_p50": 89.46259133517742,
+    "inter_chunk_ms_p90": 92.90572060272098,
+    "inter_chunk_ms_p99": 98.19293553940952,
+    "finish_reasons": {
+      "length": 20
+    }
+  }
+]
+rc=0
+# end: 2026-10-20T00:23:36Z

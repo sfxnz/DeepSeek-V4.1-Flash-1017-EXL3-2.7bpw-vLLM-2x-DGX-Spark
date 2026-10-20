@@ -1,0 +1,57 @@
+2026-10-20T04:56:32Z memsample pid 1037630, procmem + live logs on both nodes
+2026-10-20T04:56:32Z cells done (sample)
+2026-10-20T04:56:32Z block1 start
+2026-10-20T04:56:32Z smoke start
+2026-10-20T04:56:34Z smoke end
+2026-10-20T04:56:34Z STD done (smoke)
+2026-10-20T04:56:34Z block1 end
+2026-10-20T04:56:41Z block2 start
+2026-10-20T04:56:41Z c1p9 start
+2026-10-20T04:57:43Z c1p9 end
+2026-10-20T04:57:43Z c2 start
+2026-10-20T04:58:29Z c2 end
+2026-10-20T04:58:29Z STD done (c1p9 c2)
+2026-10-20T04:58:29Z lail10 start
+2026-10-20T05:00:52Z lail10 end
+2026-10-20T05:00:52Z code start
+2026-10-20T05:01:28Z code end
+2026-10-20T05:01:28Z c4distinct start
+2026-10-20T05:02:32Z c4distinct end
+2026-10-20T05:02:32Z STD done (lail10 code c4distinct)
+2026-10-20T05:02:32Z c4same start
+2026-10-20T05:03:08Z c4same end
+2026-10-20T05:03:08Z block2 end
+2026-10-20T05:03:17Z block3 start
+2026-10-20T05:03:17Z micro start
+2026-10-20T05:06:40Z micro end
+2026-10-20T05:06:40Z STD done (micro)
+2026-10-20T05:06:40Z block3 end
+2026-10-20T05:07:25Z block4 start
+2026-10-20T05:07:25Z quality start
+2026-10-20T05:10:26Z quality end
+2026-10-20T05:10:26Z STD done (quality)
+2026-10-20T05:10:26Z full start
+2026-10-20T05:22:49Z full end
+2026-10-20T05:22:49Z servedkl start
+2026-10-20T05:23:49Z servedkl end
+2026-10-20T05:23:49Z block4 end
+2026-10-20T05:24:30Z block5 start
+2026-10-20T05:24:30Z prefix-B1 start
+2026-10-20T05:25:54Z prefix-B1 end
+2026-10-20T05:25:54Z prefix-B2 start
+2026-10-20T05:27:19Z prefix-B2 end
+2026-10-20T05:27:19Z block5 end
+2026-10-20T05:27:37Z block6 start
+2026-10-20T05:35:43Z block6 end
+2026-10-20T05:36:13Z block7 start
+2026-10-20T05:36:13Z needle256k start
+2026-10-20T05:40:43Z needle256k end
+2026-10-20T05:40:43Z needle500k start
+2026-10-20T05:49:51Z needle500k end
+2026-10-20T05:49:51Z block7 end
+2026-10-20T05:50:14Z block8 start
+2026-10-20T05:50:14Z soak start
+2026-10-20T06:03:11Z soak end
+2026-10-20T06:03:11Z block8 end
+2026-10-20T06:03:58Z logs
+2026-10-20T06:04:01Z cells done (logs)

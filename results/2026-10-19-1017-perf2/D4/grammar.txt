@@ -1,0 +1,12 @@
+# cmd: python3 /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/tools/grammar_check.py --out /home/sfxnz/projects/data/dsv41-1017/perf2/integration/D4/grammar.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration4 (HEAD 746ed86) host: spark1 start: 2026-10-20T01:13:43Z
+c1 ok=True status=200 err=None tokens=61 content='{\n  "name": "Elara Voss",\n  "age": 47,\n  "tags": [\n    "keeper of forbidden archives",\n    "whisper-quiet",\n    "cat com'
+c1 ok=True status=200 err=None tokens=59 content='{\n  "name": "Elias Thornwood",\n  "age": 47,\n  "tags": [\n    "mountain guide",\n    "veteran climber",\n    "wilderness sur'
+c1 ok=True status=200 err=None tokens=50 content='{\n  "name": "Marisol Vega",\n  "age": 38,\n  "tags": [\n    "fusion cuisine",\n    "fermentation enthusiast",\n    "farm-to-t'
+c4 ok=True status=200 err=None tokens=69 content='{\n  "name": "Elara Voss",\n  "age": 47,\n  "tags": [\n    "Keeper of the Whispering Archive",\n    "Collector of forgotten l'
+c4 ok=True status=200 err=None tokens=54 content='{\n  "name": "Elias Thornwood",\n  "age": 47,\n  "tags": [\n    "veteran mountaineer",\n    "storm-reader",\n    "patient teac'
+c4 ok=True status=200 err=None tokens=56 content='{\n  "name": "Marisol Vega",\n  "age": 38,\n  "tags": [\n    "fusion cuisine",\n    "fermentation enthusiast",\n    "farm-to-t'
+c4 ok=True status=200 err=None tokens=62 content='{\n  "name": "Captain Elara Voss",\n  "age": 34,\n  "tags": [\n    "ace pilot",\n    "hot-headed",\n    "loyal to her crew",\n '
+GRAMMAR 7/7 valid
+rc=0
+# end: 2026-10-20T01:13:52Z

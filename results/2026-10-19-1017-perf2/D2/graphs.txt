@@ -1,0 +1,2 @@
+head-boot: finished in 16 secs, took 0.44 GiB
+worker-boot: finished in 17 secs, took 1.46 GiB

@@ -1,0 +1,89 @@
+# prefill16k_b rank1 (spark2)  /home/sfxnz/projects/data/dsv41-traces/perf2-B0/prefill16k_b/rank1/dp0_pp0_tp1_dcp0_ep1_rank1.1792431510548353603.nul2space.pt.trace.json.gz
+
+## execute_context_1(8190)_generation_0(0): wall 16208.7 ms = busy 12851.7 + idle 3357.0; host before first op 0.4 ms; kernel sum 12863.0 ms; layers 40 engram layers [1, 14]
+kernel time by bucket (ms, sum over streams):
+     5024.2  nccl_allreduce  (n=81)
+     2297.8  routed_moe:exl3_fused(exl3_moe/kmix)  (n=160)
+     1125.7  routed_moe:glue(gather/index_add/sort/copy/fill)  (n=35382)
+      868.6  routed_moe:fat_hgemm(cuBLAS f16)  (n=4986)
+      501.0  sparse_attention(prefill kernel+topk meta)  (n=93)
+      495.3  routed_moe:fat_hadamard  (n=9972)
+      432.2  dense_mxfp8_gemm(attn proj, idx wq_b, engram wkv)  (n=128)
+      308.5  post_forward(lm_head+DSpark drafter+sampler)  (n=211)
+      294.4  routed_moe:fat_reconstruct  (n=4986)
+      274.8  mhc(mhc_post)  (n=82)
+      223.7  dense_wo_a(DeepGEMM fp8xfp4)  (n=40)
+      205.7  shared_expert(mxfp8 gemm+act+quant)  (n=200)
+      170.2  mhc(mhc_pre)  (n=80)
+      147.4  engram_wkv_gemm(mxfp8)  (n=2)
+      132.3  mhc(mhc_prenorm)  (n=80)
+      115.5  quant_glue(mxfp8/inv-rope fp8)  (n=122)
+      105.4  attn_glue(qnorm/rope/kv insert)  (n=80)
+       55.1  other_glue(eltwise/copy/metadata)  (n=170)
+       30.6  indexer(mqa logits/topk/q/mask)  (n=76)
+       25.5  router(gate gemm+topk)  (n=80)
+       20.0  engram_gpu(hash/H2D/AG/post-wkv)  (n=16)
+        8.7  compressor(+fp32/tf32 gemm)  (n=20)
+        0.4  norm/embedding  (n=1)
+device-idle by cause (ms): engram_host_gather(hash D2H -> rows H2D) 2568.3 (n=1); allocator(cuMemCreate/Map/cudaMalloc) 633.8 (n=6); moe_host_path(sync -> relaunch, in moe_forward_shared) 23.1 (n=259); host_python(no cpu_op open) 1.6 (n=18); host_in_op:aten::empty 0.2 (n=1); host_in_op:aten::slice 0.1 (n=1); host_in_op:aten::item 0.1 (n=1); host_in_op:aten::clamp_ 0.0 (n=1)
+largest idle gaps:
+    2568.3 ms at +31.8 ms layer 0: engram_host_gather(hash D2H -> rows H2D) | prev Memcpy DtoH (Device -> Pinned) | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+     411.4 ms at +14236.8 ms layer 37: allocator(cuMemCreate/Map/cudaMalloc) | prev kernel_cutlass_kernel_flashinfergemmkernelsdense_b | next vllm::deepseek_v4_fused_ops::fusedDeepseekV4QNormR | op aten::empty | rt cuMemCreate
+     153.7 ms at +3281.6 ms layer 1: allocator(cuMemCreate/Map/cudaMalloc) | prev kernel_cutlass_kernel_flashinfergemmkernelsdense_b | next vllm::deepseek_v4_fused_ops::fusedDeepseekV4QNormR | op aten::empty | rt cuMemCreate
+      53.0 ms at +14181.0 ms layer 37: allocator(cuMemCreate/Map/cudaMalloc) | prev _q_kv_norm_quant_kernel | next kernel_cutlass_kernel_flashinfergemmkernelsdense_b | op aten::empty | rt cuMemCreate
+       7.7 ms at +2869.9 ms layer 0: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev at_cuda_detail::cub::detail::radix_sort::DeviceRad | next at_cuda_detail::cub::detail::radix_sort::DeviceRad | op aten::sort | rt 
+       7.7 ms at +2620.6 ms layer 0: allocator(cuMemCreate/Map/cudaMalloc) | prev kernel_cutlass_kernel_flashinfergemmkernelsdense_b | next vllm::deepseek_v4_fused_ops::fusedDeepseekV4QNormR | op aten::empty | rt cuMemCreate
+       7.3 ms at +2610.1 ms layer 0: allocator(cuMemCreate/Map/cudaMalloc) | prev _q_kv_norm_quant_kernel | next kernel_cutlass_kernel_flashinfergemmkernelsdense_b | op aten::empty | rt cuMemCreate
+       1.0 ms at +12899.0 ms layer 31: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev at::native::vectorized_elementwise_kernel<2, at::n | next at::native::_scatter_gather_elementwise_kernel<128 | op aten::scatter_add_ | rt 
+       0.8 ms at +11398.5 ms layer 24: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev Memcpy DtoH (Device -> Pageable) | next at::native::vectorized_gather_kernel<16, long>(cha | op vllm::moe_forward_shared | rt 
+       0.8 ms at +8177.2 ms layer 12: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev Memcpy DtoH (Device -> Pageable) | next at::native::vectorized_gather_kernel<16, long>(cha | op vllm::moe_forward_shared | rt 
+       0.8 ms at +15297.6 ms layer 37: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev Memcpy DtoH (Device -> Pageable) | next at::native::vectorized_gather_kernel<16, long>(cha | op vllm::moe_forward_shared | rt 
+       0.8 ms at +6825.1 ms layer 6: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev Memcpy DtoH (Device -> Pageable) | next at::native::vectorized_gather_kernel<16, long>(cha | op vllm::moe_forward_shared | rt 
+host syncs on the main thread: {'cudaEventSynchronize': 1, 'cudaStreamSynchronize': 520} (CPU wait 11621.9 ms); in layers 521 (per layer min/median/max [13, 13.0, 14]), post-forward 0; D2H copies 523 (median/layer 13.0); aten::item 899
+  syncs by enclosing op (outer > inner): vllm::moe_forward_shared > aten::_local_scalar_dense x360; vllm::moe_forward_shared > aten::copy_ x160; <no cpu_op> > - x1
+  per-layer sync counts: 14 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
+kernel time by launching module (outermost cpu_op), ms: vllm::moe_forward_shared 5313.1; vllm::all_reduce 5024.2; <no cpu_op> 1571.7; vllm::mm_mxfp8 614.2; _C::fused_deepseek_v4_qnorm_rope_kv_rope_quant_insert 106.0; vllm::fused_inv_rope_fp8_quant_kernel 74.8; vllm::mxfp8_quantize 44.4; aten::add 42.2; vllm::sparse_attn_indexer 27.2; vllm::all_gather 14.1; aten::copy_ 6.5; aten::mean 5.6; aten::zeros 5.0; aten::mm 4.1; aten::linear 3.3; aten::cat 2.3; aten::contiguous 2.0; _C::rms_norm 1.8; _C::vocab_parallel_embedding 0.4; aten::ge 0.0
+
+## execute_context_1(8001)_generation_0(0): wall 11456.3 ms = busy 9678.9 + idle 1777.4; host before first op 387.9 ms; kernel sum 9689.9 ms; layers 40 engram layers [1, 14]
+kernel time by bucket (ms, sum over streams):
+     2290.2  nccl_allreduce  (n=81)
+     2254.5  routed_moe:exl3_fused(exl3_moe/kmix)  (n=160)
+     1095.1  routed_moe:glue(gather/index_add/sort/copy/fill)  (n=35577)
+      852.9  routed_moe:fat_hgemm(cuBLAS f16)  (n=5031)
+      513.0  sparse_attention(prefill kernel+topk meta)  (n=93)
+      478.2  routed_moe:fat_hadamard  (n=10062)
+      389.9  dense_mxfp8_gemm(attn proj, idx wq_b, engram wkv)  (n=128)
+      295.9  routed_moe:fat_reconstruct  (n=5031)
+      268.7  mhc(mhc_post)  (n=82)
+      218.2  dense_wo_a(DeepGEMM fp8xfp4)  (n=40)
+      199.1  shared_expert(mxfp8 gemm+act+quant)  (n=200)
+      166.4  mhc(mhc_pre)  (n=80)
+      119.1  mhc(mhc_prenorm)  (n=80)
+      112.5  quant_glue(mxfp8/inv-rope fp8)  (n=122)
+      102.9  attn_glue(qnorm/rope/kv insert)  (n=80)
+       92.0  engram_wkv_gemm(mxfp8)  (n=2)
+       70.5  post_forward(lm_head+DSpark drafter+sampler)  (n=211)
+       65.6  indexer(mqa logits/topk/q/mask)  (n=118)
+       53.1  other_glue(eltwise/copy/metadata)  (n=171)
+       25.2  router(gate gemm+topk)  (n=80)
+       18.5  engram_gpu(hash/H2D/AG/post-wkv)  (n=13)
+        8.2  compressor(+fp32/tf32 gemm)  (n=20)
+        0.4  norm/embedding  (n=1)
+device-idle by cause (ms): engram_host_gather(hash D2H -> rows H2D) 1635.8 (n=1); moe_host_path(sync -> relaunch, in moe_forward_shared) 11.6 (n=230); host_python(no cpu_op open) 0.5 (n=1)
+largest idle gaps:
+    1635.8 ms at +14.2 ms layer 0: engram_host_gather(hash D2H -> rows H2D) | prev Memcpy DtoH (Device -> Pinned) | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+       1.2 ms at +6326.0 ms layer 15: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev at::native::(anonymous namespace)::fill_reverse_in | next Memset (Device) | op aten::sort | rt 
+       0.6 ms at +3804.3 ms layer 3: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev at::native::index_elementwise_kernel<128, 4, at::n | next at::native::index_elementwise_kernel<128, 4, at::n | op vllm::moe_forward_shared | rt 
+       0.5 ms at +8808.9 ms layer 27: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev at::native::vectorized_elementwise_kernel<4, at::n | next at::native::vectorized_elementwise_kernel<2, at::n | op aten::new_full | rt 
+       0.5 ms at +7461.2 ms layer 20: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev Memcpy DtoH (Device -> Pageable) | next at::native::vectorized_gather_kernel<16, long>(cha | op vllm::moe_forward_shared | rt 
+       0.5 ms at +11447.7 ms layer 40: host_python(no cpu_op open) | prev vllm::vocab_embedding::vocab_parallel_embedding_ke | next ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKe | op  | rt 
+       0.5 ms at +10163.8 ms layer 33: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev Memcpy DtoH (Device -> Pageable) | next at::native::vectorized_gather_kernel<16, long>(cha | op vllm::moe_forward_shared | rt 
+       0.4 ms at +11343.8 ms layer 39: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev at::native::vectorized_elementwise_kernel<2, at::n | next at::native::_scatter_gather_elementwise_kernel<128 | op aten::scatter_add_ | rt 
+       0.4 ms at +5073.4 ms layer 9: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev Memcpy DtoH (Device -> Pageable) | next at::native::vectorized_gather_kernel<16, long>(cha | op vllm::moe_forward_shared | rt 
+       0.2 ms at +6363.6 ms layer 15: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev Memcpy DtoH (Device -> Pageable) | next at::native::vectorized_gather_kernel<16, long>(cha | op vllm::moe_forward_shared | rt 
+       0.2 ms at +3051.7 ms layer 0: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev Memcpy DtoH (Device -> Pinned) | next at::native::vectorized_elementwise_kernel<4, at::n | op vllm::moe_forward_shared | rt 
+       0.1 ms at +5043.5 ms layer 9: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev at::native::elementwise_kernel<128, 4, at::native: | next at::native::elementwise_kernel<128, 4, at::native: | op aten::copy_ | rt 
+host syncs on the main thread: {'cudaEventSynchronize': 1, 'cudaStreamSynchronize': 520} (CPU wait 9527.5 ms); in layers 521 (per layer min/median/max [13, 13.0, 14]), post-forward 0; D2H copies 523 (median/layer 13.0); aten::item 905
+  syncs by enclosing op (outer > inner): vllm::moe_forward_shared > aten::_local_scalar_dense x360; vllm::moe_forward_shared > aten::copy_ x160; <no cpu_op> > - x1
+  per-layer sync counts: 14 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
+kernel time by launching module (outermost cpu_op), ms: vllm::moe_forward_shared 5200.8; vllm::all_reduce 2290.2; <no cpu_op> 1323.5; vllm::mm_mxfp8 514.1; _C::fused_deepseek_v4_qnorm_rope_kv_rope_quant_insert 103.0; vllm::fused_inv_rope_fp8_quant_kernel 72.9; vllm::sparse_attn_indexer 62.3; vllm::mxfp8_quantize 43.2; aten::add 41.3; vllm::all_gather 10.0; aten::copy_ 6.2; aten::mean 4.9; aten::zeros 4.3; aten::mm 3.6; aten::linear 3.3; aten::cat 2.2; aten::contiguous 1.9; _C::rms_norm 1.5; _C::vocab_parallel_embedding 0.4; aten::ge 0.0

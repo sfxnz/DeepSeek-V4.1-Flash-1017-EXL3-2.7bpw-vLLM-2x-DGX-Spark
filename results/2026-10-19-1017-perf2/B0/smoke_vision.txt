@@ -1,0 +1,8 @@
+# cmd: python3 smoke_vision.py
+# cwd: /home/sfxnz/projects/ai-lab/recipes/DeepSeek-V4.1-Flash-1017-2X-DGX-SPARKS-EXL3 (HEAD 20ee8ba) host: spark1 start: 2026-10-19T16:46:27Z
+{
+  "content": "Red",
+  "finish_reason": "stop"
+}
+rc=0
+# end: 2026-10-19T16:46:27Z

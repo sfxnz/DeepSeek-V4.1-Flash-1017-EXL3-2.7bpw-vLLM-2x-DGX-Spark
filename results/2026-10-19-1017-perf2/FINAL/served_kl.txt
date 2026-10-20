@@ -1,0 +1,62 @@
+# cmd: python3 tools/served_kl.py --panel /home/sfxnz/projects/data/dsv41-1017/calib/panel.jsonl --native /home/sfxnz/projects/data/dsv41-1017/calib-harness/panel_native.topk.safetensors --max-len 2048 --out /home/sfxnz/projects/data/dsv41-1017/perf2/integration/FINAL/served_kl.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-release (HEAD 4ae29a6) host: spark1 start: 2026-10-20T05:22:49Z
+panel-00000 multilingual n=526   kl=0.0792 dnll=+0.0414 top1=0.924 0.95s
+panel-00002 tool         n=546   kl=0.0172 dnll=+0.0071 top1=0.936 1.36s
+panel-00005 chat         n=590   kl=0.0316 dnll=+0.0173 top1=0.939 0.73s
+panel-00007 code         n=353   kl=0.0099 dnll=+0.0052 top1=0.969 0.72s
+panel-00008 code         n=534   kl=0.0071 dnll=+0.0150 top1=0.963 0.76s
+panel-00009 math         n=1406  kl=0.0199 dnll=+0.0213 top1=0.953 1.36s
+panel-00010 chat         n=1422  kl=0.0409 dnll=+0.0142 top1=0.934 1.4s
+panel-00016 tool         n=732   kl=0.0044 dnll=+0.0089 top1=0.986 1.67s
+panel-00017 chat         n=271   kl=0.0086 dnll=-0.0073 top1=1.000 0.47s
+panel-00018 chat         n=329   kl=0.0325 dnll=-0.0166 top1=0.945 0.51s
+panel-00024 code         n=676   kl=0.0354 dnll=+0.0089 top1=0.954 1.07s
+panel-00025 chat         n=916   kl=0.0349 dnll=+0.0209 top1=0.931 0.95s
+panel-00027 multilingual n=514   kl=0.0145 dnll=+0.0000 top1=0.965 0.7s
+panel-00028 code         n=397   kl=0.0085 dnll=+0.0057 top1=0.975 0.68s
+panel-00029 chat         n=162   kl=0.0408 dnll=+0.0335 top1=0.895 0.53s
+panel-00030 code         n=812   kl=0.0037 dnll=+0.0007 top1=0.991 1.1s
+panel-00031 code         n=575   kl=0.0119 dnll=+0.0034 top1=0.967 1.13s
+panel-00035 encyclopedic n=910   kl=0.0828 dnll=+0.0048 top1=0.895 0.96s
+panel-00037 chat         n=802   kl=0.0091 dnll=+0.0061 top1=0.965 0.96s
+panel-00038 encyclopedic n=1098  kl=0.1603 dnll=+0.0940 top1=0.855 1.04s
+panel-00039 multilingual n=840   kl=0.0122 dnll=+0.0089 top1=0.960 1.01s
+panel-00040 chat         n=1065  kl=0.0049 dnll=+0.0010 top1=0.984 1.3s
+panel-00041 chat         n=224   kl=0.0259 dnll=+0.0310 top1=0.942 0.62s
+panel-00042 chat         n=257   kl=0.0190 dnll=-0.0233 top1=0.938 0.43s
+panel-00045 code         n=854   kl=0.0036 dnll=+0.0052 top1=0.991 1.01s
+panel-00052 encyclopedic n=1005  kl=0.0886 dnll=-0.0088 top1=0.885 1.01s
+panel-00055 multilingual n=1167  kl=0.0137 dnll=-0.0007 top1=0.958 1.09s
+panel-00056 multilingual n=890   kl=0.0071 dnll=-0.0043 top1=0.980 1.04s
+panel-00058 chat         n=1008  kl=0.0154 dnll=+0.0076 top1=0.962 1.05s
+panel-00059 code         n=528   kl=0.0084 dnll=+0.0065 top1=0.970 0.84s
+panel-00061 chat         n=1659  kl=0.0206 dnll=-0.0046 top1=0.949 1.51s
+panel-00062 multilingual n=1373  kl=0.0489 dnll=+0.0142 top1=0.945 1.46s
+panel-00063 chat         n=1035  kl=0.0250 dnll=+0.0191 top1=0.953 1.0s
+panel-00064 tool         n=668   kl=0.0019 dnll=-0.0042 top1=0.996 1.69s
+panel-00066 code         n=766   kl=0.0068 dnll=+0.0041 top1=0.973 0.99s
+panel-00067 chat         n=786   kl=0.0273 dnll=-0.0232 top1=0.944 0.93s
+panel-00069 multilingual n=319   kl=0.1291 dnll=+0.0383 top1=0.875 0.54s
+panel-00070 chat         n=230   kl=0.0333 dnll=+0.0354 top1=0.926 0.4s
+panel-00072 multilingual n=492   kl=0.0544 dnll=-0.0384 top1=0.925 0.74s
+panel-00074 chat         n=420   kl=0.0237 dnll=+0.0181 top1=0.948 0.56s
+panel-00077 encyclopedic n=1479  kl=0.0819 dnll=+0.0502 top1=0.903 1.31s
+panel-00078 chat         n=828   kl=0.0229 dnll=+0.0172 top1=0.944 0.82s
+panel-00079 math         n=1142  kl=0.0144 dnll=+0.0082 top1=0.957 1.26s
+panel-00081 chat         n=1773  kl=0.0350 dnll=+0.0192 top1=0.938 1.6s
+panel-00082 tool         n=649   kl=0.0019 dnll=-0.0012 top1=0.991 1.72s
+panel-00084 chat         n=856   kl=0.0148 dnll=+0.0035 top1=0.949 0.88s
+panel-00085 chat         n=1270  kl=0.0273 dnll=-0.0030 top1=0.951 1.47s
+panel-00086 chat         n=1067  kl=0.0491 dnll=-0.0031 top1=0.918 1.1s
+panel-00089 encyclopedic n=1190  kl=0.1076 dnll=-0.0301 top1=0.878 1.08s
+panel-00090 multilingual n=684   kl=0.0250 dnll=+0.0088 top1=0.937 0.76s
+panel-00092 chat         n=846   kl=0.0395 dnll=+0.0054 top1=0.905 1.53s
+panel-00093 math         n=1184  kl=0.0138 dnll=+0.0238 top1=0.964 1.16s
+panel-00094 code         n=579   kl=0.0034 dnll=+0.0041 top1=0.983 0.87s
+panel-00095 multilingual n=1876  kl=0.0123 dnll=-0.0103 top1=0.969 1.63s
+panel-00096 multilingual n=829   kl=0.0241 dnll=-0.0176 top1=0.938 0.86s
+panel-00097 multilingual n=1632  kl=0.0197 dnll=-0.0250 top1=0.963 1.54s
+panel-00098 chat         n=1382  kl=0.0115 dnll=-0.0066 top1=0.962 1.61s
+SERVED_KL {"all": {"n": 48423, "kl": 0.031594, "dnll": 0.006728, "nll_native": 1.006382, "nll_served": 1.01311, "top1": 0.94653, "missing": 0.10977}, "by_domain": {"chat": {"n": 19198, "kl": 0.025852, "dnll": 0.005809, "nll_native": 1.061703, "nll_served": 1.067512, "top1": 0.94588, "missing": 0.09365}, "code": {"n": 6074, "kl": 0.009726, "dnll": 0.005612, "nll_native": 0.488099, "nll_served": 0.493711, "top1": 0.97481, "missing": 0.10194}, "encyclopedic": {"n": 5682, "kl": 0.10376, "dnll": 0.024148, "nll_native": 1.865947, "nll_served": 1.890095, "top1": 0.88384, "missing": 0.17988}, "math": {"n": 3732, "kl": 0.01627, "dnll": 0.018087, "nll_native": 0.790378, "nll_served": 0.808465, "top1": 0.95766, "missing": 0.08773}, "multilingual": {"n": 11142, "kl": 0.02774, "dnll": -0.002811, "nll_native": 0.957118, "nll_served": 0.954307, "top1": 0.95288, "missing": 0.11245}, "tool": {"n": 2595, "kl": 0.005828, "dnll": 0.002624, "nll_native": 0.450306, "nll_served": 0.452929, "top1": 0.97919, "missing": 0.11407}}}
+rc=0
+# end: 2026-10-20T05:23:49Z

@@ -1,0 +1,19 @@
+## post-build disk 2026-10-20T04:14:38Z
+spark1: /dev/nvme0n1p2  3.7T  3.3T  256G  93% /
+spark2: /dev/nvme0n1p2  3.7T  3.5T   78G  98% /
+## images
+spark1 dsv41-flash-exl3-sm121:e16-rows sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a
+spark1 dsv41-flash-exl3-sm121:e16-rows-d365c92 sha256:ac651e4f21b3fc3a93c50c1faa9d4d37e3f66008e0ecd7c1b9c6c7bad18671b8
+spark1 dsv41-flash-exl3-sm121:e15-kbits sha256:7e2cec199bed2c6691a2e3e60deaa66ebbe4ab4a14f942e1e88662135a87dc67
+spark2 dsv41-flash-exl3-sm121:e16-rows sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a
+spark2 dsv41-flash-exl3-sm121:e16-rows-d365c92 sha256:a7c4300af02c8969de2669c742f9619658a89cf25afe2823ef25af2a8ce8d3ac
+spark2 dsv41-flash-exl3-sm121:e15-kbits sha256:7e2cec199bed2c6691a2e3e60deaa66ebbe4ab4a14f942e1e88662135a87dc67
+## chain A (2026-10-20, release worktree /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-release @156a06a, clean)
+- spark1 build rc=0 2m54s (build-e16-spark1-156a06a.log): vllm_exl3 rows cuda ok / moe_prefill_tc prebuilt /opt/dsv41-moe-prefill-tc/022a960b5338 / moe_prefill_tc prebuilt ok 022a960b5338
+- spark2 build rc=1 (build-e16-spark2-156a06a.log): git clone github.com: Could not resolve host (spark2 has no default route). spark2 image TRANSFERRED from spark1 (transfer-e16-spark2.log): docker save | ssh spark2 docker load, rc=0, min free 56G during load, 78G after
+- e16-rows = sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a on both nodes; label patches ...,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack,moe_prefill_tc; git_rev 156a06a0d36291f0688781cc02de59e84b8e1c95; tree_diff e3b0c442... (sha256 of the empty diff)
+- /opt/dsv41-moe-prefill-tc/022a960b5338 present (both nodes); cuobjdump -sass vllm_exl3_c sha256 d1fe096358c46af6... new == e16-rows-d365c92 (checks-spark1.txt, checks-spark2.txt)
+- image CPU tests (image-tests-spark1.log, triage image-tests-spark1-triage.txt): doc command 272 tests failures=1 errors=2 skipped=2; test_chat_encoder_1017 8 OK.
+  ERRORs test_decoder_replay.TorchTailTests x2 ('vllm' is not a package: stub pollution in the one-process run; alone 1 FAIL 'already installed' because the image's sitecustomize installs decoder_replay at interpreter start; alone with -e DSV41_DECODER_REPLAY_ROWS=0: OK; pass on d365c92 / e15-kbits images).
+  FAIL test_dspark_adaptive.SpecTierRunShTests.test_dry_run_gives_both_ranks_the_same_tiered_configs on all three images (new, d365c92, e15-kbits): run.sh preflight reads the docker stub's output, which carries the image sitecustomize line 'dsv41-indexer-workspace: already applied', as a GPU container; passes on the host.
+  The other 12 modules pass in the image.

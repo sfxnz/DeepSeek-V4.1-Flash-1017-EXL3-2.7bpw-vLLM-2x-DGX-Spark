@@ -1,0 +1,20 @@
+## before-micro 2026-10-19T23:03:12Z spark1
+MemFree:         3471064 kB
+MemAvailable:    5256804 kB
+Cached:          3202812 kB
+SwapFree:        7591696 kB
+## spark2
+MemFree:         5026288 kB
+MemAvailable:    8869664 kB
+Cached:          5336624 kB
+SwapFree:       10563968 kB
+## after-micro 2026-10-19T23:06:42Z spark1
+MemFree:         1461712 kB
+MemAvailable:    7236492 kB
+Cached:          6744080 kB
+SwapFree:        5954920 kB
+## spark2
+MemFree:         1023872 kB
+MemAvailable:    7441668 kB
+Cached:          7803296 kB
+SwapFree:       10600148 kB

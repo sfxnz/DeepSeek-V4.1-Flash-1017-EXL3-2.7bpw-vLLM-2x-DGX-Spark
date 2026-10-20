@@ -1,0 +1,68 @@
+# PM-A1 trip 2 (re-boot): memwatch.trips 2026-10-20T02:24:48Z TRIP s1=1187 s2=7782 floor=1536 -> ./stop.sh (main checkout, both ranks)
+# phase: pp64k run 1 (first 64K novel prompt, pp_chunks.py), 2nd 8K chunk (16,376 tokens); rank-0 MemAvailable 1.57 GiB after chunk 1 with the pool flat at 103.80 GiB ('keep' after the 16K prompt)
+## memwatch.log
+2026-10-20T02:24:16Z s1=5352 s2=7779 swap1=8303 swap2=6105 up=1
+2026-10-20T02:24:18Z s1=5368 s2=7832 swap1=8303 swap2=6105 up=1
+2026-10-20T02:24:20Z s1=3488 s2=7690 swap1=8302 swap2=6105 up=1
+2026-10-20T02:24:22Z s1=3443 s2=7714 swap1=8302 swap2=6105 up=1
+2026-10-20T02:24:24Z s1=3494 s2=7734 swap1=8301 swap2=6105 up=1
+2026-10-20T02:24:26Z s1=3587 s2=7787 swap1=8300 swap2=6105 up=1
+2026-10-20T02:24:28Z s1=3713 s2=7829 swap1=8300 swap2=6105 up=1
+2026-10-20T02:24:30Z s1=4312 s2=7821 swap1=8299 swap2=6105 up=1
+2026-10-20T02:24:32Z s1=5132 s2=7734 swap1=8298 swap2=6105 up=1
+2026-10-20T02:24:34Z s1=5219 s2=7750 swap1=8298 swap2=6105 up=1
+2026-10-20T02:24:36Z s1=5277 s2=7795 swap1=8408 swap2=6105 up=1
+2026-10-20T02:24:38Z s1=4653 s2=7810 swap1=8302 swap2=6105 up=1
+2026-10-20T02:24:40Z s1=3599 s2=7823 swap1=8290 swap2=6105 up=1
+2026-10-20T02:24:42Z s1=1655 s2=7699 swap1=8288 swap2=6105 up=1
+2026-10-20T02:24:44Z s1=1585 s2=7747 swap1=8287 swap2=6105 up=1
+2026-10-20T02:24:46Z s1=1167 s2=7791 swap1=8286 swap2=6105 up=1
+2026-10-20T02:24:48Z s1=1187 s2=7782 swap1=8286 swap2=6105 up=1
+2026-10-20T02:24:48Z TRIP s1=1187 s2=7782 floor=1536 -> ./stop.sh
+## procmem meminfo spark1 (KiB)
+2026-10-20T02:24:36.230Z meminfo MemFree=5071580 MemAvailable=5383664 Cached=1389808 AnonPages=5784172 Shmem=394300 Mlocked=23772 SUnreclaim=2463956 SwapFree=8166640
+2026-10-20T02:24:37.251Z meminfo MemFree=5065892 MemAvailable=5378424 Cached=1390252 AnonPages=5783748 Shmem=394300 Mlocked=23772 SUnreclaim=2463956 SwapFree=8167708
+2026-10-20T02:24:38.273Z meminfo MemFree=4867612 MemAvailable=4917364 Cached=1398192 AnonPages=5904416 Shmem=394300 Mlocked=23772 SUnreclaim=2463892 SwapFree=8272456
+2026-10-20T02:24:39.293Z meminfo MemFree=4758296 MemAvailable=4696992 Cached=1405488 AnonPages=5921884 Shmem=394300 Mlocked=23772 SUnreclaim=2463924 SwapFree=8282036
+2026-10-20T02:24:40.316Z meminfo MemFree=4469808 MemAvailable=4484088 Cached=1556664 AnonPages=5915624 Shmem=394720 Mlocked=23772 SUnreclaim=2464268 SwapFree=8287076
+2026-10-20T02:24:41.335Z meminfo MemFree=1838096 MemAvailable=1844224 Cached=1541860 AnonPages=5932188 Shmem=394720 Mlocked=23772 SUnreclaim=2464460 SwapFree=8289320
+2026-10-20T02:24:42.353Z meminfo MemFree=1746944 MemAvailable=1694728 Cached=1423988 AnonPages=5919320 Shmem=394720 Mlocked=23772 SUnreclaim=2464260 SwapFree=8289872
+2026-10-20T02:24:43.375Z meminfo MemFree=1697800 MemAvailable=1646124 Cached=1425040 AnonPages=5920040 Shmem=394720 Mlocked=23772 SUnreclaim=2464196 SwapFree=8290552
+2026-10-20T02:24:44.397Z meminfo MemFree=1676656 MemAvailable=1624980 Cached=1425044 AnonPages=5921032 Shmem=394720 Mlocked=23772 SUnreclaim=2464228 SwapFree=8290788
+2026-10-20T02:24:45.415Z meminfo MemFree=1650912 MemAvailable=1599236 Cached=1425044 AnonPages=5920632 Shmem=394720 Mlocked=23772 SUnreclaim=2464260 SwapFree=8291204
+2026-10-20T02:24:46.433Z meminfo MemFree=1243680 MemAvailable=1196028 Cached=1433120 AnonPages=5921200 Shmem=394720 Mlocked=23772 SUnreclaim=2464252 SwapFree=8291516
+2026-10-20T02:24:47.451Z meminfo MemFree=1268044 MemAvailable=1220400 Cached=1433124 AnonPages=5921648 Shmem=394720 Mlocked=23772 SUnreclaim=2464252 SwapFree=8291872
+2026-10-20T02:24:48.474Z meminfo MemFree=1261868 MemAvailable=1214236 Cached=1433132 AnonPages=5920096 Shmem=394720 Mlocked=23772 SUnreclaim=2464284 SwapFree=8292124
+## step lines (live logs)
+2026-10-20T02:23:12.094049702Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 1 longest 3826 in_flight 0 wall 3.05 s interval - reserved 101.99 -> 102.75 GiB (+780 MiB) peak +644 MiB grown +0 MiB MemAvailable 8.36 GiB action -
+2026-10-20T02:23:14.583211716Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 2 longest 464 in_flight 0 wall 1.38 s interval 2.49 s reserved 102.75 -> 102.75 GiB (+0 MiB) peak +71 MiB grown +0 MiB MemAvailable 8.05 GiB action -
+2026-10-20T02:23:28.472724492Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 3 longest 1278 in_flight 0 wall 13.45 s interval 13.89 s reserved 102.75 -> 102.75 GiB (+0 MiB) peak +196 MiB grown +0 MiB MemAvailable 7.92 GiB action -
+2026-10-20T02:23:29.601185711Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 4 longest 213 in_flight 0 wall 0.23 s interval 1.13 s reserved 102.75 -> 102.77 GiB (+20 MiB) peak +34 MiB grown +20 MiB MemAvailable 8.00 GiB action -
+2026-10-20T02:23:48.457943911Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 5 longest 201 in_flight 0 wall 0.11 s interval 18.86 s reserved 102.77 -> 102.77 GiB (+0 MiB) peak +31 MiB grown +20 MiB MemAvailable 8.58 GiB action -
+2026-10-20T02:23:53.318472853Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 6 longest 8117 in_flight 0 wall 3.90 s interval 4.86 s reserved 102.77 -> 103.73 GiB (+982 MiB) peak +1244 MiB grown +400 MiB MemAvailable 7.48 GiB action -
+2026-10-20T02:23:59.603769425Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 7 longest 8188 in_flight 1 wall 3.69 s interval 6.29 s reserved 103.73 -> 103.75 GiB (+20 MiB) peak +1255 MiB grown +409 MiB MemAvailable 7.34 GiB action -
+2026-10-20T02:24:06.627322817Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 8 longest 16376 in_flight 1 wall 5.12 s interval 5.34 s reserved 103.75 -> 103.75 GiB (+0 MiB, 102.31 GiB after release) peak +1255 MiB grown +409 MiB MemAvailable 7.31 GiB action grown
+2026-10-20T02:24:10.407825375Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 9 longest 24564 in_flight 1 wall 3.72 s interval 5.47 s reserved 103.00 -> 103.55 GiB (+566 MiB) peak +1255 MiB grown +0 MiB MemAvailable 7.52 GiB action hold
+2026-10-20T02:24:15.287780450Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 10 longest 32561 in_flight 0 wall 4.75 s interval 4.88 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1242 MiB grown +0 MiB MemAvailable 7.61 GiB action keep
+2026-10-20T02:24:22.335321339Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 11 longest 8188 in_flight 1 wall 4.07 s interval 7.05 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1255 MiB grown +2 MiB MemAvailable 7.55 GiB action -
+2026-10-20T02:24:27.168499820Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 12 longest 16188 in_flight 0 wall 4.71 s interval 4.83 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1226 MiB grown +2 MiB MemAvailable 7.64 GiB action keep
+2026-10-20T02:24:32.641937495Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 13 longest 8188 in_flight 1 wall 3.63 s interval 5.47 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1255 MiB grown +2 MiB MemAvailable 7.56 GiB action -
+2026-10-20T02:24:38.034886445Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 14 longest 16297 in_flight 0 wall 5.24 s interval 5.39 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1243 MiB grown +2 MiB MemAvailable 7.66 GiB action keep
+2026-10-20T02:24:43.804202531Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 15 longest 8188 in_flight 1 wall 3.63 s interval 5.77 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1255 MiB grown +2 MiB MemAvailable 7.57 GiB action -
+2026-10-20T02:24:48.749018715Z (Worker_TP1 pid=464) [dsv41-prefill-empty-cache] step 16 longest 16376 in_flight 1 wall 4.83 s interval 4.94 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1255 MiB grown +2 MiB MemAvailable 7.62 GiB action hold
+2026-10-20T02:23:12.112991571Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 1 longest 3826 in_flight 0 wall 3.05 s interval - reserved 101.99 -> 102.75 GiB (+780 MiB) peak +644 MiB grown +0 MiB MemAvailable 5.37 GiB action -
+2026-10-20T02:23:14.592136182Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 2 longest 464 in_flight 0 wall 1.38 s interval 2.49 s reserved 102.75 -> 102.75 GiB (+0 MiB) peak +71 MiB grown +0 MiB MemAvailable 5.42 GiB action -
+2026-10-20T02:23:28.481608103Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 3 longest 1278 in_flight 0 wall 13.45 s interval 13.89 s reserved 102.75 -> 102.75 GiB (+0 MiB) peak +196 MiB grown +0 MiB MemAvailable 4.02 GiB action -
+2026-10-20T02:23:29.609421259Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 4 longest 213 in_flight 0 wall 0.24 s interval 1.13 s reserved 102.75 -> 102.77 GiB (+20 MiB) peak +39 MiB grown +20 MiB MemAvailable 6.17 GiB action -
+2026-10-20T02:23:48.466884159Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 5 longest 201 in_flight 0 wall 0.12 s interval 18.86 s reserved 102.77 -> 102.77 GiB (+0 MiB) peak +31 MiB grown +20 MiB MemAvailable 5.43 GiB action -
+2026-10-20T02:23:53.327542202Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 6 longest 8117 in_flight 0 wall 3.90 s interval 4.86 s reserved 102.77 -> 103.73 GiB (+982 MiB) peak +1244 MiB grown +400 MiB MemAvailable 5.17 GiB action -
+2026-10-20T02:23:59.612812992Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 7 longest 8188 in_flight 1 wall 3.69 s interval 6.29 s reserved 103.73 -> 103.75 GiB (+20 MiB) peak +1255 MiB grown +409 MiB MemAvailable 3.53 GiB action -
+2026-10-20T02:24:06.661844398Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 8 longest 16376 in_flight 1 wall 5.12 s interval 5.34 s reserved 103.75 -> 103.75 GiB (+0 MiB, 102.31 GiB after release) peak +1255 MiB grown +409 MiB MemAvailable 4.72 GiB action grown
+2026-10-20T02:24:10.415821143Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 9 longest 24564 in_flight 1 wall 3.67 s interval 5.47 s reserved 103.00 -> 103.55 GiB (+566 MiB) peak +1255 MiB grown +0 MiB MemAvailable 5.14 GiB action hold
+2026-10-20T02:24:15.285930091Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 10 longest 32561 in_flight 0 wall 4.74 s interval 4.87 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1242 MiB grown +0 MiB MemAvailable 5.25 GiB action keep
+2026-10-20T02:24:22.345013733Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 11 longest 8188 in_flight 1 wall 4.08 s interval 7.06 s reserved 103.55 -> 103.55 GiB (+0 MiB) peak +1255 MiB grown +2 MiB MemAvailable 3.39 GiB action -
+2026-10-20T02:24:28.824888602Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 12 longest 16188 in_flight 0 wall 4.71 s interval 4.83 s reserved 103.55 -> 103.55 GiB (+0 MiB, 102.31 GiB after release) peak +1226 MiB grown +2 MiB MemAvailable 3.54 GiB action release
+2026-10-20T02:24:32.961853628Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 13 longest 8188 in_flight 1 wall 3.94 s interval 5.78 s reserved 103.00 -> 103.72 GiB (+746 MiB) peak +1255 MiB grown +0 MiB MemAvailable 4.76 GiB action -
+2026-10-20T02:24:38.055016709Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 14 longest 16297 in_flight 0 wall 5.09 s interval 5.09 s reserved 103.72 -> 103.80 GiB (+80 MiB) peak +1243 MiB grown +80 MiB MemAvailable 4.81 GiB action keep
+2026-10-20T02:24:43.813180626Z (Worker_TP0 pid=657) [dsv41-prefill-empty-cache] step 15 longest 8188 in_flight 1 wall 3.63 s interval 5.76 s reserved 103.80 -> 103.80 GiB (+0 MiB) peak +1255 MiB grown +80 MiB MemAvailable 1.57 GiB action -
+## NVRM lines spark1 in window: 50, spark2 0

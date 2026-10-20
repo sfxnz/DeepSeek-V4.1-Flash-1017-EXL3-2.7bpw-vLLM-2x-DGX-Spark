@@ -1,0 +1,242 @@
+# prefill16k_b rank0 (spark1) source=/home/sfxnz/projects/data/dsv41-traces/perf2-B0/prefill16k_b/rank0/dp0_pp0_tp0_dcp0_ep0_rank0.1792431510905778299.nul2space.pt.trace.json.gz main_tid=675 nul_bytes=0 min_py_us=50.0
+# event counts {'user_annotation': 4, 'cpu_op': 266197, 'cuda_runtime': 158062, 'overhead': 28, 'kernel': 98676, 'cuda_driver': 11536, 'gpu_memcpy': 9425, 'gpu_memset': 6410, 'gpu_user_annotation': 4, 'Trace': 1}
+
+## step 0 execute_context_1(8190)_generation_0(0): wall 16206.366 ms, busy 9947.518, idle 6258.848, ops 57048, cpu span 16008.725 (annot 15889.626), first op 1.491 ms after annot start
+streams: 17: 56905 ops 9941.323 ms; 29: 8 ops 1.993 ms; 21: 2 ops 0.006 ms; 3985: 8 ops 0.463 ms; 3988: 13 ops 0.582 ms; 3986: 13 ops 1.393 ms; 3989: 17 ops 0.607 ms; 3987: 4 ops 0.127 ms; 3990: 13 ops 0.439 ms; 3993: 17 ops 0.57 ms; 3992: 4 ops 0.133 ms; 3994: 6 ops 1.579 ms; 3996: 38 ops 0.384 ms
+category                        ms       n
+moe_exl3_fused            2551.492     160
+torch_eltwise             1222.052   24267
+dense_mxfp8_b12x          1159.572     214
+mhc                       1128.214     263
+other                      806.012    3505
+moe_fat_hadamard           655.478    9972
+nccl_allreduce             577.043      88
+sparse_attn                533.277      46
+hgemm_cublas_f16           375.627    1658
+moe_fat_reconstruct        327.116    4986
+deepgemm_fp8fp4            231.468      46
+act_quant                  119.986      46
+gemm_bf16_other             81.749     431
+memcpy_DtoD                 77.103    4167
+indexer                     28.429      45
+triton                      28.404     116
+sort_scan_routing           22.209    3218
+nccl_allgather               8.200       4
+memcpy_DtoH                  6.105     523
+dense_gemv                   4.508      20
+router_topk                  3.560      43
+memset                       3.131    3204
+norm                         2.000       6
+memcpy_HtoD                  1.881       9
+compressor                   1.727       4
+rope_kv                      0.266       4
+sampler                      0.018       3
+main-thread target ARs 88, layers seen 40
+host syncs (main thread): {'cudaEventSynchronize': 1, 'cudaStreamSynchronize': 520}  wait ms {'cudaEventSynchronize': 5.022, 'cudaStreamSynchronize': 7405.085}; in layers 508, post-forward 13; D2H copies 523; sync-ish ops {'aten::item': 899, 'aten::_local_scalar_dense': 899, 'aten::repeat_interleave': 204}
+  syncs by innermost frame: <none> x521
+  syncs by outermost cpu_op: vllm::moe_forward_shared x520; <no cpu_op> x1
+  syncs by innermost cpu_op: aten::_local_scalar_dense x360; aten::copy_ x160; <no cpu_op> x1
+  sync ops by innermost frame: <none> x2002
+  per-layer sync+d2h+op counts: 0:122 1:65 2:75 3:73 4:73 5:73 6:73 7:73 8:75 9:73 10:73 11:73 12:73 13:73 14:75 15:73 16:73 17:73 18:73 19:73 20:75 21:73 22:73 23:73 24:75 25:73 26:73 27:73 28:75 29:73 30:73 31:73 32:75 33:73 34:73 35:73 36:75 37:73 38:73 39:73 40:69
+per-layer kernel ms: 0:83.248 1:468.685 2:221.961 3:197.626 4:417.759 5:377.6 6:438.785 7:206.928 8:209.878 9:200.281 10:198.097 11:195.237 12:188.648 13:190.009 14:264.781 15:185.219 16:220.803 17:186.25 18:188.903 19:188.919 20:491.497 21:391.526 22:290.862 23:191.831 24:218.428 25:195.969 26:201.263 27:203.43 28:213.745 29:191.972 30:195.127 31:204.303 32:194.785 33:199.159 34:211.485 35:203.752 36:204.521 37:239.671 38:201.601 39:199.201 40:482.885
+device-idle gaps >= threshold: n 1307 total 6106.036 ms; by length {'1-10ms': 340.337, '0.1-1ms': 177.213, '20-100us': 25.715, '>=10ms': 5562.771}
+  main-thread innermost frame at gap midpoints (ms): 
+     6106.036  <no py frame >=min_py_us>
+  main-thread innermost cpu_op at gap midpoints (ms): 
+     3217.197  aten::empty
+     1761.518  <no cpu_op open: python/host>
+      508.370  vllm::moe_forward_shared
+      446.344  aten::empty_strided
+       51.418  aten::copy_
+       27.737  aten::sort
+       23.605  aten::slice
+        5.547  aten::cat
+        5.267  aten::gather
+        5.168  aten::_to_copy
+        5.137  vllm::sparse_attn_indexer
+        4.748  aten::index
+        4.387  aten::index_select
+        4.062  aten::masked_fill
+        3.856  aten::clamp
+  main-thread open CUDA runtime call at gap midpoints (ms): cuMemCreate 3659.236; <no cuda runtime call open> 2317.338; cuLaunchKernelEx 56.997; cudaMemcpyAsync 49.664; cudaEventSynchronize 10.253; cudaLaunchKernel 7.192; cudaMemsetAsync 2.501; cudaHostAlloc 1.477
+  gap ms with some other worker thread inside a cpu_op: 0.0
+  other threads at gap midpoints (python frames, ms): 
+  largest gaps: 
+    1736.670 ms at +29.404 ms (layer 0): 
+     846.408 ms at +1960.665 ms (layer 0): 
+     753.475 ms at +4236.195 ms (layer 1): 
+     708.241 ms at +14491.689 ms (layer 37): 
+     464.296 ms at +3142.88 ms (layer 1): 
+     443.764 ms at +3766.003 ms (layer 1): 
+     274.363 ms at +14208.188 ms (layer 37): 
+     168.688 ms at +1776.566 ms (layer 0): 
+      30.615 ms at +9484.693 ms (layer 19): 
+      26.034 ms at +15286.051 ms (layer 38): 
+      24.469 ms at +8177.798 ms (layer 13): 
+      20.339 ms at +11367.304 ms (layer 25): 
+top kernels                                                                                                               cat                      n        ms   us med
+void exl3_moe_kernel<3, 128, 1>(__half const*, __half*, __half*, __half*, __half*, float*, unsigned short const**, __hal  moe_exl3_fused          96  1385.569  13438.1
+kernel_cutlass_kernel_flashinfergemmkernelsdense_blockscaled_gemm_sm120_b12xDenseGemmKernel_object_at__CopyAtom_ThrID10_  dense_mxfp8_b12x       214  1159.572   3144.0
+void deep_gemm::sm120_tf32_hc_prenorm_gemm_impl<24u, 20480u, 128u, 32u, 64u, 1u, 4u, 256u, 128u>(unsigned int, CUtensorM  mhc                     79   624.988   1600.5
+void exl3_moe_kernel<2, 128, 1>(__half const*, __half*, __half*, __half*, __half*, float*, unsigned short const**, __hal  moe_exl3_fused          28   589.432  19929.8
+ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKernelArgsStorage<4096ul>)                                                nccl_allreduce          88   577.043   6518.9
+void sparse_mla_prefill_mg_dual_kernel<(ModelType)1, (ComputeMode)1, 32, 128, 64, 64, 2>(__nv_bfloat16 const*, unsigned   sparse_attn             38   515.672  13108.8
+void exl3_moe_kmix_kernel<2, 3, 128, 1>(__half const*, __half*, __half*, __half*, __half*, float*, unsigned short const*  moe_exl3_fused          32   453.689  14204.2
+void at::native::indexFuncLargeIndex<float, long, unsigned int, 2, 2, -2, true, at::native::(anonymous namespace)::Reduc  torch_eltwise         1662   373.275    150.4
+void had_ff_r_128_kernel<false, true>(float const*, float*, __half const*, float)                                         moe_fat_hadamard      4986   362.709     20.0
+mhc_post_tilelang_kernel                                                                                                  mhc                     83   316.233   3492.2
+void cutlass::Kernel2<cutlass_80_tensorop_s16816gemm_f16_256x128_32x3_nn_align8>(cutlass_80_tensorop_s16816gemm_f16_256x  hgemm_cublas_f16       964   298.554    282.2
+void had_hf_r_128_kernel<true, false>(__half const*, __half*, __half const*, float)                                       moe_fat_hadamard      4986   292.769     25.2
+void deep_gemm::sm120_fp8_fp4_gemm_1d1d_impl<0u, 1024u, 4096u, 32u, 32u, 4u, 128u, 128u, 64u, 64u, 64u, 128u, 4u, 128u,   deepgemm_fp8fp4         40   230.443   5525.2
+nvjet_sm121_hss_mma_128x128x64_3_32x64x64_tmaAB_bz_NNNN                                                                   other                  924   227.647    240.2
+void reconstruct_kernel<3, 1>(__half*, unsigned short const*, int, int)                                                   moe_fat_reconstruct   3421   225.713     63.7
+mhc_pre_big_fuse_with_norm_tilelang_kernel                                                                                mhc                     80   181.737   2241.6
+void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl<at::native::BinaryFunctor<float, float, float, a  torch_eltwise         1662   172.668     55.3
+void at::native::vectorized_gather_kernel<16, long>(char*, char*, long*, int, long, long, long, long, bool)               torch_eltwise         1666   151.464     69.2
+void exl3_moe_kmix_kernel<3, 4, 128, 1>(__half const*, __half*, __half*, __half*, __half*, float*, unsigned short const*  moe_exl3_fused           4   122.801  32458.4
+_fused_inv_rope_fp8_quant_per_head                                                                                        act_quant               43   119.971   1944.2
+void vllm::deepseek_v4_fused_ops::fusedDeepseekV4QNormRopeKVRopeQuantInsertKernelReducedGrid<c10::BFloat16, 32, false>(c  other                   40    99.369   2427.9
+nvjet_sm121_hss_mma_128x160x64_2_64x40x64_tmaAB_bz_NNNN                                                                   other                  452    98.792    137.0
+void reconstruct_kernel<2, 1>(__half*, unsigned short const*, int, int)                                                   moe_fat_reconstruct   1508    96.308     60.4
+void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::T  torch_eltwise         3329    88.879     23.9
+nvjet_sm121_hss_mma_128x176x64_2_32x88x64_tmaAB_bz_NNNN                                                                   other                  110    83.860    318.2
+kernel_cutlass_kernel_flashinferquantizationkernelsmxfp8_quantizeMXFP8QuantizeSwizzledKernel_object_at__tensorptrbf16gme  gemm_bf16_other        166    77.503    566.4
+Memcpy DtoD (Device -> Device)                                                                                            memcpy_DtoD           4167    77.103      1.4
+void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}:  torch_eltwise          242    70.957    216.1
+void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati  torch_eltwise          203    68.636    196.2
+void at::native::vectorized_elementwise_kernel<4, at::native::(anonymous namespace)::launch_clamp_scalar(at::TensorItera  torch_eltwise         3325    55.072      8.5
+void at::native::vectorized_elementwise_kernel<4, at::native::BinaryFunctor<float, float, float, at::native::binary_inte  torch_eltwise         3324    53.058      8.9
+nvjet_sm121_hss_mma_128x96x64_3_64x24x64_tmaAB_bz_NNNN                                                                    other                  518    50.596     94.8
+void at::native::vectorized_elementwise_kernel<4, at::native::bfloat16_copy_kernel_cuda(at::TensorIteratorBase&)::{lambd  torch_eltwise           40    46.446   1149.1
+void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<c10::BFloat16>, std::array<char*, 3ul> >(i  torch_eltwise           43    46.279   1123.8
+void cutlass::Kernel2<cutlass_80_tensorop_s16816gemm_f16_128x128_32x4_nn_align8>(cutlass_80_tensorop_s16816gemm_f16_128x  hgemm_cublas_f16       434    45.081     81.8
+nvjet_sm121_hss_mma_128x144x64_2_32x72x64_tmaAB_bz_NNNN                                                                   other                  144    41.926    271.5
+nvjet_sm121_tss_mma_128x128x64_3_32x64x64_tmaAB_bz_TNNN                                                                   other                   41    36.741    530.6
+void at::native::vectorized_elementwise_kernel<4, at::native::sigmoid_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}  torch_eltwise         1662    35.518     13.7
+void cutlass::Kernel2<cutlass_80_tensorop_s16816gemm_f16_128x256_32x3_nn_align8>(cutlass_80_tensorop_s16816gemm_f16_128x  hgemm_cublas_f16       260    31.993    109.1
+nvjet_sm121_hss_mma_128x192x64_2_64x48x64_tmaAB_bz_NNNN                                                                   other                  152    29.068    154.2
+nvjet_sm121_hss_mma_128x96x64_3_32x48x64_tmaAB_bz_NNNN                                                                    other                  236    23.980    100.5
+nvjet_sm121_hss_mma_128x160x32_5_64x40x32_tmaAB_splitK_NNNN                                                               other                  256    21.118     87.6
+nvjet_sm121_hss_mma_128x64x64_4_32x64x64_tmaAB_bz_NNNN                                                                    other                  252    20.564     81.8
+nvjet_sm121_hss_mma_128x208x32_4_32x104x32_tmaAB_bz_NNNN                                                                  other                  110    19.583    156.9
+void at::native::vectorized_elementwise_kernel<4, at::native::float16_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda  torch_eltwise         1862    19.188      6.1
+
+## step 1 execute_context_1(8001)_generation_0(0): wall 11456.211 ms, busy 8111.186, idle 3345.025, ops 57463, cpu span 11574.048 (annot 11564.293), first op 199.135 ms after annot start
+streams: 17: 57320 ops 8106.816 ms; 29: 8 ops 1.619 ms; 21: 2 ops 0.004 ms; 3985: 8 ops 0.138 ms; 3988: 13 ops 0.579 ms; 3986: 13 ops 0.404 ms; 3989: 17 ops 0.411 ms; 3987: 4 ops 0.091 ms; 3990: 13 ops 0.442 ms; 3993: 17 ops 0.452 ms; 3992: 4 ops 0.125 ms; 3994: 6 ops 1.466 ms; 3996: 38 ops 0.306 ms
+category                        ms       n
+moe_exl3_fused            2283.984     160
+torch_eltwise             1128.586   24448
+other                      685.007    3546
+dense_mxfp8_b12x           647.231     214
+mhc                        583.579     263
+nccl_allreduce             556.613      88
+sparse_attn                514.643      46
+moe_fat_hadamard           499.251   10062
+hgemm_cublas_f16           334.498    1663
+moe_fat_reconstruct        312.234    5031
+deepgemm_fp8fp4            213.269      46
+act_quant                   76.209      46
+gemm_bf16_other             74.931     431
+memcpy_DtoD                 71.290    4197
+indexer                     62.366      64
+triton                      29.325     114
+sort_scan_routing           21.060    3225
+nccl_allgather               7.910       4
+dense_gemv                   4.174      20
+router_topk                  3.306      43
+memset                       3.085    3206
+memcpy_HtoD                  1.843       6
+norm                         1.586       6
+compressor                   1.370       4
+memcpy_DtoH                  1.236     523
+rope_kv                      0.248       4
+sampler                      0.014       3
+main-thread target ARs 88, layers seen 40
+host syncs (main thread): {'cudaEventSynchronize': 1, 'cudaStreamSynchronize': 520}  wait ms {'cudaEventSynchronize': 190.383, 'cudaStreamSynchronize': 6865.022}; in layers 508, post-forward 13; D2H copies 523; sync-ish ops {'aten::item': 905, 'aten::_local_scalar_dense': 905, 'aten::repeat_interleave': 204}
+  syncs by innermost frame: <none> x521
+  syncs by outermost cpu_op: vllm::moe_forward_shared x520; <no cpu_op> x1
+  syncs by innermost cpu_op: aten::_local_scalar_dense x360; aten::copy_ x160; <no cpu_op> x1
+  sync ops by innermost frame: <none> x2014
+  per-layer sync+d2h+op counts: 0:134 1:65 2:75 3:73 4:73 5:73 6:73 7:73 8:75 9:73 10:73 11:73 12:73 13:73 14:75 15:73 16:73 17:73 18:73 19:73 20:75 21:73 22:73 23:73 24:75 25:73 26:73 27:73 28:75 29:73 30:73 31:73 32:75 33:73 34:73 35:73 36:75 37:73 38:73 39:73 40:69
+per-layer kernel ms: 0:51.787 1:259.303 2:215.395 3:197.449 4:199.463 5:210.161 6:189.313 7:191.741 8:211.993 9:191.854 10:193.395 11:184.609 12:191.755 13:186.939 14:258.385 15:185.208 16:213.482 17:184.864 18:221.201 19:181.605 20:231.098 21:188.039 22:195.865 23:193.412 24:215.486 25:193.676 26:197.515 27:199.809 28:215.254 29:189.524 30:190.666 31:205.445 32:201.133 33:196.833 34:202.067 35:196.986 36:210.725 37:191.529 38:193.789 39:189.758 40:200.332
+device-idle gaps >= threshold: n 567 total 3189.947 ms; by length {'>=10ms': 3076.038, '0.1-1ms': 23.746, '20-100us': 17.243, '1-10ms': 72.919}
+  main-thread innermost frame at gap midpoints (ms): 
+     3189.947  <no py frame >=min_py_us>
+  main-thread innermost cpu_op at gap midpoints (ms): 
+     2985.392  <no cpu_op open: python/host>
+       80.679  vllm::moe_forward_shared
+       47.155  aten::copy_
+       19.524  aten::sort
+       10.097  aten::bitwise_or
+        8.767  aten::slice
+        8.716  aten::index
+        4.706  aten::gather
+        4.507  aten::index_select
+        4.399  aten::reshape
+        3.925  aten::clone
+        2.731  aten::ones
+        1.714  aten::zero_
+        1.390  aten::new_full
+        1.191  aten::clamp
+  main-thread open CUDA runtime call at gap midpoints (ms): <no cuda runtime call open> 3181.629; cudaMemcpyAsync 5.971; cudaLaunchKernel 1.695; cudaStreamSynchronize 0.542; cudaMemsetAsync 0.065; cudaDeviceGetAttribute 0.024; cudaFuncSetAttribute 0.021
+  gap ms with some other worker thread inside a cpu_op: 0.0
+  other threads at gap midpoints (python frames, ms): 
+  largest gaps: 
+    2984.891 ms at +14.199 ms (layer 0): 
+      40.853 ms at +5045.342 ms (layer 10): 
+      25.660 ms at +3681.19 ms (layer 3): 
+      14.538 ms at +6326.817 ms (layer 16): 
+      10.097 ms at +3321.096 ms (layer 2): 
+       6.548 ms at +9858.168 ms (layer 33): 
+       5.266 ms at +6341.471 ms (layer 16): 
+       3.014 ms at +5342.243 ms (layer 11): 
+       2.685 ms at +8459.682 ms (layer 26): 
+       2.645 ms at +4213.649 ms (layer 6): 
+       2.160 ms at +4128.996 ms (layer 5): 
+       2.146 ms at +3805.315 ms (layer 4): 
+top kernels                                                                                                               cat                      n        ms   us med
+void exl3_moe_kernel<3, 128, 1>(__half const*, __half*, __half*, __half*, __half*, float*, unsigned short const**, __hal  moe_exl3_fused          96  1288.917  12539.9
+kernel_cutlass_kernel_flashinfergemmkernelsdense_blockscaled_gemm_sm120_b12xDenseGemmKernel_object_at__CopyAtom_ThrID10_  dense_mxfp8_b12x       214   647.231   2870.1
+ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKernelArgsStorage<4096ul>)                                                nccl_allreduce          88   556.613   6259.2
+void sparse_mla_prefill_mg_dual_kernel<(ModelType)1, (ComputeMode)1, 32, 128, 64, 64, 2>(__nv_bfloat16 const*, unsigned   sparse_attn             38   503.602  13238.6
+void exl3_moe_kernel<2, 128, 1>(__half const*, __half*, __half*, __half*, __half*, float*, unsigned short const**, __hal  moe_exl3_fused          28   482.356  16906.8
+void exl3_moe_kmix_kernel<2, 3, 128, 1>(__half const*, __half*, __half*, __half*, __half*, float*, unsigned short const*  moe_exl3_fused          32   431.968  13478.1
+void at::native::indexFuncLargeIndex<float, long, unsigned int, 2, 2, -2, true, at::native::(anonymous namespace)::Reduc  torch_eltwise         1677   352.178    129.5
+mhc_post_tilelang_kernel                                                                                                  mhc                     83   281.441   3398.2
+void had_ff_r_128_kernel<false, true>(float const*, float*, __half const*, float)                                         moe_fat_hadamard      5031   276.329     16.4
+void cutlass::Kernel2<cutlass_80_tensorop_s16816gemm_f16_256x128_32x3_nn_align8>(cutlass_80_tensorop_s16816gemm_f16_256x  hgemm_cublas_f16       948   266.196    256.5
+void had_hf_r_128_kernel<true, false>(__half const*, __half*, __half const*, float)                                       moe_fat_hadamard      5031   222.922     22.2
+void reconstruct_kernel<3, 1>(__half*, unsigned short const*, int, int)                                                   moe_fat_reconstruct   3423   216.769     62.6
+void deep_gemm::sm120_fp8_fp4_gemm_1d1d_impl<0u, 1024u, 4096u, 32u, 32u, 4u, 128u, 128u, 64u, 64u, 64u, 128u, 4u, 128u,   deepgemm_fp8fp4         40   212.369   5334.8
+nvjet_sm121_hss_mma_128x128x64_3_32x64x64_tmaAB_bz_NNNN                                                                   other                  944   203.844    199.1
+mhc_pre_big_fuse_with_norm_tilelang_kernel                                                                                mhc                     80   174.107   2178.2
+void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl<at::native::BinaryFunctor<float, float, float, a  torch_eltwise         1677   158.185     45.5
+void at::native::vectorized_gather_kernel<16, long>(char*, char*, long*, int, long, long, long, long, bool)               torch_eltwise         1681   139.648     61.8
+void deep_gemm::sm120_tf32_hc_prenorm_gemm_impl<24u, 20480u, 128u, 32u, 64u, 1u, 4u, 256u, 128u>(unsigned int, CUtensorM  mhc                     79   125.606   1554.9
+void vllm::deepseek_v4_fused_ops::fusedDeepseekV4QNormRopeKVRopeQuantInsertKernelReducedGrid<c10::BFloat16, 32, false>(c  other                   40    93.720   2325.3
+void reconstruct_kernel<2, 1>(__half*, unsigned short const*, int, int)                                                   moe_fat_reconstruct   1552    92.120     58.8
+void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::T  torch_eltwise         3359    84.177     22.9
+void exl3_moe_kmix_kernel<3, 4, 128, 1>(__half const*, __half*, __half*, __half*, __half*, float*, unsigned short const*  moe_exl3_fused           4    80.743  20179.0
+_fused_inv_rope_fp8_quant_per_head                                                                                        act_quant               43    76.201   1881.1
+nvjet_sm121_hss_mma_128x160x64_2_64x40x64_tmaAB_bz_NNNN                                                                   other                  430    73.254    134.2
+Memcpy DtoD (Device -> Device)                                                                                            memcpy_DtoD           4197    71.290      1.4
+kernel_cutlass_kernel_flashinferquantizationkernelsmxfp8_quantizeMXFP8QuantizeSwizzledKernel_object_at__tensorptrbf16gme  gemm_bf16_other        166    71.082    550.8
+void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}:  torch_eltwise          242    68.077    212.5
+void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati  torch_eltwise          203    65.728    193.6
+nvjet_sm121_hss_mma_128x176x64_2_32x88x64_tmaAB_bz_NNNN                                                                   other                  128    53.840    316.3
+void at::native::vectorized_elementwise_kernel<4, at::native::(anonymous namespace)::launch_clamp_scalar(at::TensorItera  torch_eltwise         3355    47.928      6.1
+nvjet_sm121_hss_mma_128x96x64_3_64x24x64_tmaAB_bz_NNNN                                                                    other                  536    47.904     91.2
+void at::native::vectorized_elementwise_kernel<4, at::native::BinaryFunctor<float, float, float, at::native::binary_inte  torch_eltwise         3354    44.589      7.0
+void at::native::vectorized_elementwise_kernel<4, at::native::bfloat16_copy_kernel_cuda(at::TensorIteratorBase&)::{lambd  torch_eltwise           40    44.276   1101.0
+void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<c10::BFloat16>, std::array<char*, 3ul> >(i  torch_eltwise           43    43.954   1095.5
+void cutlass::Kernel2<cutlass_80_tensorop_s16816gemm_f16_128x128_32x4_nn_align8>(cutlass_80_tensorop_s16816gemm_f16_128x  hgemm_cublas_f16       469    40.720     80.1
+void deep_gemm::sm120_fp8_mqa_logits<32u, 128u, false, 4u, 128u, 2u, 3u, 48u, 128u, 256u, float>(unsigned int, unsigned   indexer                 13    39.083   3078.8
+nvjet_sm121_hss_mma_128x144x64_2_32x72x64_tmaAB_bz_NNNN                                                                   other                  142    37.269    265.9
+void at::native::vectorized_elementwise_kernel<4, at::native::sigmoid_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}  torch_eltwise         1677    30.467      9.0
+void cutlass::Kernel2<cutlass_80_tensorop_s16816gemm_f16_128x256_32x3_nn_align8>(cutlass_80_tensorop_s16816gemm_f16_128x  hgemm_cublas_f16       246    27.582    108.2
+nvjet_sm121_hss_mma_128x96x64_3_32x48x64_tmaAB_bz_NNNN                                                                    other                  252    24.242     99.7
+nvjet_sm121_tss_mma_128x128x64_3_32x64x64_tmaAB_bz_TNNN                                                                   other                   41    21.536    514.4
+nvjet_sm121_hss_mma_128x208x64_2_32x104x64_tmaAB_bz_NNNN                                                                  other                  154    20.748    130.8
+nvjet_sm121_hss_mma_128x160x32_5_64x40x32_tmaAB_splitK_NNNN                                                               other                  256    20.272     86.7
+nvjet_sm121_hss_mma_128x208x32_4_32x104x32_tmaAB_bz_NNNN                                                                  other                  116    19.208    154.4
+nvjet_sm121_hss_mma_128x64x64_4_32x64x64_tmaAB_bz_NNNN                                                                    other                  254    19.122     80.0

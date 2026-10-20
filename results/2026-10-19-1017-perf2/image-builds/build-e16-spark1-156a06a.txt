@@ -1,0 +1,749 @@
+start 2026-10-20T03:59:36Z host spark1 HEAD 156a06a0d36291f0688781cc02de59e84b8e1c95 DIFF e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.e16
+#1 transferring dockerfile: 5.09kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/dsv41-flash-exl3-sm121:e15-kbits
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 2.46MB 0.0s done
+#4 DONE 0.0s
+
+#5 [1/5] FROM docker.io/library/dsv41-flash-exl3-sm121:e15-kbits
+#5 DONE 0.2s
+
+#6 [2/5] COPY patch /opt/dsv41-patch
+#6 DONE 0.1s
+
+#7 [3/5] RUN apt-get update  && apt-get install -y --no-install-recommends git  && git clone https://github.com/vcruz305/vllm-exl3.git /opt/vllm-exl3  && git -C /opt/vllm-exl3 checkout "d3cfd394920360d69f820d2dc96f8292a9e10283"  && python3 /opt/dsv41-patch/fix_vllm_exl3_setup.py /opt/vllm-exl3/setup.py  && python3 /opt/dsv41-patch/widen_p2b_shapes.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_mrow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_cfg1.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_codebook.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_fshift.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_srcsort.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_coop.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_dataflow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_kbits.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_rows.py /opt/vllm-exl3  && TORCH_CUDA_ARCH_LIST=12.1a python3 -m pip install --no-build-isolation --no-deps --force-reinstall /opt/vllm-exl3  && python3 -c "import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); assert b'p2b_coop_dfw_kernelILi2ELi1E' in so and b'p2b_coop_dfw_kernelILi23ELi1E' in so and b'p2b coop dataflow wide kernel engaged' in so; assert vllm_exl3_c.P2B_WIDE_ROWS == 24; assert hasattr(e, '_native_moe_wide_rows'); print('vllm_exl3 rows cuda ok')"  && rm -rf /opt/vllm-exl3 /var/lib/apt/lists/*
+#7 0.457 Get:1 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  InRelease [1576 B]
+#7 0.466 Get:2 http://ports.ubuntu.com/ubuntu-ports noble InRelease [256 kB]
+#7 0.476 Get:3 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble InRelease [17.8 kB]
+#7 0.654 Get:4 http://ports.ubuntu.com/ubuntu-ports noble-updates InRelease [126 kB]
+#7 0.671 Get:5 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble/main arm64 Packages [59.7 kB]
+#7 0.699 Get:6 http://ports.ubuntu.com/ubuntu-ports noble-backports InRelease [126 kB]
+#7 0.745 Get:7 http://ports.ubuntu.com/ubuntu-ports noble-security InRelease [126 kB]
+#7 0.791 Get:8 http://ports.ubuntu.com/ubuntu-ports noble/universe arm64 Packages [19.0 MB]
+#7 1.341 Get:9 http://ports.ubuntu.com/ubuntu-ports noble/multiverse arm64 Packages [274 kB]
+#7 1.342 Get:10 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages [1776 kB]
+#7 1.415 Get:11 http://ports.ubuntu.com/ubuntu-ports noble/restricted arm64 Packages [113 kB]
+#7 1.416 Get:12 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 Packages [1786 kB]
+#7 1.425 Get:13 http://ports.ubuntu.com/ubuntu-ports noble-updates/universe arm64 Packages [2214 kB]
+#7 1.435 Get:14 http://ports.ubuntu.com/ubuntu-ports noble-updates/multiverse arm64 Packages [104 kB]
+#7 1.435 Get:15 http://ports.ubuntu.com/ubuntu-ports noble-updates/restricted arm64 Packages [3251 kB]
+#7 1.496 Get:16 http://ports.ubuntu.com/ubuntu-ports noble-backports/universe arm64 Packages [36.3 kB]
+#7 1.496 Get:17 http://ports.ubuntu.com/ubuntu-ports noble-backports/main arm64 Packages [49.0 kB]
+#7 1.496 Get:18 http://ports.ubuntu.com/ubuntu-ports noble-backports/multiverse arm64 Packages [669 B]
+#7 1.581 Get:19 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  Packages [1778 kB]
+#7 1.690 Get:20 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages [1475 kB]
+#7 1.773 Get:21 http://ports.ubuntu.com/ubuntu-ports noble-security/universe arm64 Packages [1638 kB]
+#7 1.781 Get:22 http://ports.ubuntu.com/ubuntu-ports noble-security/multiverse arm64 Packages [99.1 kB]
+#7 1.783 Get:23 http://ports.ubuntu.com/ubuntu-ports noble-security/restricted arm64 Packages [3129 kB]
+#7 2.172 Fetched 37.5 MB in 2s (21.1 MB/s)
+#7 2.172 Reading package lists...
+#7 2.692 W: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
+#7 2.708 Reading package lists...
+#7 3.194 Building dependency tree...
+#7 3.340 Reading state information...
+#7 3.473 The following additional packages will be installed:
+#7 3.473   git-man
+#7 3.474 Suggested packages:
+#7 3.474   gettext-base git-daemon-run | git-daemon-sysvinit git-doc git-email git-gui
+#7 3.474   gitk gitweb git-cvs git-mediawiki git-svn
+#7 3.474 Recommended packages:
+#7 3.474   less ssh-client
+#7 3.526 The following packages will be upgraded:
+#7 3.526   git git-man
+#7 3.626 2 upgraded, 0 newly installed, 0 to remove and 97 not upgraded.
+#7 3.626 Need to get 4874 kB of archives.
+#7 3.626 After this operation, 1024 B of additional disk space will be used.
+#7 3.626 Get:1 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 git-man all 1:2.43.0-1ubuntu7.4 [1101 kB]
+#7 3.934 Get:2 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 git arm64 1:2.43.0-1ubuntu7.4 [3774 kB]
+#7 4.248 debconf: delaying package configuration, since apt-utils is not installed
+#7 4.282 Fetched 4874 kB in 1s (9181 kB/s)
+#7 4.323 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 22355 files and directories currently installed.)
+#7 4.491 Preparing to unpack .../git-man_1%3a2.43.0-1ubuntu7.4_all.deb ...
+#7 4.513 Unpacking git-man (1:2.43.0-1ubuntu7.4) over (1:2.43.0-1ubuntu7.3) ...
+#7 4.628 Preparing to unpack .../git_1%3a2.43.0-1ubuntu7.4_arm64.deb ...
+#7 4.659 Unpacking git (1:2.43.0-1ubuntu7.4) over (1:2.43.0-1ubuntu7.3) ...
+#7 5.325 Setting up git-man (1:2.43.0-1ubuntu7.4) ...
+#7 5.344 Setting up git (1:2.43.0-1ubuntu7.4) ...
+#7 5.411 Cloning into '/opt/vllm-exl3'...
+#7 6.106 Note: switching to 'd3cfd394920360d69f820d2dc96f8292a9e10283'.
+#7 6.106 
+#7 6.106 You are in 'detached HEAD' state. You can look around, make experimental
+#7 6.106 changes and commit them, and you can discard any commits you make in this
+#7 6.106 state without impacting any branches by switching back to a branch.
+#7 6.106 
+#7 6.106 If you want to create a new branch to retain commits you create, you may
+#7 6.106 do so (now or later) by using -c with the switch command. Example:
+#7 6.106 
+#7 6.106   git switch -c <new-branch-name>
+#7 6.106 
+#7 6.106 Or undo this operation with:
+#7 6.106 
+#7 6.106   git switch -
+#7 6.106 
+#7 6.106 Turn off this advice by setting config variable advice.detachedHead to false
+#7 6.106 
+#7 6.106 HEAD is now at d3cfd39 chore: remove one-time SUH cache maintenance workflow
+#7 6.140 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 6.162 dsv41-patch ok prefer_b12x_mxfp8
+#7 6.173 dsv41-indexer-workspace: already applied
+#7 6.176 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 6.177 dsv41-patch ok persistent_topk: already applied
+#7 6.177 dsv41-patch ok kpool_persistent_topk: already applied
+#7 14.21 INFO 10-20 03:59:51 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 14.21 INFO 10-20 03:59:51 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 14.33 WARNING 10-20 03:59:51 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 14.39 W1020 03:59:51.380000 360 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 15.09 WARNING 10-20 03:59:52 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 15.09 WARNING 10-20 03:59:52 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 15.31 dsv41-patch ok load_general_plugins
+#7 15.31 dsv41-patch ok exl3_weight_block_size
+#7 15.53 dsv41-patch ok warmup_stubs
+#7 15.55 dsv41-patch ok cudagraph_worker_stub
+#7 15.55 dsv41-patch ok swa_page_coerce
+#7 15.66 dsv41-patch ok kernel_block_sizes
+#7 15.66 dsv41-patch ok extra_page_bump
+#7 15.66 dsv41-patch ok v41_config_vision
+#7 15.66 dsv41-patch ok swa_image_width: already applied
+#7 15.66 dsv41-patch ok attention_image_width: already applied
+#7 15.66 dsv41-patch ok native_indexer_decode: already applied
+#7 15.66 dsv41-patch ok indexer_adaptive: already applied
+#7 15.66 dsv41-patch ok indexer_short_context: already applied
+#7 15.66 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 15.66 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 15.67 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 15.67 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 15.67 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 15.67 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 15.67 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 15.67 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 15.67 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 15.67 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 15.67 dsv41-patch ok decode_levers
+#7 15.68 patched /opt/vllm-exl3/setup.py
+#7 17.32 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 17.32 dsv41-patch ok prefer_b12x_mxfp8
+#7 17.33 dsv41-indexer-workspace: already applied
+#7 17.33 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 17.33 dsv41-patch ok persistent_topk: already applied
+#7 17.33 dsv41-patch ok kpool_persistent_topk: already applied
+#7 20.40 INFO 10-20 03:59:57 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 20.40 INFO 10-20 03:59:57 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 20.48 WARNING 10-20 03:59:57 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 20.51 W1020 03:59:57.496000 449 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 20.86 WARNING 10-20 03:59:57 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 20.86 WARNING 10-20 03:59:57 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 20.91 dsv41-patch ok load_general_plugins
+#7 20.91 dsv41-patch ok exl3_weight_block_size
+#7 21.00 dsv41-patch ok warmup_stubs
+#7 21.00 dsv41-patch ok cudagraph_worker_stub
+#7 21.00 dsv41-patch ok swa_page_coerce
+#7 21.03 dsv41-patch ok kernel_block_sizes
+#7 21.03 dsv41-patch ok extra_page_bump
+#7 21.03 dsv41-patch ok v41_config_vision
+#7 21.03 dsv41-patch ok swa_image_width: already applied
+#7 21.03 dsv41-patch ok attention_image_width: already applied
+#7 21.03 dsv41-patch ok native_indexer_decode: already applied
+#7 21.03 dsv41-patch ok indexer_adaptive: already applied
+#7 21.03 dsv41-patch ok indexer_short_context: already applied
+#7 21.03 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 21.03 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 21.03 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 21.03 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 21.03 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 21.03 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 21.03 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 21.03 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 21.03 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 21.03 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 21.03 dsv41-patch ok decode_levers
+#7 21.04 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#7 21.04 patched /opt/vllm-exl3/src/vllm_exl3/exl3.py
+#7 22.24 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 22.25 dsv41-patch ok prefer_b12x_mxfp8
+#7 22.26 dsv41-indexer-workspace: already applied
+#7 22.26 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 22.26 dsv41-patch ok persistent_topk: already applied
+#7 22.26 dsv41-patch ok kpool_persistent_topk: already applied
+#7 25.24 INFO 10-20 04:00:02 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 25.24 INFO 10-20 04:00:02 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 25.31 WARNING 10-20 04:00:02 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 25.33 W1020 04:00:02.324000 581 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 25.66 WARNING 10-20 04:00:02 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 25.66 WARNING 10-20 04:00:02 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 25.71 dsv41-patch ok load_general_plugins
+#7 25.71 dsv41-patch ok exl3_weight_block_size
+#7 25.79 dsv41-patch ok warmup_stubs
+#7 25.79 dsv41-patch ok cudagraph_worker_stub
+#7 25.79 dsv41-patch ok swa_page_coerce
+#7 25.82 dsv41-patch ok kernel_block_sizes
+#7 25.82 dsv41-patch ok extra_page_bump
+#7 25.82 dsv41-patch ok v41_config_vision
+#7 25.82 dsv41-patch ok swa_image_width: already applied
+#7 25.82 dsv41-patch ok attention_image_width: already applied
+#7 25.82 dsv41-patch ok native_indexer_decode: already applied
+#7 25.82 dsv41-patch ok indexer_adaptive: already applied
+#7 25.82 dsv41-patch ok indexer_short_context: already applied
+#7 25.82 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 25.82 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 25.82 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 25.82 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 25.82 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 25.82 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 25.82 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 25.82 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 25.82 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 25.82 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 25.82 dsv41-patch ok decode_levers
+#7 25.82 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#7 25.82 patched /opt/vllm-exl3/src/vllm_exl3/exl3.py
+#7 26.82 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 26.83 dsv41-patch ok prefer_b12x_mxfp8
+#7 26.84 dsv41-indexer-workspace: already applied
+#7 26.84 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 26.84 dsv41-patch ok persistent_topk: already applied
+#7 26.84 dsv41-patch ok kpool_persistent_topk: already applied
+#7 29.82 INFO 10-20 04:00:06 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 29.82 INFO 10-20 04:00:06 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 29.90 WARNING 10-20 04:00:06 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 29.92 W1020 04:00:06.912000 713 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 30.25 WARNING 10-20 04:00:07 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 30.25 WARNING 10-20 04:00:07 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 30.30 dsv41-patch ok load_general_plugins
+#7 30.30 dsv41-patch ok exl3_weight_block_size
+#7 30.38 dsv41-patch ok warmup_stubs
+#7 30.39 dsv41-patch ok cudagraph_worker_stub
+#7 30.39 dsv41-patch ok swa_page_coerce
+#7 30.42 dsv41-patch ok kernel_block_sizes
+#7 30.42 dsv41-patch ok extra_page_bump
+#7 30.42 dsv41-patch ok v41_config_vision
+#7 30.42 dsv41-patch ok swa_image_width: already applied
+#7 30.42 dsv41-patch ok attention_image_width: already applied
+#7 30.42 dsv41-patch ok native_indexer_decode: already applied
+#7 30.42 dsv41-patch ok indexer_adaptive: already applied
+#7 30.42 dsv41-patch ok indexer_short_context: already applied
+#7 30.42 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 30.42 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 30.42 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 30.42 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 30.42 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 30.42 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 30.42 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 30.42 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 30.42 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 30.42 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 30.42 dsv41-patch ok decode_levers
+#7 30.42 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#7 31.43 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 31.44 dsv41-patch ok prefer_b12x_mxfp8
+#7 31.44 dsv41-indexer-workspace: already applied
+#7 31.44 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 31.44 dsv41-patch ok persistent_topk: already applied
+#7 31.44 dsv41-patch ok kpool_persistent_topk: already applied
+#7 34.34 INFO 10-20 04:00:11 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 34.34 INFO 10-20 04:00:11 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 34.42 WARNING 10-20 04:00:11 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 34.44 W1020 04:00:11.426000 845 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 34.77 WARNING 10-20 04:00:11 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 34.78 WARNING 10-20 04:00:11 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 34.83 dsv41-patch ok load_general_plugins
+#7 34.83 dsv41-patch ok exl3_weight_block_size
+#7 34.91 dsv41-patch ok warmup_stubs
+#7 34.91 dsv41-patch ok cudagraph_worker_stub
+#7 34.92 dsv41-patch ok swa_page_coerce
+#7 34.95 dsv41-patch ok kernel_block_sizes
+#7 34.95 dsv41-patch ok extra_page_bump
+#7 34.95 dsv41-patch ok v41_config_vision
+#7 34.95 dsv41-patch ok swa_image_width: already applied
+#7 34.95 dsv41-patch ok attention_image_width: already applied
+#7 34.95 dsv41-patch ok native_indexer_decode: already applied
+#7 34.95 dsv41-patch ok indexer_adaptive: already applied
+#7 34.95 dsv41-patch ok indexer_short_context: already applied
+#7 34.95 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 34.95 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 34.95 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 34.95 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 34.95 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 34.95 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 34.95 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 34.95 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 34.95 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 34.95 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 34.95 dsv41-patch ok decode_levers
+#7 34.95 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#7 34.95 patched /opt/vllm-exl3/src/vllm_exl3/exl3.py
+#7 35.97 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 35.98 dsv41-patch ok prefer_b12x_mxfp8
+#7 35.98 dsv41-indexer-workspace: already applied
+#7 35.98 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 35.98 dsv41-patch ok persistent_topk: already applied
+#7 35.98 dsv41-patch ok kpool_persistent_topk: already applied
+#7 38.95 INFO 10-20 04:00:15 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 38.95 INFO 10-20 04:00:15 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 39.02 WARNING 10-20 04:00:16 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 39.04 W1020 04:00:16.033000 977 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 39.37 WARNING 10-20 04:00:16 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 39.37 WARNING 10-20 04:00:16 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 39.42 dsv41-patch ok load_general_plugins
+#7 39.42 dsv41-patch ok exl3_weight_block_size
+#7 39.51 dsv41-patch ok warmup_stubs
+#7 39.51 dsv41-patch ok cudagraph_worker_stub
+#7 39.51 dsv41-patch ok swa_page_coerce
+#7 39.54 dsv41-patch ok kernel_block_sizes
+#7 39.54 dsv41-patch ok extra_page_bump
+#7 39.54 dsv41-patch ok v41_config_vision
+#7 39.54 dsv41-patch ok swa_image_width: already applied
+#7 39.54 dsv41-patch ok attention_image_width: already applied
+#7 39.54 dsv41-patch ok native_indexer_decode: already applied
+#7 39.54 dsv41-patch ok indexer_adaptive: already applied
+#7 39.54 dsv41-patch ok indexer_short_context: already applied
+#7 39.54 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 39.54 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 39.54 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 39.54 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 39.54 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 39.54 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 39.54 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 39.54 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 39.54 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 39.54 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 39.54 dsv41-patch ok decode_levers
+#7 39.54 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#7 40.53 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 40.54 dsv41-patch ok prefer_b12x_mxfp8
+#7 40.54 dsv41-indexer-workspace: already applied
+#7 40.54 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 40.54 dsv41-patch ok persistent_topk: already applied
+#7 40.54 dsv41-patch ok kpool_persistent_topk: already applied
+#7 43.65 INFO 10-20 04:00:20 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 43.65 INFO 10-20 04:00:20 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 43.73 WARNING 10-20 04:00:20 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 43.76 W1020 04:00:20.745000 1109 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 44.12 WARNING 10-20 04:00:21 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 44.12 WARNING 10-20 04:00:21 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 44.18 dsv41-patch ok load_general_plugins
+#7 44.18 dsv41-patch ok exl3_weight_block_size
+#7 44.27 dsv41-patch ok warmup_stubs
+#7 44.27 dsv41-patch ok cudagraph_worker_stub
+#7 44.27 dsv41-patch ok swa_page_coerce
+#7 44.30 dsv41-patch ok kernel_block_sizes
+#7 44.30 dsv41-patch ok extra_page_bump
+#7 44.30 dsv41-patch ok v41_config_vision
+#7 44.30 dsv41-patch ok swa_image_width: already applied
+#7 44.30 dsv41-patch ok attention_image_width: already applied
+#7 44.30 dsv41-patch ok native_indexer_decode: already applied
+#7 44.30 dsv41-patch ok indexer_adaptive: already applied
+#7 44.30 dsv41-patch ok indexer_short_context: already applied
+#7 44.30 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 44.30 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 44.30 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 44.30 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 44.30 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 44.30 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 44.30 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 44.31 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 44.31 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 44.31 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 44.31 dsv41-patch ok decode_levers
+#7 44.31 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#7 45.38 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 45.39 dsv41-patch ok prefer_b12x_mxfp8
+#7 45.40 dsv41-indexer-workspace: already applied
+#7 45.40 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 45.40 dsv41-patch ok persistent_topk: already applied
+#7 45.40 dsv41-patch ok kpool_persistent_topk: already applied
+#7 48.49 INFO 10-20 04:00:25 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 48.49 INFO 10-20 04:00:25 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 48.57 WARNING 10-20 04:00:25 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 48.59 W1020 04:00:25.582000 1241 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 48.96 WARNING 10-20 04:00:25 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 48.97 WARNING 10-20 04:00:25 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 49.02 dsv41-patch ok load_general_plugins
+#7 49.02 dsv41-patch ok exl3_weight_block_size
+#7 49.11 dsv41-patch ok warmup_stubs
+#7 49.11 dsv41-patch ok cudagraph_worker_stub
+#7 49.12 dsv41-patch ok swa_page_coerce
+#7 49.15 dsv41-patch ok kernel_block_sizes
+#7 49.15 dsv41-patch ok extra_page_bump
+#7 49.15 dsv41-patch ok v41_config_vision
+#7 49.15 dsv41-patch ok swa_image_width: already applied
+#7 49.15 dsv41-patch ok attention_image_width: already applied
+#7 49.15 dsv41-patch ok native_indexer_decode: already applied
+#7 49.15 dsv41-patch ok indexer_adaptive: already applied
+#7 49.15 dsv41-patch ok indexer_short_context: already applied
+#7 49.15 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 49.15 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 49.15 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 49.15 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 49.15 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 49.15 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 49.15 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 49.15 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 49.15 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 49.15 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 49.15 dsv41-patch ok decode_levers
+#7 49.15 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#7 50.32 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 50.33 dsv41-patch ok prefer_b12x_mxfp8
+#7 50.33 dsv41-indexer-workspace: already applied
+#7 50.33 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 50.33 dsv41-patch ok persistent_topk: already applied
+#7 50.33 dsv41-patch ok kpool_persistent_topk: already applied
+#7 53.35 INFO 10-20 04:00:30 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 53.35 INFO 10-20 04:00:30 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 53.43 WARNING 10-20 04:00:30 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 53.45 W1020 04:00:30.437000 1373 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 53.78 WARNING 10-20 04:00:30 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 53.78 WARNING 10-20 04:00:30 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 53.83 dsv41-patch ok load_general_plugins
+#7 53.83 dsv41-patch ok exl3_weight_block_size
+#7 53.91 dsv41-patch ok warmup_stubs
+#7 53.91 dsv41-patch ok cudagraph_worker_stub
+#7 53.92 dsv41-patch ok swa_page_coerce
+#7 53.94 dsv41-patch ok kernel_block_sizes
+#7 53.94 dsv41-patch ok extra_page_bump
+#7 53.94 dsv41-patch ok v41_config_vision
+#7 53.94 dsv41-patch ok swa_image_width: already applied
+#7 53.94 dsv41-patch ok attention_image_width: already applied
+#7 53.94 dsv41-patch ok native_indexer_decode: already applied
+#7 53.94 dsv41-patch ok indexer_adaptive: already applied
+#7 53.94 dsv41-patch ok indexer_short_context: already applied
+#7 53.94 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 53.94 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 53.94 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 53.94 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 53.94 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 53.94 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 53.94 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 53.94 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 53.94 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 53.94 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 53.94 dsv41-patch ok decode_levers
+#7 53.95 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#7 54.90 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 54.91 dsv41-patch ok prefer_b12x_mxfp8
+#7 54.91 dsv41-indexer-workspace: already applied
+#7 54.91 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 54.91 dsv41-patch ok persistent_topk: already applied
+#7 54.91 dsv41-patch ok kpool_persistent_topk: already applied
+#7 57.88 INFO 10-20 04:00:34 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 57.88 INFO 10-20 04:00:34 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 57.96 WARNING 10-20 04:00:34 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 57.98 W1020 04:00:34.968000 1505 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 58.30 WARNING 10-20 04:00:35 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 58.30 WARNING 10-20 04:00:35 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 58.36 dsv41-patch ok load_general_plugins
+#7 58.36 dsv41-patch ok exl3_weight_block_size
+#7 58.44 dsv41-patch ok warmup_stubs
+#7 58.44 dsv41-patch ok cudagraph_worker_stub
+#7 58.44 dsv41-patch ok swa_page_coerce
+#7 58.47 dsv41-patch ok kernel_block_sizes
+#7 58.47 dsv41-patch ok extra_page_bump
+#7 58.47 dsv41-patch ok v41_config_vision
+#7 58.47 dsv41-patch ok swa_image_width: already applied
+#7 58.47 dsv41-patch ok attention_image_width: already applied
+#7 58.47 dsv41-patch ok native_indexer_decode: already applied
+#7 58.47 dsv41-patch ok indexer_adaptive: already applied
+#7 58.47 dsv41-patch ok indexer_short_context: already applied
+#7 58.47 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 58.47 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 58.47 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 58.47 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 58.47 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 58.47 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 58.47 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 58.47 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 58.47 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 58.47 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 58.47 dsv41-patch ok decode_levers
+#7 58.49 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#7 58.49 wrote /opt/vllm-exl3/csrc/exl3_moe_kmix.cu (kernel from /usr/local/lib/python3.12/dist-packages/exllamav3/exllamav3_ext/quant/exl3_moe_kernel.cuh)
+#7 58.49 patched /opt/vllm-exl3/setup.py
+#7 58.49 patched /opt/vllm-exl3/csrc/bindings.cpp
+#7 58.49 patched /opt/vllm-exl3/src/vllm_exl3/exl3.py
+#7 59.56 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 59.57 dsv41-patch ok prefer_b12x_mxfp8
+#7 59.57 dsv41-indexer-workspace: already applied
+#7 59.57 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 59.57 dsv41-patch ok persistent_topk: already applied
+#7 59.57 dsv41-patch ok kpool_persistent_topk: already applied
+#7 62.59 INFO 10-20 04:00:39 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 62.59 INFO 10-20 04:00:39 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 62.67 WARNING 10-20 04:00:39 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 62.69 W1020 04:00:39.682000 1637 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 63.03 WARNING 10-20 04:00:40 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 63.04 WARNING 10-20 04:00:40 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 63.09 dsv41-patch ok load_general_plugins
+#7 63.09 dsv41-patch ok exl3_weight_block_size
+#7 63.17 dsv41-patch ok warmup_stubs
+#7 63.17 dsv41-patch ok cudagraph_worker_stub
+#7 63.17 dsv41-patch ok swa_page_coerce
+#7 63.20 dsv41-patch ok kernel_block_sizes
+#7 63.20 dsv41-patch ok extra_page_bump
+#7 63.20 dsv41-patch ok v41_config_vision
+#7 63.20 dsv41-patch ok swa_image_width: already applied
+#7 63.20 dsv41-patch ok attention_image_width: already applied
+#7 63.20 dsv41-patch ok native_indexer_decode: already applied
+#7 63.20 dsv41-patch ok indexer_adaptive: already applied
+#7 63.20 dsv41-patch ok indexer_short_context: already applied
+#7 63.20 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 63.20 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 63.20 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 63.20 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 63.20 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 63.20 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 63.20 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 63.20 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 63.20 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 63.20 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 63.20 dsv41-patch ok decode_levers
+#7 63.21 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#7 63.21 patched /opt/vllm-exl3/csrc/bindings.cpp
+#7 63.21 patched /opt/vllm-exl3/src/vllm_exl3/exl3.py
+#7 64.17 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 64.18 dsv41-patch ok prefer_b12x_mxfp8
+#7 64.18 dsv41-indexer-workspace: already applied
+#7 64.18 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 64.18 dsv41-patch ok persistent_topk: already applied
+#7 64.18 dsv41-patch ok kpool_persistent_topk: already applied
+#7 67.12 INFO 10-20 04:00:44 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 67.12 INFO 10-20 04:00:44 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 67.19 WARNING 10-20 04:00:44 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 67.21 W1020 04:00:44.203000 1769 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 67.54 WARNING 10-20 04:00:44 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 67.54 WARNING 10-20 04:00:44 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 67.59 dsv41-patch ok load_general_plugins
+#7 67.59 dsv41-patch ok exl3_weight_block_size
+#7 67.67 dsv41-patch ok warmup_stubs
+#7 67.68 dsv41-patch ok cudagraph_worker_stub
+#7 67.68 dsv41-patch ok swa_page_coerce
+#7 67.71 dsv41-patch ok kernel_block_sizes
+#7 67.71 dsv41-patch ok extra_page_bump
+#7 67.71 dsv41-patch ok v41_config_vision
+#7 67.71 dsv41-patch ok swa_image_width: already applied
+#7 67.71 dsv41-patch ok attention_image_width: already applied
+#7 67.71 dsv41-patch ok native_indexer_decode: already applied
+#7 67.71 dsv41-patch ok indexer_adaptive: already applied
+#7 67.71 dsv41-patch ok indexer_short_context: already applied
+#7 67.71 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 67.71 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 67.71 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 67.71 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 67.71 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 67.71 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 67.71 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 67.71 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 67.71 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 67.71 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 67.71 dsv41-patch ok decode_levers
+#7 67.94 Processing /opt/vllm-exl3
+#7 67.94   Preparing metadata (pyproject.toml): started
+#7 73.14   Preparing metadata (pyproject.toml): finished with status 'done'
+#7 73.14 Building wheels for collected packages: vllm-exl3
+#7 73.14   Building wheel for vllm-exl3 (pyproject.toml): started
+#7 117.4   Building wheel for vllm-exl3 (pyproject.toml): finished with status 'done'
+#7 117.4   Created wheel for vllm-exl3: filename=vllm_exl3-0.4.2-cp312-cp312-linux_aarch64.whl size=5761146 sha256=aa01241d80879dc7831d3cd443f789a46443a155d2192e5cb661327c4857f225
+#7 117.4   Stored in directory: /tmp/pip-ephem-wheel-cache-qg5y7qrq/wheels/2c/23/97/261c957ec2b335d5405f2e9ff7e5f99a3b21aef9f54e133d06
+#7 117.4 Successfully built vllm-exl3
+#7 117.4 Installing collected packages: vllm-exl3
+#7 117.4   Attempting uninstall: vllm-exl3
+#7 117.4     Found existing installation: vllm-exl3 0.4.2
+#7 117.4     Uninstalling vllm-exl3-0.4.2:
+#7 120.8       Successfully uninstalled vllm-exl3-0.4.2
+#7 120.9 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#7 120.9 Successfully installed vllm-exl3-0.4.2
+#7 120.9 DEPRECATION: Unexpected import of 'tabulate' after pip install started. pip 26.3 will enforce this behaviour change. Discussion can be found at https://github.com/pypa/pip/issues/13842 (/usr/local/lib/python3.12/dist-packages/torch/_dynamo/utils.py:249)
+#7 120.9 DEPRECATION: Unexpected import of 'wcwidth' after pip install started. pip 26.3 will enforce this behaviour change. Discussion can be found at https://github.com/pypa/pip/issues/13842 (/usr/local/lib/python3.12/dist-packages/tabulate/__init__.py:27)
+#7 120.9 DEPRECATION: Unexpected import of 'tabulate.version' after pip install started. pip 26.3 will enforce this behaviour change. Discussion can be found at https://github.com/pypa/pip/issues/13842 (/usr/local/lib/python3.12/dist-packages/tabulate/__init__.py:38)
+#7 121.9 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#7 122.0 dsv41-patch ok prefer_b12x_mxfp8
+#7 122.0 dsv41-indexer-workspace: already applied
+#7 122.0 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#7 122.0 dsv41-patch ok persistent_topk: already applied
+#7 122.0 dsv41-patch ok kpool_persistent_topk: already applied
+#7 125.0 INFO 10-20 04:01:41 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#7 125.0 INFO 10-20 04:01:41 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#7 125.1 WARNING 10-20 04:01:42 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 125.1 W1020 04:01:42.078000 2378 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#7 125.4 WARNING 10-20 04:01:42 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 125.4 WARNING 10-20 04:01:42 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#7 125.5 dsv41-patch ok load_general_plugins
+#7 125.5 dsv41-patch ok exl3_weight_block_size
+#7 125.6 dsv41-patch ok warmup_stubs
+#7 125.6 dsv41-patch ok cudagraph_worker_stub
+#7 125.6 dsv41-patch ok swa_page_coerce
+#7 125.6 dsv41-patch ok kernel_block_sizes
+#7 125.6 dsv41-patch ok extra_page_bump
+#7 125.6 dsv41-patch ok v41_config_vision
+#7 125.6 dsv41-patch ok swa_image_width: already applied
+#7 125.6 dsv41-patch ok attention_image_width: already applied
+#7 125.6 dsv41-patch ok native_indexer_decode: already applied
+#7 125.6 dsv41-patch ok indexer_adaptive: already applied
+#7 125.6 dsv41-patch ok indexer_short_context: already applied
+#7 125.6 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#7 125.6 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#7 125.6 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#7 125.6 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#7 125.6 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#7 125.6 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#7 125.6 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#7 125.6 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#7 125.6 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#7 125.6 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#7 125.6 dsv41-patch ok decode_levers
+#7 125.6 vllm_exl3 rows cuda ok
+#7 DONE 126.9s
+
+#8 [4/5] RUN TORCH_CUDA_ARCH_LIST=12.1a MAX_JOBS=4 python3 /opt/dsv41-patch/moe_prefill_tc.py       --prebuild /opt/dsv41-moe-prefill-tc --arch 121a  && python3 -c "import sys, torch; sys.path.insert(0, '/opt/dsv41-patch'); import moe_prefill_tc as m; tag = m.source_tag(); mod = m._load_prebuilt(tag); assert mod is not None and int(mod.ABI) == 1 and hasattr(mod, 'moe_prefill_tc'), tag; print('moe_prefill_tc prebuilt ok', tag)"  && find /opt/dsv41-moe-prefill-tc -name '*.o' -delete
+#8 0.146 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#8 0.151 dsv41-patch ok prefer_b12x_mxfp8
+#8 0.154 dsv41-indexer-workspace: already applied
+#8 0.154 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#8 0.154 dsv41-patch ok persistent_topk: already applied
+#8 0.154 dsv41-patch ok kpool_persistent_topk: already applied
+#8 3.149 INFO 10-20 04:01:47 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#8 3.149 INFO 10-20 04:01:47 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#8 3.227 WARNING 10-20 04:01:47 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#8 3.248 W1020 04:01:47.143000 7 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#8 3.571 WARNING 10-20 04:01:47 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#8 3.572 WARNING 10-20 04:01:47 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#8 3.624 dsv41-patch ok load_general_plugins
+#8 3.624 dsv41-patch ok exl3_weight_block_size
+#8 3.706 dsv41-patch ok warmup_stubs
+#8 3.710 dsv41-patch ok cudagraph_worker_stub
+#8 3.713 dsv41-patch ok swa_page_coerce
+#8 3.740 dsv41-patch ok kernel_block_sizes
+#8 3.740 dsv41-patch ok extra_page_bump
+#8 3.740 dsv41-patch ok v41_config_vision
+#8 3.740 dsv41-patch ok swa_image_width: already applied
+#8 3.740 dsv41-patch ok attention_image_width: already applied
+#8 3.740 dsv41-patch ok native_indexer_decode: already applied
+#8 3.740 dsv41-patch ok indexer_adaptive: already applied
+#8 3.740 dsv41-patch ok indexer_short_context: already applied
+#8 3.740 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#8 3.740 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#8 3.740 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#8 3.740 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#8 3.740 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#8 3.740 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#8 3.740 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#8 3.741 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#8 3.741 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#8 3.741 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#8 3.741 dsv41-patch ok decode_levers
+#8 35.06 [1/2] /usr/local/cuda/bin/nvcc -MD -MF moe_prefill_tc.cuda.o.d -DTORCH_EXTENSION_NAME=dsv41_moe_prefill_tc_022a960b5338 -DTORCH_API_INCLUDE_EXTENSION_H -I/opt/dsv41-patch -I/usr/local/lib/python3.12/dist-packages/exllamav3/exllamav3_ext -I/usr/local/lib/python3.12/dist-packages/exllamav3/exllamav3_ext/quant -isystem /usr/local/lib/python3.12/dist-packages/torch/include -isystem /usr/local/lib/python3.12/dist-packages/torch/include/torch/csrc/api/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options '-fPIC' -O3 -std=c++20 -diag-suppress=20012 -gencode=arch=compute_121a,code=sm_121a -c /opt/dsv41-patch/moe_prefill_tc.cu -o moe_prefill_tc.cuda.o 
+#8 35.18 [2/2] c++ moe_prefill_tc.cuda.o -shared -L/usr/local/lib/python3.12/dist-packages/torch/lib -lc10 -lc10_cuda -ltorch_cpu -ltorch_cuda -ltorch -ltorch_python -L/usr/local/cuda/lib64 -lcudart -o dsv41_moe_prefill_tc_022a960b5338.so
+#8 35.18 moe_prefill_tc prebuilt /opt/dsv41-moe-prefill-tc/022a960b5338
+#8 36.11 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#8 36.11 dsv41-patch ok prefer_b12x_mxfp8
+#8 36.11 dsv41-indexer-workspace: already applied
+#8 36.12 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#8 36.12 dsv41-patch ok persistent_topk: already applied
+#8 36.12 dsv41-patch ok kpool_persistent_topk: already applied
+#8 39.07 INFO 10-20 04:02:22 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#8 39.07 INFO 10-20 04:02:22 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#8 39.14 WARNING 10-20 04:02:23 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#8 39.16 W1020 04:02:23.058000 168 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#8 39.48 WARNING 10-20 04:02:23 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#8 39.48 WARNING 10-20 04:02:23 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#8 39.53 dsv41-patch ok load_general_plugins
+#8 39.53 dsv41-patch ok exl3_weight_block_size
+#8 39.61 dsv41-patch ok warmup_stubs
+#8 39.61 dsv41-patch ok cudagraph_worker_stub
+#8 39.62 dsv41-patch ok swa_page_coerce
+#8 39.65 dsv41-patch ok kernel_block_sizes
+#8 39.65 dsv41-patch ok extra_page_bump
+#8 39.65 dsv41-patch ok v41_config_vision
+#8 39.65 dsv41-patch ok swa_image_width: already applied
+#8 39.65 dsv41-patch ok attention_image_width: already applied
+#8 39.65 dsv41-patch ok native_indexer_decode: already applied
+#8 39.65 dsv41-patch ok indexer_adaptive: already applied
+#8 39.65 dsv41-patch ok indexer_short_context: already applied
+#8 39.65 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#8 39.65 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#8 39.65 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#8 39.65 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#8 39.65 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#8 39.65 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#8 39.65 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#8 39.65 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#8 39.65 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#8 39.65 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#8 39.65 dsv41-patch ok decode_levers
+#8 39.66 moe_prefill_tc prebuilt ok 022a960b5338
+#8 DONE 40.8s
+
+#9 [5/5] RUN cp /opt/dsv41-patch/sitecustomize.py /usr/lib/python3.12/sitecustomize.py  && python3 -m py_compile /usr/lib/python3.12/sitecustomize.py
+#9 0.196 dsv41-patch skip model_loop_release: DSV41_MODEL_LOOP_RELEASE is not 1
+#9 0.197 dsv41-patch skip kv_packed_groups: DSV41_KV_PACKED_GROUPS is not 1
+#9 0.197 dsv41-patch skip indexer_expanded_lazy: DSV41_INDEXER_EXPANDED_TABLE_LAZY is not 1
+#9 0.197 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#9 0.198 dsv41-patch ok prefer_b12x_mxfp8
+#9 0.202 dsv41-indexer-workspace: already applied
+#9 0.202 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#9 0.202 dsv41-patch ok persistent_topk: already applied
+#9 0.202 dsv41-patch ok kpool_persistent_topk: already applied
+#9 0.225 dsv41-patch ok indexer_ragged_decode: rewritten
+#9 3.323 INFO 10-20 04:02:27 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#9 3.323 INFO 10-20 04:02:27 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#9 3.404 WARNING 10-20 04:02:28 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#9 3.426 W1020 04:02:28.100000 8 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#9 3.772 WARNING 10-20 04:02:28 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#9 3.773 WARNING 10-20 04:02:28 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#9 3.827 dsv41-patch ok load_general_plugins
+#9 3.827 dsv41-patch ok exl3_weight_block_size
+#9 3.912 dsv41-patch ok warmup_stubs
+#9 3.916 dsv41-patch ok cudagraph_worker_stub
+#9 3.917 dsv41-patch skip fat_scratch_shared: DSV41_FAT_SCRATCH_SHARED is not 1
+#9 3.917 dsv41-patch skip attn_out_defer: DSV41_ATTN_OUT_DEFER is not 1
+#9 3.917 dsv41-patch skip engram_post_inplace: DSV41_ENGRAM_POST_INPLACE is not 1 and DSV41_ENGRAM_WKV_ROWS is 0
+#9 3.920 dsv41-patch ok swa_page_coerce
+#9 3.965 dsv41-patch ok kernel_block_sizes
+#9 3.965 dsv41-patch ok extra_page_bump
+#9 3.965 dsv41-patch ok v41_config_vision
+#9 3.965 dsv41-patch ok swa_image_width: already applied
+#9 3.965 dsv41-patch ok attention_image_width: already applied
+#9 3.965 dsv41-patch ok native_indexer_decode: already applied
+#9 3.965 dsv41-patch ok indexer_adaptive: already applied
+#9 3.965 dsv41-patch ok indexer_short_context: already applied
+#9 3.966 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#9 3.966 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#9 3.966 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#9 3.966 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#9 3.966 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#9 3.966 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#9 3.966 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#9 3.967 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#9 3.967 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#9 3.967 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#9 3.995 dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+#9 3.995 dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+#9 4.034 dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+#9 4.034 dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+#9 4.073 dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+#9 4.075 dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+#9 4.076 dsv41-patch ok decode_levers
+#9 DONE 5.3s
+
+#10 exporting to image
+#10 exporting layers
+#10 exporting layers 0.2s done
+#10 writing image sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a done
+#10 naming to docker.io/library/dsv41-flash-exl3-sm121:e16-rows 0.0s done
+#10 DONE 0.2s
+
+real	2m53.959s
+user	0m0.245s
+sys	0m0.258s
+rc=0
+end 2026-10-20T04:02:30Z

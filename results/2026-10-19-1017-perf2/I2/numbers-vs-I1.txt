@@ -1,0 +1,52 @@
+# I2 vs B0 (/home/sfxnz/projects/data/dsv41-1017/perf2/integration/I1)
+
+## decode (agg tok/s | per-stream | ms/step | acc | TTFT p50)
+- lail_prose c=1: -   [B0 37.9 | 37.9 | 53.6 | 2.02 | 0.263]
+- prose c=1: -   [B0 47.6 | 47.6 | 53.2 | 2.54 | 0.192]
+- prose c=2: -   [B0 78.2 | 39.1 | 66.7 | 2.60 | 0.209]
+- prose c=4: -   [B0 117.3 | 30.3 | 87.0 | 2.67 | 0.214]
+- prose_distinct c=4: -   [B0 91.1 | 24.1 | 101.2 | 2.41 | 0.290]
+- structured c=1: -   [B0 74.4 | 74.4 | 53.2 | 3.96 | 0.139]
+- structured c=2: -   [B0 122.0 | 62.1 | 63.8 | 3.96 | 0.238]
+- structured c=4: -   [B0 219.8 | 55.0 | 72.0 | 3.96 | 0.248]
+- structured_distinct c=4: -   [B0 197.2 | 49.2 | 80.9 | 3.98 | 0.353]
+
+## prefill micro (median tok/s; runs)
+- 4096 pp_novel: 1583.5 [1582.5, 1584.6]   [B0 1888.2] (-16.1%)
+- 4096 pp_warm: 1361.9 [1197.7, 1526.1]   [B0 1781.3] (-23.5%)
+- 4096 tg: 37.9 [45.5, 30.3]   [B0 44.2] (-14.3%)
+- 16384 pp_novel: 1541.3 [1512.3, 1570.4]   [B0 1497.8] (+2.9%)
+- 16384 pp_warm: 1300.0 [1104.5, 1495.5]   [B0 2013.3] (-35.4%)
+- 16384 tg: 104.0 [168.8, 39.2]   [B0 38.8] (+168.0%)
+- 65536 pp_novel: 1560.8 [1548.6, 1573.1]   [B0 2806.8] (-44.4%)
+- 65536 pp_warm: 1421.3 [1456.2, 1386.4]   [B0 2722.1] (-47.8%)
+- 65536 tg: 32.5 [24.8, 40.3]   [B0 41.0] (-20.7%)
+
+## prefix cache (prompt, TTFT s, hits)
+- a_novel: 32766 tok, 21.086 s, hits 0   [B0 32591 tok, 11.709 s, hits 0]
+- b_identical: 32766 tok, 0.334 s, hits 32640   [B0 32591 tok, 0.928 s, hits 32512]
+- c_multiturn: 32850 tok, 0.447 s, hits 32640   [B0 32675 tok, 0.399 s, hits 32512]
+- d_same_doc_new_question: 32766 tok, 0.32 s, hits 32640   [B0 32591 tok, 11.727 s, hits 0]
+- e_shared_16k_prefix_new_tail: 32419 tok, 10.447 s, hits 16384   [B0 32387 tok, 11.623 s, hits 0]
+- f_identical_to_e: 32419 tok, 2.511 s, hits 28672   [B0 32387 tok, 11.364 s, hits 0]
+
+## quality --quick
+- not run
+
+## MemAvailable minima per phase (MiB, memwatch 2 s)
+- smoke: spark1 6433 / spark2 9063 (2026-10-19T19:48:56Z .. 2026-10-19T19:48:57Z)
+- micro: spark1 1740 / spark2 6887 (2026-10-19T19:48:57Z .. 2026-10-19T19:54:58Z)
+- A-arm: spark1 3275 / spark2 6880 (2026-10-19T19:54:58Z .. 2026-10-19T19:57:05Z)
+- prefix: spark1 4836 / spark2 6873 (2026-10-19T19:57:05Z .. 2026-10-19T19:57:54Z)
+
+
+## warm_prefix (tools/warm_prefix.py --tokens 20000)
+- run 1: cold ttft=6.139s prompt_tokens=9061 hits=0.0 warm ttft=0.276s prompt_tokens=9061 hits=8960.0  expected "expected_hits":8960  (doc came out at 9,061 tok)
+- rerun: cold ttft=12.504s prompt_tokens=19813 hits=0.0 warm ttft=0.299s prompt_tokens=19813 hits=19712.0  expected "expected_hits":19712
+- I1: cold ttft=7.593s prompt_tokens=20069 hits=0.0 warm ttft=0.281s prompt_tokens=20069 hits=19968.0  expected "expected_hits":19968
+
+## replay_ab turns hits (A=I2 replay off, B=I1 replay on)
+- turn1: prompt 20017, hits I2 0.0 / I1 0.0
+- resend: prompt 20017, hits I2 16384.0 / I1 0.0
+- continue: prompt 20051, hits I2 19968.0 / I1 19968.0
+- diverge: prompt 20042, hits I2 16384.0 / I1 0.0

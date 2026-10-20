@@ -1,0 +1,8 @@
+## spark1 2026-10-19T19:48:56Z after-boot-I2
+               total        used        free      shared  buff/cache   available
+Mem:          124610      118703        5181         254        2098        5906
+Swap:          16383        8315        8068
+## spark2
+               total        used        free      shared  buff/cache   available
+Mem:          124610      115561        8398         253        2441        9048
+Swap:          16383        6179       10204

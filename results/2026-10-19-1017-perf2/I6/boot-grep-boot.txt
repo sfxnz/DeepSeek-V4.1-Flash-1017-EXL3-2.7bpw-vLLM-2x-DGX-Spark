@@ -1,0 +1,150 @@
+## head (spark1) 2026-10-19T22:57:41Z
+      1 Capturing CUDA graphs (PIECEWISE):   0%|          | 0/8 [00:00<?, ?it/s]dsv41: p2b coop dataflow wide kernel engaged (DSV41_P2B_COOP=2, m * top_k <= 144)
+      1 Capturing CUDA graphs (PIECEWISE):  12%|█▎        | 1/8 [00:03<00:22,  3.25s/it]Capturing CUDA graphs (PIECEWISE):  25%|██▌       | 2/8 [00:03<00:08,  1.45s/it]dsv41: p2b coop dataflow kernel engaged (DSV41_P2B_COOP=2)
+      1 [dense-gemv] rank0 K1280xN16384 (wq_b) pre-quantized input checked bitwise vs b12x (M=8)
+      1 dsv41: decoder replay armed (W=2670 exact (exact from 2414), cut=20, layers 20-39 on kept rows in eager prefill steps, valid tail 384 rows, junction runs 2542 rows)
+      1 dsv41: decoder replay engaged: first trimmed step 3778 tokens -> 2670 kept rows (W=2670 exact (exact from 2414), cut=20, layers 20-39 on kept rows in eager prefill steps, valid tail 384 rows, junction runs 2542 rows)
+      1 dsv41: decoder replay prefix-cache guard armed (43 SWA groups; SWA blocks below prompt_len - 384 stay out of the prefix cache when a prefill skips rows; junction anchors keep [J-256, J+peek), 0 = none)
+      4 dsv41: engram native stage: EngramDiskStager wrapped (max_tokens=64, verify=8); early hash armed (verify=8)
+      1 dsv41: engram native stage self-check bit-exact (2 tables, n=20, max_tokens=64)
+      1 dsv41: engram prefill ahead armed (2 tables, read-ahead 8192 tokens = 96.0 MiB pinned at first use, threads=8, cpus=any, verify=4, dontneed=0, above 64 tokens)
+      4 dsv41: engram prefill ahead: EngramDiskStager wrapped (read-ahead tokens=max, threads=8, verify=4)
+      1 dsv41: engram prefill ahead self-check bit-exact (2 tables, n=3778, 0 rows ahead)
+      4 dsv41: fat scratch shared engaged (one scratch set of 2048 rows for every row bucket and K)
+      2 dsv41: fat scratch shared: one set of 2048 rows, 195.9 MiB (hidden 5120, intermediate 1152, packed13 2949120 int16)
+      1 dsv41: fat scratch shared: stock key 1 (bucket 2048 rows, K 2): the stock cache would hold 193.1 MiB in 1 sets, shared 195.9 MiB
+      3 dsv41: indexer expanded block table lazy engaged (indexer already applied)
+      1 dsv41: indexer expanded block table lazy engaged (indexer rewritten)
+      1 dsv41-kv-packed-groups: 50 KV cache groups, 1 pattern repeats per group
+      3 dsv41: kv packed groups engaged (kv_cache_utils already applied)
+      1 dsv41: kv packed groups engaged (kv_cache_utils rewritten)
+      1 dsv41: lm_head mxfp8 enabled (b12x, (64640, 5120))
+      1 dsv41: moe prefill tc: no prebuilt kernel for 022a960b5338, compiling (1-2 min)
+      1 dsv41: moe prefill tc self-check ok (synthetic 256 rows vs stock: max_rel 0.000474, rms_rel 0.000825; K_gu/K_d 2/2; min rows 9, verify 2)
+      4 dsv41: moe prefill tc: vllm_exl3 apply_exl3_fused_moe wrapped (min rows 9, verify 2; self-check at the first eager call; exl3_moe scratch lazy)
+      3 dsv41: p2b coop dataflow kernel engaged (DSV41_P2B_COOP=2)
+      3 dsv41: p2b coop dataflow wide kernel engaged (DSV41_P2B_COOP=2, m * top_k <= 144)
+      4 dsv41-patch ok attention_image_width: already applied
+      4 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+      4 dsv41-patch ok decode_levers
+      4 dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+      4 dsv41-patch ok exl3_weight_block_size
+      4 dsv41-patch ok extra_page_bump
+      4 dsv41-patch ok fat_scratch_shared: engaged
+      4 dsv41-patch ok indexer_adaptive: already applied
+      3 dsv41-patch ok indexer_expanded_lazy: indexer already applied
+      1 dsv41-patch ok indexer_expanded_lazy: indexer rewritten
+      3 dsv41-patch ok indexer_ragged_decode: already applied
+      1 dsv41-patch ok indexer_ragged_decode: rewritten
+      4 dsv41-patch ok indexer_short_context: already applied
+      4 dsv41-patch ok kernel_block_sizes
+      4 dsv41-patch ok kpool_persistent_topk: already applied
+      3 dsv41-patch ok kv_packed_groups: kv_cache_utils already applied
+      1 dsv41-patch ok kv_packed_groups: kv_cache_utils rewritten
+      4 dsv41-patch ok load_general_plugins
+      4 dsv41-patch ok native_indexer_decode: already applied
+      4 dsv41-patch ok persistent_topk: already applied
+      4 dsv41-patch ok prefer_b12x_mxfp8
+      4 dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+      4 dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+      4 dsv41-patch ok swa_image_width: already applied
+      4 dsv41-patch ok swa_page_coerce
+      4 dsv41-patch ok v41_config_vision
+      4 dsv41-patch ok warmup_stubs
+      4 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+      4 dsv41-patch skip cudagraph_worker_stub: DSV41_ALLOW_CUDA_GRAPHS=1
+      4 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+      4 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+      4 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+      4 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+      4 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+      4 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+      4 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+      4 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+      4 dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+      4 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+      4 [dsv41-prefill-empty-cache] armed (threshold 8192 tokens, release when MemAvailable < 4.0 GiB; hold mid-prefill, release there below 3.0 GiB; per-step log)
+      4 dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+      1 dsv41: prefix-end fallback engaged: SWA boundaries [3777] also keep [3649] (interval 4096)
+      4 dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+      1 dsv41: prefix reply retain: decode-filled blocks of 43 SWA groups enter the prefix cache
+      4 dsv41: swa metadata batched: model_states.default.build_attn_metadata batches causal SWA decode rows (verify=8)
+      1 dsv41: swa metadata batched self-check bit-exact (groups 43, decode tokens 16, valid tokens False)
+      4 dsv41: swa metadata fused: DeepseekSparseSWAMetadataBuilder.build fused decode path (verify=8)
+      1 dsv41: swa metadata fused self-check bit-exact (decode tokens 16, width 128)
+      1 GPU KV cache size: 1,471,832 tokens, Maximum concurrency for 500,000 tokens per request: 2.94x
+      1 Graph capturing finished in 13 secs, took 0.64 GiB
+      1 Model loading took 97.44 GiB memory and 483.121951 seconds
+## worker (spark2)
+      1 [dense-gemv] rank1 K1280xN16384 (wq_b) pre-quantized input checked bitwise vs b12x (M=8)
+      1 dsv41: decoder replay armed (W=2670 exact (exact from 2414), cut=20, layers 20-39 on kept rows in eager prefill steps, valid tail 384 rows, junction runs 2542 rows)
+      1 dsv41: decoder replay engaged: first trimmed step 3778 tokens -> 2670 kept rows (W=2670 exact (exact from 2414), cut=20, layers 20-39 on kept rows in eager prefill steps, valid tail 384 rows, junction runs 2542 rows)
+      3 dsv41: engram native stage: EngramDiskStager wrapped (max_tokens=64, verify=8); early hash armed (verify=8)
+      1 dsv41: engram native stage self-check bit-exact (2 tables, n=20, max_tokens=64)
+      1 dsv41: engram prefill ahead armed (2 tables, read-ahead 8192 tokens = 96.0 MiB pinned at first use, threads=8, cpus=any, verify=4, dontneed=0, above 64 tokens)
+      3 dsv41: engram prefill ahead: EngramDiskStager wrapped (read-ahead tokens=max, threads=8, verify=4)
+      1 dsv41: engram prefill ahead self-check bit-exact (2 tables, n=3778, 0 rows ahead)
+      3 dsv41: fat scratch shared engaged (one scratch set of 2048 rows for every row bucket and K)
+      2 dsv41: fat scratch shared: one set of 2048 rows, 195.9 MiB (hidden 5120, intermediate 1152, packed13 2949120 int16)
+      1 dsv41: fat scratch shared: stock key 1 (bucket 2048 rows, K 2): the stock cache would hold 193.1 MiB in 1 sets, shared 195.9 MiB
+      2 dsv41: indexer expanded block table lazy engaged (indexer already applied)
+      1 dsv41: indexer expanded block table lazy engaged (indexer rewritten)
+      2 dsv41: kv packed groups engaged (kv_cache_utils already applied)
+      1 dsv41: kv packed groups engaged (kv_cache_utils rewritten)
+      1 dsv41: lm_head mxfp8 enabled (b12x, (64640, 5120))
+      1 dsv41: moe prefill tc: no prebuilt kernel for 022a960b5338, compiling (1-2 min)
+      1 dsv41: moe prefill tc self-check ok (synthetic 256 rows vs stock: max_rel 0.0005, rms_rel 0.000838; K_gu/K_d 2/2; min rows 9, verify 2)
+      3 dsv41: moe prefill tc: vllm_exl3 apply_exl3_fused_moe wrapped (min rows 9, verify 2; self-check at the first eager call; exl3_moe scratch lazy)
+      4 dsv41: p2b coop dataflow kernel engaged (DSV41_P2B_COOP=2)
+      4 dsv41: p2b coop dataflow wide kernel engaged (DSV41_P2B_COOP=2, m * top_k <= 144)
+      3 dsv41-patch ok attention_image_width: already applied
+      3 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+      3 dsv41-patch ok decode_levers
+      3 dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+      3 dsv41-patch ok exl3_weight_block_size
+      3 dsv41-patch ok extra_page_bump
+      3 dsv41-patch ok fat_scratch_shared: engaged
+      3 dsv41-patch ok indexer_adaptive: already applied
+      2 dsv41-patch ok indexer_expanded_lazy: indexer already applied
+      1 dsv41-patch ok indexer_expanded_lazy: indexer rewritten
+      2 dsv41-patch ok indexer_ragged_decode: already applied
+      1 dsv41-patch ok indexer_ragged_decode: rewritten
+      3 dsv41-patch ok indexer_short_context: already applied
+      3 dsv41-patch ok kernel_block_sizes
+      3 dsv41-patch ok kpool_persistent_topk: already applied
+      2 dsv41-patch ok kv_packed_groups: kv_cache_utils already applied
+      1 dsv41-patch ok kv_packed_groups: kv_cache_utils rewritten
+      3 dsv41-patch ok load_general_plugins
+      3 dsv41-patch ok native_indexer_decode: already applied
+      3 dsv41-patch ok persistent_topk: already applied
+      3 dsv41-patch ok prefer_b12x_mxfp8
+      3 dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+      3 dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+      3 dsv41-patch ok swa_image_width: already applied
+      3 dsv41-patch ok swa_page_coerce
+      3 dsv41-patch ok v41_config_vision
+      3 dsv41-patch ok warmup_stubs
+      3 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+      3 dsv41-patch skip cudagraph_worker_stub: DSV41_ALLOW_CUDA_GRAPHS=1
+      3 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+      3 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+      3 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+      3 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+      3 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+      3 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+      3 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+      3 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+      3 dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+      3 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+      3 [dsv41-prefill-empty-cache] armed (threshold 8192 tokens, release when MemAvailable < 4.0 GiB; hold mid-prefill, release there below 3.0 GiB; per-step log)
+      3 dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+      3 dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+      3 dsv41: swa metadata batched: model_states.default.build_attn_metadata batches causal SWA decode rows (verify=8)
+      1 dsv41: swa metadata batched self-check bit-exact (groups 43, decode tokens 16, valid tokens False)
+      3 dsv41: swa metadata fused: DeepseekSparseSWAMetadataBuilder.build fused decode path (verify=8)
+      1 dsv41: swa metadata fused self-check bit-exact (decode tokens 16, width 128)
+      1 Graph capturing finished in 13 secs, took 1.47 GiB
+      1 Model loading took 97.44 GiB memory and 283.084804 seconds
+## MUST-NOT-APPEAR scan (dsv41-patch FAIL | FAILED | DISABLED | allocated on first use | lever is OFF | Traceback)
+/home/sfxnz/projects/data/dsv41-1017/perf2/integration/I6/head-boot.log:318:(Worker_TP0 pid=656) Traceback (most recent call last):
+## [prefill-ahead] census lines: head 4, worker 4

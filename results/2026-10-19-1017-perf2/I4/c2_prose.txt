@@ -1,0 +1,46 @@
+# cmd: python3 bench_decode.py --phase prose --concurrency 2 --runs 5
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration2 (HEAD 2844fce) host: spark1 start: 2026-10-19T21:27:47Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=200 runs=5 concurrency=[2] phases=['prose']
+phase=prose c=2 run=1 wall=5.27s agg=80.98 tok/s per_stream=[43.05,38.99] ttft=[0.542,0.161] acc=2.673 ms_step=[62.1,68.6]
+phase=prose c=2 run=2 wall=5.08s agg=82.45 tok/s per_stream=[44.79,41.24] ttft=[0.248,0.248] acc=2.844 ms_step=[63.5,69.0]
+phase=prose c=2 run=3 wall=5.58s agg=74.85 tok/s per_stream=[37.48,38.20] ttft=[0.161,0.374] acc=2.571 ms_step=[68.6,67.3]
+phase=prose c=2 run=4 wall=5.31s agg=78.95 tok/s per_stream=[40.82,40.31] ttft=[0.164,0.371] acc=2.608 ms_step=[63.9,64.7]
+phase=prose c=2 run=5 wall=5.15s agg=80.44 tok/s per_stream=[41.45,40.23] ttft=[0.203,0.203] acc=2.636 ms_step=[63.6,65.5]
+natural phase=prose completion_tokens=82 finish_reason=stop
+SUMMARY [
+  {
+    "phase": "prose",
+    "concurrency": 2,
+    "median_decode_tok_s": 40.56381859289756,
+    "median_ttft_s": 0.22562036593444645,
+    "median_agg_tok_s": 80.43835094985603,
+    "median_completion_tokens": 200.0,
+    "n": 10,
+    "acceptance_len": 2.6631158455392807,
+    "draft_acceptance_rate": 0.5543719485130937,
+    "run_acceptance_len": [
+      2.6733,
+      2.844,
+      2.5705,
+      2.6078,
+      2.6358
+    ],
+    "median_run_acceptance_len": 2.635761589403973,
+    "median_ms_per_step": 65.10789521987274,
+    "ttft_s_p50": 0.22562036593444645,
+    "ttft_s_p90": 0.39057901683263474,
+    "ttft_s_p99": 0.5266200785012916,
+    "inter_chunk_ms_p50": 64.51309891417623,
+    "inter_chunk_ms_p90": 73.79903038963675,
+    "inter_chunk_ms_p99": 142.11884509772096,
+    "finish_reasons": {
+      "length": 10
+    },
+    "natural_completion_tokens": 82,
+    "natural_finish_reason": "stop",
+    "natural_covers_max": false,
+    "post_eos_fraction": 0.59
+  }
+]
+rc=0
+# end: 2026-10-19T21:28:16Z

@@ -1,0 +1,5 @@
+# cmd: python3 smoke_chat.py
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration2 (HEAD 2844fce) host: spark1 start: 2026-10-19T21:24:00Z
+323
+rc=0
+# end: 2026-10-19T21:24:00Z

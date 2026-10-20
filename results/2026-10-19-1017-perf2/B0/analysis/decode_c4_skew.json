@@ -1,0 +1,215 @@
+{
+ "collectives": [
+  3036,
+  3036
+ ],
+ "matched": 3036,
+ "op_or_grid_mismatch": 0,
+ "floor_us_p10_of_min": 31.78,
+ "classes": [
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "graph",
+   "grid": [
+    8,
+    1,
+    1
+   ],
+   "n": 2269,
+   "skew_median_us(+=rank1 late)": -8.7,
+   "abs_skew_mean_us": 243.3,
+   "frac_rank1_late": 0.309,
+   "r0_dur_median_us": 41.9,
+   "r1_dur_median_us": 49.8,
+   "r0_wait_over_floor_ms": 288.016,
+   "r1_wait_over_floor_ms": 398.829
+  },
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "graph",
+   "grid": [
+    5,
+    1,
+    1
+   ],
+   "n": 254,
+   "skew_median_us(+=rank1 late)": -15.5,
+   "abs_skew_mean_us": 156.0,
+   "frac_rank1_late": 0.173,
+   "r0_dur_median_us": 25.2,
+   "r1_dur_median_us": 38.9,
+   "r0_wait_over_floor_ms": 6.803,
+   "r1_wait_over_floor_ms": 32.744
+  },
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "eager",
+   "grid": [
+    8,
+    1,
+    1
+   ],
+   "n": 188,
+   "skew_median_us(+=rank1 late)": 24.2,
+   "abs_skew_mean_us": 8356.6,
+   "frac_rank1_late": 0.628,
+   "r0_dur_median_us": 103.0,
+   "r1_dur_median_us": 81.6,
+   "r0_wait_over_floor_ms": 69.766,
+   "r1_wait_over_floor_ms": 1522.501
+  },
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "eager",
+   "grid": [
+    7,
+    1,
+    1
+   ],
+   "n": 82,
+   "skew_median_us(+=rank1 late)": -4.7,
+   "abs_skew_mean_us": 2589.3,
+   "frac_rank1_late": 0.451,
+   "r0_dur_median_us": 70.0,
+   "r1_dur_median_us": 59.9,
+   "r0_wait_over_floor_ms": 101.699,
+   "r1_wait_over_floor_ms": 279.71
+  },
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "graph",
+   "grid": [
+    7,
+    1,
+    1
+   ],
+   "n": 80,
+   "skew_median_us(+=rank1 late)": -294.0,
+   "abs_skew_mean_us": 412.6,
+   "frac_rank1_late": 0.013,
+   "r0_dur_median_us": 38.6,
+   "r1_dur_median_us": 337.3,
+   "r0_wait_over_floor_ms": 3.396,
+   "r1_wait_over_floor_ms": 31.03
+  },
+  {
+   "op": "AllGather_RING_LL",
+   "where": "graph",
+   "grid": [
+    6,
+    1,
+    1
+   ],
+   "n": 60,
+   "skew_median_us(+=rank1 late)": 1.9,
+   "abs_skew_mean_us": 1154.4,
+   "frac_rank1_late": 0.567,
+   "r0_dur_median_us": 35.2,
+   "r1_dur_median_us": 32.8,
+   "r0_wait_over_floor_ms": 67.703,
+   "r1_wait_over_floor_ms": 1.769
+  },
+  {
+   "op": "AllGather_RING_LL",
+   "where": "eager",
+   "grid": [
+    8,
+    1,
+    1
+   ],
+   "n": 33,
+   "skew_median_us(+=rank1 late)": -75.2,
+   "abs_skew_mean_us": 121.6,
+   "frac_rank1_late": 0.03,
+   "r0_dur_median_us": 160.2,
+   "r1_dur_median_us": 231.2,
+   "r0_wait_over_floor_ms": 3.71,
+   "r1_wait_over_floor_ms": 7.711
+  },
+  {
+   "op": "AllGather_RING_LL",
+   "where": "graph",
+   "grid": [
+    8,
+    1,
+    1
+   ],
+   "n": 33,
+   "skew_median_us(+=rank1 late)": -97.5,
+   "abs_skew_mean_us": 140.5,
+   "frac_rank1_late": 0.03,
+   "r0_dur_median_us": 105.3,
+   "r1_dur_median_us": 201.3,
+   "r0_wait_over_floor_ms": 2.358,
+   "r1_wait_over_floor_ms": 6.657
+  },
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "graph",
+   "grid": [
+    3,
+    1,
+    1
+   ],
+   "n": 28,
+   "skew_median_us(+=rank1 late)": -65.3,
+   "abs_skew_mean_us": 267.7,
+   "frac_rank1_late": 0.286,
+   "r0_dur_median_us": 27.3,
+   "r1_dur_median_us": 119.8,
+   "r0_wait_over_floor_ms": 1.23,
+   "r1_wait_over_floor_ms": 7.104
+  },
+  {
+   "op": "AllGather_RING_LL",
+   "where": "eager",
+   "grid": [
+    7,
+    1,
+    1
+   ],
+   "n": 4,
+   "skew_median_us(+=rank1 late)": 8.7,
+   "abs_skew_mean_us": 19.9,
+   "frac_rank1_late": 0.75,
+   "r0_dur_median_us": 74.2,
+   "r1_dur_median_us": 49.5,
+   "r0_wait_over_floor_ms": 0.173,
+   "r1_wait_over_floor_ms": 0.114
+  },
+  {
+   "op": "AllReduce_Sum_bf16_RING_LL",
+   "where": "eager",
+   "grid": [
+    5,
+    1,
+    1
+   ],
+   "n": 3,
+   "skew_median_us(+=rank1 late)": -467.5,
+   "abs_skew_mean_us": 881.4,
+   "frac_rank1_late": 0.0,
+   "r0_dur_median_us": 32.9,
+   "r1_dur_median_us": 500.4,
+   "r0_wait_over_floor_ms": 0.115,
+   "r1_wait_over_floor_ms": 2.748
+  },
+  {
+   "op": "AllGather_RING_LL",
+   "where": "eager",
+   "grid": [
+    6,
+    1,
+    1
+   ],
+   "n": 2,
+   "skew_median_us(+=rank1 late)": -11.0,
+   "abs_skew_mean_us": 11.0,
+   "frac_rank1_late": 0.0,
+   "r0_dur_median_us": 52.1,
+   "r1_dur_median_us": 63.1,
+   "r0_wait_over_floor_ms": 0.041,
+   "r1_wait_over_floor_ms": 0.063
+  }
+ ]
+}

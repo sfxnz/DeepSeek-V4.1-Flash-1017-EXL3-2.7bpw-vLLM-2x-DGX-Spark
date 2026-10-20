@@ -1,0 +1,24 @@
+71 steps, 23 prompt groups
+prompt 0: longest 3778 chunks 1 wall sum 3.39 s [3.39] intervals [-] reserved 101.97->103.12 GiB growth/chunk [1180] MiB MemAvail min 6.54 actions -
+prompt 1: longest 377 chunks 1 wall sum 1.33 s [1.33] intervals [2.13] reserved 103.12->103.12 GiB growth/chunk [0] MiB MemAvail min 5.75 actions -
+prompt 2: longest 1263 chunks 1 wall sum 13.90 s [13.90] intervals [14.30] reserved 103.12->103.12 GiB growth/chunk [0] MiB MemAvail min 5.45 actions -
+prompt 3: longest 209 chunks 1 wall sum 0.27 s [0.27] intervals [1.10] reserved 103.12->103.14 GiB growth/chunk [20] MiB MemAvail min 6.32 actions -
+prompt 4: longest 201 chunks 1 wall sum 0.13 s [0.13] intervals [47.15] reserved 103.14->103.14 GiB growth/chunk [0] MiB MemAvail min 6.13 actions -
+prompt 5: longest 4049 chunks 1 wall sum 1.81 s [1.81] intervals [291.70] reserved 103.14->103.20 GiB growth/chunk [60] MiB MemAvail min 5.85 actions -
+prompt 6: longest 3998 chunks 1 wall sum 1.51 s [1.51] intervals [2.44] reserved 103.20->103.20 GiB growth/chunk [0] MiB MemAvail min 5.60 actions -
+prompt 7: longest 4092 chunks 1 wall sum 1.52 s [1.52] intervals [2.25] reserved 103.20->103.22 GiB growth/chunk [20] MiB MemAvail min 6.38 actions -
+prompt 8: longest 4031 chunks 1 wall sum 1.47 s [1.47] intervals [2.12] reserved 103.22->103.22 GiB growth/chunk [0] MiB MemAvail min 6.30 actions -
+prompt 9: longest 4008 chunks 1 wall sum 1.54 s [1.54] intervals [2.23] reserved 103.22->103.22 GiB growth/chunk [0] MiB MemAvail min 6.21 actions -
+prompt 10: longest 4013 chunks 1 wall sum 1.51 s [1.51] intervals [3.15] reserved 103.22->103.22 GiB growth/chunk [0] MiB MemAvail min 6.13 actions -
+prompt 11: longest 16101 chunks 2 wall sum 7.74 s [2.70, 5.04] intervals [4.33, 5.32] reserved 103.22->104.41 GiB growth/chunk [1220, 0] MiB MemAvail min 6.61 actions -,keep
+prompt 12: longest 16047 chunks 2 wall sum 7.00 s [1.97, 5.03] intervals [3.42, 5.15] reserved 104.41->104.47 GiB growth/chunk [0, 60] MiB MemAvail min 6.14 actions -,keep
+prompt 13: longest 16316 chunks 2 wall sum 5.46 s [0.94, 4.52] intervals [2.02, 4.63] reserved 104.47->104.47 GiB growth/chunk [0, 0] MiB MemAvail min 6.64 actions -,keep
+prompt 14: longest 16117 chunks 2 wall sum 5.28 s [0.96, 4.32] intervals [1.86, 4.43] reserved 104.47->104.47 GiB growth/chunk [0, 0] MiB MemAvail min 7.06 actions -,keep
+prompt 15: longest 16332 chunks 2 wall sum 5.51 s [0.87, 4.64] intervals [1.93, 4.76] reserved 104.47->104.47 GiB growth/chunk [0, 0] MiB MemAvail min 7.07 actions -,keep
+prompt 16: longest 13410 chunks 2 wall sum 4.57 s [0.84, 3.73] intervals [2.75, 3.85] reserved 104.47->104.47 GiB growth/chunk [0, 0] MiB MemAvail min 6.89 actions -,keep
+prompt 17: longest 65314 chunks 8 wall sum 22.10 s [0.80, 2.91, 2.51, 2.76, 2.61, 2.62, 2.75, 5.14] intervals [3.03, 3.03, 2.63, 2.88, 2.73, 2.74, 2.87, 5.26] reserved 104.47->104.51 GiB growth/chunk [0, 0, 0, 0, 0, 0, 2, 40] MiB MemAvail min 6.46 actions -,hold,hold,hold,hold,hold,hold,keep
+prompt 18: longest 64546 chunks 8 wall sum 20.96 s [0.83, 2.72, 2.50, 2.67, 2.55, 2.59, 2.51, 4.59] intervals [2.21, 2.84, 2.62, 2.79, 2.67, 2.71, 2.63, 4.72] reserved 104.51->104.51 GiB growth/chunk [0, 0, 0, 0, 0, 0, 0, 0] MiB MemAvail min 6.42 actions -,hold,hold,hold,hold,hold,hold,keep
+prompt 19: longest 65327 chunks 8 wall sum 22.85 s [0.98, 2.49, 2.99, 2.64, 2.99, 2.69, 3.01, 5.06] intervals [2.11, 2.61, 3.10, 2.76, 3.10, 2.80, 3.12, 5.18] reserved 104.51->104.51 GiB growth/chunk [0, 0, 0, 0, 0, 0, 0, 0] MiB MemAvail min 6.43 actions -,hold,hold,hold,hold,hold,hold,keep
+prompt 20: longest 65520 chunks 8 wall sum 23.93 s [0.99, 2.97, 2.44, 3.17, 2.49, 3.08, 2.49, 6.30] intervals [2.13, 3.09, 2.56, 3.29, 2.61, 3.20, 2.61, 6.41] reserved 104.51->104.51 GiB growth/chunk [0, 0, 0, 0, 0, 0, 0, 0] MiB MemAvail min 6.32 actions -,hold,hold,hold,hold,hold,hold,hold
+prompt 21: longest 65435 chunks 8 wall sum 22.07 s [0.84, 2.67, 3.17, 2.49, 2.50, 2.65, 2.92, 4.83] intervals [3.57, 2.78, 3.28, 2.75, 2.62, 2.77, 3.04, 4.95] reserved 104.51->104.51 GiB growth/chunk [0, 0, 0, 0, 0, 0, 0, 0] MiB MemAvail min 6.54 actions -,hold,hold,hold,hold,hold,hold,keep
+prompt 22: longest 64847 chunks 8 wall sum 21.59 s [0.83, 2.85, 2.48, 2.65, 2.66, 2.76, 2.56, 4.80] intervals [2.76, 2.97, 2.60, 2.77, 2.78, 2.88, 2.68, 4.92] reserved 104.51->104.51 GiB growth/chunk [0, 0, 0, 0, 0, 0, 0, 0] MiB MemAvail min 6.52 actions -,hold,hold,hold,hold,hold,hold,keep

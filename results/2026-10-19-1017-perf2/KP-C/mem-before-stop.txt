@@ -1,0 +1,8 @@
+## spark1 2026-10-20T03:33:14Z mem-before-stop
+               total        used        free      shared  buff/cache   available
+Mem:          124610      120538        3020         386        3489        4071
+Swap:          16383        8857        7526
+## spark2
+               total        used        free      shared  buff/cache   available
+Mem:          124610      118224        1933         381        6831        6385
+Swap:          16383        6009       10374

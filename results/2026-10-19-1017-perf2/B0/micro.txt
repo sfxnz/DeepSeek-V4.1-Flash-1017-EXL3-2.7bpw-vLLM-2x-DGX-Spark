@@ -1,0 +1,30 @@
+# cmd: benches/micro.sh --contexts 4096 16384 65536 --runs 2
+# cwd: /home/sfxnz/projects/ai-lab/recipes/DeepSeek-V4.1-Flash-1017-2X-DGX-SPARKS-EXL3 (HEAD 20ee8ba) host: spark1 start: 2026-10-19T16:53:10Z
+ctx=4096 pp_warm run=1 doc=3987 ttft=6.03s rate=661.8 tok/s acc=-
+ctx=4096 pp_warm run=2 doc=3996 ttft=5.62s rate=712.0 tok/s acc=-
+ctx=4096 pp_novel run=1 doc=4074 ttft=5.28s rate=772.8 tok/s acc=-
+ctx=4096 pp_novel run=2 doc=4067 ttft=5.13s rate=793.8 tok/s acc=-
+ctx=4096 tg run=1 doc=4070 ttft=5.48s rate=48.8 tok/s acc=2.75
+ctx=4096 tg run=2 doc=4067 ttft=5.46s rate=45.7 tok/s acc=2.4615384615384617
+ctx=16384 pp_warm run=1 doc=16027 ttft=25.44s rate=630.3 tok/s acc=-
+ctx=16384 pp_warm run=2 doc=15907 ttft=26.93s rate=590.9 tok/s acc=-
+ctx=16384 pp_novel run=1 doc=16187 ttft=25.75s rate=628.8 tok/s acc=-
+ctx=16384 pp_novel run=2 doc=16171 ttft=24.63s rate=656.7 tok/s acc=-
+ctx=16384 tg run=1 doc=15936 ttft=22.70s rate=44.1 tok/s acc=2.666666666666667
+ctx=16384 tg run=2 doc=16347 ttft=23.39s rate=31.9 tok/s acc=1.9444444444444444
+ctx=65536 pp_warm run=1 doc=64588 ttft=117.90s rate=547.9 tok/s acc=-
+ctx=65536 pp_warm run=2 doc=63662 ttft=97.35s rate=654.0 tok/s acc=-
+ctx=65536 pp_novel run=1 doc=65132 ttft=99.76s rate=652.9 tok/s acc=-
+ctx=65536 pp_novel run=2 doc=65456 ttft=151.54s rate=432.0 tok/s acc=-
+Traceback (most recent call last):
+  File "/home/sfxnz/projects/ai-lab/recipes/DeepSeek-V4.1-Flash-1017-2X-DGX-SPARKS-EXL3/benches/micro.py", line 176, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/sfxnz/projects/ai-lab/recipes/DeepSeek-V4.1-Flash-1017-2X-DGX-SPARKS-EXL3/benches/micro.py", line 152, in main
+    res = stream_once(args.url, args.model, doc,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sfxnz/projects/ai-lab/recipes/DeepSeek-V4.1-Flash-1017-2X-DGX-SPARKS-EXL3/benches/micro.py", line 90, in stream_once
+    raise RuntimeError("no content token in stream")
+RuntimeError: no content token in stream
+rc=1
+# end: 2026-10-19T17:05:39Z

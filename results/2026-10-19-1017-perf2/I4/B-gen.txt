@@ -1,0 +1,7 @@
+# cmd: python3 tools/replay_ab.py gen --out /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I4/B-gen.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration2 (HEAD 2844fce) host: spark1 start: 2026-10-19T21:39:16Z
+gen8192 8117 tokens, hits 0.0 | Based on the text, the word that appears most often is **"at"**.
+gen32768 32561 tokens, hits 0.0 | Based on the text, the word that appears most often is **"the"**.
+gen102400 102344 tokens, hits 0.0 | Based on the text, the word that appears most often is **"for"**.
+rc=0
+# end: 2026-10-19T21:40:09Z

@@ -1,0 +1,76 @@
+# I1 prefill16k rank1  /home/sfxnz/projects/data/dsv41-traces/perf2-I1/prefill16k/rank1/dp0_pp0_tp1_dcp0_ep1_rank1.1792438190297886331.nul2space.pt.trace.json.gz
+
+## execute_context_1(8190)_generation_0(0): wall 3130.3 ms = busy 2767.3 + idle 363.0; host before first op 24.3 ms; kernel sum 2769.9 ms; layers 24 engram layers [1, 14, 20]
+kernel time by bucket (ms, sum over streams):
+      906.9  routed_moe:glue(gather/index_add/sort/copy/fill)  (n=800)
+      536.1  nccl_allreduce  (n=48)
+      245.9  sparse_attention(prefill kernel+topk meta)  (n=87)
+      223.1  dense_mxfp8_gemm(attn proj, idx wq_b, engram wkv)  (n=67)
+      135.4  mhc(mhc_post)  (n=40)
+      121.3  engram_wkv_gemm(mxfp8)  (n=3)
+      117.2  dense_wo_a(DeepGEMM fp8xfp4)  (n=26)
+      107.6  shared_expert(mxfp8 gemm+act+quant)  (n=100)
+       90.3  mhc(mhc_pre)  (n=41)
+       64.0  mhc(mhc_prenorm)  (n=41)
+       63.9  quant_glue(mxfp8/inv-rope fp8)  (n=70)
+       62.4  attn_glue(qnorm/rope/kv insert)  (n=58)
+       47.0  other_glue(eltwise/copy/metadata)  (n=450)
+       20.6  engram_gpu(hash/H2D/AG/post-wkv)  (n=18)
+       12.9  router(gate gemm+topk)  (n=40)
+        7.0  compressor(+fp32/tf32 gemm)  (n=16)
+        6.5  indexer(mqa logits/topk/q/mask)  (n=19)
+        2.0  norm/embedding  (n=8)
+        0.0  post_forward(lm_head+DSpark drafter+sampler)  (n=2)
+device-idle by cause (ms): engram_host_gather(hash D2H -> rows H2D) 351.4 (n=1); host_python(no cpu_op open) 6.4 (n=95); host_in_op:aten::repeat_interleave 0.5 (n=1); host_in_op:aten::item 0.2 (n=9); host_in_op:aten::select 0.2 (n=5); host_in_op:aten::sum 0.1 (n=2); host_in_op:aten::ge 0.0 (n=1); host_in_op:aten::copy_ 0.0 (n=1); host_in_op:aten::clamp_ 0.0 (n=1)
+largest idle gaps:
+     351.4 ms at +182.5 ms layer 0: engram_host_gather(hash D2H -> rows H2D) | prev Memcpy DtoH (Device -> Pinned) | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+       0.9 ms at +3122.3 ms layer 24: host_python(no cpu_op open) | prev vllm::vocab_embedding::vocab_parallel_embedding_ke | next ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKe | op  | rt cudaEventSynchronize
+       0.6 ms at +0.6 ms layer 0: host_python(no cpu_op open) | prev _apply_write_kernel | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+       0.6 ms at +3.2 ms layer 0: host_python(no cpu_op open) | prev _compute_slot_mappings_kernel | next at::native::unrolled_elementwise_kernel<at::native | op  | rt 
+       0.5 ms at +0.0 ms layer 0: host_python(no cpu_op open) | prev at::native::vectorized_elementwise_kernel<2, at::n | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+       0.5 ms at +4.1 ms layer 0: host_in_op:aten::repeat_interleave | prev compute_cuda_kernel<int>(int const*, long const*,  | next at::native::_scatter_gather_elementwise_kernel<128 | op aten::repeat_interleave | rt 
+       0.3 ms at +1.3 ms layer 0: host_python(no cpu_op open) | prev _apply_write_kernel | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+       0.3 ms at +3.8 ms layer 0: host_python(no cpu_op open) | prev (anonymous namespace)::elementwise_kernel_with_ind | next at::native::unrolled_elementwise_kernel<at::native | op  | rt 
+       0.2 ms at +11.0 ms layer 0: host_python(no cpu_op open) | prev at::native::vectorized_elementwise_kernel<4, at::n | next Memcpy DtoD (Device -> Device) | op  | rt 
+       0.2 ms at +10.8 ms layer 0: host_python(no cpu_op open) | prev Kernel | next at::native::vectorized_elementwise_kernel<4, at::n | op  | rt 
+       0.1 ms at +8.8 ms layer 0: host_python(no cpu_op open) | prev Memcpy DtoD (Device -> Device) | next _compute_swa_indices_and_lens_kernel | op  | rt 
+       0.1 ms at +4.7 ms layer 0: host_python(no cpu_op open) | prev Memcpy DtoD (Device -> Device) | next _compute_swa_indices_and_lens_kernel | op  | rt 
+host syncs on the main thread: {'cudaEventSynchronize': 1} (CPU wait 170.1 ms); in layers 1 (per layer min/median/max [0, 0.0, 1]), post-forward 0; D2H copies 4 (median/layer 0.0); aten::item 370
+  syncs by enclosing op (outer > inner): <no cpu_op> > - x1
+  per-layer sync counts: 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+kernel time by launching module (outermost cpu_op), ms: vllm::moe_forward_shared 1027.4; <no cpu_op> 680.0; vllm::all_reduce 533.2; vllm::mm_mxfp8 344.4; _C::fused_deepseek_v4_qnorm_rope_kv_rope_quant_insert 58.5; vllm::fused_inv_rope_fp8_quant_kernel 38.0; vllm::mxfp8_quantize 25.9; aten::add 21.6; vllm::all_gather 10.9; aten::copy_ 6.4; vllm::sparse_attn_indexer 5.1; aten::zeros 4.2; aten::mm 4.1; aten::cat 2.3; aten::contiguous 2.1; aten::linear 1.8; aten::mean 1.8; _C::rms_norm 1.5; _C::vocab_parallel_embedding 0.4; aten::ge 0.1
+
+## execute_context_1(7856)_generation_0(0): wall 3252.2 ms = busy 3243.6 + idle 8.6; host before first op 1696.3 ms; kernel sum 3247.1 ms; layers 40 engram layers [1, 14]
+kernel time by bucket (ms, sum over streams):
+     1194.8  routed_moe:glue(gather/index_add/sort/copy/fill)  (n=1600)
+      374.5  nccl_allreduce  (n=81)
+      332.0  sparse_attention(prefill kernel+topk meta)  (n=141)
+      234.7  dense_mxfp8_gemm(attn proj, idx wq_b, engram wkv)  (n=129)
+      174.3  mhc(mhc_post)  (n=83)
+      154.0  post_forward(lm_head+DSpark drafter+sampler)  (n=221)
+      126.0  dense_wo_a(DeepGEMM fp8xfp4)  (n=40)
+      118.8  shared_expert(mxfp8 gemm+act+quant)  (n=200)
+      109.9  mhc(mhc_pre)  (n=81)
+       89.5  engram_wkv_gemm(mxfp8)  (n=2)
+       81.9  mhc(mhc_prenorm)  (n=81)
+       74.4  quant_glue(mxfp8/inv-rope fp8)  (n=123)
+       69.2  attn_glue(qnorm/rope/kv insert)  (n=89)
+       40.5  other_glue(eltwise/copy/metadata)  (n=854)
+       31.7  indexer(mqa logits/topk/q/mask)  (n=77)
+       19.0  engram_gpu(hash/H2D/AG/post-wkv)  (n=17)
+       16.4  router(gate gemm+topk)  (n=80)
+        5.2  compressor(+fp32/tf32 gemm)  (n=15)
+        0.4  norm/embedding  (n=1)
+device-idle by cause (ms): host_python(no cpu_op open) 1.1 (n=4); engram_host_gather(hash D2H -> rows H2D) 0.2 (n=1); moe_host_path(sync -> relaunch, in moe_forward_shared) 0.0 (n=1); host_in_op:aten::gt 0.0 (n=1)
+largest idle gaps:
+       1.0 ms at +3224.3 ms layer 40: host_python(no cpu_op open) | prev vllm::vocab_embedding::vocab_parallel_embedding_ke | next ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKe | op  | rt 
+       0.2 ms at +11.7 ms layer 0: engram_host_gather(hash D2H -> rows H2D) | prev Memcpy DtoH (Device -> Pinned) | next Memcpy HtoD (Pinned -> Device) | op  | rt 
+       0.0 ms at +2885.6 ms layer 40: host_python(no cpu_op open) | prev at_cuda_detail::cub::detail::radix_sort::DeviceRad | next Memset (Device) | op  | rt 
+       0.0 ms at +2383.0 ms layer 35: moe_host_path(sync -> relaunch, in moe_forward_shared) | prev at::native::vectorized_elementwise_kernel<4, at::n | next ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKe | op aten::sort | rt cudaLaunchKernel
+       0.0 ms at +2943.5 ms layer 40: host_python(no cpu_op open) | prev Memset (Device) | next cutlass::Kernel2<cutlass_80_wmma_tensorop_bf16_s16 | op  | rt 
+       0.0 ms at +2403.0 ms layer 36: host_python(no cpu_op open) | prev at_cuda_detail::cub::detail::radix_sort::DeviceRad | next Memset (Device) | op  | rt 
+       0.0 ms at +1228.5 ms layer 20: host_in_op:aten::gt | prev at::native::(anonymous namespace)::fill_reverse_in | next Memset (Device) | op aten::gt | rt cudaLaunchKernel
+host syncs on the main thread: {'cudaEventSynchronize': 1} (CPU wait 1249.8 ms); in layers 1 (per layer min/median/max [0, 0.0, 1]), post-forward 0; D2H copies 4 (median/layer 0.0); aten::item 672
+  syncs by enclosing op (outer > inner): <no cpu_op> > - x1
+  per-layer sync counts: 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+kernel time by launching module (outermost cpu_op), ms: vllm::moe_forward_shared 1330.0; <no cpu_op> 873.5; vllm::all_reduce 374.5; vllm::mm_mxfp8 357.7; _C::fused_deepseek_v4_qnorm_rope_kv_rope_quant_insert 72.1; vllm::all_gather 70.3; vllm::fused_inv_rope_fp8_quant_kernel 47.9; vllm::mxfp8_quantize 29.9; vllm::sparse_attn_indexer 29.9; aten::add 27.2; aten::copy_ 6.9; aten::zeros 4.6; aten::mm 3.9; aten::mean 3.6; aten::index_copy 2.8; aten::linear 2.4; aten::cat 2.1; aten::contiguous 1.8; _C::rms_norm 1.6; aten::index_select 1.2

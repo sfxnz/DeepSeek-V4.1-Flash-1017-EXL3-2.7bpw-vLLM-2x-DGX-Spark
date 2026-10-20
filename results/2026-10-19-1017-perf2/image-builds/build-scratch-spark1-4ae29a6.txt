@@ -1,0 +1,399 @@
+start 2026-10-20T06:38:21Z host spark1 HEAD 4ae29a6d02c1267babb3b517a14ff2a73b09d84e DIFF e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 (chain B, from scratch, docker/Dockerfile)
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 6.97kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/vllm/vllm-openai:deepseekv41-flash-0909@sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/7] FROM docker.io/vllm/vllm-openai:deepseekv41-flash-0909@sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 1.28MB 0.0s done
+#5 DONE 0.0s
+
+#4 [1/7] FROM docker.io/vllm/vllm-openai:deepseekv41-flash-0909@sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58
+#4 CACHED
+
+#6 [2/7] COPY patch /opt/dsv41-patch
+#6 DONE 0.1s
+
+#7 [3/7] RUN python3 /opt/dsv41-patch/apply_engram_disk.py       --engram /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4_1/common/engram.py       --weights /usr/local/lib/python3.12/dist-packages/vllm/model_executor/model_loader/weight_utils.py  && python3 /opt/dsv41-patch/apply_engram_prestage.py       --engram /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4_1/common/engram.py       --model-state /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4_1/nvidia/model_state.py
+#7 0.397 apply_engram_disk: patched /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4_1/common/engram.py and /usr/local/lib/python3.12/dist-packages/vllm/model_executor/model_loader/weight_utils.py
+#7 0.422 apply_engram_prestage: patched /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4_1/common/engram.py and /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4_1/nvidia/model_state.py
+#7 DONE 0.4s
+
+#8 [4/7] RUN apt-get update  && apt-get install -y --no-install-recommends       git libcusparse-dev-13-0 libcusolver-dev-13-0  && git clone https://github.com/turboderp-org/exllamav3.git /opt/exllamav3  && git -C /opt/exllamav3 checkout "5be886578ec80324c2c715269387be2058724b6e"  && python3 /opt/dsv41-patch/patch_exllamav3_aarch64.py /opt/exllamav3/exllamav3/exllamav3_ext  && TORCH_CUDA_ARCH_LIST=12.1a python3 -m pip install --no-build-isolation --no-deps /opt/exllamav3  && python3 -c "import torch, exllamav3, exllamav3_ext; assert hasattr(exllamav3_ext, 'exl3_moe'); print('exllamav3 ok')"  && git clone https://github.com/vcruz305/vllm-exl3.git /opt/vllm-exl3  && git -C /opt/vllm-exl3 checkout "d3cfd394920360d69f820d2dc96f8292a9e10283"  && python3 /opt/dsv41-patch/fix_vllm_exl3_setup.py /opt/vllm-exl3/setup.py  && python3 /opt/dsv41-patch/widen_p2b_shapes.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_mrow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_cfg1.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_codebook.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_fshift.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_srcsort.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_coop.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_dataflow.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_kbits.py /opt/vllm-exl3  && python3 /opt/dsv41-patch/widen_p2b_rows.py /opt/vllm-exl3  && TORCH_CUDA_ARCH_LIST=12.1a python3 -m pip install --no-build-isolation --no-deps /opt/vllm-exl3  && python3 -c "import torch, vllm_exl3, vllm_exl3_c; so = open(vllm_exl3_c.__file__, 'rb').read(); assert hasattr(vllm_exl3_c, 'p2b_fused_moe'); assert b'DSV41_P2B_SRC_SORT' in so and b'DSV41_P2B_COOP' in so and b'p2b coop dataflow kernel engaged' in so; assert b'p2b_coop_df_kernelILi23ELi1E' in so and b'p2b_coop_df_kernelILi4ELi1E' in so; assert hasattr(vllm_exl3_c, 'exl3_moe_kmix'); import vllm_exl3.exl3 as e; assert hasattr(e.Exl3Config, 'expert_bits_for_prefix'); assert b'p2b_coop_dfw_kernelILi2ELi1E' in so and b'p2b_coop_dfw_kernelILi23ELi1E' in so and b'p2b coop dataflow wide kernel engaged' in so; assert vllm_exl3_c.P2B_WIDE_ROWS == 24; assert hasattr(e, '_native_moe_wide_rows'); print('vllm_exl3 rows cuda ok')"  && rm -rf /opt/exllamav3 /opt/vllm-exl3 /var/lib/apt/lists/*
+#8 0.298 Get:1 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  InRelease [1576 B]
+#8 0.386 Get:2 http://ports.ubuntu.com/ubuntu-ports noble InRelease [256 kB]
+#8 0.573 Get:3 http://ports.ubuntu.com/ubuntu-ports noble-updates InRelease [126 kB]
+#8 0.619 Get:4 http://ports.ubuntu.com/ubuntu-ports noble-backports InRelease [126 kB]
+#8 0.664 Get:5 http://ports.ubuntu.com/ubuntu-ports noble-security InRelease [126 kB]
+#8 0.710 Get:6 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 Packages [1776 kB]
+#8 0.854 Get:7 http://ports.ubuntu.com/ubuntu-ports noble/multiverse arm64 Packages [274 kB]
+#8 0.854 Get:8 http://ports.ubuntu.com/ubuntu-ports noble/universe arm64 Packages [19.0 MB]
+#8 0.885 Get:9 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble InRelease [17.8 kB]
+#8 1.151 Get:10 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  Packages [1778 kB]
+#8 1.161 Get:11 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble/main arm64 Packages [59.7 kB]
+#8 1.203 Get:12 http://ports.ubuntu.com/ubuntu-ports noble/restricted arm64 Packages [113 kB]
+#8 1.204 Get:13 http://ports.ubuntu.com/ubuntu-ports noble-updates/restricted arm64 Packages [3251 kB]
+#8 1.265 Get:14 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 Packages [1786 kB]
+#8 1.274 Get:15 http://ports.ubuntu.com/ubuntu-ports noble-updates/multiverse arm64 Packages [104 kB]
+#8 1.275 Get:16 http://ports.ubuntu.com/ubuntu-ports noble-updates/universe arm64 Packages [2214 kB]
+#8 1.287 Get:17 http://ports.ubuntu.com/ubuntu-ports noble-backports/main arm64 Packages [49.0 kB]
+#8 1.287 Get:18 http://ports.ubuntu.com/ubuntu-ports noble-backports/universe arm64 Packages [36.3 kB]
+#8 1.288 Get:19 http://ports.ubuntu.com/ubuntu-ports noble-backports/multiverse arm64 Packages [669 B]
+#8 1.288 Get:20 http://ports.ubuntu.com/ubuntu-ports noble-security/universe arm64 Packages [1638 kB]
+#8 1.297 Get:21 http://ports.ubuntu.com/ubuntu-ports noble-security/multiverse arm64 Packages [99.1 kB]
+#8 1.297 Get:22 http://ports.ubuntu.com/ubuntu-ports noble-security/restricted arm64 Packages [3129 kB]
+#8 1.321 Get:23 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 Packages [1475 kB]
+#8 1.972 Fetched 37.5 MB in 2s (21.9 MB/s)
+#8 1.972 Reading package lists...
+#8 2.489 W: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
+#8 2.506 Reading package lists...
+#8 3.010 Building dependency tree...
+#8 3.152 Reading state information...
+#8 3.276 The following additional packages will be installed:
+#8 3.276   git-man libcusolver-13-0 libcusparse-13-0 liberror-perl
+#8 3.277 Suggested packages:
+#8 3.277   gettext-base git-daemon-run | git-daemon-sysvinit git-doc git-email git-gui
+#8 3.277   gitk gitweb git-cvs git-mediawiki git-svn
+#8 3.277 Recommended packages:
+#8 3.277   less ssh-client
+#8 3.329 The following NEW packages will be installed:
+#8 3.329   git git-man libcusolver-13-0 libcusolver-dev-13-0 libcusparse-13-0
+#8 3.329   libcusparse-dev-13-0 liberror-perl
+#8 3.439 0 upgraded, 7 newly installed, 0 to remove and 97 not upgraded.
+#8 3.439 Need to get 606 MB of archives.
+#8 3.439 After this operation, 884 MB of additional disk space will be used.
+#8 3.439 Get:1 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 liberror-perl all 0.17029-2 [25.6 kB]
+#8 3.515 Get:2 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 git-man all 1:2.43.0-1ubuntu7.4 [1101 kB]
+#8 3.741 Get:3 http://ports.ubuntu.com/ubuntu-ports noble-security/main arm64 git arm64 1:2.43.0-1ubuntu7.4 [3774 kB]
+#8 4.184 Get:4 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  libcusolver-13-0 12.0.4.66-1 [179 MB]
+#8 16.62 Get:5 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  libcusolver-dev-13-0 12.0.4.66-1 [113 MB]
+#8 30.23 Get:6 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  libcusparse-13-0 12.6.3.3-1 [153 MB]
+#8 41.76 Get:7 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa  libcusparse-dev-13-0 12.6.3.3-1 [156 MB]
+#8 55.32 debconf: delaying package configuration, since apt-utils is not installed
+#8 55.35 Fetched 606 MB in 52s (11.7 MB/s)
+#8 55.40 Selecting previously unselected package liberror-perl.
+#8 55.40 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 21232 files and directories currently installed.)
+#8 55.52 Preparing to unpack .../0-liberror-perl_0.17029-2_all.deb ...
+#8 55.53 Unpacking liberror-perl (0.17029-2) ...
+#8 55.58 Selecting previously unselected package git-man.
+#8 55.59 Preparing to unpack .../1-git-man_1%3a2.43.0-1ubuntu7.4_all.deb ...
+#8 55.59 Unpacking git-man (1:2.43.0-1ubuntu7.4) ...
+#8 55.66 Selecting previously unselected package git.
+#8 55.66 Preparing to unpack .../2-git_1%3a2.43.0-1ubuntu7.4_arm64.deb ...
+#8 55.67 Unpacking git (1:2.43.0-1ubuntu7.4) ...
+#8 55.80 Selecting previously unselected package libcusolver-13-0.
+#8 55.81 Preparing to unpack .../3-libcusolver-13-0_12.0.4.66-1_arm64.deb ...
+#8 55.81 Unpacking libcusolver-13-0 (12.0.4.66-1) ...
+#8 56.69 Selecting previously unselected package libcusolver-dev-13-0.
+#8 56.69 Preparing to unpack .../4-libcusolver-dev-13-0_12.0.4.66-1_arm64.deb ...
+#8 56.69 Unpacking libcusolver-dev-13-0 (12.0.4.66-1) ...
+#8 57.40 Selecting previously unselected package libcusparse-13-0.
+#8 57.40 Preparing to unpack .../5-libcusparse-13-0_12.6.3.3-1_arm64.deb ...
+#8 57.41 Unpacking libcusparse-13-0 (12.6.3.3-1) ...
+#8 58.02 Selecting previously unselected package libcusparse-dev-13-0.
+#8 58.02 Preparing to unpack .../6-libcusparse-dev-13-0_12.6.3.3-1_arm64.deb ...
+#8 58.03 Unpacking libcusparse-dev-13-0 (12.6.3.3-1) ...
+#8 58.76 Setting up libcusolver-13-0 (12.0.4.66-1) ...
+#8 58.78 Setting up liberror-perl (0.17029-2) ...
+#8 58.80 Setting up libcusparse-13-0 (12.6.3.3-1) ...
+#8 58.82 Setting up git-man (1:2.43.0-1ubuntu7.4) ...
+#8 58.84 Setting up libcusparse-dev-13-0 (12.6.3.3-1) ...
+#8 58.86 Setting up libcusolver-dev-13-0 (12.0.4.66-1) ...
+#8 58.88 Setting up git (1:2.43.0-1ubuntu7.4) ...
+#8 59.01 Cloning into '/opt/exllamav3'...
+#8 61.86 Note: switching to '5be886578ec80324c2c715269387be2058724b6e'.
+#8 61.86 
+#8 61.86 You are in 'detached HEAD' state. You can look around, make experimental
+#8 61.86 changes and commit them, and you can discard any commits you make in this
+#8 61.86 state without impacting any branches by switching back to a branch.
+#8 61.86 
+#8 61.86 If you want to create a new branch to retain commits you create, you may
+#8 61.86 do so (now or later) by using -c with the switch command. Example:
+#8 61.86 
+#8 61.86   git switch -c <new-branch-name>
+#8 61.86 
+#8 61.86 Or undo this operation with:
+#8 61.86 
+#8 61.86   git switch -
+#8 61.86 
+#8 61.86 Turn off this advice by setting config variable advice.detachedHead to false
+#8 61.86 
+#8 61.86 HEAD is now at 5be88657 Bump to v1.4.9
+#8 61.89 patched /opt/exllamav3/exllamav3/exllamav3_ext/avx2_target.h
+#8 61.89 patched /opt/exllamav3/exllamav3/exllamav3_ext/avx512_target.h
+#8 61.89 patched /opt/exllamav3/exllamav3/exllamav3_ext/avx2_target.cpp
+#8 61.89 patched /opt/exllamav3/exllamav3/exllamav3_ext/avx512_target.cpp
+#8 61.89 patched /opt/exllamav3/exllamav3/exllamav3_ext/parallel/all_reduce_cpu_avx2.cpp
+#8 61.89 patched /opt/exllamav3/exllamav3/exllamav3_ext/parallel/all_reduce_cpu_avx512.cpp
+#8 61.89 patched /opt/exllamav3/exllamav3/exllamav3_ext/cpu/moe_mul1.cpp
+#8 61.89 patched /opt/exllamav3/exllamav3/exllamav3_ext/cpu/moe_handoff.cu
+#8 61.89 patched /opt/exllamav3/exllamav3/exllamav3_ext/parallel/all_reduce_cpu.cu
+#8 62.50 Processing /opt/exllamav3
+#8 62.50   Preparing metadata (pyproject.toml): started
+#8 66.93   Preparing metadata (pyproject.toml): finished with status 'done'
+#8 66.94 Building wheels for collected packages: exllamav3
+#8 66.94   Building wheel for exllamav3 (pyproject.toml): started
+#8 127.9   Building wheel for exllamav3 (pyproject.toml): still running...
+#8 166.2   Building wheel for exllamav3 (pyproject.toml): finished with status 'done'
+#8 166.3   Created wheel for exllamav3: filename=exllamav3-1.4.9-cp312-cp312-linux_aarch64.whl size=81993424 sha256=1e483748d9d67f57922d9a2cb2155ecc4fa8cb3f1b46521d25b4ba45f45f3487
+#8 166.3   Stored in directory: /tmp/pip-ephem-wheel-cache-t2vm5d11/wheels/66/31/22/52c7f1731161c8b0d5fd515bdafc549cddbaf9d4f6b0057a0f
+#8 166.3 Successfully built exllamav3
+#8 166.3 Installing collected packages: exllamav3
+#8 167.2 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#8 167.2 Successfully installed exllamav3-1.4.9
+#8 167.9 W1020 06:41:10.731000 3068 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#8 168.5 exllamav3 ok
+#8 168.7 Cloning into '/opt/vllm-exl3'...
+#8 169.4 Note: switching to 'd3cfd394920360d69f820d2dc96f8292a9e10283'.
+#8 169.4 
+#8 169.4 You are in 'detached HEAD' state. You can look around, make experimental
+#8 169.4 changes and commit them, and you can discard any commits you make in this
+#8 169.4 state without impacting any branches by switching back to a branch.
+#8 169.4 
+#8 169.4 If you want to create a new branch to retain commits you create, you may
+#8 169.4 do so (now or later) by using -c with the switch command. Example:
+#8 169.4 
+#8 169.4   git switch -c <new-branch-name>
+#8 169.4 
+#8 169.4 Or undo this operation with:
+#8 169.4 
+#8 169.4   git switch -
+#8 169.4 
+#8 169.4 Turn off this advice by setting config variable advice.detachedHead to false
+#8 169.4 
+#8 169.4 HEAD is now at d3cfd39 chore: remove one-time SUH cache maintenance workflow
+#8 169.4 patched /opt/vllm-exl3/setup.py
+#8 169.5 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#8 169.5 patched /opt/vllm-exl3/src/vllm_exl3/exl3.py
+#8 169.5 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#8 169.5 patched /opt/vllm-exl3/src/vllm_exl3/exl3.py
+#8 169.5 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#8 169.5 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#8 169.5 patched /opt/vllm-exl3/src/vllm_exl3/exl3.py
+#8 169.5 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#8 169.6 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#8 169.6 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#8 169.6 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#8 169.6 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#8 169.6 wrote /opt/vllm-exl3/csrc/exl3_moe_kmix.cu (kernel from /usr/local/lib/python3.12/dist-packages/exllamav3/exllamav3_ext/quant/exl3_moe_kernel.cuh)
+#8 169.6 patched /opt/vllm-exl3/setup.py
+#8 169.6 patched /opt/vllm-exl3/csrc/bindings.cpp
+#8 169.6 patched /opt/vllm-exl3/src/vllm_exl3/exl3.py
+#8 169.6 patched /opt/vllm-exl3/csrc/p2b_moe.cu
+#8 169.6 patched /opt/vllm-exl3/csrc/bindings.cpp
+#8 169.6 patched /opt/vllm-exl3/src/vllm_exl3/exl3.py
+#8 169.8 Processing /opt/vllm-exl3
+#8 169.8   Preparing metadata (pyproject.toml): started
+#8 170.9   Preparing metadata (pyproject.toml): finished with status 'done'
+#8 170.9 Building wheels for collected packages: vllm-exl3
+#8 170.9   Building wheel for vllm-exl3 (pyproject.toml): started
+#8 211.2   Building wheel for vllm-exl3 (pyproject.toml): finished with status 'done'
+#8 211.2   Created wheel for vllm-exl3: filename=vllm_exl3-0.4.2-cp312-cp312-linux_aarch64.whl size=5761148 sha256=8dbffc2a612d7f8f79797f48ed373cef413a8b040926e21dc7f5069bb9953e3e
+#8 211.2   Stored in directory: /tmp/pip-ephem-wheel-cache-znxv7fbd/wheels/2c/23/97/261c957ec2b335d5405f2e9ff7e5f99a3b21aef9f54e133d06
+#8 211.2 Successfully built vllm-exl3
+#8 211.2 Installing collected packages: vllm-exl3
+#8 211.3 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#8 211.3 Successfully installed vllm-exl3-0.4.2
+#8 223.0 INFO 10-20 06:42:05 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#8 223.0 INFO 10-20 06:42:05 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#8 223.2 WARNING 10-20 06:42:05 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#8 223.2 W1020 06:42:06.005000 3331 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#8 224.3 WARNING 10-20 06:42:07 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#8 224.3 WARNING 10-20 06:42:07 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#8 225.1 vllm_exl3 rows cuda ok
+#8 DONE 226.5s
+
+#9 [5/7] RUN TORCH_CUDA_ARCH_LIST=12.1a MAX_JOBS=4 python3 /opt/dsv41-patch/moe_prefill_tc.py       --prebuild /opt/dsv41-moe-prefill-tc --arch 121a  && python3 -c "import sys, torch; sys.path.insert(0, '/opt/dsv41-patch'); import moe_prefill_tc as m; tag = m.source_tag(); mod = m._load_prebuilt(tag); assert mod is not None and int(mod.ABI) == 1 and hasattr(mod, 'moe_prefill_tc'), tag; print('moe_prefill_tc prebuilt ok', tag)"  && find /opt/dsv41-moe-prefill-tc -name '*.o' -delete
+#9 0.842 W1020 06:42:10.122000 7 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#9 34.07 [1/2] /usr/local/cuda/bin/nvcc -MD -MF moe_prefill_tc.cuda.o.d -DTORCH_EXTENSION_NAME=dsv41_moe_prefill_tc_022a960b5338 -DTORCH_API_INCLUDE_EXTENSION_H -I/opt/dsv41-patch -I/usr/local/lib/python3.12/dist-packages/exllamav3/exllamav3_ext -I/usr/local/lib/python3.12/dist-packages/exllamav3/exllamav3_ext/quant -isystem /usr/local/lib/python3.12/dist-packages/torch/include -isystem /usr/local/lib/python3.12/dist-packages/torch/include/torch/csrc/api/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options '-fPIC' -O3 -std=c++20 -diag-suppress=20012 -gencode=arch=compute_121a,code=sm_121a -c /opt/dsv41-patch/moe_prefill_tc.cu -o moe_prefill_tc.cuda.o 
+#9 34.20 [2/2] c++ moe_prefill_tc.cuda.o -shared -L/usr/local/lib/python3.12/dist-packages/torch/lib -lc10 -lc10_cuda -ltorch_cpu -ltorch_cuda -ltorch -ltorch_python -L/usr/local/cuda/lib64 -lcudart -o dsv41_moe_prefill_tc_022a960b5338.so
+#9 34.21 moe_prefill_tc prebuilt /opt/dsv41-moe-prefill-tc/022a960b5338
+#9 35.06 moe_prefill_tc prebuilt ok 022a960b5338
+#9 DONE 35.3s
+
+#10 [6/7] COPY patch/sitecustomize.py /usr/lib/python3.12/sitecustomize.py
+#10 DONE 0.1s
+
+#11 [7/7] RUN python3 /opt/dsv41-patch/widen_b12x_smalls.py /usr/local/lib/python3.12/dist-packages/flashinfer/gemm/kernels/dense_blockscaled_gemm_sm120_b12x.py  && python3 /opt/dsv41-patch/probe_wo_a.py /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/ops/o_proj.py  && python3 /opt/dsv41-patch/fix_o_proj_woa_fp8.py /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/ops/o_proj.py
+#11 0.199 dsv41-patch skip model_loop_release: DSV41_MODEL_LOOP_RELEASE is not 1
+#11 0.200 dsv41-patch skip kv_packed_groups: DSV41_KV_PACKED_GROUPS is not 1
+#11 0.201 dsv41-patch skip indexer_expanded_lazy: DSV41_INDEXER_EXPANDED_TABLE_LAZY is not 1
+#11 0.201 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#11 0.232 dsv41-patch ok prefer_b12x_mxfp8
+#11 0.266 patched /usr/local/lib/python3.12/dist-packages/vllm/model_executor/kernels/linear/mxfp8/flashinfer.py
+#11 0.266 dsv41-indexer-workspace: applied (/usr/local/lib/python3.12/dist-packages/vllm/v1/attention/backends/mla/indexer.py)
+#11 0.268 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#11 0.277 dsv41-patch ok persistent_topk: rewritten
+#11 0.278 dsv41-patch ok kpool_persistent_topk: rewritten
+#11 0.279 dsv41-patch ok indexer_ragged_decode: rewritten
+#11 3.349 INFO 10-20 06:42:47 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#11 3.349 INFO 10-20 06:42:47 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#11 3.427 WARNING 10-20 06:42:48 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#11 3.448 W1020 06:42:48.071000 6 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#11 3.809 WARNING 10-20 06:42:48 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#11 3.810 WARNING 10-20 06:42:48 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#11 3.863 dsv41-patch ok load_general_plugins
+#11 3.863 dsv41-patch ok exl3_weight_block_size
+#11 4.446 dsv41-patch ok warmup_stubs
+#11 4.481 dsv41-patch ok cudagraph_worker_stub
+#11 4.484 dsv41-patch skip fat_scratch_shared: DSV41_FAT_SCRATCH_SHARED is not 1
+#11 4.485 dsv41-patch skip attn_out_defer: DSV41_ATTN_OUT_DEFER is not 1
+#11 4.486 dsv41-patch skip engram_post_inplace: DSV41_ENGRAM_POST_INPLACE is not 1 and DSV41_ENGRAM_WKV_ROWS is 0
+#11 4.499 dsv41-patch ok swa_page_coerce
+#11 4.751 dsv41-patch ok kernel_block_sizes
+#11 4.751 dsv41-patch ok extra_page_bump
+#11 4.751 dsv41-patch ok v41_config_vision
+#11 4.751 dsv41-patch ok swa_image_width: rewritten
+#11 4.751 dsv41-patch ok attention_image_width: rewritten
+#11 4.751 dsv41-patch ok native_indexer_decode: rewritten
+#11 4.751 dsv41-patch ok indexer_adaptive: rewritten
+#11 4.751 dsv41-patch ok indexer_short_context: rewritten
+#11 4.756 dsv41: chat encoder 1017 parity engaged (encoding rewritten, tokenizer rewritten)
+#11 4.756 dsv41-patch ok chat_encoder_1017: encoding rewritten, tokenizer rewritten
+#11 4.757 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#11 4.757 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#11 4.757 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#11 4.757 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#11 4.757 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#11 4.770 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#11 4.770 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#11 4.771 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#11 4.786 dsv41: engram disk gather census instrumented
+#11 4.786 dsv41: engram parallel stage installed
+#11 4.786 dsv41: engram prefetch v3 stager installed
+#11 4.786 dsv41: engram prefetch v3 runner hook installed
+#11 4.786 dsv41: engram census pf_hit accounting fixed (v3)
+#11 4.786 dsv41: engram gather v2 installed (DSV41_ENGRAM_GATHER_V2)
+#11 4.786 dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+#11 4.786 dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+#11 4.825 dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+#11 4.825 dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+#11 4.835 dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+#11 4.836 dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+#11 4.841 dsv41-patch ok decode_levers
+#11 4.856 patched /usr/local/lib/python3.12/dist-packages/flashinfer/gemm/kernels/dense_blockscaled_gemm_sm120_b12x.py
+#11 5.971 dsv41-patch skip model_loop_release: DSV41_MODEL_LOOP_RELEASE is not 1
+#11 5.971 dsv41-patch skip kv_packed_groups: DSV41_KV_PACKED_GROUPS is not 1
+#11 5.972 dsv41-patch skip indexer_expanded_lazy: DSV41_INDEXER_EXPANDED_TABLE_LAZY is not 1
+#11 5.972 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#11 5.972 dsv41-patch ok prefer_b12x_mxfp8
+#11 5.976 dsv41-indexer-workspace: already applied
+#11 5.976 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#11 5.976 dsv41-patch ok persistent_topk: already applied
+#11 5.976 dsv41-patch ok kpool_persistent_topk: already applied
+#11 5.977 dsv41-patch ok indexer_ragged_decode: already applied
+#11 9.192 INFO 10-20 06:42:53 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#11 9.192 INFO 10-20 06:42:53 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#11 9.274 WARNING 10-20 06:42:53 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#11 9.296 W1020 06:42:53.919000 95 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#11 9.652 WARNING 10-20 06:42:54 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#11 9.654 WARNING 10-20 06:42:54 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#11 9.711 dsv41-patch ok load_general_plugins
+#11 9.711 dsv41-patch ok exl3_weight_block_size
+#11 9.795 dsv41-patch ok warmup_stubs
+#11 9.799 dsv41-patch ok cudagraph_worker_stub
+#11 9.799 dsv41-patch skip fat_scratch_shared: DSV41_FAT_SCRATCH_SHARED is not 1
+#11 9.799 dsv41-patch skip attn_out_defer: DSV41_ATTN_OUT_DEFER is not 1
+#11 9.799 dsv41-patch skip engram_post_inplace: DSV41_ENGRAM_POST_INPLACE is not 1 and DSV41_ENGRAM_WKV_ROWS is 0
+#11 9.802 dsv41-patch ok swa_page_coerce
+#11 9.831 dsv41-patch ok kernel_block_sizes
+#11 9.831 dsv41-patch ok extra_page_bump
+#11 9.831 dsv41-patch ok v41_config_vision
+#11 9.831 dsv41-patch ok swa_image_width: already applied
+#11 9.831 dsv41-patch ok attention_image_width: already applied
+#11 9.831 dsv41-patch ok native_indexer_decode: already applied
+#11 9.831 dsv41-patch ok indexer_adaptive: already applied
+#11 9.831 dsv41-patch ok indexer_short_context: already applied
+#11 9.831 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#11 9.831 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#11 9.832 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#11 9.832 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#11 9.832 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#11 9.832 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#11 9.832 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#11 9.832 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#11 9.832 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#11 9.832 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#11 9.834 dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+#11 9.834 dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+#11 9.836 dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+#11 9.836 dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+#11 9.839 dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+#11 9.839 dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+#11 9.839 dsv41-patch ok decode_levers
+#11 9.854 patched /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/ops/o_proj.py
+#11 11.03 dsv41-patch skip model_loop_release: DSV41_MODEL_LOOP_RELEASE is not 1
+#11 11.03 dsv41-patch skip kv_packed_groups: DSV41_KV_PACKED_GROUPS is not 1
+#11 11.03 dsv41-patch skip indexer_expanded_lazy: DSV41_INDEXER_EXPANDED_TABLE_LAZY is not 1
+#11 11.03 dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+#11 11.03 dsv41-patch ok prefer_b12x_mxfp8
+#11 11.04 dsv41-indexer-workspace: already applied
+#11 11.04 dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+#11 11.04 dsv41-patch ok persistent_topk: already applied
+#11 11.04 dsv41-patch ok kpool_persistent_topk: already applied
+#11 11.04 dsv41-patch ok indexer_ragged_decode: already applied
+#11 14.09 INFO 10-20 06:42:58 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+#11 14.09 INFO 10-20 06:42:58 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+#11 14.17 WARNING 10-20 06:42:58 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#11 14.19 W1020 06:42:58.812000 227 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+#11 14.53 WARNING 10-20 06:42:59 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#11 14.53 WARNING 10-20 06:42:59 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+#11 14.58 dsv41-patch ok load_general_plugins
+#11 14.58 dsv41-patch ok exl3_weight_block_size
+#11 14.67 dsv41-patch ok warmup_stubs
+#11 14.67 dsv41-patch ok cudagraph_worker_stub
+#11 14.67 dsv41-patch skip fat_scratch_shared: DSV41_FAT_SCRATCH_SHARED is not 1
+#11 14.67 dsv41-patch skip attn_out_defer: DSV41_ATTN_OUT_DEFER is not 1
+#11 14.67 dsv41-patch skip engram_post_inplace: DSV41_ENGRAM_POST_INPLACE is not 1 and DSV41_ENGRAM_WKV_ROWS is 0
+#11 14.67 dsv41-patch ok swa_page_coerce
+#11 14.70 dsv41-patch ok kernel_block_sizes
+#11 14.70 dsv41-patch ok extra_page_bump
+#11 14.70 dsv41-patch ok v41_config_vision
+#11 14.70 dsv41-patch ok swa_image_width: already applied
+#11 14.70 dsv41-patch ok attention_image_width: already applied
+#11 14.70 dsv41-patch ok native_indexer_decode: already applied
+#11 14.70 dsv41-patch ok indexer_adaptive: already applied
+#11 14.70 dsv41-patch ok indexer_short_context: already applied
+#11 14.70 dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+#11 14.70 dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+#11 14.70 dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+#11 14.70 dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+#11 14.70 dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+#11 14.70 dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+#11 14.70 dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+#11 14.70 dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+#11 14.70 dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+#11 14.70 dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+#11 14.71 dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+#11 14.71 dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+#11 14.71 dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+#11 14.71 dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+#11 14.71 dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+#11 14.71 dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+#11 14.71 dsv41-patch ok decode_levers
+#11 14.71 patched /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/ops/o_proj.py
+#11 DONE 15.9s
+
+#12 exporting to image
+#12 exporting layers
+#12 exporting layers 2.3s done
+#12 writing image sha256:05122e36e015e3ce9569894b69db0ff391e36ee1353efb910d74a2cbba03cafa done
+#12 naming to docker.io/library/dsv41-flash-exl3-sm121:e16-rows-scratch done
+#12 DONE 2.3s
+
+real	4m41.180s
+user	0m0.324s
+sys	0m0.310s
+rc=0
+end 2026-10-20T06:43:02Z

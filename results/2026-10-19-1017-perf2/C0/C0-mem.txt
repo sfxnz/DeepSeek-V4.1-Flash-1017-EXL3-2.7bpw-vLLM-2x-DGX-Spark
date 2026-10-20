@@ -1,0 +1,24 @@
+## spark1 2026-10-19T21:42:44Z before
+               total        used        free      shared  buff/cache   available
+Mem:          124610      119811        3848         386        2953        4798
+Swap:          16383       10622        5761
+## spark2
+               total        used        free      shared  buff/cache   available
+Mem:          124610      118022        1735         380        6794        6587
+Swap:          16383        6083       10300
+## spark1 2026-10-19T21:46:30Z after-dec
+               total        used        free      shared  buff/cache   available
+Mem:          124610      118283        4429         387        3722        6326
+Swap:          16383       10591        5792
+## spark2
+               total        used        free      shared  buff/cache   available
+Mem:          124610      117579        1429         381        7102        7030
+Swap:          16383        6069       10314
+## spark1 2026-10-19T21:50:17Z after-turns
+               total        used        free      shared  buff/cache   available
+Mem:          124610      117651        3975         386        4492        6958
+Swap:          16383       10676        5707
+## spark2
+               total        used        free      shared  buff/cache   available
+Mem:          124610      117948        1053         381        7457        6661
+Swap:          16383        6042       10341

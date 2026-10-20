@@ -1,0 +1,27 @@
+# cmd: python3 tools/measure_lail_prose.py --runs 5
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration4 (HEAD 746ed86) host: spark1 start: 2026-10-20T01:44:35Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=512 temperature=0.2 runs=5 phase=lail_prose c=1
+run=1 {"ttft_s": 1.1360389981418848, "decode_s": 12.93635623389855, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 256, "lail_tok_s": 39.57837823438646, "recipe_tok_s": 39.50107671439743, "tokens_per_chunk": 2.0, "repeat_ratio": 0.00234192037470726, "collapsed": false, "preview": "The scheduler's admission policy is where this becomes visible. When four tabs each hold a 12k-token system prompt and a growing transcript, the prefill cost is amortized only if the runtime recognizes the shared prefix and reuses its KV bl", "acceptance_len": 2.003921568627451, "draft_acceptance_rate": 0.2007843137254902}
+run=2 {"ttft_s": 0.25676423823460937, "decode_s": 13.633543491829187, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 270, "lail_tok_s": 37.55443332152424, "recipe_tok_s": 37.48108481894314, "tokens_per_chunk": 1.8962962962962964, "repeat_ratio": 0.0025, "collapsed": false, "preview": "The KV cache is the product, not a leftover after util. Once you internalize that, the whole scheduling problem inverts: you stop asking \"how much cache can I afford to keep\" and start asking \"which cache is worth keeping, and for whom.\" On", "acceptance_len": 1.9070631970260223, "draft_acceptance_rate": 0.18141263940520447}
+run=3 {"ttft_s": 0.2262732652015984, "decode_s": 12.851098289713264, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 251, "lail_tok_s": 39.84095276975925, "recipe_tok_s": 39.76313840888081, "tokens_per_chunk": 2.039840637450199, "repeat_ratio": 0.002457002457002457, "collapsed": false, "preview": "The KV cache is the product, not a leftover after util. Once you internalize that, the whole scheduling problem inverts: you stop asking \"how many tokens per second can I squeeze out of this box\" and start asking \"how many resident contexts", "acceptance_len": 2.044, "draft_acceptance_rate": 0.2088}
+run=4 {"ttft_s": 0.2608785228803754, "decode_s": 14.080574703868479, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 262, "lail_tok_s": 36.36215216835814, "recipe_tok_s": 36.291132339904316, "tokens_per_chunk": 1.9541984732824427, "repeat_ratio": 0.00234192037470726, "collapsed": false, "preview": "The scheduler's admission policy is where this becomes visible. When four tabs each hold a 30k-token system prompt and the agent fans out a tool call, the prefill for the new turn is cheap only if the shared prefix is still resident. On uni", "acceptance_len": 1.9578544061302683, "draft_acceptance_rate": 0.19157088122605365}
+run=5 {"ttft_s": 0.2532307719811797, "decode_s": 13.203194044996053, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 259, "lail_tok_s": 38.77849543490164, "recipe_tok_s": 38.70275618600535, "tokens_per_chunk": 1.9768339768339769, "repeat_ratio": 0.002380952380952381, "collapsed": false, "preview": "The KV cache is the product, not a leftover after util. That inversion is the whole game on a box like the Spark, because unified memory collapses the boundary that used to let you pretend prefill and decode lived in separate economies. On ", "acceptance_len": 1.9806201550387597, "draft_acceptance_rate": 0.19612403100775194}
+natural phase=lail_prose completion_tokens=512 finish_reason=length
+SUMMARY {
+  "phase": "lail_prose",
+  "concurrency": 1,
+  "max_tokens": 512,
+  "temperature": 0.2,
+  "n": 5,
+  "median_lail_tok_s": 38.77849543490164,
+  "median_recipe_tok_s": 38.70275618600535,
+  "median_ttft_s": 0.25676423823460937,
+  "median_completion_tokens": 512,
+  "natural_completion_tokens": 512,
+  "natural_finish_reason": "length",
+  "post_eos_fraction": 0.0,
+  "median_acceptance_len": 1.9806201550387597,
+  "median_draft_acceptance_rate": 0.19612403100775194
+}
+rc=0
+# end: 2026-10-20T01:45:57Z

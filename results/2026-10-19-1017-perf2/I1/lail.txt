@@ -1,0 +1,27 @@
+# cmd: python3 tools/measure_lail_prose.py --runs 5
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration (HEAD ff424e8) host: spark1 start: 2026-10-19T19:13:46Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=512 temperature=0.2 runs=5 phase=lail_prose c=1
+run=1 {"ttft_s": 1.160893369000405, "decode_s": 13.365083461161703, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 249, "lail_tok_s": 38.30877685783614, "recipe_tok_s": 38.23395502803568, "tokens_per_chunk": 2.0562248995983934, "repeat_ratio": 0.0025252525252525255, "collapsed": false, "preview": "The KV cache is the product, not a leftover after util. Once you internalize that, the whole scheduling problem inverts: you stop asking \"how many tokens per second can I squeeze out of this box\" and start asking \"which resident contexts ar", "acceptance_len": 2.060483870967742, "draft_acceptance_rate": 0.353494623655914}
+run=2 {"ttft_s": 0.26286193216219544, "decode_s": 13.522093128878623, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 254, "lail_tok_s": 37.86396049192569, "recipe_tok_s": 37.790007444089895, "tokens_per_chunk": 2.015748031496063, "repeat_ratio": 0.0024154589371980675, "collapsed": false, "preview": "The scheduler's admission policy is where this becomes visible first. When four tabs each hold a 30k-token system prompt and three of them are idle, a naive continuous-batching loop still pays the prefill tax on every new turn because it tr", "acceptance_len": 2.0237154150197627, "draft_acceptance_rate": 0.3412384716732543}
+run=3 {"ttft_s": 0.25446971738711, "decode_s": 14.864795395638794, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 273, "lail_tok_s": 34.44379733273803, "recipe_tok_s": 34.37652429107252, "tokens_per_chunk": 1.8754578754578755, "repeat_ratio": 0.0024813895781637717, "collapsed": false, "preview": "The scheduler's admission policy is where this becomes visible. When four tabs each hold a 30k-token system prompt and the agent fans out a tool call, the prefill for the fifth request doesn't start from zero\u2014it starts from whatever prefix ", "acceptance_len": 1.8823529411764706, "draft_acceptance_rate": 0.29411764705882354}
+run=4 {"ttft_s": 0.2546471757814288, "decode_s": 13.005214584991336, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 243, "lail_tok_s": 39.368823686375265, "recipe_tok_s": 39.291931452612815, "tokens_per_chunk": 2.1069958847736627, "repeat_ratio": 0.002380952380952381, "collapsed": false, "preview": "The scheduler's admission policy is where this becomes visible first. When four tabs each carry the same 12k-token system prompt, a naive continuous-batching loop treats them as four independent prefills and pays the full cost four times ov", "acceptance_len": 2.1069958847736627, "draft_acceptance_rate": 0.36899862825788754}
+run=5 {"ttft_s": 0.2643504999577999, "decode_s": 13.757380138151348, "prompt_tokens": 61, "completion_tokens": 512, "finish_reason": "length", "chunks": 258, "lail_tok_s": 37.21638821189106, "recipe_tok_s": 37.14369995366471, "tokens_per_chunk": 1.9844961240310077, "repeat_ratio": 0.0024390243902439024, "collapsed": false, "preview": "The scheduler's admission policy is where this becomes visible. When four tabs each hold a 30k-token system prompt and three of them are idle, a naive continuous-batching loop still pays to keep their KV blocks resident because eviction loo", "acceptance_len": 1.9883268482490273, "draft_acceptance_rate": 0.32944228274967574}
+natural phase=lail_prose completion_tokens=512 finish_reason=length
+SUMMARY {
+  "phase": "lail_prose",
+  "concurrency": 1,
+  "max_tokens": 512,
+  "temperature": 0.2,
+  "n": 5,
+  "median_lail_tok_s": 37.86396049192569,
+  "median_recipe_tok_s": 37.790007444089895,
+  "median_ttft_s": 0.26286193216219544,
+  "median_completion_tokens": 512,
+  "natural_completion_tokens": 512,
+  "natural_finish_reason": "length",
+  "post_eos_fraction": 0.0,
+  "median_acceptance_len": 2.0237154150197627,
+  "median_draft_acceptance_rate": 0.3412384716732543
+}
+rc=0
+# end: 2026-10-19T19:15:11Z

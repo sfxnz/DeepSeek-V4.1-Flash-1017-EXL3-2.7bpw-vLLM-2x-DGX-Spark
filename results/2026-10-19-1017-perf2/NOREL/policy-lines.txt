@@ -1,0 +1,9 @@
+      3 dsv41: attention out defer engaged (o_padded after the indexer above 64 eager rows)
+      3 dsv41: engram post engaged (in place on, wkv rows full, above 64 eager rows, self-check 2 calls)
+      3 dsv41: fat scratch shared engaged (one scratch set of 2048 rows for every row bucket and K)
+      2 dsv41: model loop release engaged (model.py already applied)
+      1 dsv41: model loop release engaged (model.py rewritten)
+      3 [dsv41-prefill-empty-cache] armed (threshold 100000000 tokens, release when MemAvailable < 4.0 GiB; hold mid-prefill, release there below 3.0 GiB or on 150 MiB of pool growth the step peaks do not explain; per-step log)
+      1 (Worker_TP1 pid=467) dsv41: engram post self-check bit-exact on 2 eager calls (in place on, wkv rows full)
+      2 (Worker_TP1 pid=467) dsv41: fat scratch shared: one set of 2048 rows, 195.9 MiB (hidden 5120, intermediate 1152, packed13 2949120 int16)
+      1 (Worker_TP1 pid=467) dsv41: fat scratch shared: stock key 1 (bucket 2048 rows, K 2): the stock cache would hold 193.1 MiB in 1 sets, shared 195.9 MiB

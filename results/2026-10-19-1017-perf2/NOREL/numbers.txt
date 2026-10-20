@@ -1,0 +1,273 @@
+# NOREL = D4ENV + DSV41_PREFILL_EMPTY_CACHE_TOKENS=100000000 (integration4 @746ed86): hook armed with threshold 100000000, no step qualifies, every step action '-' (no empty_cache).
+# MEMWATCH TRIP 2026-10-20T03:12:02Z (s1=617 s2=7011 floor 1536; main checkout ./stop.sh, both ranks) in pp32kx3 run 2 (2nd 32K novel prompt), chunk 3 in flight (24,564 tok logged at 03:12:03 by rank 0/1).
+# done: smoke, 32K run 1 (32,653 tok TTFT 14.22 s 2296 tok/s). Not run: 32K run 3, 3 x 64K, 102K gen, c1 prose, c4 distinct (cells stopped per main's rule).
+
+## memwatch (2 s)
+2026-10-20T03:11:38Z s1=5077 s2=8492 swap1=8190 swap2=6075 up=1
+2026-10-20T03:11:40Z s1=4978 s2=8471 swap1=8190 swap2=6045 up=1
+2026-10-20T03:11:42Z s1=4455 s2=8426 swap1=8189 swap2=6045 up=1
+2026-10-20T03:11:44Z s1=4879 s2=7325 swap1=8213 swap2=6033 up=1
+2026-10-20T03:11:46Z s1=4498 s2=7296 swap1=8211 swap2=6033 up=1
+2026-10-20T03:11:48Z s1=3501 s2=7451 swap1=8211 swap2=6033 up=1
+2026-10-20T03:11:50Z s1=2513 s2=7366 swap1=8210 swap2=6033 up=1
+2026-10-20T03:11:52Z s1=4844 s2=7313 swap1=8225 swap2=6033 up=1
+2026-10-20T03:11:54Z s1=4719 s2=7326 swap1=8229 swap2=6033 up=1
+2026-10-20T03:11:56Z s1=4920 s2=7116 swap1=8393 swap2=6032 up=1
+2026-10-20T03:11:58Z s1=2069 s2=7126 swap1=8389 swap2=6032 up=1
+2026-10-20T03:12:00Z s1=789 s2=7054 swap1=8388 swap2=6032 up=1
+2026-10-20T03:12:02Z s1=617 s2=7011 swap1=8388 swap2=6032 up=1
+2026-10-20T03:12:02Z TRIP s1=617 s2=7011 floor=1536 -> ./stop.sh
+2026-10-20T03:12:11Z s1=117790 s2=119461 swap1=5509 swap2=2491 up=0
+
+## memsample spark1 1 Hz
+03:11:40 free=5473 avail=4981 cached=1256 swap=8190
+03:11:41 free=5418 avail=4931 cached=1266 swap=8190
+03:11:42 free=5378 avail=4893 cached=1273 swap=8189
+03:11:43 free=5390 avail=4908 cached=1356 swap=8190
+03:11:44 free=5418 avail=4934 cached=1036 swap=8213
+03:11:45 free=5202 avail=4520 cached=1007 swap=8212
+03:11:46 free=5175 avail=4498 cached=1017 swap=8211
+03:11:47 free=5149 avail=4472 cached=1018 swap=8211
+03:11:48 free=4173 avail=3501 cached=1028 swap=8211
+03:11:49 free=4161 avail=3489 cached=1029 swap=8211
+03:11:50 free=3665 avail=3030 cached=1101 swap=8210
+03:11:51 free=3121 avail=2453 cached=1037 swap=8210
+03:11:52 free=3104 avail=2437 cached=1038 swap=8210
+03:11:53 free=5487 avail=4992 cached=1000 swap=8231
+03:11:54 free=5401 avail=4720 cached=1010 swap=8229
+03:11:55 free=5462 avail=4777 cached=1002 swap=8229
+03:11:56 free=5423 avail=4932 cached=1005 swap=8393
+03:11:57 free=3894 avail=3241 cached=1067 swap=8389
+03:11:58 free=2744 avail=2071 cached=1025 swap=8389
+03:11:59 free=2709 avail=2036 cached=1025 swap=8388
+03:12:00 free=1497 avail=880 cached=1138 swap=8388
+03:12:01 free=1424 avail=755 cached=1035 swap=8388
+03:12:02 free=1245 avail=652 cached=1187 swap=8388
+03:12:03 free=7586 avail=7038 cached=1060 swap=6245
+03:12:04 free=8669 avail=8191 cached=789 swap=5513
+
+## step lines (pool reserved trajectory; no releases)
+2026-10-20T03:11:41.579849187Z (Worker_TP0 pid=673) [dsv41-prefill-empty-cache] step 5 longest 201 in_flight 0 wall 0.12 s interval 23.78 s reserved 103.07 -> 103.07 GiB (+0 MiB) peak +31 MiB grown +20 MiB MemAvailable 4.81 GiB action -
+2026-10-20T03:11:45.141714659Z (Worker_TP0 pid=673) [dsv41-prefill-empty-cache] step 6 longest 8188 in_flight 1 wall 2.66 s interval 3.56 s reserved 103.07 -> 103.44 GiB (+382 MiB) peak +1024 MiB grown +339 MiB MemAvailable 4.45 GiB action -
+2026-10-20T03:11:48.328087891Z (Worker_TP0 pid=673) [dsv41-prefill-empty-cache] step 7 longest 16376 in_flight 1 wall 2.99 s interval 3.19 s reserved 103.44 -> 103.44 GiB (+0 MiB) peak +1024 MiB grown +338 MiB MemAvailable 3.41 GiB action -
+2026-10-20T03:11:50.863417338Z (Worker_TP0 pid=673) [dsv41-prefill-empty-cache] step 8 longest 24564 in_flight 1 wall 2.42 s interval 2.54 s reserved 103.44 -> 103.44 GiB (+0 MiB) peak +1143 MiB grown +219 MiB MemAvailable 2.42 GiB action -
+2026-10-20T03:11:56.049611704Z (Worker_TP0 pid=673) [dsv41-prefill-empty-cache] step 9 longest 32653 in_flight 0 wall 5.07 s interval 5.18 s reserved 103.44 -> 103.71 GiB (+280 MiB) peak +1428 MiB grown +214 MiB MemAvailable 4.73 GiB action -
+2026-10-20T03:11:58.153777339Z (Worker_TP0 pid=673) [dsv41-prefill-empty-cache] step 10 longest 8188 in_flight 1 wall 1.30 s interval 2.11 s reserved 103.71 -> 103.71 GiB (+0 MiB) peak +1024 MiB grown +214 MiB MemAvailable 2.05 GiB action -
+2026-10-20T03:12:00.699458843Z (Worker_TP0 pid=673) [dsv41-prefill-empty-cache] step 11 longest 16376 in_flight 1 wall 2.43 s interval 2.55 s reserved 103.71 -> 103.71 GiB (+0 MiB) peak +1024 MiB grown +214 MiB MemAvailable 0.76 GiB action -
+2026-10-20T03:12:03.256987577Z (Worker_TP0 pid=673) [dsv41-prefill-empty-cache] step 12 longest 24564 in_flight 1 wall 2.44 s interval 2.56 s reserved 103.71 -> 103.71 GiB (+0 MiB) peak +1143 MiB grown +214 MiB MemAvailable 4.78 GiB action -
+2026-10-20T03:11:41.571529766Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] step 5 longest 201 in_flight 0 wall 0.11 s interval 23.78 s reserved 103.07 -> 103.07 GiB (+0 MiB) peak +31 MiB grown +20 MiB MemAvailable 8.23 GiB action -
+2026-10-20T03:11:45.146301001Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] step 6 longest 8188 in_flight 1 wall 2.67 s interval 3.58 s reserved 103.07 -> 103.44 GiB (+382 MiB) peak +1024 MiB grown +339 MiB MemAvailable 7.13 GiB action -
+2026-10-20T03:11:48.317688654Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] step 7 longest 16376 in_flight 1 wall 2.97 s interval 3.17 s reserved 103.44 -> 103.44 GiB (+0 MiB) peak +1024 MiB grown +338 MiB MemAvailable 7.16 GiB action -
+2026-10-20T03:11:50.853107997Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] step 8 longest 24564 in_flight 1 wall 2.42 s interval 2.54 s reserved 103.44 -> 103.44 GiB (+0 MiB) peak +1143 MiB grown +219 MiB MemAvailable 7.13 GiB action -
+2026-10-20T03:11:56.034657377Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] step 9 longest 32653 in_flight 0 wall 5.07 s interval 5.18 s reserved 103.44 -> 103.71 GiB (+280 MiB) peak +1428 MiB grown +214 MiB MemAvailable 6.95 GiB action -
+2026-10-20T03:11:58.143632794Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] step 10 longest 8188 in_flight 1 wall 1.30 s interval 2.11 s reserved 103.71 -> 103.71 GiB (+0 MiB) peak +1024 MiB grown +214 MiB MemAvailable 6.86 GiB action -
+2026-10-20T03:12:00.688977380Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] step 11 longest 16376 in_flight 1 wall 2.43 s interval 2.55 s reserved 103.71 -> 103.71 GiB (+0 MiB) peak +1024 MiB grown +214 MiB MemAvailable 6.84 GiB action -
+2026-10-20T03:12:03.245187161Z (Worker_TP1 pid=467) [dsv41-prefill-empty-cache] step 12 longest 24564 in_flight 1 wall 2.44 s interval 2.56 s reserved 103.71 -> 103.71 GiB (+0 MiB) peak +1143 MiB grown +214 MiB MemAvailable 6.87 GiB action -
+
+## per-prompt (step lines GiB; memsample node minima MiB)
+## head.live.log rank 0: 2 prompts >= 8000 tokens
+   1 tok=32653 steps=4 first=4.45 first3min=2.42 min=2.42@3 pool=103.07->103.71 (max 103.71, low 103.44) GiB wall=13.14 start_utc=03:11:42 spark1_start_min_MiB=3501 spark1_prompt_min_MiB=2437 spark2_start_min_MiB=7289 spark2_prompt_min_MiB=7116 actions={'-': 4}
+   2 tok=24564(open) steps=3 first=2.05 first3min=0.76 min=0.76@2 pool=103.71->103.71 (max 103.71, low 103.71) GiB wall=6.17 start_utc=03:11:56 spark1_start_min_MiB=652 spark1_prompt_min_MiB=652 spark2_start_min_MiB=7009 spark2_prompt_min_MiB=7009 actions={'-': 3}
+## worker.live.log rank 1: 2 prompts >= 8000 tokens
+   1 tok=32653 steps=4 first=7.13 first3min=7.13 min=6.95@4 pool=103.07->103.71 (max 103.71, low 103.44) GiB wall=13.13 start_utc=03:11:42 spark1_start_min_MiB=3501 spark1_prompt_min_MiB=2437 spark2_start_min_MiB=7289 spark2_prompt_min_MiB=7116 actions={'-': 4}
+   2 tok=24564(open) steps=3 first=6.86 first3min=6.84 min=6.84@2 pool=103.71->103.71 (max 103.71, low 103.71) GiB wall=6.17 start_utc=03:11:56 spark1_start_min_MiB=652 spark1_prompt_min_MiB=652 spark2_start_min_MiB=7009 spark2_prompt_min_MiB=7009 actions={'-': 3}
+
+## D4 per-prompt reference (step lines only)
+## D4/head-final.log rank 0: 9 prompts >= 30000 tokens
+   1 tok=32296 steps=4 first=4.84 first3min=4.75 min=4.71@4 pool=103.56->103.56 (max 103.56, low 103.56) GiB wall=10.42  actions={'-': 1, 'hold': 2, 'keep': 1}
+   2 tok=32173 steps=4 first=4.81 first3min=4.62 min=4.62@2 pool=103.56->103.91 (max 103.91, low 103.56) GiB wall=10.63  actions={'-': 1, 'hold': 2, 'keep': 1}
+   3 tok=32666 steps=4 first=4.18 first3min=4.12 min=4.12@2 pool=103.91->103.84 (max 103.91, low 102.16) GiB wall=12.57  actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   4 tok=65479 steps=8 first=2.49 first3min=1.52 min=1.52@2 pool=103.71->103.82 (max 103.82, low 102.14) GiB wall=11.3  actions={'-': 1, 'floor': 6, 'keep': 1}
+   5 tok=65015 steps=8 first=4.77 first3min=3.53 min=2.18@7 pool=103.82->103.90 (max 103.90, low 102.16) GiB wall=13.88  actions={'-': 1, 'hold': 2, 'floor': 4, 'keep': 1}
+   6 tok=65411 steps=8 first=3.66 first3min=1.91 min=1.60@4 pool=103.90->103.84 (max 103.90, low 102.16) GiB wall=10.55  actions={'-': 1, 'floor': 6, 'keep': 1}
+   7 tok=65461 steps=8 first=4.57 first3min=2.74 min=1.65@6 pool=103.84->103.84 (max 103.84, low 102.16) GiB wall=12.2  actions={'-': 1, 'hold': 1, 'floor': 5, 'release': 1}
+   8 tok=65489 steps=8 first=1.69 first3min=1.69 min=1.68@4 pool=103.04->103.79 (max 103.79, low 102.14) GiB wall=10.55  actions={'-': 1, 'floor': 6, 'release': 1}
+   9 tok=65500 steps=8 first=1.71 first3min=1.71 min=1.71@1 pool=103.04->103.84 (max 103.84, low 102.14) GiB wall=10.56  actions={'-': 1, 'floor': 6, 'keep': 1}
+## D4/worker-final.log rank 1: 9 prompts >= 30000 tokens
+   1 tok=32296 steps=4 first=7.53 first3min=7.08 min=6.91@4 pool=103.56->103.56 (max 103.56, low 103.56) GiB wall=10.43  actions={'-': 1, 'hold': 2, 'keep': 1}
+   2 tok=32173 steps=4 first=7.01 first3min=7.01 min=7.01@1 pool=103.56->103.91 (max 103.91, low 103.56) GiB wall=10.63  actions={'-': 1, 'hold': 2, 'keep': 1}
+   3 tok=32666 steps=4 first=7.95 first3min=7.84 min=7.47@4 pool=103.91->103.84 (max 103.91, low 102.16) GiB wall=13.09  actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   4 tok=65479 steps=8 first=7.70 first3min=7.64 min=7.46@7 pool=103.55->103.87 (max 103.87, low 103.55) GiB wall=21.69  actions={'-': 1, 'hold': 6, 'keep': 1}
+   5 tok=65015 steps=8 first=6.94 first3min=6.39 min=6.39@3 pool=103.87->103.87 (max 103.87, low 103.87) GiB wall=20.76  actions={'-': 1, 'hold': 6, 'keep': 1}
+   6 tok=65411 steps=8 first=6.41 first3min=6.41 min=6.41@1 pool=103.87->103.87 (max 103.87, low 103.87) GiB wall=20.53  actions={'-': 1, 'hold': 6, 'keep': 1}
+   7 tok=65461 steps=8 first=6.40 first3min=6.40 min=6.40@1 pool=103.87->103.87 (max 103.87, low 103.87) GiB wall=20.55  actions={'-': 1, 'hold': 6, 'keep': 1}
+   8 tok=65489 steps=8 first=6.40 first3min=6.40 min=6.40@1 pool=103.87->103.87 (max 103.87, low 103.87) GiB wall=20.86  actions={'-': 1, 'hold': 6, 'keep': 1}
+   9 tok=65500 steps=8 first=6.43 first3min=6.43 min=6.43@1 pool=103.87->103.87 (max 103.87, low 103.87) GiB wall=20.81  actions={'-': 1, 'hold': 6, 'keep': 1}
+
+## /proc probe, 32K run 1 (procstat_sampler 1 Hz)
+prompt 32653 tokens, 2026-10-20T03:11:42.448441Z -> 2026-10-20T03:11:56.669792Z (TTFT 14.22 s)
+
+## spark1: /proc/meminfo (MiB; delta vs before)
+field              before (03:11:40)   start+2s (03:11:44)     middle (03:11:50)     end-1s (03:11:56)   after+3s (03:12:00)
+MemFree                    5506 (+0)            5445 (-61)          4171 (-1335)            5461 (-45)          2547 (-2959)
+MemAvailable               5014 (+0)           4859 (-155)          3500 (-1514)           4843 (-171)          1956 (-3058)
+Cached                     1255 (+0)           1065 (-190)           1029 (-226)            978 (-277)            1191 (-64)
+AnonPages                  5837 (+0)            5886 (+49)            5856 (+19)           5675 (-162)           5694 (-143)
+Shmem                       254 (+0)            384 (+130)            384 (+130)            384 (+130)            384 (+130)
+Mlocked                      23 (+0)               23 (+0)               23 (+0)               23 (+0)               23 (+0)
+Unevictable                  23 (+0)               23 (+0)               23 (+0)               23 (+0)               23 (+0)
+SUnreclaim                 2393 (+0)             2398 (+5)             2399 (+6)            2403 (+10)            2403 (+10)
+KReclaimable                439 (+0)              438 (-1)              438 (-1)              438 (-1)              438 (-1)
+PageTables                   84 (+0)               84 (+0)               84 (+0)               84 (+0)               84 (+0)
+SecPageTables               297 (+0)              298 (+1)              298 (+1)              299 (+2)              299 (+2)
+VmallocUsed                 139 (+0)              140 (+1)              140 (+1)              141 (+2)              141 (+2)
+Percpu                       31 (+0)               31 (+0)               31 (+0)               31 (+0)               31 (+0)
+KernelStack                  28 (+0)               29 (+1)               28 (+0)               28 (+0)               28 (+0)
+AnonHugePages                10 (+0)               10 (+0)               10 (+0)               10 (+0)               10 (+0)
+CmaFree                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+SwapFree                   8193 (+0)             8185 (-8)            8172 (-21)           7989 (-204)           7995 (-198)
+### spark1 VLLM::EngineCor:582198 (MiB)
+  VmRSS                     655 (+0)              655 (-1)              655 (-1)              653 (-2)              655 (+0)
+  VmSwap                    255 (+0)              255 (+0)              255 (+0)              255 (+0)              255 (+0)
+  RssAnon                   622 (+0)              623 (+1)              624 (+1)              624 (+1)              625 (+3)
+  RssFile                    30 (+0)               27 (-4)               27 (-4)               26 (-5)               26 (-5)
+  RssShmem                    1 (+0)                3 (+1)                3 (+1)                3 (+2)                3 (+2)
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                       4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+### spark1 VLLM::Worker_TP:582600 (MiB)
+  VmRSS                    2961 (+0)             2952 (-9)            2948 (-13)           2779 (-182)           2784 (-178)
+  VmSwap                   1187 (+0)             1187 (-1)             1196 (+8)           1362 (+174)           1357 (+170)
+  RssAnon                  2362 (+0)             2368 (+6)             2360 (-3)           2194 (-169)           2198 (-165)
+  RssFile                   432 (+0)            286 (-146)            291 (-142)            288 (-145)            288 (-144)
+  RssShmem                  166 (+0)            296 (+130)            297 (+130)            297 (+130)            297 (+130)
+  VmPin                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                      13 (+0)               13 (+0)               13 (+0)               13 (+0)               13 (+0)
+### spark1 vllm:580365 (MiB)
+  VmRSS                     597 (+0)             613 (+15)             613 (+15)             612 (+14)             615 (+17)
+  VmSwap                    525 (+0)              522 (-4)              522 (-4)              522 (-4)              521 (-4)
+  RssAnon                   561 (+0)             581 (+20)             581 (+20)             581 (+20)             583 (+22)
+  RssFile                    36 (+0)               31 (-6)               31 (-5)               30 (-7)               31 (-5)
+  RssShmem                    0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                       5 (+0)                5 (+0)                5 (+0)                5 (+0)                5 (+0)
+
+## spark2: /proc/meminfo (MiB; delta vs before)
+field              before (03:11:40)   start+2s (03:11:44)     middle (03:11:50)     end-1s (03:11:56)   after+3s (03:12:00)
+MemFree                    7641 (+0)           6908 (-733)           6931 (-710)           6673 (-968)          6525 (-1116)
+MemAvailable               8471 (+0)          7332 (-1139)          7366 (-1105)          7116 (-1355)          7152 (-1319)
+Cached                     2301 (+0)           2456 (+155)           2467 (+166)           2476 (+175)           2659 (+358)
+AnonPages                  3017 (+0)            3038 (+21)            3038 (+21)            3039 (+22)            3039 (+22)
+Shmem                       253 (+0)            381 (+128)            381 (+128)            381 (+128)            381 (+128)
+Mlocked                      24 (+0)               24 (+0)               24 (+0)               24 (+0)               24 (+0)
+Unevictable                  24 (+0)               24 (+0)               24 (+0)               24 (+0)               24 (+0)
+SUnreclaim                 2332 (+0)             2339 (+7)             2339 (+7)            2343 (+11)            2343 (+11)
+KReclaimable                284 (+0)              284 (+0)              283 (-1)              283 (-1)              283 (-1)
+PageTables                   55 (+0)               55 (+0)               55 (+0)               55 (+0)               55 (+0)
+SecPageTables               273 (+0)              274 (+1)              274 (+1)              274 (+1)              274 (+1)
+VmallocUsed                 128 (+0)              129 (+1)              129 (+1)              129 (+1)              129 (+1)
+Percpu                       35 (+0)               35 (+0)               35 (+0)               35 (+0)               35 (+0)
+KernelStack                  20 (+0)               20 (+0)               20 (+0)               20 (+0)               20 (+0)
+AnonHugePages                10 (+0)               10 (+0)               10 (+0)               10 (+0)               10 (+0)
+CmaFree                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+SwapFree                  10338 (+0)           10350 (+12)           10350 (+12)           10351 (+13)           10351 (+13)
+### spark2 VLLM::Worker_TP:2624707 (MiB)
+  VmRSS                    3162 (+0)           3299 (+136)           3296 (+133)           3296 (+133)           3296 (+133)
+  VmSwap                   1076 (+0)             1076 (-1)             1076 (-1)             1076 (-1)             1076 (-1)
+  RssAnon                  2463 (+0)             2469 (+6)             2469 (+6)             2469 (+6)             2469 (+6)
+  RssFile                   538 (+0)              539 (+0)              536 (-3)              536 (-3)              536 (-3)
+  RssShmem                  160 (+0)            290 (+129)            290 (+129)            290 (+129)            290 (+129)
+  VmPin                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                      13 (+0)               13 (+0)               13 (+0)               13 (+0)               13 (+0)
+### spark2 vllm:2619252 (MiB)
+  VmRSS                      49 (+0)               49 (+0)               49 (+0)               49 (+0)               49 (+0)
+  VmSwap                    950 (+0)              950 (+0)              950 (+0)              950 (+0)              950 (+0)
+  RssAnon                     4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+  RssFile                    45 (+0)               45 (+0)               45 (+0)               45 (+0)               45 (+0)
+  RssShmem                    0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                       4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+
+## /proc probe, 32K run 2 up to the trip
+prompt 32K run 2 (tripped) tokens, 2026-10-20T03:11:56.700000Z -> 2026-10-20T03:12:02.000000Z (TTFT 0.00 s)
+
+## spark1: /proc/meminfo (MiB; delta vs before)
+field              before (03:11:55)   start+2s (03:11:59)     middle (03:11:59)     end-1s (03:12:01)   after+3s (03:12:05)
+MemFree                    5384 (+0)          2741 (-2643)          2741 (-2643)          1456 (-3928)        18831 (+13447)
+MemAvailable               4704 (+0)          2067 (-2637)          2067 (-2637)           787 (-3917)        18355 (+13651)
+Cached                     1011 (+0)            1025 (+14)            1025 (+14)            1035 (+24)            750 (-261)
+AnonPages                  5839 (+0)           5693 (-146)           5693 (-146)           5694 (-145)          2272 (-3567)
+Shmem                       384 (+0)              384 (+0)              384 (+0)              384 (+0)              3 (-381)
+Mlocked                      23 (+0)               23 (+0)               23 (+0)               23 (+0)               23 (+0)
+Unevictable                  23 (+0)               23 (+0)               23 (+0)               23 (+0)               23 (+0)
+SUnreclaim                 2399 (+0)             2403 (+4)             2403 (+4)             2403 (+4)           2147 (-252)
+KReclaimable                438 (+0)              438 (+0)              438 (+0)              438 (+0)              437 (-1)
+PageTables                   84 (+0)               84 (+0)               84 (+0)               84 (+0)              57 (-27)
+SecPageTables               298 (+0)              299 (+1)              299 (+1)              299 (+1)             280 (-18)
+VmallocUsed                 140 (+0)              141 (+1)              141 (+1)              140 (+0)             124 (-16)
+Percpu                       31 (+0)               31 (+0)               31 (+0)               31 (+0)               31 (+0)
+KernelStack                  28 (+0)               28 (+0)               28 (+0)               28 (+0)               23 (-5)
+AnonHugePages                10 (+0)               10 (+0)               10 (+0)               10 (+0)               0 (-10)
+CmaFree                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+SwapFree                   8154 (+0)           7995 (-159)           7995 (-159)           7995 (-159)         10870 (+2716)
+### spark1 VLLM::EngineCor:582198 (MiB)
+  VmRSS                     654 (+0)              655 (+1)              655 (+1)              655 (+1)                     -
+  VmSwap                    255 (+0)              255 (+0)              255 (+0)              255 (+0)                     -
+  RssAnon                   624 (+0)              625 (+1)              625 (+1)              625 (+1)                     -
+  RssFile                    26 (+0)               26 (-1)               26 (-1)               26 (-1)                     -
+  RssShmem                    3 (+0)                3 (+0)                3 (+0)                3 (+0)                     -
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                     -
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                     -
+  VmPTE                       4 (+0)                4 (+0)                4 (+0)                4 (+0)                     -
+### spark1 VLLM::Worker_TP:582600 (MiB)
+  VmRSS                    2927 (+0)           2784 (-144)           2784 (-144)           2784 (-144)                     -
+  VmSwap                   1214 (+0)           1357 (+142)           1357 (+142)           1357 (+142)                     -
+  RssAnon                  2341 (+0)           2198 (-143)           2198 (-143)           2198 (-143)                     -
+  RssFile                   289 (+0)              288 (-1)              288 (-1)              288 (-1)                     -
+  RssShmem                  297 (+0)              297 (+0)              297 (+0)              297 (+0)                     -
+  VmPin                      67 (+0)               67 (+0)               67 (+0)               67 (+0)                     -
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                     -
+  VmPTE                      13 (+0)               13 (+0)               13 (+0)               13 (+0)                     -
+### spark1 vllm:580365 (MiB)
+  VmRSS                     612 (+0)              615 (+2)              615 (+2)              615 (+2)                     -
+  VmSwap                    522 (+0)              521 (-1)              521 (-1)              521 (-1)                     -
+  RssAnon                   581 (+0)              583 (+2)              583 (+2)              583 (+2)                     -
+  RssFile                    31 (+0)               31 (+0)               31 (+0)               31 (+0)                     -
+  RssShmem                    0 (+0)                0 (+0)                0 (+0)                0 (+0)                     -
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                     -
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                     -
+  VmPTE                       5 (+0)                5 (+0)                5 (+0)                5 (+0)                     -
+
+## spark2: /proc/meminfo (MiB; delta vs before)
+field              before (03:11:55)   start+2s (03:11:59)     middle (03:11:59)     end-1s (03:12:01)   after+3s (03:12:05)
+MemFree                    6906 (+0)           6558 (-348)           6558 (-348)           6538 (-368)           6547 (-359)
+MemAvailable               7349 (+0)           7024 (-325)           7024 (-325)           7014 (-335)           7087 (-262)
+Cached                     2476 (+0)            2499 (+23)            2499 (+23)            2508 (+32)            2572 (+96)
+AnonPages                  3038 (+0)             3039 (+1)             3039 (+1)             3038 (+0)            3056 (+18)
+Shmem                       381 (+0)              381 (+0)              381 (+0)              381 (+0)              381 (+0)
+Mlocked                      24 (+0)               24 (+0)               24 (+0)               24 (+0)               24 (+0)
+Unevictable                  24 (+0)               24 (+0)               24 (+0)               24 (+0)               24 (+0)
+SUnreclaim                 2339 (+0)             2343 (+4)             2343 (+4)             2343 (+4)             2344 (+5)
+KReclaimable                283 (+0)              283 (+0)              283 (+0)              283 (+0)              284 (+1)
+PageTables                   55 (+0)               55 (+0)               55 (+0)               55 (+0)               56 (+1)
+SecPageTables               274 (+0)              274 (+0)              274 (+0)              274 (+0)              274 (+0)
+VmallocUsed                 129 (+0)              129 (+0)              129 (+0)              129 (+0)              129 (+0)
+Percpu                       35 (+0)               35 (+0)               35 (+0)               35 (+0)               35 (+0)
+KernelStack                  20 (+0)               20 (+0)               20 (+0)               20 (+0)               20 (+0)
+AnonHugePages                10 (+0)               10 (+0)               10 (+0)               10 (+0)               10 (+0)
+CmaFree                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+SwapFree                  10350 (+0)            10351 (+1)            10351 (+1)            10351 (+1)           10362 (+12)
+### spark2 VLLM::Worker_TP:2624707 (MiB)
+  VmRSS                    3296 (+0)             3296 (+0)             3296 (+0)             3296 (+0)             3299 (+3)
+  VmSwap                   1076 (+0)             1076 (+0)             1076 (+0)             1076 (-1)             1076 (-1)
+  RssAnon                  2469 (+0)             2469 (+0)             2469 (+0)             2469 (+0)             2470 (+0)
+  RssFile                   536 (+0)              536 (+0)              536 (+0)              536 (+0)              539 (+2)
+  RssShmem                  290 (+0)              290 (+0)              290 (+0)              290 (+0)              290 (+0)
+  VmPin                      67 (+0)               67 (+0)               67 (+0)               67 (+0)               67 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                      13 (+0)               13 (+0)               13 (+0)               13 (+0)               13 (+0)
+### spark2 vllm:2619252 (MiB)
+  VmRSS                      49 (+0)               49 (+0)               49 (+0)               49 (+0)               49 (+0)
+  VmSwap                    950 (+0)              950 (+0)              950 (+0)              950 (+0)              950 (+0)
+  RssAnon                     4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+  RssFile                    45 (+0)               45 (+0)               45 (+0)               45 (+0)               45 (+0)
+  RssShmem                    0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPin                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmLck                       0 (+0)                0 (+0)                0 (+0)                0 (+0)                0 (+0)
+  VmPTE                       4 (+0)                4 (+0)                4 (+0)                4 (+0)                4 (+0)
+
+## NVRM lines spark1 8 / spark2 0

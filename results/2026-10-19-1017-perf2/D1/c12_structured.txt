@@ -1,0 +1,100 @@
+# cmd: python3 bench_decode.py --phase structured --concurrency 1 2 --runs 9
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 (HEAD ca42873) host: spark1 start: 2026-10-19T23:56:28Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=200 runs=9 concurrency=[1, 2] phases=['structured']
+phase=structured c=1 run=1 wall=2.86s agg=73.56 tok/s per_stream=[73.58] ttft=[0.150] acc=3.961 ms_step=[53.8]
+phase=structured c=1 run=2 wall=2.80s agg=74.86 tok/s per_stream=[74.88] ttft=[0.138] acc=3.961 ms_step=[52.9]
+phase=structured c=1 run=3 wall=2.79s agg=74.94 tok/s per_stream=[74.95] ttft=[0.139] acc=3.961 ms_step=[52.8]
+phase=structured c=1 run=4 wall=2.91s agg=71.90 tok/s per_stream=[71.91] ttft=[0.140] acc=3.961 ms_step=[55.1]
+phase=structured c=1 run=5 wall=2.79s agg=75.11 tok/s per_stream=[75.12] ttft=[0.139] acc=3.961 ms_step=[52.7]
+phase=structured c=1 run=6 wall=2.82s agg=74.97 tok/s per_stream=[74.99] ttft=[0.162] acc=3.961 ms_step=[52.8]
+phase=structured c=1 run=7 wall=2.80s agg=74.68 tok/s per_stream=[74.70] ttft=[0.138] acc=3.961 ms_step=[53.0]
+phase=structured c=1 run=8 wall=2.79s agg=75.02 tok/s per_stream=[75.04] ttft=[0.140] acc=3.961 ms_step=[52.8]
+phase=structured c=1 run=9 wall=2.80s agg=74.71 tok/s per_stream=[74.73] ttft=[0.139] acc=3.961 ms_step=[53.0]
+phase=structured c=2 run=1 wall=4.44s agg=106.70 tok/s per_stream=[47.53,62.90] ttft=[0.142,1.271] acc=3.961 ms_step=[83.3,63.0]
+phase=structured c=2 run=2 wall=3.53s agg=121.11 tok/s per_stream=[60.82,62.41] ttft=[0.143,0.335] acc=3.961 ms_step=[65.1,63.5]
+phase=structured c=2 run=3 wall=3.49s agg=122.36 tok/s per_stream=[61.37,63.05] ttft=[0.139,0.331] acc=3.961 ms_step=[64.5,62.8]
+phase=structured c=2 run=4 wall=3.50s agg=122.00 tok/s per_stream=[61.23,62.91] ttft=[0.143,0.339] acc=3.961 ms_step=[64.7,63.0]
+phase=structured c=2 run=5 wall=3.59s agg=118.69 tok/s per_stream=[59.50,61.13] ttft=[0.143,0.337] acc=3.961 ms_step=[66.6,64.8]
+phase=structured c=2 run=6 wall=3.45s agg=122.92 tok/s per_stream=[61.07,62.88] ttft=[0.139,0.283] acc=3.961 ms_step=[64.9,63.0]
+phase=structured c=2 run=7 wall=3.51s agg=121.80 tok/s per_stream=[61.07,62.79] ttft=[0.141,0.336] acc=3.961 ms_step=[64.9,63.1]
+phase=structured c=2 run=8 wall=3.45s agg=122.91 tok/s per_stream=[61.09,62.87] ttft=[0.141,0.285] acc=3.961 ms_step=[64.8,63.0]
+phase=structured c=2 run=9 wall=3.48s agg=122.66 tok/s per_stream=[61.54,63.21] ttft=[0.143,0.334] acc=3.961 ms_step=[64.4,62.7]
+natural phase=structured completion_tokens=200 finish_reason=length
+SUMMARY [
+  {
+    "phase": "structured",
+    "concurrency": 1,
+    "median_decode_tok_s": 74.88368577053379,
+    "median_ttft_s": 0.13935274723917246,
+    "median_agg_tok_s": 74.86378957514403,
+    "median_completion_tokens": 200,
+    "n": 9,
+    "acceptance_len": 3.9607843137254903,
+    "draft_acceptance_rate": 0.9869281045751634,
+    "run_acceptance_len": [
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608
+    ],
+    "median_run_acceptance_len": 3.9607843137254903,
+    "median_ms_per_step": 52.89248616664688,
+    "ttft_s_p50": 0.13935274723917246,
+    "ttft_s_p90": 0.15262813176959752,
+    "ttft_s_p99": 0.16126615103334188,
+    "inter_chunk_ms_p50": 52.02355608344078,
+    "inter_chunk_ms_p90": 54.57710213959217,
+    "inter_chunk_ms_p99": 65.88760688900949,
+    "finish_reasons": {
+      "length": 9
+    },
+    "natural_completion_tokens": 200,
+    "natural_finish_reason": "length",
+    "natural_covers_max": true,
+    "post_eos_fraction": 0.0
+  },
+  {
+    "phase": "structured",
+    "concurrency": 2,
+    "median_decode_tok_s": 61.453764480821576,
+    "median_ttft_s": 0.2132035638205707,
+    "median_agg_tok_s": 122.00368308443082,
+    "median_completion_tokens": 200.0,
+    "n": 18,
+    "acceptance_len": 3.9607843137254903,
+    "draft_acceptance_rate": 0.9869281045751634,
+    "run_acceptance_len": [
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608,
+      3.9608
+    ],
+    "median_run_acceptance_len": 3.9607843137254903,
+    "median_ms_per_step": 64.45157821176865,
+    "ttft_s_p50": 0.2132035638205707,
+    "ttft_s_p90": 0.33784831650555136,
+    "ttft_s_p99": 1.1125164220482096,
+    "inter_chunk_ms_p50": 62.2891450766474,
+    "inter_chunk_ms_p90": 64.81745289638638,
+    "inter_chunk_ms_p99": 91.31201853509992,
+    "finish_reasons": {
+      "length": 18
+    },
+    "natural_completion_tokens": 200,
+    "natural_finish_reason": "length",
+    "natural_covers_max": true,
+    "post_eos_fraction": 0.0
+  }
+]
+rc=0
+# end: 2026-10-19T23:57:29Z

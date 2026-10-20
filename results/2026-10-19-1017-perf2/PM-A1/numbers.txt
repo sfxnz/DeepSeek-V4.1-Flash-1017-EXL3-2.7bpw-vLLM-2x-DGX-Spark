@@ -1,0 +1,57 @@
+# PM-A1 = D4ENV + DSV41_DECODER_REPLAY_ROWS=0 (integration4 @746ed86). Two boots, both tripped memwatch on spark1 at the start of a long prompt (re-boot once per RUNSHEET; no third boot).
+# boot 1 (trip1/): gen 8192 + 32768 done, TRIP 02:08:36Z in gen's 102,400-token prompt, chunk 2 (16,376 tok): spark1 5,078 -> 1,102 MiB in ~10 s. trip1/trip.txt
+# boot 2: smoke, gen 8192+32768, pp16k x2 done; TRIP 02:24:48Z in pp64k run 1, chunk 2 (16,376 tok): spark1 5,277 -> 1,167 MiB. trip2.txt. Not run: pp64k, gen102k, quality, soak.
+
+## replay_ab compare I5/A-gen.json (I5c, replay off, ca42873) vs PM-A1/gen.json (boot 2)
+identical greedy tokens: 1/2; per-arm hit checks failed: none
+- gen8192: identical (18/18 tokens), max|dlp| 0.144, min top5 overlap 0.8
+- gen32768: diverged at token 14 of 18 ('the' I5c vs 'that' PM-A1 boot 2; PM-A1 boot 1 printed 'the'), max|dlp| 0.139 on the common prefix, min top5 overlap 0.8
+- reference: I5c A/A within boot 2/2 identical (max|dlp| 0.114 / 0.261); I5c vs I4 2/2
+- vs I2/A-gen.json: 0/2 by tokens but not comparable (I2 stored token strings, I5c/PM-A1 store token_id:N); by text I2 = PM-A1 boot 2 on both ('at', 'that')
+
+## pp16k (replay off): 1516.0 / 1520.2 tok/s, TTFT 10.68 / 10.72 s (I5c micro 16K pp_novel 1511.6 / 1567.7; D4 replay on 2564.1)
+
+## spark1 min over the 2x64K pp_novel: TRIPPED in the first one at 1,167 MiB memwatch / 1,182 MiB memsample / rank-0 1.57 GiB after chunk 1
+   I5c: 2,319 MiB memwatch (22:39:54Z) / rank-0 step-line minima 2.45 and 3.63 GiB over its two pp_novel prompts (I5c-ppnovel-ref.txt)
+
+## per-prompt MemAvailable (step lines GiB; memsample node minima MiB)
+## head.live.log rank 0: 5 prompts >= 8000 tokens
+   1 tok=8117 steps=1 first=5.17 first3min=5.17 min=5.17@1 wall=3.9 start_utc=02:23:49 spark1_start_min_MiB=5255 spark1_prompt_min_MiB=5273 spark2_start_min_MiB=7673 spark2_prompt_min_MiB=7673 actions={'-': 1}
+   2 tok=32561 steps=4 first=3.53 first3min=3.53 min=3.53@1 wall=17.22 start_utc=02:23:55 spark1_start_min_MiB=3520 spark1_prompt_min_MiB=2233 spark2_start_min_MiB=7434 spark2_prompt_min_MiB=7434 actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   3 tok=16188 steps=2 first=3.39 first3min=3.39 min=3.39@1 wall=8.79 start_utc=02:24:18 spark1_start_min_MiB=3433 spark1_prompt_min_MiB=3433 spark2_start_min_MiB=7722 spark2_prompt_min_MiB=7722 actions={'-': 1, 'release': 1}
+   4 tok=16297 steps=2 first=4.76 first3min=4.76 min=4.76@1 wall=9.03 start_utc=02:24:29 spark1_start_min_MiB=4312 spark1_prompt_min_MiB=4312 spark2_start_min_MiB=7719 spark2_prompt_min_MiB=7719 actions={'-': 1, 'keep': 1}
+   5 tok=8188(open) steps=1 first=1.57 first3min=1.57 min=1.57@1 wall=3.63 start_utc=02:24:40 spark1_start_min_MiB=1182 spark1_prompt_min_MiB=1589 spark2_start_min_MiB=7716 spark2_prompt_min_MiB=7716 actions={'-': 1}
+## worker.live.log rank 1: 5 prompts >= 8000 tokens
+   1 tok=8117 steps=1 first=7.48 first3min=7.48 min=7.48@1 wall=3.9 start_utc=02:23:49 spark1_start_min_MiB=5255 spark1_prompt_min_MiB=5273 spark2_start_min_MiB=7673 spark2_prompt_min_MiB=7673 actions={'-': 1}
+   2 tok=32561 steps=4 first=7.34 first3min=7.31 min=7.31@2 wall=17.28 start_utc=02:23:55 spark1_start_min_MiB=3520 spark1_prompt_min_MiB=2233 spark2_start_min_MiB=7434 spark2_prompt_min_MiB=7434 actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   3 tok=16188 steps=2 first=7.55 first3min=7.55 min=7.55@1 wall=8.78 start_utc=02:24:18 spark1_start_min_MiB=3433 spark1_prompt_min_MiB=3433 spark2_start_min_MiB=7722 spark2_prompt_min_MiB=7722 actions={'-': 1, 'keep': 1}
+   4 tok=16297 steps=2 first=7.56 first3min=7.56 min=7.56@1 wall=8.87 start_utc=02:24:29 spark1_start_min_MiB=4312 spark1_prompt_min_MiB=4312 spark2_start_min_MiB=7719 spark2_prompt_min_MiB=7719 actions={'-': 1, 'keep': 1}
+   5 tok=16376(open) steps=2 first=7.57 first3min=7.57 min=7.57@1 wall=8.46 start_utc=02:24:40 spark1_start_min_MiB=1182 spark1_prompt_min_MiB=1182 spark2_start_min_MiB=7716 spark2_prompt_min_MiB=7716 actions={'-': 1, 'hold': 1}
+### boot 1
+## trip1/head.live.log rank 0: 3 prompts >= 8000 tokens
+   1 tok=8117 steps=1 first=5.30 first3min=5.30 min=5.30@1 wall=3.88 start_utc=02:07:58 spark1_start_min_MiB=5364 spark1_prompt_min_MiB=5385 spark2_start_min_MiB=7780 spark2_prompt_min_MiB=7780 actions={'-': 1}
+   2 tok=32561 steps=4 first=4.24 first3min=3.00 min=3.00@2 wall=17.95 start_utc=02:08:05 spark1_start_min_MiB=3094 spark1_prompt_min_MiB=3074 spark2_start_min_MiB=7570 spark2_prompt_min_MiB=7522 actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   3 tok=8188(open) steps=1 first=2.22 first3min=2.22 min=2.22@1 wall=3.64 start_utc=02:08:27 spark1_start_min_MiB=1378 spark1_prompt_min_MiB=2223 spark2_start_min_MiB=7555 spark2_prompt_min_MiB=7555 actions={'-': 1}
+## trip1/worker.live.log rank 1: 3 prompts >= 8000 tokens
+   1 tok=8117 steps=1 first=7.57 first3min=7.57 min=7.57@1 wall=3.88 start_utc=02:07:58 spark1_start_min_MiB=5364 spark1_prompt_min_MiB=5385 spark2_start_min_MiB=7780 spark2_prompt_min_MiB=7780 actions={'-': 1}
+   2 tok=32561 steps=4 first=7.40 first3min=7.35 min=7.35@2 wall=18.04 start_utc=02:08:05 spark1_start_min_MiB=3094 spark1_prompt_min_MiB=3074 spark2_start_min_MiB=7570 spark2_prompt_min_MiB=7522 actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   3 tok=16376(open) steps=2 first=7.40 first3min=7.40 min=7.40@1 wall=8.42 start_utc=02:08:27 spark1_start_min_MiB=1378 spark1_prompt_min_MiB=1102 spark2_start_min_MiB=7555 spark2_prompt_min_MiB=7555 actions={'-': 1, 'hold': 1}
+
+## memsample per-phase minima (boot 2)
+phase | spark1 min MemAvail (at) / swap max / +allocstalls | spark2 min MemAvail (at) / swap max / +allocstalls
+smoke [02:23:48..02:23:49] | 5527 (02:23:49) / 8231 / +0 | 8756 (02:23:49) / 6119 / +0
+gen [02:23:49..02:24:18] | 2233 (02:24:02) / 8319 / +1739 | 7434 (02:23:57) / 6105 / +0
+pp16k [02:24:18..02:24:39] | 3433 (02:24:21) / 8407 / +392 | 7719 (02:24:31) / 6105 / +0
+pp64k [02:24:39..02:24:49] | 1182 (02:24:46) / 8298 / +1 | 7716 (02:24:42) / 6105 / +0
+quality [02:24:49..02:24:49] | 5173 (02:24:49) / 8298 / +0 | 7814 (02:24:49) / 6105 / +0
+soak [02:24:49..02:24:49] | 5173 (02:24:49) / 8298 / +0 | 7814 (02:24:49) / 6105 / +0
+
+## hold_steps (boot 2)
+head.live.log rank 0: 15 prefill steps, actions {'-': 10, 'grown': 1, 'hold': 1, 'keep': 2, 'release': 1}
+  growth on steps after an in-flight step (>= 8192 tokens): 5 steps, sum 646 MiB, largest [566, 80, 0, 0, 0]
+  MemAvailable on steps with +0 MiB pool growth: min 1.57 max 5.43 GiB (8 steps)
+  hold steps below a 3.0 GiB floor: 0 of 1
+worker.live.log rank 1: 16 prefill steps, actions {'-': 10, 'grown': 1, 'hold': 2, 'keep': 3}
+  growth on steps after an in-flight step (>= 8192 tokens): 6 steps, sum 566 MiB, largest [566, 0, 0, 0, 0, 0]
+  MemAvailable on steps with +0 MiB pool growth: min 7.31 max 8.58 GiB (11 steps)
+  hold steps below a 3.0 GiB floor: 0 of 2

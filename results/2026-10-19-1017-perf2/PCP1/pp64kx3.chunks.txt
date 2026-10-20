@@ -1,0 +1,46 @@
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PCP1/head.log: 95 step lines
+run 1: prompt 65292 ttft 22.33 s pp 2924.3 tok/s; 9 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 3.08 2.55 2.58 2.57 2.57 2.59 2.61 4.86 2.23
+   growth MiB:  +0 +0 +0 +0 +0 +0 +0 +0 +0
+   peak MiB:    1498 1498 1498 1499 1499 1500 1501 1593 1498
+   grown MiB:   +131 +131 +131 +131 +131 +131 +131 +131 +131
+   MemAvail GiB:3.24 1.97 1.30 1.32 1.29 1.29 1.29 1.53 1.31  actions: - hold hold hold hold hold hold keep -
+run 2: prompt 65229 ttft 21.93 s pp 2974.2 tok/s; 9 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 2.23 2.55 2.58 2.56 2.57 2.58 2.62 4.48 2.31
+   growth MiB:  +0 +0 +0 +0 +0 +0 +0 +0 +0
+   peak MiB:    1498 1498 1498 1499 1499 1500 1501 1587 1498
+   grown MiB:   +131 +131 +131 +131 +131 +131 +131 +131 +131
+   MemAvail GiB:1.31 1.33 1.36 1.35 1.37 1.35 1.37 1.45 1.36  actions: - hold hold hold hold hold hold keep -
+run 3: prompt 65380 ttft 22.52 s pp 2903.1 tok/s; 8 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 2.31 2.55 2.58 2.69 3.01 2.58 2.61 4.52
+   growth MiB:  +0 +0 +0 +0 +0 +0 +0 +0
+   peak MiB:    1498 1498 1498 1499 1499 1500 1501 1601
+   grown MiB:   +131 +131 +131 +131 +131 +131 +131 +131
+   MemAvail GiB:1.36 1.35 1.39 1.39 1.39 1.40 1.38 1.40  actions: - hold hold hold hold hold hold keep
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PCP1/worker.log: 95 step lines
+run 1: prompt 65292 ttft 22.33 s pp 2924.3 tok/s; 9 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 3.25 2.55 2.58 2.57 2.57 2.59 2.61 4.86 2.23
+   growth MiB:  +0 +0 +0 +0 +0 +0 +0 +0 +0
+   peak MiB:    1498 1498 1498 1499 1499 1500 1501 1593 1498
+   grown MiB:   +131 +131 +131 +131 +131 +131 +131 +131 +131
+   MemAvail GiB:7.15 7.11 7.12 7.14 7.14 7.15 7.14 7.23 7.14  actions: - hold hold hold hold hold hold keep -
+run 2: prompt 65229 ttft 21.93 s pp 2974.2 tok/s; 9 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 2.23 2.55 2.58 2.56 2.57 2.58 2.62 4.48 2.31
+   growth MiB:  +0 +0 +0 +0 +0 +0 +0 +0 +0
+   peak MiB:    1498 1498 1498 1499 1499 1500 1501 1587 1498
+   grown MiB:   +131 +131 +131 +131 +131 +131 +131 +131 +131
+   MemAvail GiB:7.14 7.13 7.13 7.13 7.16 7.16 7.12 7.21 7.13  actions: - hold hold hold hold hold hold keep -
+run 3: prompt 65380 ttft 22.52 s pp 2903.1 tok/s; 8 chunks, reserved growth 0 MiB, releases 0 []
+   intervals s: 2.31 2.55 2.58 2.73 2.97 2.58 2.61 4.52
+   growth MiB:  +0 +0 +0 +0 +0 +0 +0 +0
+   peak MiB:    1498 1498 1498 1499 1499 1500 1501 1601
+   grown MiB:   +131 +131 +131 +131 +131 +131 +131 +131
+   MemAvail GiB:7.13 7.17 7.18 7.17 7.11 7.16 7.17 7.21  actions: - hold hold hold hold hold hold keep
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PCP1/nvrm-spark1.txt: run 1 0; run 2 0; run 3 0
+## /home/sfxnz/projects/data/dsv41-1017/perf2/integration/PCP1/nvrm-spark2.txt: run 1 0; run 2 0; run 3 0
+## spark1 run 1: min MemFree 1205 MemAvailable 1304 MiB, max swap 9652 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +486 pswpout +0
+## spark1 run 2: min MemFree 1216 MemAvailable 1344 MiB, max swap 9650 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +358 pswpout +0
+## spark1 run 3: min MemFree 1165 MemAvailable 1393 MiB, max swap 9648 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +416 pswpout +0
+## spark2 run 1: min MemFree 6090 MemAvailable 7273 MiB, max swap 6050 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +71 pswpout +0
+## spark2 run 2: min MemFree 6032 MemAvailable 7285 MiB, max swap 6050 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +91 pswpout +0
+## spark2 run 3: min MemFree 6001 MemAvailable 7297 MiB, max swap 6050 MiB; allocstall_normal +0 allocstall_movable +0 pgscan_direct +0 pgsteal_direct +0 compact_stall +0 compact_fail +0 pswpin +54 pswpout +0

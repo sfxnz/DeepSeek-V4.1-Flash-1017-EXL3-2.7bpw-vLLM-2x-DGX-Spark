@@ -1,0 +1,134 @@
+{
+ "seed": 723001756,
+ "doc_tokens": 32745,
+ "cases": [
+  {
+   "case": "a_novel",
+   "utc": "2026-10-19T19:57:05Z",
+   "prompt_tokens": 32766,
+   "completion_tokens": 64,
+   "ttft_s": 21.086,
+   "wall_s": 22.35,
+   "prefill_tok_s_from_ttft": 1553.9,
+   "prefix_queries_delta": 32766.0,
+   "prefix_hits_delta": 0.0,
+   "hit_frac": 0.0,
+   "finish_reason": "length",
+   "metrics_before": {
+    "vllm:prefix_cache_queries_total": 758789.0,
+    "vllm:prefix_cache_hits_total": 61696.0
+   },
+   "metrics_after": {
+    "vllm:prefix_cache_queries_total": 791555.0,
+    "vllm:prefix_cache_hits_total": 61696.0
+   },
+   "other_prefix_metrics_after": {
+    "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8497472,
+    "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8507457,
+    "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8521483,
+    "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.855744,
+    "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 61696.0,
+    "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8675487
+   },
+   "text": "Based on a frequency count of the invented words in the text, the three that appear most often are:\n\n1. **kaimi**\n2. **their** (Note: This appears to be a real English word, but given the context of the text, it is used as a recurring invented word)\n3."
+  },
+  {
+   "case": "b_identical",
+   "utc": "2026-10-19T19:57:29Z",
+   "prompt_tokens": 32766,
+   "completion_tokens": 62,
+   "ttft_s": 0.334,
+   "wall_s": 1.829,
+   "prefill_tok_s_from_ttft": 98051.3,
+   "prefix_queries_delta": 32766.0,
+   "prefix_hits_delta": 32640.0,
+   "hit_frac": 0.9962,
+   "finish_reason": "stop",
+   "metrics_before": {
+    "vllm:prefix_cache_queries_total": 791555.0,
+    "vllm:prefix_cache_hits_total": 61696.0
+   },
+   "metrics_after": {
+    "vllm:prefix_cache_queries_total": 824321.0,
+    "vllm:prefix_cache_hits_total": 94336.0
+   },
+   "other_prefix_metrics_after": {
+    "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8497472,
+    "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8507457,
+    "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8521483,
+    "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.855744,
+    "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 94336.0,
+    "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8675487
+   },
+   "text": "Analyzing the text, the three invented words that appear most frequently are:\n\n1. **kaimi**\n2. **gloudreal** (and variants like gloudreal/gloudeabil)\n3. **krenend**\n\nThese recur throughout the passage more than any other coined terms."
+  },
+  {
+   "case": "c_multiturn",
+   "utc": "2026-10-19T19:57:32Z",
+   "prompt_tokens": 32850,
+   "completion_tokens": 5,
+   "ttft_s": 0.447,
+   "wall_s": 0.598,
+   "prefill_tok_s_from_ttft": 73477.0,
+   "prefix_queries_delta": 32850.0,
+   "prefix_hits_delta": 32640.0,
+   "hit_frac": 0.9936,
+   "finish_reason": "stop",
+   "metrics_before": {
+    "vllm:prefix_cache_queries_total": 824321.0,
+    "vllm:prefix_cache_hits_total": 94336.0
+   },
+   "metrics_after": {
+    "vllm:prefix_cache_queries_total": 857171.0,
+    "vllm:prefix_cache_hits_total": 126976.0
+   },
+   "other_prefix_metrics_after": {
+    "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8497472,
+    "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8507457,
+    "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8521483,
+    "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.855744,
+    "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 126976.0,
+    "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8675487
+   },
+   "text": "gloudeabil"
+  },
+  {
+   "case": "d_same_doc_new_question",
+   "utc": "2026-10-19T19:57:33Z",
+   "prompt_tokens": 32766,
+   "completion_tokens": 21,
+   "ttft_s": 0.32,
+   "wall_s": 0.637,
+   "prefill_tok_s_from_ttft": 102312.2,
+   "prefix_queries_delta": 32766.0,
+   "prefix_hits_delta": 32640.0,
+   "hit_frac": 0.9962,
+   "finish_reason": "stop",
+   "metrics_before": {
+    "vllm:prefix_cache_queries_total": 857171.0,
+    "vllm:prefix_cache_hits_total": 126976.0
+   },
+   "metrics_after": {
+    "vllm:prefix_cache_queries_total": 889937.0,
+    "vllm:prefix_cache_hits_total": 159616.0
+   },
+   "other_prefix_metrics_after": {
+    "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8497472,
+    "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8507457,
+    "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8521483,
+    "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+    "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.855744,
+    "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 159616.0,
+    "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8675487
+   },
+   "text": "No, the text does not contain any English sentences; it is written entirely in a constructed language."
+  }
+ ]
+}

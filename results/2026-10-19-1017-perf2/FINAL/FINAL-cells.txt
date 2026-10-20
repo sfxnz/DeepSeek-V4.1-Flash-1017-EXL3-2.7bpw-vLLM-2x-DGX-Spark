@@ -1,0 +1,8 @@
+2026-10-20T05:27:37Z FINAL start recipe=/home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-release HEAD=4ae29a6 dirty=''
+2026-10-20T05:27:38Z FINAL solo start
+2026-10-20T05:29:11Z FINAL dec start
+2026-10-20T05:31:34Z FINAL dec-aa start
+2026-10-20T05:33:54Z FINAL turns start
+2026-10-20T05:35:42Z FINAL cells done
+2026-10-20T05:35:43Z FINAL done
+cells rc=0

@@ -1,0 +1,41 @@
+# D3 vs B0 (/home/sfxnz/projects/data/dsv41-1017/perf2/integration/I6)
+
+## decode (agg tok/s | per-stream | ms/step | acc | TTFT p50)
+- code c=1: 67.4 | 67.4 | 58.5 | 3.91 | 0.209   [B0 -]
+- lail_prose c=1: 37.9 | 37.9 | 49.9 | 1.89 | 0.253   [B0 38.3 | 38.3 | 53.7 | 2.07 | 0.261]  (-1.1% agg)
+- prose c=1: 48.2 | 48.2 | 52.1 | 2.50 | 0.199   [B0 49.2 | 49.2 | 52.3 | 2.58 | 0.190]  (-2.0% agg)
+- prose c=2: 72.6 | 37.0 | 66.6 | 2.50 | 0.208   [B0 -]
+- prose_distinct c=4: 93.4 | 24.8 | 96.5 | 2.39 | 0.299   [B0 94.7 | 24.9 | 100.0 | 2.47 | 0.305]  (-1.3% agg)
+- structured c=1: 100.5 | 100.5 | 58.5 | 5.88 | 0.182   [B0 75.2 | 75.2 | 52.7 | 3.96 | 0.144]  (+33.7% agg)
+- structured c=2: 180.3 | 90.2 | 65.2 | 5.88 | 0.200   [B0 -]
+- structured_distinct c=4: 263.0 | 65.8 | 90.3 | 5.94 | 0.239   [B0 199.5 | 50.8 | 78.5 | 3.98 | 0.370]  (+31.8% agg)
+
+## prefill micro (median tok/s; runs)
+- 4096 pp_novel: -    [B0 1916.0]
+- 4096 pp_warm: -    [B0 1680.0]
+- 4096 tg: -    [B0 40.3]
+- 16384 pp_novel: -    [B0 2560.7]
+- 16384 pp_warm: -    [B0 1891.0]
+- 16384 tg: -    [B0 42.4]
+- 65536 pp_novel: -    [B0 2562.9]
+- 65536 pp_warm: -    [B0 2791.3]
+- 65536 tg: -    [B0 43.5]
+
+## prefix cache (prompt, TTFT s, hits)
+
+## quality --quick
+- {"mode": "quick", "pass": true, "elapsed_s": 189.6, "nll": 0.145091, "decode_median_dlp": 0.00149, "decode_gen_nll": 0.25544, "tools_exact": 1.0, "tools_json": 1.0, "tools_nocall": 1.0, "needle": 6, "selfcons_identical": 5, "selfcons_aa_hazard": 0.0125, "selfcons_golden_hazard": 0.01995, "c2": true, "vision": true}
+
+## spec decode acceptance per draft position (accepted/drafts over the cell)
+- c12-: drafts 3155, per-pos [0.826, 0.5816, 0.4247, 0.3585, 0.3255]
+- c4-: drafts 2360, per-pos [0.7703, 0.5428, 0.4169, 0.3542, 0.3258]
+- code-: drafts 608, per-pos [0.8832, 0.7237, 0.5789, 0.4539, 0.3191]
+
+## MemAvailable minima per phase (MiB, memwatch 2 s)
+- smoke: spark1 5811 / spark2 8537 (2026-10-20T00:41:11Z .. 2026-10-20T00:41:13Z)
+- lail10: spark1 4000 / spark2 8188 (2026-10-20T00:41:13Z .. 2026-10-20T00:43:47Z)
+- c12: spark1 4072 / spark2 8115 (2026-10-20T00:43:47Z .. 2026-10-20T00:46:06Z)
+- code: spark1 4909 / spark2 8453 (2026-10-20T00:46:06Z .. 2026-10-20T00:46:43Z)
+- c4distinct: spark1 5250 / spark2 8464 (2026-10-20T00:46:43Z .. 2026-10-20T00:47:45Z)
+- quality: spark1 2565 / spark2 6724 (2026-10-20T00:47:45Z .. 2026-10-20T00:50:55Z)
+

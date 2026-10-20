@@ -1,0 +1,23 @@
+{
+ "500000@0.1": {
+  "found": true,
+  "prompt_tokens": 499342,
+  "s": 181.6,
+  "answer": "HWQ-6256-JT",
+  "code": "HWQ-6256-JT"
+ },
+ "500000@0.5": {
+  "found": true,
+  "prompt_tokens": 499340,
+  "s": 180.3,
+  "answer": "HWQ-6256-JT",
+  "code": "HWQ-6256-JT"
+ },
+ "500000@0.9": {
+  "found": true,
+  "prompt_tokens": 499342,
+  "s": 181.1,
+  "answer": "HWQ-6256-JT",
+  "code": "HWQ-6256-JT"
+ }
+}

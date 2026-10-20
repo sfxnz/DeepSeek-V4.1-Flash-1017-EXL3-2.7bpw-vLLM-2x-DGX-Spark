@@ -1,0 +1,7 @@
+# cmd: python3 /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/tools/prefix_junction_test.py /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I2/prefix_cache.json /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I2/prefix_junction.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration (HEAD ff424e8) host: spark1 start: 2026-10-19T19:57:35Z
+seed=723001756 shared_tokens=16505 tail_tokens=15893 (doc reproduced: 32745 tokens, prev 32745)
+e_shared_16k_prefix_new_tail: prompt=32419 ttft=10.447s rate=3103.1 tok/s queries+=32419 hits+=16384 hit_frac=0.5054 text='Analyzing the text, the three invented words that appear most frequently are:\n\n1'
+f_identical_to_e: prompt=32419 ttft=2.511s rate=12909.6 tok/s queries+=32419 hits+=28672 hit_frac=0.8844 text='The three invented words that appear most often are:\n\n1. **their**\n2. **that**\n3'
+rc=0
+# end: 2026-10-19T19:57:54Z

@@ -1,0 +1,8 @@
+## trip1/head.live.log rank 0: 3 prompts >= 8000 tokens
+   1 tok=8117 steps=1 first=5.30 first3min=5.30 min=5.30@1 wall=3.88 start_utc=02:07:58 spark1_start_min_MiB=5364 spark1_prompt_min_MiB=5385 spark2_start_min_MiB=7780 spark2_prompt_min_MiB=7780 actions={'-': 1}
+   2 tok=32561 steps=4 first=4.24 first3min=3.00 min=3.00@2 wall=17.95 start_utc=02:08:05 spark1_start_min_MiB=3094 spark1_prompt_min_MiB=3074 spark2_start_min_MiB=7570 spark2_prompt_min_MiB=7522 actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   3 tok=8188(open) steps=1 first=2.22 first3min=2.22 min=2.22@1 wall=3.64 start_utc=02:08:27 spark1_start_min_MiB=1378 spark1_prompt_min_MiB=2223 spark2_start_min_MiB=7555 spark2_prompt_min_MiB=7555 actions={'-': 1}
+## trip1/worker.live.log rank 1: 3 prompts >= 8000 tokens
+   1 tok=8117 steps=1 first=7.57 first3min=7.57 min=7.57@1 wall=3.88 start_utc=02:07:58 spark1_start_min_MiB=5364 spark1_prompt_min_MiB=5385 spark2_start_min_MiB=7780 spark2_prompt_min_MiB=7780 actions={'-': 1}
+   2 tok=32561 steps=4 first=7.40 first3min=7.35 min=7.35@2 wall=18.04 start_utc=02:08:05 spark1_start_min_MiB=3094 spark1_prompt_min_MiB=3074 spark2_start_min_MiB=7570 spark2_prompt_min_MiB=7522 actions={'-': 1, 'grown': 1, 'hold': 1, 'keep': 1}
+   3 tok=16376(open) steps=2 first=7.40 first3min=7.40 min=7.40@1 wall=8.42 start_utc=02:08:27 spark1_start_min_MiB=1378 spark1_prompt_min_MiB=1102 spark2_start_min_MiB=7555 spark2_prompt_min_MiB=7555 actions={'-': 1, 'hold': 1}

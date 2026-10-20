@@ -1,0 +1,10 @@
+## chain B image checks 2026-10-20T06:43:29Z
+### dsv41-flash-exl3-sm121:e16-rows-scratch sha256:05122e36e015e3ce9569894b69db0ff391e36ee1353efb910d74a2cbba03cafa
+patches=shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack,moe_prefill_tc git_rev=4ae29a6d02c1267babb3b517a14ff2a73b09d84e tree_diff=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+ls /opt/dsv41-moe-prefill-tc/: 022a960b5338 
+cuobjdump -sass vllm_exl3_c sha256: d1fe096358c46af68832ce364f8fab068f3647fa7313752e24be12bb2f80d181  -
+### dsv41-flash-exl3-sm121:e16-rows sha256:df157a2d8afef69c4a967fabb3635a18593ce98f18d5ef864614794cc35df36a
+patches=shapes,mrow,cfg1,codebook,fshift,srcsort,coop,dataflow,kbits,rows,b12x_smalls,fix_o_proj_woa_fp8,woa_prepack,moe_prefill_tc git_rev=156a06a0d36291f0688781cc02de59e84b8e1c95 tree_diff=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+ls /opt/dsv41-moe-prefill-tc/: 022a960b5338 
+cuobjdump -sass vllm_exl3_c sha256: d1fe096358c46af68832ce364f8fab068f3647fa7313752e24be12bb2f80d181  -
+df: /dev/nvme0n1p2  3.7T  3.3T  255G  93% /

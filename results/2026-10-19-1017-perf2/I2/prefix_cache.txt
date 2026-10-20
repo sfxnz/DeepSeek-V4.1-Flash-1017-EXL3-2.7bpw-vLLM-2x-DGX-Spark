@@ -1,0 +1,135 @@
+# cmd: python3 /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/tools/prefix_cache_test.py --out /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I2/prefix_cache.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration (HEAD ff424e8) host: spark1 start: 2026-10-19T19:57:05Z
+seed=723001756 doc_tokens=32745 ratio=0.3348
+a_novel: prompt=32766 ttft=21.086s rate=1553.9 tok/s queries+=32766 hits+=0 hit_frac=0.0 text='Based on a frequency count of the invented words in the text, the three that app'
+b_identical: prompt=32766 ttft=0.334s rate=98051.3 tok/s queries+=32766 hits+=32640 hit_frac=0.9962 text='Analyzing the text, the three invented words that appear most frequently are:\n\n1'
+c_multiturn: prompt=32850 ttft=0.447s rate=73477.0 tok/s queries+=32850 hits+=32640 hit_frac=0.9936 text='gloudeabil'
+d_same_doc_new_question: prompt=32766 ttft=0.32s rate=102312.2 tok/s queries+=32766 hits+=32640 hit_frac=0.9962 text='No, the text does not contain any English sentences; it is written entirely in a'
+SUMMARY [
+ {
+  "case": "a_novel",
+  "utc": "2026-10-19T19:57:05Z",
+  "prompt_tokens": 32766,
+  "completion_tokens": 64,
+  "ttft_s": 21.086,
+  "wall_s": 22.35,
+  "prefill_tok_s_from_ttft": 1553.9,
+  "prefix_queries_delta": 32766.0,
+  "prefix_hits_delta": 0.0,
+  "hit_frac": 0.0,
+  "finish_reason": "length",
+  "metrics_before": {
+   "vllm:prefix_cache_queries_total": 758789.0,
+   "vllm:prefix_cache_hits_total": 61696.0
+  },
+  "metrics_after": {
+   "vllm:prefix_cache_queries_total": 791555.0,
+   "vllm:prefix_cache_hits_total": 61696.0
+  },
+  "other_prefix_metrics_after": {
+   "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8497472,
+   "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8507457,
+   "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8521483,
+   "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.855744,
+   "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 61696.0,
+   "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8675487
+  }
+ },
+ {
+  "case": "b_identical",
+  "utc": "2026-10-19T19:57:29Z",
+  "prompt_tokens": 32766,
+  "completion_tokens": 62,
+  "ttft_s": 0.334,
+  "wall_s": 1.829,
+  "prefill_tok_s_from_ttft": 98051.3,
+  "prefix_queries_delta": 32766.0,
+  "prefix_hits_delta": 32640.0,
+  "hit_frac": 0.9962,
+  "finish_reason": "stop",
+  "metrics_before": {
+   "vllm:prefix_cache_queries_total": 791555.0,
+   "vllm:prefix_cache_hits_total": 61696.0
+  },
+  "metrics_after": {
+   "vllm:prefix_cache_queries_total": 824321.0,
+   "vllm:prefix_cache_hits_total": 94336.0
+  },
+  "other_prefix_metrics_after": {
+   "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8497472,
+   "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8507457,
+   "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8521483,
+   "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.855744,
+   "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 94336.0,
+   "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8675487
+  }
+ },
+ {
+  "case": "c_multiturn",
+  "utc": "2026-10-19T19:57:32Z",
+  "prompt_tokens": 32850,
+  "completion_tokens": 5,
+  "ttft_s": 0.447,
+  "wall_s": 0.598,
+  "prefill_tok_s_from_ttft": 73477.0,
+  "prefix_queries_delta": 32850.0,
+  "prefix_hits_delta": 32640.0,
+  "hit_frac": 0.9936,
+  "finish_reason": "stop",
+  "metrics_before": {
+   "vllm:prefix_cache_queries_total": 824321.0,
+   "vllm:prefix_cache_hits_total": 94336.0
+  },
+  "metrics_after": {
+   "vllm:prefix_cache_queries_total": 857171.0,
+   "vllm:prefix_cache_hits_total": 126976.0
+  },
+  "other_prefix_metrics_after": {
+   "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8497472,
+   "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8507457,
+   "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8521483,
+   "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.855744,
+   "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 126976.0,
+   "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8675487
+  }
+ },
+ {
+  "case": "d_same_doc_new_question",
+  "utc": "2026-10-19T19:57:33Z",
+  "prompt_tokens": 32766,
+  "completion_tokens": 21,
+  "ttft_s": 0.32,
+  "wall_s": 0.637,
+  "prefill_tok_s_from_ttft": 102312.2,
+  "prefix_queries_delta": 32766.0,
+  "prefix_hits_delta": 32640.0,
+  "hit_frac": 0.9962,
+  "finish_reason": "stop",
+  "metrics_before": {
+   "vllm:prefix_cache_queries_total": 857171.0,
+   "vllm:prefix_cache_hits_total": 126976.0
+  },
+  "metrics_after": {
+   "vllm:prefix_cache_queries_total": 889937.0,
+   "vllm:prefix_cache_hits_total": 159616.0
+  },
+  "other_prefix_metrics_after": {
+   "vllm:prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8497472,
+   "vllm:prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8507457,
+   "vllm:external_prefix_cache_queries_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_queries_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8521483,
+   "vllm:external_prefix_cache_hits_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 0.0,
+   "vllm:external_prefix_cache_hits_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.855744,
+   "vllm:prompt_tokens_cached_total{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 159616.0,
+   "vllm:prompt_tokens_cached_created{engine=\"0\",model_name=\"deepseek-ai/DeepSeek-V4.1-Flash-1017\"}": 1792439276.8675487
+  }
+ }
+]
+rc=0
+# end: 2026-10-19T19:57:35Z

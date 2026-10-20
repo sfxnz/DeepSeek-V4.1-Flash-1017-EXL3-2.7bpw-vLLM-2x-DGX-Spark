@@ -1,0 +1,7 @@
+# cmd: python3 /home/sfxnz/projects/data/dsv41-1017/perf2/baseline/tools/prefix_junction_test.py /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I4/prefix_cache.json /home/sfxnz/projects/data/dsv41-1017/perf2/integration/I4/prefix_junction.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration2 (HEAD 2844fce) host: spark1 start: 2026-10-19T21:34:13Z
+seed=87507521 shared_tokens=16459 tail_tokens=15816 (doc reproduced: 32465 tokens, prev 32465)
+e_shared_16k_prefix_new_tail: prompt=32296 ttft=12.296s rate=2626.6 tok/s queries+=32296 hits+=0 hit_frac=0.0 text='The three invented words that appear most often are:\n\n1. **kraist** (and closely'
+f_identical_to_e: prompt=32296 ttft=0.359s rate=90084.1 tok/s queries+=32296 hits+=32128 hit_frac=0.9948 text='The three invented words that appear most often are:\n\n1. **kraist** (and variant'
+rc=0
+# end: 2026-10-19T21:34:32Z

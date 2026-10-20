@@ -1,0 +1,6 @@
+head: lines 112; chunks>=2048 rows 101: read-ahead covered 71 (ahead==n 71, partial 0), uncovered/first 30
+  covered: wait median 0.0 max 1.0 ms; exposed stage-hash_sync median 0.2 max 9.0 ms; job median 599.4 max 1987.4 ms
+  uncovered (first chunk, sync C gather): gather median 399.9 max 510.0 ms; exposed median 400.2 ms; n median 8190.0
+worker: lines 112; chunks>=2048 rows 101: read-ahead covered 71 (ahead==n 71, partial 0), uncovered/first 30
+  covered: wait median 0.0 max 0.0 ms; exposed stage-hash_sync median 0.2 max 0.4 ms; job median 577.7 max 1215.2 ms
+  uncovered (first chunk, sync C gather): gather median 400.7 max 492.6 ms; exposed median 401.0 ms; n median 8190.0

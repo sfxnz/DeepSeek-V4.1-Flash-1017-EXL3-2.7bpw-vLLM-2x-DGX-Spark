@@ -1,0 +1,10 @@
+2026-10-20T06:31:52Z memsample pid 1508904, procmem + live logs on both nodes
+2026-10-20T06:31:52Z smoke start
+2026-10-20T06:31:53Z smoke end
+2026-10-20T06:31:53Z cells done (sample smoke)
+2026-10-20T06:31:53Z micro start
+2026-10-20T06:35:16Z micro end
+2026-10-20T06:35:16Z pp64kx3 start
+2026-10-20T06:36:23Z pp64kx3 end
+2026-10-20T06:36:23Z logs
+2026-10-20T06:36:26Z cells done (pp64kx3 logs)

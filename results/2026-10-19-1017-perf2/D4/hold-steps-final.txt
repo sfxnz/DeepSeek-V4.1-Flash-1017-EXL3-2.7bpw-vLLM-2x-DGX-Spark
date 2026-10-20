@@ -1,0 +1,8 @@
+head-final.log rank 0: 165 prefill steps, actions {'-': 108, 'hold': 8, 'keep': 11, 'grown': 2, 'release': 3, 'floor': 33}
+  growth on steps after an in-flight step (>= 8192 tokens): 57 steps, sum 21432 MiB, largest [1086, 1026, 1026, 1026, 1006, 966, 566, 546]
+  MemAvailable on steps with +0 MiB pool growth: min 1.52 max 6.30 GiB (120 steps)
+  hold steps below a 3.0 GiB floor: 0 of 8
+worker-final.log rank 1: 165 prefill steps, actions {'-': 108, 'hold': 41, 'keep': 14, 'grown': 2}
+  growth on steps after an in-flight step (>= 8192 tokens): 57 steps, sum 1708 MiB, largest [526, 500, 360, 200, 120, 2, 0, 0]
+  MemAvailable on steps with +0 MiB pool growth: min 6.39 max 8.42 GiB (154 steps)
+  hold steps below a 3.0 GiB floor: 0 of 41

@@ -1,0 +1,16 @@
+# cmd: python3 bench_decode.py --phase prose --concurrency 1 --runs 5
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3 (HEAD ca42873) host: spark1 start: 2026-10-19T22:05:38Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=200 runs=5 concurrency=[1] phases=['prose']
+stream failed: <urlopen error [Errno 111] Connection refused>
+Traceback (most recent call last):
+  File "/home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3/bench_decode.py", line 403, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3/bench_decode.py", line 353, in main
+    rows, wall, agg = wave(args.url, args.model, prompt, args.max_tokens, c)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-integration3/bench_decode.py", line 216, in wave
+    raise RuntimeError(f"{len(errors)} stream(s) in the wave failed")
+RuntimeError: 1 stream(s) in the wave failed
+rc=1
+# end: 2026-10-19T22:05:38Z

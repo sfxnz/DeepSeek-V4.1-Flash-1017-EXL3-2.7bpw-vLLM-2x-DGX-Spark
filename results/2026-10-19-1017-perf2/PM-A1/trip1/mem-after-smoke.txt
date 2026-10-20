@@ -1,0 +1,8 @@
+## spark1 2026-10-20T02:07:58Z mem-after-smoke
+               total        used        free      shared  buff/cache   available
+Mem:          124610      119055        4942         256        2483        5554
+Swap:          16383        8231        8152
+## spark2
+               total        used        free      shared  buff/cache   available
+Mem:          124610      115811        7840         253        2644        8798
+Swap:          16383        6133       10250
