@@ -1260,5 +1260,51 @@ def _p_nccl_eager_twin():
 _patch("nccl_eager_twin", _p_nccl_eager_twin)
 
 
+# Prompt-end SWA prefix-cache fallback (docker/patch/prefix_end_fallback.py):
+# DSV41_PREFIX_END_FALLBACK=1 (default) also keeps the SWA tail one hit unit below every
+# reachable boundary (resends and at-N follow-ups always hit); 0 = stock e15. Scheduler
+# side, with or without decoder replay.
+def _p_prefix_end_fallback():
+    import prefix_end_fallback
+
+    state = prefix_end_fallback.install()
+    if state == "off":
+        raise _PatchSkip(f"{prefix_end_fallback.ENV}=0")
+    return state
+
+
+_patch("prefix_end_fallback", _p_prefix_end_fallback)
+
+
+# Decode-filled SWA blocks in the prefix cache (docker/patch/prefix_reply_retain.py):
+# DSV41_PREFIX_REPLY_RETAIN=1 (default) lets a follow-up that repeats the assistant reply
+# hit at the reply's end; 0 = stock e15. Scheduler side, with or without decoder replay.
+def _p_prefix_reply_retain():
+    import prefix_reply_retain
+
+    state = prefix_reply_retain.install()
+    if state == "off":
+        raise _PatchSkip(f"{prefix_reply_retain.ENV}=0")
+    return state
+
+
+_patch("prefix_reply_retain", _p_prefix_reply_retain)
+
+
+# Decoder-side SWA bounded replay, the CED prefill skip (docker/patch/decoder_replay.py):
+# DSV41_DECODER_REPLAY_ROWS=W (2670 exact, 128 upstream approximate, 0 off). Installs the
+# worker side and the scheduler's SWA prefix-cache guard together, or neither.
+def _p_decoder_replay():
+    import decoder_replay
+
+    state = decoder_replay.install()
+    if state == "off":
+        raise _PatchSkip(f"{decoder_replay.ENV}=0")
+    return state
+
+
+_patch("decoder_replay", _p_decoder_replay)
+
+
 # Env-gated decode levers (docker/patch/decode_levers.py; each is off by default).
 _patch("decode_levers", lambda: __import__("decode_levers").install())

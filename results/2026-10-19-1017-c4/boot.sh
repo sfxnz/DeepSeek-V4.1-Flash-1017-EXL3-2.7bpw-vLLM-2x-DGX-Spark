@@ -12,6 +12,8 @@
 #   - perf2 c4-kernels: IMAGE e15-kbits -> e16-rows (native decode MoE for 9..24 rows).
 #   - perf2 prefill-moe: DSV41_MOE_PREFILL_TC=1 (tensor-core routed-MoE prefill kernel, prebuilt in e16-rows).
 #   - perf2 engram-io: DSV41_ENGRAM_PREFILL_AHEAD=1 (Engram prefill read-ahead, _DONTNEED=1).
+#   - perf2 decoder-skip: DSV41_DECODER_REPLAY_ROWS=2670 (exact CED decoder replay), DSV41_PREFIX_END_FALLBACK=1,
+#     DSV41_PREFIX_REPLY_RETAIN=1.
 # GPU evidence: results/2026-10-19-1017-perf2/ (boot I3 ran the kv-pack defaults with the later perf2 levers
 # off). Boot FINAL ran the full stack's defaults (the last of these PRs) with the 4-session resident soak.
 # Run with: SKIP_DOWNLOAD=1 AUDIT=strict results/2026-10-19-1017-c4/boot.sh
@@ -70,5 +72,9 @@ export DSV41_INDEXER_WP_GEMV=1
 export DSV41_SWA_META_BATCHED=1
 # perf2 prefill-moe.
 export DSV41_MOE_PREFILL_TC=1
+# perf2 decoder-skip.
+export DSV41_DECODER_REPLAY_ROWS=2670
+export DSV41_PREFIX_END_FALLBACK=1
+export DSV41_PREFIX_REPLY_RETAIN=1
 
 exec ./run.sh

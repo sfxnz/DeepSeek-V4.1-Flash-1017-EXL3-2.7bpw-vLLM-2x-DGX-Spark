@@ -277,6 +277,11 @@ def _fake_vllm() -> types.ModuleType:
     return vllm, model_mod.DeepseekV41LLMForCausalLM, mxfp8_utils
 
 
+def _faked(name: str) -> bool:
+    """The modules setUpClass removes or _fake_vllm() replaces."""
+    return name.startswith("vllm") or name == "flashinfer" or name.startswith("flashinfer.")
+
+
 class _MMRecorder:
     """Capture mm_mxfp8 args; emulate the GEMM with row-major scales."""
 
@@ -284,11 +289,19 @@ class _MMRecorder:
 class TestLMHeadMxfp8(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls._real = {m: sys.modules[m] for m in list(sys.modules) if _faked(m)}
         for mod in list(sys.modules):
             if mod.startswith("vllm"):
                 del sys.modules[mod]
         cls.vllm, cls.Cls, cls.mxfp8_utils = _fake_vllm()
         cls.mod = _load(PATCH, "lmhead_mxfp8_test")
+
+    @classmethod
+    def tearDownClass(cls):
+        """Put the real modules back: test modules after this one in the same process import vllm."""
+        for mod in [m for m in sys.modules if _faked(m)]:
+            del sys.modules[mod]
+        sys.modules.update(cls._real)
 
     def test_env_gate(self):
         self.assertFalse(self.mod.enabled_from_env({}))

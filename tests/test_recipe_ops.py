@@ -340,6 +340,12 @@ ENGAGED_LOG = "\n".join(
         # perf2 engram-io: Engram prefill read-ahead, DSV41_ENGRAM_PREFILL_AHEAD=1 (each worker)
         "(Worker_TP0 pid=1) dsv41: engram prefill ahead armed (2 tables, read-ahead 8192 tokens = 96.0 MiB pinned "
         "at first use, threads=8, cpus=any, verify=4, dontneed=1, above 64 tokens)",
+        # decoder replay, DSV41_DECODER_REPLAY_ROWS=2670 (every worker's model state)
+        "(Worker_TP0 pid=1) dsv41: decoder replay armed (W=2670 exact (exact from 2414), cut=20)",
+        # prefix-end fallback, DSV41_PREFIX_END_FALLBACK=1 (every process)
+        "(EngineCore pid=1) dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)",
+        # prefix reply retention, DSV41_PREFIX_REPLY_RETAIN=1 (every process)
+        "(EngineCore pid=1) dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)",
     ]
 )
 
