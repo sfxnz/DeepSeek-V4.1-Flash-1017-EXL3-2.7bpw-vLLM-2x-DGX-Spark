@@ -15,12 +15,14 @@ IFACE="${IFACE:-enp1s0f1np1}"
 HCA="${HCA:-rocep1s0f1}"
 TP="${TP:-2}"
 NNODES="${NNODES:-2}"
-MAX_MODEL_LEN="${MAX_MODEL_LEN:-1048576}"
-MAX_NUM_SEQS="${MAX_NUM_SEQS:-2}"
+MAX_MODEL_LEN="${MAX_MODEL_LEN:-500000}"
+MAX_NUM_SEQS="${MAX_NUM_SEQS:-4}"
 UTIL="${UTIL:-0.75}"
 KV_CACHE_DTYPE="${KV_CACHE_DTYPE:-fp8}"
 KV_CACHE_MEMORY="${KV_CACHE_MEMORY:-4160749568}"
+DSV41_KV_PACKED_GROUPS="${DSV41_KV_PACKED_GROUPS:-1}"
 BLOCK_SIZE="${BLOCK_SIZE:-64}"
+PREFIX_CACHE_RETENTION_INTERVAL="${PREFIX_CACHE_RETENTION_INTERVAL:-4096}"
 NUM_SPECULATIVE_TOKENS="${NUM_SPECULATIVE_TOKENS:-3}"
 SPEC="${SPEC:-dspark}"
 LOAD_FORMAT="${LOAD_FORMAT:-auto}"
@@ -28,6 +30,7 @@ QUANTIZATION="${QUANTIZATION:-exl3}"
 DSV41_ENGRAM_DISK="${DSV41_ENGRAM_DISK:-1}"
 LANGUAGE_MODEL_ONLY="${LANGUAGE_MODEL_ONLY:-0}"
 MM_ENCODER_TP_MODE="${MM_ENCODER_TP_MODE:-data}"
+MM_PROCESSOR_CACHE_GB="${MM_PROCESSOR_CACHE_GB:-1}"
 MAX_NUM_BATCHED_TOKENS="${MAX_NUM_BATCHED_TOKENS:-8192}"
 FORCE_UNSAFE_CTX="${FORCE_UNSAFE_CTX:-0}"
 FORCE_UNSAFE_ENGRAM="${FORCE_UNSAFE_ENGRAM:-0}"
@@ -58,6 +61,7 @@ DSV41_ENGRAM_NATIVE_STAGE="${DSV41_ENGRAM_NATIVE_STAGE:-1}"
 DSV41_ENGRAM_EARLY_HASH="${DSV41_ENGRAM_EARLY_HASH:-1}"
 DSV41_ATTN_T2R_DEDUP="${DSV41_ATTN_T2R_DEDUP:-1}"
 DSV41_SWA_META_FUSED="${DSV41_SWA_META_FUSED:-1}"
+DSV41_SWA_META_BATCHED="${DSV41_SWA_META_BATCHED:-1}"
 DSV41_MOE_PREP_FUSED="${DSV41_MOE_PREP_FUSED:-1}"
 DSV41_CANDIDATE_MASK_BOUNDED="${DSV41_CANDIDATE_MASK_BOUNDED:-1}"
 DSV41_INDEXER_WP_GEMV="${DSV41_INDEXER_WP_GEMV:-1}"
@@ -67,6 +71,7 @@ NCCL_PROTO="${NCCL_PROTO:-^LL128}"
 NCCL_MAX_NCHANNELS="${NCCL_MAX_NCHANNELS:-8}"
 DSV41_DROP_PAGE_CACHE="${DSV41_DROP_PAGE_CACHE:-1}"
 DSV41_INDEXER_PREFILL_FACTOR="${DSV41_INDEXER_PREFILL_FACTOR:-1}"
+DSV41_INDEXER_EXPANDED_TABLE_LAZY="${DSV41_INDEXER_EXPANDED_TABLE_LAZY:-1}"
 DSV41_PREFILL_EMPTY_CACHE_TOKENS="${DSV41_PREFILL_EMPTY_CACHE_TOKENS:-8192}"
 DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB="${DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB:-4}"
 VLLM_SPARSE_INDEXER_MAX_LOGITS_MB="${VLLM_SPARSE_INDEXER_MAX_LOGITS_MB:-256}"
@@ -126,6 +131,9 @@ FORWARD_ENVS=(
   DSV41_INDEXER_WP_VERIFY=
   DSV41_SWA_META_FUSED=
   DSV41_SWA_META_VERIFY=
+  DSV41_SWA_META_BATCHED=
+  DSV41_SWA_META_BATCHED_VERIFY=
+  DSV41_KV_PACKED_GROUPS=
   DSV41_ENGRAM_WKV_TP=0
   DSV41_LOAD_PF_G8=0
   DSV41_STREAM_FEED=
@@ -149,6 +157,7 @@ FORWARD_ENVS=(
   DSV41_LMHEAD_MXFP8=
   DSV41_DROP_PAGE_CACHE=
   DSV41_INDEXER_PREFILL_FACTOR=
+  DSV41_INDEXER_EXPANDED_TABLE_LAZY=
   DSV41_PREFILL_EMPTY_CACHE_TOKENS=
   DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=
   VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=
@@ -245,12 +254,12 @@ if [[ "$MAX_MODEL_LEN" -gt 1048576 && "$FORCE_UNSAFE_CTX" != 1 ]]; then
   echo "fp8 KV pin cannot hold --max-model-len $MAX_MODEL_LEN. Native window is 1048576. FORCE_UNSAFE_CTX=1 overrides." >&2
   exit 1
 fi
-if [[ "$MAX_NUM_SEQS" -gt 2 && "$FORCE_UNSAFE_CTX" != 1 ]]; then
-  echo "MAX_NUM_SEQS=$MAX_NUM_SEQS exceeds 2 on this pin. FORCE_UNSAFE_CTX=1 overrides." >&2
+if [[ "$MAX_NUM_SEQS" -gt 4 && "$FORCE_UNSAFE_CTX" != 1 ]]; then
+  echo "MAX_NUM_SEQS=$MAX_NUM_SEQS exceeds 4 on this pin. The 3.875 GiB KV pool is sized for 4 sessions of ~500K tokens with packed KV groups (DSV41_KV_PACKED_GROUPS=1). FORCE_UNSAFE_CTX=1 overrides." >&2
   exit 1
 fi
 if [[ "$KV_CACHE_MEMORY" -gt 8589934592 && "$FORCE_UNSAFE_CTX" != 1 ]]; then
-  echo "KV_CACHE_MEMORY=$KV_CACHE_MEMORY exceeds the 8 GiB cap 8589934592. The 2.70 bpw pack loads 97.73 GiB per rank; the 3.875 GiB default (4160749568) holds 1,108,848 tokens (1.06x of one 1M request) and leaves ~4.3 GiB MemAvailable on the head after the smokes. FORCE_UNSAFE_CTX=1 overrides." >&2
+  echo "KV_CACHE_MEMORY=$KV_CACHE_MEMORY exceeds the 8 GiB cap 8589934592. The 2.70 bpw pack loads 97.73 GiB per rank. The 3.875 GiB default (4160749568) with packed KV groups holds 4 sessions of ~500K tokens; on boot D1 (2 seqs, 1M window, stock groups) it left ~4.3 GiB MemAvailable on the head after the smokes. FORCE_UNSAFE_CTX=1 overrides." >&2
   exit 1
 fi
 if [[ "$SPEC" == dspark && ! "$NUM_SPECULATIVE_TOKENS" =~ ^[1-5]$ && "$FORCE_UNSAFE_CTX" != 1 ]]; then
@@ -266,7 +275,7 @@ case "$AUDIT" in
 esac
 
 # Cudagraph capture sizes match the verify batch: {1} + {s*k, s*(k+1)} for s in 1..MAX_NUM_SEQS.
-# k=3, 2 seqs gives [1,3,4,6,8] (R16: +5.5% vs padded k5-era sizes).
+# k=3, 4 seqs gives [1,3,4,6,8,9,12,16]; 2 seqs gave [1,3,4,6,8] (R16: +5.5% vs padded k5-era sizes).
 if [[ -z "${COMPILATION_CONFIG:-}" ]]; then
   spec_k=0
   if [[ "$SPEC" == dspark ]]; then
@@ -495,6 +504,15 @@ start_local() {
   elif [[ -n "${MM_ENCODER_TP_MODE:-}" ]]; then
     lm_args+=(--mm-encoder-tp-mode "$MM_ENCODER_TP_MODE")
   fi
+  # vLLM mirrors the MM processor cache in the API server and EngineCore (default 4 GiB each).
+  if [[ "$LANGUAGE_MODEL_ONLY" != "1" && -n "${MM_PROCESSOR_CACHE_GB:-}" ]]; then
+    lm_args+=(--mm-processor-cache-gb "$MM_PROCESSOR_CACHE_GB")
+  fi
+  # Sliding-window prefix-cache checkpoints every N tokens (vLLM default 0: replay boundary only).
+  local cache_args=()
+  if [[ -n "${PREFIX_CACHE_RETENTION_INTERVAL:-}" ]]; then
+    cache_args+=(--prefix-cache-retention-interval "$PREFIX_CACHE_RETENTION_INTERVAL")
+  fi
   local extra_args=()
   read -ra extra_args <<<"$EXTRA_ARGS"
   local kv_dtype_arg="$KV_CACHE_DTYPE"
@@ -536,6 +554,7 @@ start_local() {
     "${eager_args[@]}" \
     "${kernel_args[@]}" \
     --block-size "$BLOCK_SIZE" \
+    "${cache_args[@]}" \
     --quantization "$QUANTIZATION" \
     "${spec_args[@]}" \
     "${lm_args[@]}" \
@@ -720,6 +739,7 @@ if [[ "$ORCHESTRATE" == "auto" && "$ROLE" == "head" ]]; then
       SERVED_NAME SKIP_DOWNLOAD SPEC SPEC_CONFIG NUM_SPECULATIVE_TOKENS ENFORCE_EAGER
       COMPILATION_CONFIG MAX_NUM_BATCHED_TOKENS FORCE_UNSAFE_CTX FORCE_UNSAFE_ENGRAM
       FORCE_UNSAFE_QUANT LOAD_FORMAT QUANTIZATION SNAPSHOT_SHA HF_CACHE MODEL EXTRA_ARGS
+      MM_PROCESSOR_CACHE_GB PREFIX_CACHE_RETENTION_INTERVAL
     )
     worker_env="ROLE=worker ORCHESTRATE=0 DSV41_PATCH_DIR=\$HOME/$WORKER_PATCH_DIR"
     for name in "${worker_config[@]}" "${FORWARD_ENVS[@]%%=*}"; do

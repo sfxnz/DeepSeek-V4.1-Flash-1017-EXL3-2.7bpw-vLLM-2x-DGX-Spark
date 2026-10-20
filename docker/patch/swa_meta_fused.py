@@ -39,6 +39,8 @@ LOG_DISARMED = "dsv41: swa metadata fused DISABLED ->"
 DEFAULT_VERIFY = 8
 CHUNK = 1024
 _STATE = {"armed": True, "verify_left": DEFAULT_VERIFY, "engaged": False}
+# swa_meta_batched.py sets this: (decode args) -> True when the step's batched launch wrote the rows.
+_BATCH_HOOK = None
 
 VALID_OLD = """        is_valid_token = self.is_valid_token[: slot_mapping.shape[0]]
         is_valid_token.copy_(slot_mapping >= 0)
@@ -201,6 +203,8 @@ class SwaFused:
     def decode(self, builder, indices, qsl, seq_lens, t2r, slots, valid, block_table, nd) -> None:
         torch = self.torch
         args = (builder, indices, qsl, seq_lens, t2r, slots, valid, block_table, nd)
+        if _BATCH_HOOK is not None and _BATCH_HOOK(*args):
+            return
         if _STATE["verify_left"] <= 0 or torch.cuda.is_current_stream_capturing():
             try:
                 return self._launch(*args)

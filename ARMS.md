@@ -30,7 +30,7 @@ history (Sept model, 2.0 bpw pack). Their evidence is in the Sept recipe,
      **after smoke** (`smoke_chat.py` + `smoke_vision.py`). The 2.70 bpw
      pack is 97.73 GiB per TP rank (Sept 2.0 pack: 75.58), so the Sept
      floors (12 GiB at boot, 8 GiB after smoke) cannot hold on 1017.
-     Boot D1 (KV 3.875 GiB, `results/2026-10-18-1017/boot-d1/`) read a
+     Boot D1 (KV 3.875 GiB, 2 seqs, 1M window, `results/2026-10-18-1017/boot-d1/`) read a
      boot minimum of 4.6 / 5.4 GiB and 4.3 / 5.9 GiB after smoke
      (spark1 / spark2);
    - known dip, not an abort: `quality_eval.py`'s nll component
@@ -189,11 +189,17 @@ history (Sept model, 2.0 bpw pack). Their evidence is in the Sept recipe,
 
 Current serve (1017) = `dsv41-flash-exl3-sm121:e15-kbits` on both nodes,
 pack `sfxnz/DeepSeek-V4.1-Flash-1017-EXL3` @ `2.7bpw-mcg-hq`, served as
-`deepseek-ai/DeepSeek-V4.1-Flash-1017`, with the release defaults:
-`KV_CACHE_MEMORY=4160749568` (3.875 GiB), `MAX_MODEL_LEN=1048576`,
-`MAX_NUM_SEQS=2`, `MAX_NUM_BATCHED_TOKENS=8192`, DSpark k=3, `UTIL=0.75`,
-`DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4`, and every round-34 and round-35
-lever on (AGENTS.md, working rules). Launched from this checkout:
+`deepseek-ai/DeepSeek-V4.1-Flash-1017`, with the 4-session defaults:
+`KV_CACHE_MEMORY=4160749568` (3.875 GiB), `MAX_MODEL_LEN=500000`,
+`MAX_NUM_SEQS=4`, `DSV41_KV_PACKED_GROUPS=1`, `DSV41_SWA_META_BATCHED=1`,
+`DSV41_INDEXER_EXPANDED_TABLE_LAZY=1`,
+`MAX_NUM_BATCHED_TOKENS=8192`, DSpark k=3, `UTIL=0.75`,
+`DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4`, `--mm-processor-cache-gb 1`,
+`--prefix-cache-retention-interval 4096`, and every round-34 and round-35
+lever on (AGENTS.md, working rules). Boot I3 ran these defaults
+(`results/2026-10-19-1017-perf2/I3/`); the D1/r1 release boots ran
+`MAX_NUM_SEQS=2` at `MAX_MODEL_LEN=1048576` with the image's KV grouping.
+Launched from this checkout:
 
 ```bash
 ./stop.sh                       # both nodes (stops spark2 via ssh)
@@ -204,8 +210,9 @@ AUDIT=strict ./run.sh
 
 Boot D1 ran `SKIP_DOWNLOAD=1 AUDIT=strict KV_CACHE_MEMORY=4160749568
 ./run.sh` (`results/2026-10-18-1017/boot-d1/command.txt`).
-`results/2026-10-18-1017/boot.sh` exports the release env and then runs
-`exec ./run.sh`.
+`results/2026-10-18-1017/boot.sh` exports the D1/r1 release env and then runs
+`exec ./run.sh`; `results/2026-10-19-1017-c4/boot.sh` does the same for the
+4-session defaults.
 
 The mixed-K pack needs `e15-kbits`. `canonical-e14` and older images have
 no `expert_bits` support (the plugin ignores it), and the K-aware audit

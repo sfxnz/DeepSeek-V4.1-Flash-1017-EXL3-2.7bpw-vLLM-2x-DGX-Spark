@@ -4,7 +4,7 @@ Serve an EXL3 pack of [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface
 
 Native MXFP4 and MXFP8 weights are about 510 GB and do not fit 2× Spark UMA. The pack re-encodes only the routed experts (40 layers × 384, source MXFP4) as EXL3 MCG trellis with an integer K in {2, 3, 4} per layer and projection group (GU = gate+up, D = down). The routed mean is exactly 2.70 bpw. K is not uniform: the allocation puts the bits where the measured sensitivity of the official 1017 model is highest. Jointly perturbed, the chosen allocation scores KL_eq 0.050, against 0.088 for uniform 3/2 at 2.67 bpw and 0.137 for uniform 2/2 at 2.0 bpw ([How the pack was made](#how-the-pack-was-made)). The experts are encoded with real activation Hessians. Everything else keeps the source dtypes, the lm_head is MXFP8, and the Engram tables stay on NVMe (`DSV41_ENGRAM_DISK=1`).
 
-On boot D1 the pack serves 39.6 tok/s on the L.A.I.L prose cell and 49.6 tok/s greedy prose at c=1, holds one 1,048,576-token request in its KV pool, and passes the full quality eval (GSM8K 97/100, MMLU 208/228, tools 22/22, needle 9/9). It finds a needle at 256k and at 1M tokens (3/3 depths each), stays within 0.025 nats/token KL of the native unquantized model, and ran a 60-minute mixed c=2 soak with 0 errors.
+On boot D1 the pack serves 39.6 tok/s on the L.A.I.L prose cell and 49.6 tok/s greedy prose at c=1, holds one 1,048,576-token request in its KV pool, and passes the full quality eval (GSM8K 97/100, MMLU 208/228, tools 22/22, needle 9/9). It finds a needle at 256k and at 1M tokens (3/3 depths each), stays within 0.025 nats/token KL of the native unquantized model, and ran a 60-minute mixed c=2 soak with 0 errors. Those numbers were measured with `MAX_NUM_SEQS=2` and a 1,048,576-token window. The defaults are now four sessions at a 500,000-token window from the same 3.875 GiB KV pool, with packed KV groups ([Memory and context](#memory-and-context)). The perf2 boots measured that configuration (`results/2026-10-19-1017-perf2/`), and boot FINAL ran the full quality eval, the long needles and the 4-session soak on the full perf2 stack (`results/2026-10-19-1017-perf2/FINAL/`).
 
 This recipe replaces the September recipe for `deepseek-ai/DeepSeek-V4.1-Flash` (2.0 bpw pack, rounds 1-36): [sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark](https://github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark) @ `3de9146`. Its numbers are history, not this pack's.
 
@@ -74,9 +74,9 @@ python3 bench_decode.py --phase prose --concurrency 1
 python3 tools/measure_lail_prose.py
 ```
 
-`./run.sh` starts the worker, then the head, and returns when the serve is ready. It prints `==> Ready → http://127.0.0.1:8000/v1  (context=1048576)`, then `==> audit ok`, the warmup replies, and `==> Stop with: ./stop.sh`. Run the smokes after that. Follow the head with `docker logs -f dsv41-flash-exl3`.
+`./run.sh` starts the worker, then the head, and returns when the serve is ready. It prints `==> Ready → http://127.0.0.1:8000/v1  (context=500000)`, then `==> audit ok`, the warmup replies, and `==> Stop with: ./stop.sh`. Run the smokes after that. Follow the head with `docker logs -f dsv41-flash-exl3`.
 
-The API is `http://127.0.0.1:8000/v1`. The served model is `deepseek-ai/DeepSeek-V4.1-Flash-1017`. Cap is `MAX_NUM_SEQS=2`. Do not send a third stream. A boot takes about 11 minutes (model load 508 s on the head, 305 s on the worker).
+The API is `http://127.0.0.1:8000/v1`. The served model is `deepseek-ai/DeepSeek-V4.1-Flash-1017`. Cap is `MAX_NUM_SEQS=4`. Do not send a fifth stream. Boot D1 took about 11 minutes (model load 508 s on the head, 305 s on the worker).
 
 The `smoke_chat.py` default prompt is `What is 17*19? Return only the integer.` Thinking is off. The pass is `content` matching `323` (`--expect ''` accepts any non-empty content). `smoke_vision.py` sends a 64x64 solid-red PNG as OpenAI `image_url`. It must not return HTTP 400 `is not a multimodal model`, and the answer must contain `red`. `bench_decode.py` is streamed greedy, thinking off, 200 completion tokens, 3-run median by default (the headline cell uses `--runs 9`).
 
@@ -90,13 +90,22 @@ When you are done:
 
 Run it on the head. It removes `dsv41-flash-exl3` on both nodes (the worker over ssh). If it reports `Cannot SSH to <worker>`, run `docker rm -f dsv41-flash-exl3` on the worker.
 
-The serve levers are the ones the September recipe promoted, all default-on: DSpark k=3 (`NUM_SPECULATIVE_TOKENS=3`) with cudagraph capture sizes `[1,3,4,6,8]`, `MAX_NUM_BATCHED_TOKENS=8192` (`2048` is the override for long-prompt-heavy workloads), the NCCL AR-tail set, the mem-hygiene bundle, Engram prefetch + gather v2 + census + `DSV41_ENGRAM_WILLNEED`, lm_head MXFP8 (`DSV41_LMHEAD_MXFP8=1`), `DSV41_STREAM_FEED`, `DSV41_WOA_PREPACK`, `DSV41_DSPARK_SPARSE_MARKOV` with `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024`, and the round-3 kernel bundle (`DSV41_P2B_COOP=2`, `DSV41_DENSE_GEMV=1`, `DSV41_MHC_DET_SPLITS=16`, `DSV41_ENGRAM_NATIVE_STAGE=1`, `DSV41_ENGRAM_EARLY_HASH=1`, `DSV41_ATTN_T2R_DEDUP=1`, `DSV41_SWA_META_FUSED=1`, `DSV41_MOE_PREP_FUSED=1`, `DSV41_CANDIDATE_MASK_BOUNDED=1`, `DSV41_INDEXER_WP_GEMV=1`). Set any `DSV41_*` lever to `0` to turn it off (`DSV41_DSPARK_SPARSE_MARKOV_TOPK=256` restores the round-34 top-k; `SPEC=none` turns speculative decoding off). `flags.md` has the per-flag record; the September A/B evidence is in the September recipe.
+The serve levers are the ones the September recipe promoted, all default-on: DSpark k=3 (`NUM_SPECULATIVE_TOKENS=3`) with cudagraph capture sizes derived from k and `MAX_NUM_SEQS` (`[1,3,4,6,8,9,12,16]` at 4 sessions), `MAX_NUM_BATCHED_TOKENS=8192` (`2048` is the override for long-prompt-heavy workloads), the NCCL AR-tail set, the mem-hygiene bundle, Engram prefetch + gather v2 + census + `DSV41_ENGRAM_WILLNEED`, lm_head MXFP8 (`DSV41_LMHEAD_MXFP8=1`), `DSV41_STREAM_FEED`, `DSV41_WOA_PREPACK`, `DSV41_DSPARK_SPARSE_MARKOV` with `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024`, and the round-3 kernel bundle (`DSV41_P2B_COOP=2`, `DSV41_DENSE_GEMV=1`, `DSV41_MHC_DET_SPLITS=16`, `DSV41_ENGRAM_NATIVE_STAGE=1`, `DSV41_ENGRAM_EARLY_HASH=1`, `DSV41_ATTN_T2R_DEDUP=1`, `DSV41_SWA_META_FUSED=1`, `DSV41_MOE_PREP_FUSED=1`, `DSV41_CANDIDATE_MASK_BOUNDED=1`, `DSV41_INDEXER_WP_GEMV=1`). Set any `DSV41_*` lever to `0` to turn it off (`DSV41_DSPARK_SPARSE_MARKOV_TOPK=256` restores the round-34 top-k; `SPEC=none` turns speculative decoding off). `flags.md` has the per-flag record; the September A/B evidence is in the September recipe.
+
+The 4-session defaults add packed KV groups (`DSV41_KV_PACKED_GROUPS=1`, vLLM PR #60996 on the image's planner), batched SWA decode metadata (`DSV41_SWA_META_BATCHED=1`, needs `DSV41_SWA_META_FUSED=1`), a ragged-batch guard in the sparse indexer (always on, from vLLM 0.32rc1), the indexer's expanded block table on first use only (`DSV41_INDEXER_EXPANDED_TABLE_LAZY=1`), `--mm-processor-cache-gb 1` and `--prefix-cache-retention-interval 4096`. Boot I3 ran them with the later perf2 levers off: c=1 prose 50.3 tok/s at 52.7 ms/step (the config-only 4-session baseline B0: 49.0 at 52.7), c=4 distinct prose 62.3 tok/s aggregate (B0 61.4), quick quality PASS (`results/2026-10-19-1017-perf2/I3/`).
 
 ## Memory and context
 
-The model takes 97.73 GiB per TP rank. The release KV pool is `KV_CACHE_MEMORY=4160749568` (3.875 GiB), which holds 1,108,848 tokens: 1.06× one 1,048,576-token request. Two concurrent streams share that pool, so two 1M-token requests do not fit at once. A 4.5 GiB pool would leave spark1 about 3.7 GiB `MemAvailable` after the smokes (estimate from this boot), below the 4 GiB floor target.
+The model takes 97.73 GiB per TP rank. The KV pool is `KV_CACHE_MEMORY=4160749568` (3.875 GiB). The image's planner splits the 43 sliding-window layers and 4 compressed-KV layers into 18 KV groups on 138,240-byte blocks, and the ratio-1 group pays a full block for 46,080 bytes of pages. Packed groups (`DSV41_KV_PACKED_GROUPS=1`) give 50 groups on 46,080-byte blocks. Per-layer page sizes and kernels do not change. The image's own planner and KV manager, run on CPU, give these numbers (the perf2 boots log the 500,000 / 8192 one):
 
-`MemAvailable` on boot D1 (spark1 / spark2):
+- at the 500,000-token window: 1,471,832 tokens (2.94×) at `MAX_NUM_BATCHED_TOKENS=8192`, 1,793,682 (3.59×) at 4096. The image's 18 groups give 964,308 (1.93×) at 8192 (the perf2 baseline boot logged 975,641, 1.86×, at 524,288).
+- four sessions growing to 500,000 tokens at once, with no preemption, need 3.82 GiB at 8192 and 3.59 GiB at 4096. That is why the window is 500,000. Four full 524,288-token sessions need 3.99 GiB at 8192 (more than the pool) and 3.75 GiB at 4096, so `MAX_MODEL_LEN=524288 MAX_NUM_BATCHED_TOKENS=4096` allows four sessions at 2^19.
+
+Packing also adds attention-metadata buffers outside the KV pool (28 more SWA builders, 2 more indexer builders). Every indexer builder used to allocate an expanded block table (B × blocks of one max-length request × 4 bytes) that only the flattened decode path reads; SM120 decode is native, so `DSV41_INDEXER_EXPANDED_TABLE_LAZY=1` allocates it on first use only. Estimated from the builders' allocations, per rank at 500,000 and 8192: 513 MiB with the image's grouping and allocation, 985 MiB packed, 374 MiB packed with the lazy table (4096: 256 / 492 / 187 MiB).
+
+A 4.5 GiB pool would leave spark1 about 3.7 GiB `MemAvailable` after the smokes (estimate from boot D1), below the 4 GiB floor target.
+
+`MemAvailable` on boot D1 (`MAX_NUM_SEQS=2`, 1M window, 18 KV groups; spark1 / spark2):
 
 - minimum during boot: 4.6 / 5.4 GiB
 - after the smokes: 4.3 / 5.9 GiB
@@ -105,7 +114,7 @@ The model takes 97.73 GiB per TP rank. The release KV pool is `KV_CACHE_MEMORY=4
 - 256k and 1M needles: spark1 dips to 2.1–2.8 GiB for 2 s or less at prefill boundaries, and to 1.8 GiB for 2 s or less while the API server tokenizes a 1M-token prompt (the engine is idle then)
 - release boot r1: 4.4 / 5.2 GiB after the smokes and 4.1 / 5.5 GiB after the 60-minute soak; spark2's lowest sample over all tests was 3.6 GiB
 
-These short dips use page cache and swap headroom and did not OOM. Concurrent long-context requests near 1M tokens are not supported (`MAX_NUM_SEQS=2` shares one 1.06× pool).
+These short dips use page cache and swap headroom and did not OOM. The default window is 500,000 tokens. A 1M-token request needs `MAX_MODEL_LEN=1048576`; with packed groups the pool holds 1.73× of one such request (CPU planner), and two 1M-token requests do not fit at once. With the 4-session defaults, MemAvailable minima per phase are in each perf2 boot's `numbers.txt` (`results/2026-10-19-1017-perf2/`); boot I3's lowest was 2.0 GiB on spark1 during the prefill micro bench.
 
 The memory watchdog (stop at under 1.5 GiB on either node for two 2 s samples) never tripped in any test. After a prefill step of 8192 tokens or more (`DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192`), the allocator releases its unused cached blocks while `MemAvailable` is below 4 GiB (`DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4`).
 
@@ -156,7 +165,7 @@ The 1017 baseline for `2.7bpw-mcg-hq` is `results/2026-10-18-1017/quality-baseli
 
 The quick baseline (`quality-baseline/quick.json`) was recorded on release boot r1: PASS, NLL 0.1430, decode median |Δlogprob| 0.00096, tools exact, needle 6/6, c=2 and vision pass.
 
-**Long context.** Needle at 256k: 3/3 depths (10% / 50% / 90%), about 400 s per request end to end, roughly 650 tok/s prefill. Needle at 1,047,432 prompt tokens: 3/3 depths, 1908–1999 s per request, roughly 530 tok/s prefill. One request at a time; the KV pool holds 1.06× a 1M request (`results/2026-10-18-1017/boot-d1/long-needle*.txt`).
+**Long context.** Needle at 256k: 3/3 depths (10% / 50% / 90%), about 400 s per request end to end, roughly 650 tok/s prefill. Needle at 1,047,432 prompt tokens: 3/3 depths, 1908–1999 s per request, roughly 530 tok/s prefill. One request at a time; the KV pool held 1.06× a 1M request on those boot D1 settings (`results/2026-10-18-1017/boot-d1/long-needle*.txt`).
 
 **Served KL against the native model.** `tools/served_kl.py` scores the live serve's `prompt_logprobs` (top 20) against the native unquantized 1017 model's top-128 logits on 72 held-out text rows (92,818 tokens). It measures the whole served stack, so engine numerics count against it as well as the quantization. Eval boot: `MAX_NUM_BATCHED_TOKENS=512 LANGUAGE_MODEL_ONLY=1`, because `prompt_logprobs` materialises full-vocab logits per chunk on the head.
 
@@ -184,27 +193,30 @@ Encyclopedic text loses the most. Rare-fact recall lives in the routed experts t
 | Image | `dsv41-flash-exl3-sm121:e15-kbits` |
 | Model | `sfxnz/DeepSeek-V4.1-Flash-1017-EXL3` revision `2.7bpw-mcg-hq` |
 | `--tensor-parallel-size` / `--nnodes` | 2 / 2 |
-| `--max-model-len` | 1048576 |
-| `--max-num-seqs` | 2 |
+| `--max-model-len` | 500000 |
+| `--max-num-seqs` | 4 |
 | `--max-num-batched-tokens` | 8192 |
 | `--kv-cache-dtype` | `fp8` |
 | `--kv-cache-memory` | 4160749568 |
+| KV cache groups | packed, one layer-pattern repeat per group (`DSV41_KV_PACKED_GROUPS=1`, vLLM PR #60996): 50 groups on 46,080-byte blocks; `0` restores the image's 18 groups on 138,240-byte blocks |
 | `--quantization` | `exl3` |
 | Engram | disk (`DSV41_ENGRAM_DISK=1`) |
 | `--block-size` | 64 |
+| `--prefix-cache-retention-interval` | 4096 (sliding-window prefix-cache checkpoint every 4096 tokens; vLLM's default 0 keeps only the replay boundary) |
 | Speculative | DSpark-3 (`SPEC=dspark`) |
-| CUDA graphs | `FULL_AND_PIECEWISE`, capture sizes {1} ∪ {s·k, s·(k+1)} for s ≤ `--max-num-seqs` (`[1,3,4,6,8]` at k=3) (`ENFORCE_EAGER=0`, `DSV41_ALLOW_CUDA_GRAPHS=1`) |
+| CUDA graphs | `FULL_AND_PIECEWISE`, capture sizes {1} ∪ {s·k, s·(k+1)} for s ≤ `--max-num-seqs` (`[1,3,4,6,8,9,12,16]` at k=3) (`ENFORCE_EAGER=0`, `DSV41_ALLOW_CUDA_GRAPHS=1`) |
 | Engram prefetch / census / gather | `DSV41_ENGRAM_PREFETCH=1` `DSV41_ENGRAM_CENSUS=1` `DSV41_ENGRAM_GATHER_V2=1` |
 | Engram prefill read-ahead | `DSV41_ENGRAM_WILLNEED=1` (gv2 calls with >= 512 rows fadvise their pages before the preadv loop) |
 | lm_head | MXFP8 (`DSV41_LMHEAD_MXFP8=1`), needs an lm_head-MXFP8 pack (`2.7bpw-mcg-hq` is one: `tools/build_pack_1017.py` converts source shard 43); self-disarms on a bf16-head pack |
 | Weight-load stream feed | `DSV41_STREAM_FEED=1` |
 | Decode levers | `DSV41_WOA_PREPACK=1` (needs the `dsv41-flash-exl3-sm121:e15-kbits` o_proj stage) `DSV41_DSPARK_SPARSE_MARKOV=1` `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024` |
-| Round-3 kernel bundle | `DSV41_P2B_COOP=2` (coop dataflow MoE kernel, needs the `dsv41-flash-exl3-sm121:e15-kbits` build) `DSV41_DENSE_GEMV=1` `DSV41_MHC_DET_SPLITS=16` `DSV41_ENGRAM_NATIVE_STAGE=1` `DSV41_ENGRAM_EARLY_HASH=1` `DSV41_ATTN_T2R_DEDUP=1` `DSV41_SWA_META_FUSED=1` `DSV41_MOE_PREP_FUSED=1` `DSV41_CANDIDATE_MASK_BOUNDED=1` `DSV41_INDEXER_WP_GEMV=1` (set one to `0` to turn it off) |
+| Round-3 kernel bundle | `DSV41_P2B_COOP=2` (coop dataflow MoE kernel, needs the `dsv41-flash-exl3-sm121:e15-kbits` build) `DSV41_DENSE_GEMV=1` `DSV41_MHC_DET_SPLITS=16` `DSV41_ENGRAM_NATIVE_STAGE=1` `DSV41_ENGRAM_EARLY_HASH=1` `DSV41_ATTN_T2R_DEDUP=1` `DSV41_SWA_META_FUSED=1` `DSV41_SWA_META_BATCHED=1` `DSV41_MOE_PREP_FUSED=1` `DSV41_CANDIDATE_MASK_BOUNDED=1` `DSV41_INDEXER_WP_GEMV=1` (set one to `0` to turn it off) |
 | NCCL AR-tail set | `NCCL_BUFFSIZE=1048576` `NCCL_LL128_BUFFSIZE=262144` `NCCL_PROTO=^LL128` `NCCL_MAX_NCHANNELS=8` |
-| Memory hygiene | `DSV41_DROP_PAGE_CACHE=1` `DSV41_INDEXER_PREFILL_FACTOR=1` `DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192` `DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4` `VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=256` |
+| Memory hygiene | `DSV41_DROP_PAGE_CACHE=1` `DSV41_INDEXER_PREFILL_FACTOR=1` `DSV41_INDEXER_EXPANDED_TABLE_LAZY=1` `DSV41_PREFILL_EMPTY_CACHE_TOKENS=8192` `DSV41_PREFILL_EMPTY_CACHE_MEMAVAIL_GIB=4` `VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=256` |
 | Tokenizers / tools / reasoning | `deepseek_v41` |
 | Vision | on (`LANGUAGE_MODEL_ONLY=0`) |
 | `--mm-encoder-tp-mode` | data |
+| `--mm-processor-cache-gb` | 1 (vLLM default 4, mirrored in the API server and EngineCore on the head) |
 | Default thinking | `thinking=false`, `reasoning_effort=low` |
 | Post-ready | engagement audit of both ranks' logs (`AUDIT=warn`; `strict` fails the boot, `off` skips), then greedy, t=0.7, ~3k/~1k/~300-token nonce prefill and small-image warmup requests (`WARMUP=1`) |
 | API | `http://<head>:8000/v1` |

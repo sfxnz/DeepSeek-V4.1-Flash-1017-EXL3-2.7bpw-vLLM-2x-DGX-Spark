@@ -72,8 +72,8 @@ HUB_MODEL = "sfxnz/DeepSeek-V4.1-Flash-1017-EXL3"
 HUB_REV = "2.7bpw-mcg-hq"
 SERVED_NAME = "deepseek-ai/DeepSeek-V4.1-Flash-1017"
 IMAGE_TAG = "dsv41-flash-exl3-sm121:e15-kbits"
-PROMOTED_BOOT = "results/2026-10-18-1017/boot.sh"
-RELEASE_KV_CACHE_MEMORY = "4160749568"  # 3.875 GiB, boot D1
+PROMOTED_BOOT = "results/2026-10-19-1017-c4/boot.sh"  # 4-session defaults; 2026-10-18-1017/boot.sh is D1/r1 evidence
+RELEASE_KV_CACHE_MEMORY = "4160749568"  # 3.875 GiB, boot D1; the 4-session defaults keep it
 HUB_DIRNAME = "models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3"
 HUB_PACK_URL = "https://huggingface.co/sfxnz/DeepSeek-V4.1-Flash-1017-EXL3"
 DEFAULTS_BEGIN = (
@@ -323,6 +323,7 @@ ENGAGED_LOG = "\n".join(
         "(Worker_TP0 pid=1) dsv41: engram early hash matches the stock hash",
         "(Worker_TP0 pid=1) dsv41: attention t2r dedup reuse bit-exact",
         "(Worker_TP0 pid=1) dsv41: swa metadata fused self-check bit-exact",
+        "(Worker_TP0 pid=1) dsv41: swa metadata batched self-check bit-exact (groups 43, decode tokens 4, valid tokens False)",
         "(Worker_TP0 pid=1) dsv41: moe prep fused self-check bit-exact",
         "(Worker_TP0 pid=1) dsv41: candidate mask bounded self-check bit-exact",
         "(Worker_TP0 pid=1) dsv41: indexer weights_proj GEMV self-check bit-exact",
@@ -330,6 +331,9 @@ ENGAGED_LOG = "\n".join(
         "(Worker_TP0 pid=1) dsv41: exl3 routed experts K_gu/K_d=2/2 layer 0 (bits)",
         # 1017 chat-encoder parity (sitecustomize, every process)
         "dsv41: chat encoder 1017 parity engaged (encoding rewritten, tokenizer rewritten)",
+        # PR #60996 packed KV groups and the lazy indexer table (sitecustomize, every process)
+        "dsv41: kv packed groups engaged (kv_cache_utils rewritten)",
+        "dsv41: indexer expanded block table lazy engaged (indexer rewritten)",
     ]
 )
 
@@ -668,15 +672,21 @@ class RecipeOpsTests(unittest.TestCase):
         k = _recipe()["serve"]["env"]["NUM_SPECULATIVE_TOKENS"]
         self.assertEqual(k, "3")
         self.assertIn(f"spec_tokens={k}", proc.stdout)
-        self.assertIn('"cudagraph_capture_sizes":[1,3,4,6,8]', proc.stdout)
+        self.assertIn('"cudagraph_capture_sizes":[1,3,4,6,8,9,12,16]', proc.stdout)
+        self.assertIn("seqs=4", proc.stdout)
         self.assertIn("eager=0", proc.stdout)
         self.assertIn("lm_only=0", proc.stdout)
         self.assertNotIn("--language-model-only", proc.stdout)
 
     def test_validate_only_refuses_max_num_seqs(self) -> None:
-        proc = _run_sh(MAX_NUM_SEQS="8")
-        self.assertNotEqual(proc.returncode, 0)
-        self.assertIn("exceeds 2", proc.stderr)
+        for seqs in ("5", "8"):
+            proc = _run_sh(MAX_NUM_SEQS=seqs)
+            self.assertNotEqual(proc.returncode, 0, seqs)
+            self.assertIn("exceeds 4", proc.stderr)
+            self.assertIn("FORCE_UNSAFE_CTX=1 overrides", proc.stderr)
+        for seqs in ("1", "4"):
+            self.assertEqual(_run_sh(MAX_NUM_SEQS=seqs).returncode, 0, seqs)
+        self.assertEqual(_run_sh(MAX_NUM_SEQS="8", FORCE_UNSAFE_CTX="1").returncode, 0)
 
     def test_validate_only_refuses_spec_tokens_above_block(self) -> None:
         for k in ("10", "6", "0", "3.5"):
@@ -693,6 +703,7 @@ class RecipeOpsTests(unittest.TestCase):
 
     def test_validate_only_capture_sizes_follow_k_and_seqs(self) -> None:
         cases = {
+            ("3", "4"): "[1,3,4,6,8,9,12,16]",
             ("3", "2"): "[1,3,4,6,8]",
             ("5", "2"): "[1,5,6,10,12]",
             ("2", "2"): "[1,2,3,4,6]",
@@ -746,12 +757,16 @@ class RecipeOpsTests(unittest.TestCase):
         self.assertNotIn("dsv41.recipe.patches", res["stderr"])
 
     def test_defaults_match_promoted_boot(self) -> None:
-        """A plain ./run.sh reproduces the 1017 release boot (results/2026-10-18-1017/boot.sh).
+        """A plain ./run.sh reproduces the promoted boot (PROMOTED_BOOT), and the boot names every lever.
 
-        boot.sh exports the release env measured on boot D1 (e15-kbits, 2.7bpw-mcg-hq,
-        KV 4160749568, DSpark k=3, MEMAVAIL floor 4 GiB, round-34/35 levers on). Every export
-        must equal what the dry-run head container and argv get. The only allowed delta is
-        FORCE_UNSAFE_CTX, should a boot script ever set it: the default stays 0 (ARMS.md).
+        results/2026-10-19-1017-c4/boot.sh exports the defaults of the perf2 stack (its header lists
+        what each perf2 change moved against the D1/r1 release boot). Every export must equal what
+        the dry-run head container and argv get, and every DSV41_* default in recipe.yaml serve.env
+        must be exported there with that value: a change that adds or moves a lever default writes
+        it into the promoted boot. DSV41_ALLOW_CUDA_GRAPHS is the CUDA-graph switch, not a lever.
+        The only allowed delta is FORCE_UNSAFE_CTX, should a boot script ever set it: the default
+        stays 0 (ARMS.md). results/2026-10-18-1017/boot.sh stays as the D1/r1 evidence copy
+        (MAX_NUM_SEQS=2, 1M).
         """
         import json
         import shlex
@@ -775,6 +790,8 @@ class RecipeOpsTests(unittest.TestCase):
             KV_CACHE_MEMORY=args[args.index("--kv-cache-memory") + 1],
             MAX_MODEL_LEN=args[args.index("--max-model-len") + 1],
             MAX_NUM_SEQS=args[args.index("--max-num-seqs") + 1],
+            MM_PROCESSOR_CACHE_GB=args[args.index("--mm-processor-cache-gb") + 1],
+            PREFIX_CACHE_RETENTION_INTERVAL=args[args.index("--prefix-cache-retention-interval") + 1],
             UTIL=args[args.index("--gpu-memory-utilization") + 1],
             COMPILATION_CONFIG=args[args.index("--compilation-config") + 1],
             NUM_SPECULATIVE_TOKENS=str(
@@ -785,6 +802,9 @@ class RecipeOpsTests(unittest.TestCase):
             if name in allowed:
                 continue
             self.assertEqual(effective.get(name), value, name)
+        levers = {k: v for k, v in _recipe()["serve"]["env"].items()
+                  if k.startswith("DSV41_") and k != "DSV41_ALLOW_CUDA_GRAPHS"}
+        self.assertEqual({k: boot.get(k) for k in levers}, levers)
 
     def test_force_unsafe_defaults_are_off(self) -> None:
         env = _recipe()["serve"]["env"]
@@ -876,6 +896,52 @@ class RecipeOpsTests(unittest.TestCase):
         readme = _read("README.md")
         self.assertIn("`2048` is the override", readme)
         self.assertIn(f"hf download {HUB_MODEL} --revision {HUB_REV}", readme)
+
+    def test_four_session_defaults(self) -> None:
+        """MAX_NUM_SEQS=4 at a 500,000-token window, packed KV groups, batched SWA metadata (perf2).
+
+        4 x 500K fits the 3.875 GiB pool at MAX_NUM_BATCHED_TOKENS=8192 without preemption (CPU:
+        3.82 GiB needed); 4 x 524,288 does not (3.99), so the window is 500,000, not 2^19.
+        """
+        env = _recipe()["serve"]["env"]
+        self.assertEqual(env["MAX_NUM_SEQS"], "4")
+        self.assertEqual(env["MAX_MODEL_LEN"], "500000")
+        self.assertEqual(env["MAX_NUM_BATCHED_TOKENS"], "8192")
+        self.assertEqual(env["DSV41_KV_PACKED_GROUPS"], "1")
+        self.assertEqual(env["DSV41_INDEXER_EXPANDED_TABLE_LAZY"], "1")
+        self.assertEqual(env["DSV41_SWA_META_BATCHED"], "1")
+        self.assertEqual(env["DSV41_SWA_META_FUSED"], "1")  # the batched path rides on it
+        self.assertEqual(env["MM_PROCESSOR_CACHE_GB"], "1")
+        self.assertEqual(env["PREFIX_CACHE_RETENTION_INTERVAL"], "4096")
+        self.assertEqual(int(env["PREFIX_CACHE_RETENTION_INTERVAL"]) % 128, 0)  # scheduler block 128
+        self.assertEqual(_defaults_row("`--max-num-seqs`"), "| `--max-num-seqs` | 4 |")
+        self.assertEqual(_defaults_row("`--max-model-len`"), "| `--max-model-len` | 500000 |")
+        self.assertIn("DSV41_KV_PACKED_GROUPS=1", _defaults_row("KV cache groups"))
+
+    def test_mm_cache_and_prefix_retention_flags_reach_both_ranks(self) -> None:
+        container_env, dry_run, image_and_args = _harness()
+        res = dry_run()
+        self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
+        for role in ("head", "worker"):
+            _, args = image_and_args(res[role])
+            self.assertEqual(args[args.index("--mm-processor-cache-gb") + 1], "1", role)
+            self.assertEqual(args[args.index("--prefix-cache-retention-interval") + 1], "4096", role)
+            env = container_env(res[role])
+            self.assertEqual(env["DSV41_KV_PACKED_GROUPS"], "1", role)
+            self.assertEqual(env["DSV41_SWA_META_BATCHED"], "1", role)
+        res = dry_run(MM_PROCESSOR_CACHE_GB="2", PREFIX_CACHE_RETENTION_INTERVAL="8192")
+        for role in ("head", "worker"):
+            _, args = image_and_args(res[role])
+            self.assertEqual(args[args.index("--mm-processor-cache-gb") + 1], "2", role)
+            self.assertEqual(args[args.index("--prefix-cache-retention-interval") + 1], "8192", role)
+        # An empty value keeps the default (generated block); 0 is vLLM's own default policy.
+        res = dry_run(LANGUAGE_MODEL_ONLY="1", PREFIX_CACHE_RETENTION_INTERVAL="0")
+        for role in ("head", "worker"):
+            _, args = image_and_args(res[role])
+            self.assertNotIn("--mm-processor-cache-gb", args, role)
+            self.assertEqual(args[args.index("--prefix-cache-retention-interval") + 1], "0", role)
+        self.assertIn("MM_PROCESSOR_CACHE_GB", _worker_config())
+        self.assertIn("PREFIX_CACHE_RETENTION_INTERVAL", _worker_config())
 
     def test_default_kv_cache_memory_is_the_release_pool(self) -> None:
         self.assertEqual(_recipe()["serve"]["env"]["KV_CACHE_MEMORY"], RELEASE_KV_CACHE_MEMORY)

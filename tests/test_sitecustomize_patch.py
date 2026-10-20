@@ -29,6 +29,9 @@ REQUIRED = {
     "native_indexer_decode",
     "indexer_adaptive",
     "chat_encoder_1017",
+    "kv_packed_groups",
+    "indexer_expanded_lazy",
+    "indexer_ragged_decode",
 }
 REQUIRED_UNLESS_LM_ONLY = {"swa_image_width", "attention_image_width"}
 sys.path.insert(0, str(ROOT / "docker/patch"))
