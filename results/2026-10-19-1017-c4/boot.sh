@@ -19,6 +19,9 @@
 #     DSV41_PREFILL_EMPTY_CACHE_GROWTH_MIB=150, DSV41_FAT_SCRATCH_SHARED=1, DSV41_MODEL_LOOP_RELEASE=1,
 #     DSV41_ATTN_OUT_DEFER=1, DSV41_ENGRAM_POST_INPLACE=1 (spark1 headroom with decoder replay off is not
 #     solved: flags.md).
+#   - perf2 dspark-adaptive: NUM_SPECULATIVE_TOKENS_PER_BATCH=1-2:5,3-4:3 (DSpark block 5; verify k=5 at 1-2
+#     requests, k=3 at 3-4) and DSV41_DSPARK_ADAPTIVE=1 (TAU 0.15). NUM_SPECULATIVE_TOKENS=3 applies only
+#     with NUM_SPECULATIVE_TOKENS_PER_BATCH=0.
 # GPU evidence: results/2026-10-19-1017-perf2/ (boot I3 ran the kv-pack defaults with the later perf2 levers
 # off). Boot FINAL ran the full stack's defaults (the last of these PRs) with the 4-session resident soak.
 # Run with: SKIP_DOWNLOAD=1 AUDIT=strict results/2026-10-19-1017-c4/boot.sh
@@ -33,7 +36,7 @@ export MAX_MODEL_LEN=500000
 export MAX_NUM_SEQS=4
 export UTIL=0.75
 export MAX_NUM_BATCHED_TOKENS=8192
-export NUM_SPECULATIVE_TOKENS=3
+export NUM_SPECULATIVE_TOKENS_PER_BATCH=1-2:5,3-4:3
 export MM_PROCESSOR_CACHE_GB=1
 export PREFIX_CACHE_RETENTION_INTERVAL=4096
 
@@ -89,5 +92,7 @@ export DSV41_MOE_PREFILL_TC=1
 export DSV41_DECODER_REPLAY_ROWS=2670
 export DSV41_PREFIX_END_FALLBACK=1
 export DSV41_PREFIX_REPLY_RETAIN=1
+# perf2 dspark-adaptive.
+export DSV41_DSPARK_ADAPTIVE=1
 
 exec ./run.sh

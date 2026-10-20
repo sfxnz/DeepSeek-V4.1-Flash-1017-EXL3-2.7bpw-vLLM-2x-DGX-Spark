@@ -68,6 +68,10 @@
   tensor-core kernels of moe_prefill_tc.cuh, each EXL3 trellis tile decoded once per row chunk;
   self-checked and verified against the stock path (moe_prefill_tc.py). Not a decode lever: it is
   hooked here so the mounted patch dir arms it like the others.
+- DSV41_DSPARK_ADAPTIVE=1: each request verifies only the drafts whose
+  confidence-head survival is >= DSV41_DSPARK_TAU (cap DSV41_DSPARK_VERIFY_MAX)
+  at unchanged shapes; the other verify rows reuse their anchor's experts with
+  weight 0 and their drafts are forced rejected (dspark_adaptive.py).
 
 Top-level imports are stdlib only, so importing this module cannot fail.
 """
@@ -299,6 +303,14 @@ def _install_moe_prefill_tc(env) -> None:
     print(f"dsv41: moe prefill tc: {moe_prefill_tc.install()}", flush=True)
 
 
+def _install_dspark_adaptive(env) -> None:
+    if (env.get("DSV41_DSPARK_ADAPTIVE", "0") or "0") != "1":
+        return
+    import dspark_adaptive
+
+    print(f"dsv41: dspark adaptive verify: {dspark_adaptive.install(env)}", flush=True)
+
+
 def _install_engram_prefill_ahead(env) -> None:
     if (env.get("DSV41_ENGRAM_PREFILL_AHEAD", "0") or "0") != "1":
         return
@@ -326,6 +338,7 @@ def install(env=None) -> None:
         ("swa-meta-batched", _install_swa_meta_batched),
         ("engram-wkv-tp", _install_engram_wkv_tp),
         ("moe-prefill-tc", _install_moe_prefill_tc),
+        ("dspark-adaptive", _install_dspark_adaptive),
     ):
         try:
             step(env)
