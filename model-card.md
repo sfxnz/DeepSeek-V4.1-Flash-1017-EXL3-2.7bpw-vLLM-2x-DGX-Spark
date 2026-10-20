@@ -30,22 +30,25 @@ The 2× DGX Spark recipe is [sfxnz/DeepSeek-V4.1-Flash-1017-EXL3-2.7bpw-vLLM-2x-
 
 ## Results
 
-Measured on 2× DGX Spark at the 2026-10-18 release defaults (DSpark k=3, `MAX_NUM_SEQS=2`, 1,048,576-token window, KV pool 3.875 GiB = 1,108,848 tokens, 1.06× one 1M request), boot D1, 2026-10-18. The recipe now defaults to four sessions at a 500,000-token window from the same pool (packed KV groups); its boots are in the recipe's `results/2026-10-19-1017-perf2/`. Boot D1:
+Measured on 2× DGX Spark at the recipe's perf2 defaults (four sessions at a 500,000-token window, KV pool 3.875 GiB = 1,471,832 tokens with packed KV groups, DSpark verify k=5 at 1-2 sessions and k=3 at 3-4 with adaptive verify), boot FINAL, 2026-10-20, a plain `./run.sh` from the recipe's perf2 tip. The right column is the 2026-10-18 release defaults (DSpark k=3, `MAX_NUM_SEQS=2`, 1,048,576-token window), boot D1, kept as history. Evidence: the recipe's `results/2026-10-19-1017-perf2/FINAL/` and `results/2026-10-18-1017/`.
 
-| Cell | Result |
-|---|---|
-| L.A.I.L prose c=1 (512 tokens, t=0.2) | 39.6 tok/s |
-| Greedy prose c=1 / structured c=1 (200 tokens, `ignore_eos`; the prose prompt stops naturally at 83) | 49.6 / 77.0 tok/s |
-| c=2 aggregate, prose / structured | 75.8 / 140.3 tok/s |
-| Prefill, novel text, 4k / 16k / 64k | 795 / 755 / 733 tok/s |
-| Teacher-forced NLL, 40 passages | 0.1445 nats/token |
-| GSM8K-100 thinking off / GSM8K-40 thinking on | 97/100 / 39/40 |
-| MMLU 4×57 | 208/228 (91.2%) |
-| Tool calls | 22/22 exact args, 8/8 no-call |
-| Needle 8k / 32k / 128k × 3 depths | 9/9 |
-| Needle 256k / 1M (3 depths each) | 3/3 / 3/3 |
-| Served KL vs native unquantized 1017 (72 rows, 92,818 tokens) | 0.025 nats/token, ΔNLL +0.63%, top-1 95.3% (encyclopedic worst: 0.114, 88.1%) |
-| 60-minute c=2 soak, mixed checked traffic | 4,296 requests, 0 errors, 4,295 correct |
+| Cell | perf2 defaults (FINAL) | release defaults (D1, history) |
+|---|---|---|
+| L.A.I.L prose c=1 (512 tokens, t=0.2) | 40.5 tok/s | 39.6 tok/s |
+| Greedy prose c=1 / structured c=1 (200 tokens, `ignore_eos`; the prose prompt stops naturally at 83) | 51.3 / 103.6 tok/s | 49.6 / 77.0 tok/s |
+| c=2 aggregate, prose / structured | 74.6 / 183.4 tok/s | 75.8 / 140.3 tok/s |
+| c=4 aggregate, four distinct prompts, prose / structured | 96.4 / 201.1 tok/s | - |
+| Prefill, novel text, 4k / 16k / 64k | 1,830 / 2,236 / 2,932 tok/s | 795 / 755 / 733 tok/s |
+| Teacher-forced NLL, 40 passages | 0.1458 nats/token | 0.1445 nats/token |
+| GSM8K-100 thinking off / GSM8K-40 thinking on | 98/100 / 38/40 | 97/100 / 39/40 |
+| MMLU 4×57 | 211/228 (92.5%) | 208/228 (91.2%) |
+| Tool calls | 22/22 exact args, 8/8 no-call | 22/22 exact args, 8/8 no-call |
+| Needle 8k / 32k / 128k × 3 depths | 9/9 | 9/9 |
+| Long needles, 3 depths each | 256k 3/3, 500k 3/3 | 256k 3/3, 1M 3/3 |
+| Served KL vs native unquantized 1017 (72 rows, 92,818 tokens) | 0.0253 nats/token, ΔNLL +0.58%, top-1 95.2% (encyclopedic worst: 0.112, 87.5%) | 0.025 nats/token, ΔNLL +0.63%, top-1 95.3% (encyclopedic worst: 0.114, 88.1%) |
+| Soak | 4 sessions of ~447K tokens resident, 0 preemptions, KV usage peak 0.876 | 60-minute c=2 mixed checked traffic: 4,296 requests, 0 errors, 4,295 correct |
+
+GSM8K-40 with thinking on scored 38/40 against the baseline's 39/40: inside the quality gate's Wilson bound, one problem below the baseline.
 
 The recipe's README has the full table, the memory notes and the quality baseline.
 

@@ -24,6 +24,8 @@
 #     with NUM_SPECULATIVE_TOKENS_PER_BATCH=0.
 #   - perf2 decode levers: DSV41_PM_QOS_US=20, DSV41_ENGRAM_WKV_TP=1, DSV41_MHC_DET_OVERLAP=1 (round-35 KP
 #     add-ons, boot KP-C); DSV41_NCCL_EAGER_TWIN and DSV41_AR_L2_PREFETCH stay off.
+#   - perf2 c4-sched: DSV41_SCHED_PREFILL_CAP=2048, DSV41_SCHED_DECODE_STEPS=1 (prefill shares each step with
+#     the other sessions' decodes; a request alone in the scheduler is scheduled as stock).
 # GPU evidence: results/2026-10-19-1017-perf2/ (boot I3 ran the kv-pack defaults with the later perf2 levers
 # off). Boot FINAL ran the full stack's defaults (the last of these PRs) with the 4-session resident soak.
 # Run with: SKIP_DOWNLOAD=1 AUDIT=strict results/2026-10-19-1017-c4/boot.sh
@@ -100,5 +102,8 @@ export DSV41_DSPARK_ADAPTIVE=1
 export DSV41_PM_QOS_US=20
 export DSV41_ENGRAM_WKV_TP=1
 export DSV41_MHC_DET_OVERLAP=1
+# perf2 c4-sched.
+export DSV41_SCHED_PREFILL_CAP=2048
+export DSV41_SCHED_DECODE_STEPS=1
 
 exec ./run.sh

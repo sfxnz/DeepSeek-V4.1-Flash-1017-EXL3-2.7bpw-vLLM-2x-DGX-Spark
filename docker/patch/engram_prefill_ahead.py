@@ -46,7 +46,11 @@ _DONTNEED (above); _CPUS pins the gather threads (e.g. "0-4,10-14", the A725 cor
 empty = no pinning). Memory: 2 tables x TOKENS x 12 x 256 x 2 B pinned (96 MiB at 8192,
 48 MiB at 4096, allocated at the first read-ahead) + TOKENS x 96 B of hash ids + THREADS x
 0.8 MB scratch. DSV41_ENGRAM_CENSUS=1 prints a [prefill-ahead] line per call that carries
-a prefill.
+a prefill. With DSV41_SCHED_PREFILL_CAP=X (sched_prefill_cap.py: the scheduler gives each
+prefilling request at most X tokens per step while it holds more than one request), a
+batch of more than one request reads each request at most X tokens ahead, the chunk the
+scheduler will give it; a read-ahead of up to TOKENS would make the next stage wait for
+rows it does not use yet (and read them again a step later).
 
 Hook points: wraps EngramDiskStager.__init__ / stage() (same signature) and
 DeepseekV41ModelState.prepare_inputs (records the batch stage() is called for). Installed
@@ -90,6 +94,12 @@ def cap_tokens(max_tokens: int, env=None) -> int:
     if n < 0:
         raise ValueError(f"DSV41_ENGRAM_PREFILL_AHEAD_TOKENS={n} must be >= 0")
     return min(n, int(max_tokens)) if n else int(max_tokens)
+
+
+def share_tokens(env=None) -> int:
+    """The scheduler's per-request prefill cap with co-tenants (sched_prefill_cap.py; 0 = off)."""
+    env = os.environ if env is None else env
+    return max(0, int(env.get("DSV41_SCHED_PREFILL_CAP", "") or 0))
 
 
 def threads(env=None) -> int:
@@ -205,12 +215,12 @@ def hash_segment(c: dict, ids, window, pos0: int, h0: int, h1: int):
 
 
 def plan_ahead(req_ids, idx_mapping, num_computed, num_scheduled, prefill_len, is_prefilling,
-               cap: int, min_tokens: int = MIN_AHEAD) -> list:
+               cap: int, min_tokens: int = MIN_AHEAD, per_req: int = 0) -> list:
     """Next-chunk read-ahead: [(req_id, req_idx, start, length, slot)], slots packed from 0.
 
     A request still prefilling after this step resumes at num_computed + num_scheduled
     (a chunked prefill continues where it stopped) and gets up to
-    min(prefill_len - start, cap - used) tokens.
+    min(prefill_len - start, cap - used, per_req or cap) tokens.
     """
     plan, used = [], 0
     for i, req_id in enumerate(req_ids):
@@ -219,7 +229,7 @@ def plan_ahead(req_ids, idx_mapping, num_computed, num_scheduled, prefill_len, i
         if not bool(is_prefilling[i]):
             continue
         start = int(num_computed[i]) + int(num_scheduled[i])
-        length = min(int(prefill_len[i]) - start, cap - used)
+        length = min(int(prefill_len[i]) - start, cap - used, per_req or cap)
         if length < min_tokens:
             continue
         plan.append((req_id, int(idx_mapping[i]), start, length, used))
@@ -374,9 +384,10 @@ class AheadCore:
     """
 
     def __init__(self, gather: Gather, consts: dict, h0: int, h1: int, depth: int, cap: int,
-                 pf_hash, pf_rows_ptrs, wait_h2d, flags_prefill: int, cpu_set=None):
+                 pf_hash, pf_rows_ptrs, wait_h2d, flags_prefill: int, cpu_set=None, share: int = 0):
         self.gather, self.consts = gather, consts
         self.h0, self.h1, self.depth, self.cap = h0, h1, depth, cap
+        self.share = share  # share_tokens(): per-request read-ahead when the batch holds > 1 request
         self.pf_hash, self.pf_rows_ptrs = pf_hash, list(pf_rows_ptrs)
         self.wait_h2d, self.flags_prefill = wait_h2d, flags_prefill
         self.coord = ThreadPoolExecutor(max_workers=1, thread_name_prefix="dsv41-pa-job",
@@ -387,7 +398,8 @@ class AheadCore:
         """The read-ahead of the next chunk of every request that keeps prefilling."""
         nreq = int(batch.num_reqs)
         return plan_ahead(batch.req_ids[:nreq], batch.idx_mapping_np, batch.num_computed_tokens_np,
-                          batch.num_scheduled_tokens, batch.prefill_len_np, batch.is_prefilling_np, self.cap)
+                          batch.num_scheduled_tokens, batch.prefill_len_np, batch.is_prefilling_np, self.cap,
+                          per_req=self.share if nreq > 1 else 0)
 
     def start(self, plan, token_rows) -> Job:
         """Submit `plan`; token_rows[req_idx] is that request's all_token_ids row."""
@@ -523,7 +535,8 @@ class Ahead:
         self.pf_hash = np.zeros((self.cap, self.nl, self.hv), dtype=np.int32)
         self.core = AheadCore(self.gather, consts, stager.head_start, stager.head_end, int(hs.lookback_depth),
                               self.cap, self.pf_hash, [], self.h2d_done.synchronize,
-                              FLAG_NOWAIT | (FLAG_DONTNEED if dontneed(env) else 0), cpu_set)
+                              FLAG_NOWAIT | (FLAG_DONTNEED if dontneed(env) else 0), cpu_set,
+                              share=share_tokens(env))
         self.qsl_host = None
         self.census = census_on(env)
         self.mib = len(tables) * self.cap * self.lh * self.dim * 2 / 2**20

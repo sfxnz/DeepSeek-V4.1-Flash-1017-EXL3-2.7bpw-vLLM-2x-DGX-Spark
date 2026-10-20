@@ -1375,5 +1375,23 @@ def _p_decoder_replay():
 _patch("decoder_replay", _p_decoder_replay)
 
 
+# Prefill sharing for concurrent sessions (docker/patch/sched_prefill_cap.py): DSV41_SCHED_PREFILL_CAP=X
+# caps each prefilling request at X tokens per step while the scheduler holds more than one request;
+# DSV41_SCHED_DECODE_STEPS=n runs n decode-only steps after each step that carried prefill while a
+# request decodes. Both 0 (default): stock scheduling, nothing patched.
+def _p_sched_prefill_cap():
+    import sched_prefill_cap
+
+    state = sched_prefill_cap.install()
+    if state == "off":
+        raise _PatchSkip(f"{sched_prefill_cap.ENV_CAP} and {sched_prefill_cap.ENV_STEPS} are 0")
+    if state not in ("armed", "already installed"):
+        raise RuntimeError(f"sched_prefill_cap {state}")
+    return state
+
+
+_patch("sched_prefill_cap", _p_sched_prefill_cap)
+
+
 # Env-gated decode levers (docker/patch/decode_levers.py; each is off by default).
 _patch("decode_levers", lambda: __import__("decode_levers").install())

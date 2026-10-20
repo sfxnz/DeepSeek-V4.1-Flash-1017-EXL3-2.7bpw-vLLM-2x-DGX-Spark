@@ -389,6 +389,28 @@ class PlanTests(unittest.TestCase):
         plan = epa.plan_ahead(["a", "b"], [0, 1], [0, 0], [100, 100], [1000 - 30 + 100, 5000], [True, True], cap=1000)
         self.assertEqual(plan, [("a", 0, 100, 970, 0)])  # b would get 30 < 64
 
+    def test_plan_follows_the_schedulers_per_request_cap(self) -> None:
+        self.assertEqual(epa.share_tokens({}), 0)
+        self.assertEqual(epa.share_tokens({"DSV41_SCHED_PREFILL_CAP": "2048"}), 2048)
+        # decoders + one prefill: the scheduler gives it 2048 next step, so read 2048 ahead
+        plan = epa.plan_ahead(["d", "p"], [0, 1], [900, 4096], [4, 2048], [100, 40000], [False, True],
+                              cap=8192, per_req=2048)
+        self.assertEqual(plan, [("p", 1, 6144, 2048, 0)])
+        # two prefills: each its own capped chunk, slots packed
+        plan = epa.plan_ahead(["a", "b"], [0, 1], [0, 0], [2048, 2048], [30000, 3000], [True, True],
+                              cap=8192, per_req=2048)
+        self.assertEqual(plan, [("a", 0, 2048, 2048, 0), ("b", 1, 2048, 952, 2048)])
+        core = epa.AheadCore(None, {}, 0, 1, NGRAM - 1, 8192, None, [], lambda: None, 0, share=2048)
+        try:
+            def batch(n):
+                return SimpleNamespace(num_reqs=n, req_ids=["p", "d"][:n], idx_mapping_np=[0, 1],
+                                       num_computed_tokens_np=[8190, 900], num_scheduled_tokens=[8190, 4],
+                                       prefill_len_np=[40000, 100], is_prefilling_np=[True, False])
+            self.assertEqual(core.plan(batch(1)), [("p", 0, 16380, 8192, 0)])  # alone: full chunks
+            self.assertEqual(core.plan(batch(2)), [("p", 0, 16380, 2048, 0)])
+        finally:
+            core.close()
+
     def test_covered_rows(self) -> None:
         plan = [("p", 1, 1000, 384, 0), ("q", 2, 50, 100, 384)]
         # decode d first, then p's chunk exactly as read ahead

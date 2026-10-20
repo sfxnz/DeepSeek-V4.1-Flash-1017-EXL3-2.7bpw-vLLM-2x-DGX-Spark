@@ -364,6 +364,9 @@ ENGAGED_LOG = "\n".join(
         "12800 of 25600 rows per rank, M 1/4/8/64)",
         "(Worker_TP0 pid=1) dsv41: mhc det overlap engaged: target: layer_input right after the post; prenorm GEMM + "
         "sinkhorn forked under the next all-reduce; split path bitwise equal to stock (fork and in place, T 1/4/16/24)",
+        # perf2 c4-sched: DSV41_SCHED_PREFILL_CAP=2048, DSV41_SCHED_DECODE_STEPS=1 (sitecustomize, every process)
+        "dsv41: sched prefill cap armed (cap 2048 tokens per prefilling request while the scheduler holds > 1 request; "
+        "1 decode-only step(s) after each step that carried prefill while a request decodes)",
     ]
 )
 
