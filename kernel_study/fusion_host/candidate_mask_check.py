@@ -40,6 +40,7 @@ import sys
 import torch
 
 sys.path.insert(0, "/opt/dsv41-patch")
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[2] / "docker" / "patch"))  # repo first
 import candidate_mask_bounded as cmb  # noqa: E402
 
 BS = 8  # candidate_block_size
@@ -88,7 +89,7 @@ def main() -> int:
 
     # 1. mask equality below each row's end
     for width in (1 << 20, 65536, 4096):
-        for rows in (1, 4, 8):
+        for rows in (1, 4, 8, 16, 24):  # c4-kernels: + the c = 4 verify rows (k = 3 and depth 5)
             for trial in range(6):
                 ends = torch.randint(1, min(width, 60000) + 1, (rows,), generator=g)
                 ends[0] = min(width, BS * 37)
@@ -111,7 +112,7 @@ def main() -> int:
 
     # 2. decode top-k on garbage past the end
     for width in (1 << 20, 65536):
-        for batch, next_n in ((1, 4), (2, 4), (1, 1), (2, 3)):
+        for batch, next_n in ((1, 4), (2, 4), (1, 1), (2, 3), (4, 4), (4, 6)):
             for trial in range(5):
                 rows = batch * next_n
                 base = torch.randint(2 * TOPK, min(width, 40000), (batch,), generator=g)
@@ -181,8 +182,8 @@ def main() -> int:
     timing = {}
     flush = torch.empty(128 << 20, dtype=torch.uint8, device=dev)
     spans = {"typ": (1500, 20000), "32k": (30000, 34000), "128k": (126000, 134000)}
-    cells = [(w, r, "typ") for w in (1 << 20, 65536) for r in (4, 8)]
-    cells += [(1 << 20, r, sp) for sp in ("32k", "128k") for r in (4, 8)]
+    cells = [(w, r, "typ") for w in (1 << 20, 65536) for r in (4, 8, 16)]
+    cells += [(1 << 20, r, sp) for sp in ("32k", "128k") for r in (4, 8, 16)]
     for width, rows, span in cells:
         ends = torch.randint(*spans[span], (rows,), generator=g)
         ends_d = ends.to(torch.int32).to(dev)

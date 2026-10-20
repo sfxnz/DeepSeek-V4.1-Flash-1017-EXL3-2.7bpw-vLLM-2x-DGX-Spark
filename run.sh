@@ -5,7 +5,7 @@ set -euo pipefail
 # BEGIN generated from recipe.yaml — edit recipe.yaml and run kit/render.py
 MODEL="${MODEL:-sfxnz/DeepSeek-V4.1-Flash-1017-EXL3}"
 SERVED_NAME="${SERVED_NAME:-deepseek-ai/DeepSeek-V4.1-Flash-1017}"
-IMAGE="${IMAGE:-dsv41-flash-exl3-sm121:e15-kbits}"
+IMAGE="${IMAGE:-dsv41-flash-exl3-sm121:e16-rows}"
 CONTAINER_NAME="${CONTAINER_NAME:-dsv41-flash-exl3}"
 PORT="${PORT:-8000}"
 MASTER_PORT="${MASTER_PORT:-29524}"
@@ -164,6 +164,7 @@ FORWARD_ENVS=(
   VLLM_EXL3_FAT_THRESHOLD=
   DSV41_P2B_SRC_SORT=
   DSV41_P2B_COOP=
+  DSV41_P2B_WIDE=
   DSV41_ALLOW_CUDA_GRAPHS=
   VLLM_USE_BREAKABLE_CUDAGRAPH=
   VLLM_ADAPTIVE_VERIFICATION_PROFILE_CONTEXT_LEN=256

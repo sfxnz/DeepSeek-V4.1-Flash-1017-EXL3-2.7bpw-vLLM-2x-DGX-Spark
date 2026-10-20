@@ -3,14 +3,14 @@
 
 install() against the real vLLM modules, prepare() on a module tree holding real mHC weights,
 then the patched model-module names (what DeepseekV4DecoderLayer.forward calls) vs the stock
-functions, bitwise, eager and inside a CUDA graph; T > 16 and an unpacked fn during capture
+functions, bitwise, eager and inside a CUDA graph; T > the engaged max T and an unpacked fn during capture
 must take the stock path.
 
 --overlap: the same with DSV41_MHC_DET_OVERLAP=1. A layer-shaped chain through the patched names
 (pre -> all-reduce -> post -> pre ... -> final post, 2 layers) where the all-reduce is the real,
 wrapped GroupCoordinator.all_reduce on a world-size-1 group (it returns its input after the
 hook forked the deferred coefficient half): bitwise vs the stock chain at T 1/3/4/6/8/16, fork
-and join counts, the no-all-reduce variant (in-place launch), T > 16 stock, and the chain
+and join counts, the no-all-reduce variant (in-place launch), T > the engaged max T stock, and the chain
 captured in one CUDA graph (50 replays vs eager). Writes lever_smoke_overlap.json.
 """
 from __future__ import annotations
@@ -99,7 +99,7 @@ def overlap_main() -> int:
         return outs
 
     rows = []
-    for t in (1, 3, 4, 6, 8, 16, 17, 64):
+    for t in (1, 3, 4, 6, 8, 16, 17, 24, 25, 64):  # c4-kernels: + T 24 (det) / 25 (stock)
         g = torch.Generator(device="cuda").manual_seed(500 + t)
         xs = [(torch.randn(t, 5120, device="cuda", generator=g) * 2).bfloat16() for _ in range(4)]
         ref = chain(mhc_det._S.stock_post, mhc_det._S.stock_pre, lambda x: x, t, xs)
@@ -139,8 +139,9 @@ def overlap_main() -> int:
     ok = (all(res["patched"]) and res["det_on"] and res["overlap_on"] and bad == 0
           and res["capture"]["forks_captured"] == 4 and not res["capture"]["pending_after"]
           and all(r["bitwise_with_all_reduce"] and r["bitwise_without"] and not r["pending_after"] for r in rows)
-          and all((r["forks"], r["in_place"]) == ((4, 4) if r["T"] <= 16 else (0, 0)) for r in rows))
+          and all((r["forks"], r["in_place"]) == ((4, 4) if r["T"] <= mhc_det._S.max_t else (0, 0)) for r in rows))
     res["pass"] = ok
+    __import__("os").makedirs("/repo/results/2026-09-25-kernels/mhc-det", exist_ok=True)
     with open("/repo/results/2026-09-25-kernels/mhc-det/lever_smoke_overlap.json", "w") as fh:
         json.dump(res, fh, indent=1)
     print("PASS" if ok else "FAIL", flush=True)
@@ -181,7 +182,7 @@ def main() -> int:
     scale, base, nw = tree[1].hc_attn_scale, tree[1].hc_attn_base, tree[1].attn_norm.weight
     emb = C.embeddings(32)
     rows = []
-    for t in (1, 3, 4, 6, 8, 16, 17, 64):
+    for t in (1, 3, 4, 6, 8, 16, 17, 24, 25, 64):  # c4-kernels: + T 24 (det) / 25 (stock)
         g = torch.Generator(device="cuda").manual_seed(t)
         residual = (torch.randn(t, 4, 5120, device="cuda", generator=g) * 3).bfloat16()
         x = (torch.randn(t, 5120, device="cuda", generator=g)).bfloat16()
@@ -239,9 +240,10 @@ def main() -> int:
     print(json.dumps(res, indent=1), flush=True)
     ok = (all(res["patched"]) and res["on"] and bad == 0
           and all(r["post_bitwise"] and r["pre_bitwise"] and r["broadcast_bitwise"] for r in rows)
-          and all((r["det_gemm_calls"] == 2) == (r["T"] <= 16) for r in rows)
+          and all((r["det_gemm_calls"] == 2) == (r["T"] <= mhc_det._S.max_t) for r in rows)
           and res["capture"]["det_gemm_calls_captured"] == 1 and res["capture"]["misses_logged"] == 1)
     res["pass"] = ok
+    __import__("os").makedirs("/repo/results/2026-09-25-kernels/mhc-det", exist_ok=True)
     with open("/repo/results/2026-09-25-kernels/mhc-det/lever_smoke.json", "w") as fh:
         json.dump(res, fh, indent=1)
     print("PASS" if ok else "FAIL", flush=True)

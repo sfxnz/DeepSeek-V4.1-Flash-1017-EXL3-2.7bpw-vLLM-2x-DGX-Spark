@@ -10,7 +10,8 @@
 //                      then + shfl_xor 2, + shfl_xor 1 (DeepGEMM warp_reduce_sum<4>).
 // The chain of every (split, 8-column n-tile) is unchanged; only the work layout differs:
 // one warp per (split, n-tile) = 48 CTAs instead of 16 CTAs x 8 warps x 128 rows, so all
-// 48 SMs stream fn and no warp multiplies zero rows. T <= 16 (one m16 tile).
+// 48 SMs stream fn and no warp multiplies zero rows. T <= 16 (one m16 tile); T <= 24 with a second
+// m16 tile for rows 16..23 (mhc_det_gemm_t24, c4-kernels: the same chain per row).
 //
 // No atomics. Every output element is written by exactly one thread with plain stores.
 
@@ -105,11 +106,12 @@ __device__ unsigned long long g_prof[64 * 16];
 // CTAs is one contiguous region (stream_probe.json: 6.6 vs 7.5 us for 48 x 25.6 KB cold).
 //
 // grid (3 n-tiles, 16 splits), block 32. x [T, K] bf16, packed fn -> mixes [16, T, 24] f32,
-// sqr [16, T] f32. ROW1: T may exceed 8 (rows g + 8 are live).
+// sqr [16, T] f32. ROW1: T may exceed 8 (rows g + 8 are live). ROW2: T may exceed 16 (rows g + 16 are
+// live, in a second m16 tile whose rows g + 24 stay zero).
 #ifndef PREFETCH_STAGES
 #define PREFETCH_STAGES 4  // fn stages issued before griddepcontrol.wait (sweep_prefetch.json)
 #endif
-template <bool ROW1>
+template <bool ROW1, bool ROW2 = false>
 DEV void gemm_body(const u16* __restrict__ x, const unsigned char* __restrict__ fnp, float* __restrict__ mixes,
                    float* __restrict__ sqr, const int T, const int K) {
   extern __shared__ __align__(128) unsigned char smem[];
@@ -157,10 +159,12 @@ DEV void gemm_body(const u16* __restrict__ x, const unsigned char* __restrict__ 
   PROF(3);
 
   float d[4] = {0.f, 0.f, 0.f, 0.f};
-  float acc0 = 0.f, acc1 = 0.f;
-  const bool r0 = g < T, r1 = ROW1 && (g + 8 < T);
+  float d2[4] = {0.f, 0.f, 0.f, 0.f};  // ROW2: rows 16..23
+  float acc0 = 0.f, acc1 = 0.f, acc2 = 0.f;
+  const bool r0 = g < T, r1 = ROW1 && (g + 8 < T), r2 = ROW2 && (g + 16 < T);
   const u16* xr0 = xsm + g * xs;
   const u16* xr1 = xsm + (g + 8) * xs;
+  const u16* xr2 = xsm + (g + 16) * xs;
   for (int st = 0; st < nstage; ++st) {
     mbar_wait(&bars[st], 0);
     if (st < 12) PROF(4 + (st >> 1));
@@ -190,12 +194,19 @@ DEV void gemm_body(const u16* __restrict__ x, const unsigned char* __restrict__ 
           acc0 = __fadd_rn(acc0, __fmaf_rn(fa0, fa0, __fmul_rn(fa2, fa2)));
           if (ROW1) acc1 = __fadd_rn(acc1, __fmaf_rn(fa1, fa1, __fmul_rn(fa3, fa3)));
         }
+        if (ROW2) {  // rows 16..23: the same B fragment, the same chain per row
+          const float fa4 = r2 ? bf16f(xr2[k]) : 0.f;
+          const float fa6 = r2 ? bf16f(xr2[k + 4]) : 0.f;
+          mma_tf32(d2, __float_as_uint(fa4), 0u, __float_as_uint(fa6), 0u, b0, b1);
+          if (nt == 0) acc2 = __fadd_rn(acc2, __fmaf_rn(fa4, fa4, __fmul_rn(fa6, fa6)));
+        }
       }
     }
   }
   PROF(10);
   if (r0) *(float2*)&mixes[((size_t)s * T + g) * 24 + nt * 8 + 2 * t] = make_float2(d[0], d[1]);
   if (r1) *(float2*)&mixes[((size_t)s * T + g + 8) * 24 + nt * 8 + 2 * t] = make_float2(d[2], d[3]);
+  if (r2) *(float2*)&mixes[((size_t)s * T + g + 16) * 24 + nt * 8 + 2 * t] = make_float2(d2[0], d2[1]);
   if (nt == 0) {
     acc0 = __fadd_rn(acc0, __shfl_xor_sync(0xffffffffu, acc0, 2));
     acc0 = __fadd_rn(acc0, __shfl_xor_sync(0xffffffffu, acc0, 1));
@@ -203,9 +214,14 @@ DEV void gemm_body(const u16* __restrict__ x, const unsigned char* __restrict__ 
       acc1 = __fadd_rn(acc1, __shfl_xor_sync(0xffffffffu, acc1, 2));
       acc1 = __fadd_rn(acc1, __shfl_xor_sync(0xffffffffu, acc1, 1));
     }
+    if (ROW2) {
+      acc2 = __fadd_rn(acc2, __shfl_xor_sync(0xffffffffu, acc2, 2));
+      acc2 = __fadd_rn(acc2, __shfl_xor_sync(0xffffffffu, acc2, 1));
+    }
     if (t == 0) {
       if (r0) sqr[s * T + g] = acc0;
       if (r1) sqr[s * T + g + 8] = acc1;
+      if (r2) sqr[s * T + g + 16] = acc2;
     }
   }
   PROF(11);
@@ -219,6 +235,12 @@ DEV void gemm_body(const u16* __restrict__ x, const unsigned char* __restrict__ 
   }
 GEMM_KERNEL(mhc_det_gemm_t8, false)
 GEMM_KERNEL(mhc_det_gemm_t16, true)
+// T 17..24 (c4-kernels: 4 sequences x DSpark depth 5 + 1): rows 16..23 in a second m16 tile.
+extern "C" __global__ void __launch_bounds__(32, 1)
+    mhc_det_gemm_t24(const u16* __restrict__ x, const unsigned char* __restrict__ fnp, float* __restrict__ mixes,
+                     float* __restrict__ sqr, int T, int K) {
+  gemm_body<true, true>(x, fnp, mixes, sqr, T, K);
+}
 
 // ---------------------------------------------------------------------------------------------
 // Bitwise replica of the TileLang mhc_post kernel (vLLM kernels/mhc/tilelang_kernels.py):

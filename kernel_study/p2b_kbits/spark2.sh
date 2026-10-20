@@ -3,8 +3,8 @@
 # sync the raw logs back.
 #   kernel_study/p2b_kbits/spark2.sh <tag> <image> <python3 args...>
 # The step runs `python3 <args>` in a --rm container dsv41-1017-kb-<tag> (memory-capped, no network)
-# with the repo at /repo, the Sept source snapshot at /src (ro), the served K=2 pack at /hf (ro)
-# and the campaign kernels data dir at /data. Log: /home/sfxnz/projects/data/dsv41-1017/kernels/runs/<tag>.log
+# with the repo at /repo, the Sept source snapshot at /src (ro), the served K=2 pack at /hf (ro), the 1017 pack
+# at /hf1017 (ro) and the campaign kernels data dir at /data. Log: /home/sfxnz/projects/data/dsv41-1017/kernels/runs/<tag>.log
 # (on spark2, rsynced back to the same path on spark1). MEM (default 24g) caps the container.
 set -euo pipefail
 tag=$1; img=$2; shift 2
@@ -21,6 +21,7 @@ dst=$1; data=$2; lock=$3; tag=$4; img=$5; mem=$6; shift 6
 log=$data/runs/$tag.log
 src=/home/sfxnz/.cache/huggingface/hub/models--deepseek-ai--DeepSeek-V4.1-Flash
 pack=/home/sfxnz/.cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-EXL3
+pack1017=/home/sfxnz/.cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3
 exec 9>"$lock"
 echo "$(date -u +%FT%TZ) waiting for $lock" >> "$log"
 flock -w 14400 9 || { echo "lock timeout" | tee -a "$log"; exit 4; }
@@ -36,7 +37,7 @@ smi=$!
 docker run --rm --name "dsv41-1017-kb-$tag" --gpus all --network none --memory "$mem" --memory-swap "$mem" \
   --user 1000:1000 -e HOME=/tmp -e TORCH_CUDA_ARCH_LIST=12.1a \
   -e TORCH_EXTENSIONS_DIR=/repo/kernel_study/p2b_kbits/build/torch_ext \
-  -v "$dst:/repo" -v "$src:/srcrepo:ro" -v "$pack:/hf:ro" -v "$data:/data" -w /repo \
+  -v "$dst:/repo" -v "$src:/srcrepo:ro" -v "$pack:/hf:ro" -v "$pack1017:/hf1017:ro" -v "$data:/data" -w /repo \
   --entrypoint python3 "$img" "$@" 2>&1 \
   | grep --line-buffered -v -e '^dsv41-patch' -e '^dsv41-indexer' -e ' \[importing.py' -e ' \[interface.py' -e 'cpp_extension.py:' \
   | tee -a "$log"

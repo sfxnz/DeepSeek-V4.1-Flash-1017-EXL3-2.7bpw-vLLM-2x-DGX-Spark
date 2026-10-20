@@ -44,6 +44,7 @@ import types
 import torch
 
 sys.path.insert(0, "/opt/dsv41-patch")
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[2] / "docker" / "patch"))  # repo first
 import moe_prep_fused as mpf  # noqa: E402
 
 N_EXP, TOPK, HIDDEN = 384, 6, 5120
@@ -107,7 +108,7 @@ def main() -> int:
     # 1. sweep
     g = torch.Generator().manual_seed(7)
     n_cases = 0
-    for m in (1, 2, 3, 4, 5, 6, 7, 8, 64):
+    for m in (1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 24, 64):  # c4-kernels: + the wide native rows
         for adv in (False, True):
             for ids_dtype in (torch.int64, torch.int32):
                 for w_dtype in (torch.float32, torch.bfloat16):
@@ -122,7 +123,7 @@ def main() -> int:
     out["sweep_cases"] = n_cases
 
     # 2. graph capture + replay
-    for m in (1, 3, 4, 6, 8):
+    for m in (1, 3, 4, 6, 8, 12, 16, 24):
         ids, w, x = inputs(m, dev, g)
         s_ids, s_w, s_x = ids.clone(), w.clone(), x.clone()
         torch.cuda.synchronize()
@@ -181,7 +182,7 @@ def main() -> int:
         d["pin_exl3_expert_map"] = lambda layer, dev: None
     layer._exl3_inners = inners
     try:
-        for m in (1, 4, 8):
+        for m in (1, 4, 8, 16, 24):
             for adv in (False, True):
                 ids, w, x = inputs(m, dev, g, adv)
                 rec.clear()

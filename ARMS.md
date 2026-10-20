@@ -187,7 +187,7 @@ history (Sept model, 2.0 bpw pack). Their evidence is in the Sept recipe,
 
 ## Exact restore sequence
 
-Current serve (1017) = `dsv41-flash-exl3-sm121:e15-kbits` on both nodes,
+Current serve (1017) = `dsv41-flash-exl3-sm121:e16-rows` on both nodes,
 pack `sfxnz/DeepSeek-V4.1-Flash-1017-EXL3` @ `2.7bpw-mcg-hq`, served as
 `deepseek-ai/DeepSeek-V4.1-Flash-1017`, with the 4-session defaults:
 `KV_CACHE_MEMORY=4160749568` (3.875 GiB), `MAX_MODEL_LEN=500000`,
@@ -214,7 +214,8 @@ Boot D1 ran `SKIP_DOWNLOAD=1 AUDIT=strict KV_CACHE_MEMORY=4160749568
 `exec ./run.sh`; `results/2026-10-19-1017-c4/boot.sh` does the same for the
 4-session defaults.
 
-The mixed-K pack needs `e15-kbits`. `canonical-e14` and older images have
+The mixed-K pack needs `e15-kbits` or newer (the default `e16-rows` adds the
+9..24-row decode MoE). `canonical-e14` and older images have
 no `expert_bits` support (the plugin ignores it), and the K-aware audit
 fails `AUDIT=strict`. Do not roll back by image on 1017.
 
@@ -225,7 +226,7 @@ fails `AUDIT=strict`. Do not roll back by image on 1017.
   multiproc executor` line (up to 120 s), then starts head rank 0 and `wait_ready`
   (`/health` + `/v1/models`; allow up to 60 min, plan ≥20). D1 booted in
   ~11 min (load 508 s head / 305 s worker).
-- Lever rollbacks stay on `e15-kbits`: set the lever to `0` (an empty value
+- Lever rollbacks stay on `e16-rows`: set the lever to `0` (an empty value
   keeps the default). Round-35 kernel levers off (the round-34 config):
   ```bash
   DSV41_P2B_COOP=0 DSV41_DENSE_GEMV=0 DSV41_MHC_DET_SPLITS=0 \

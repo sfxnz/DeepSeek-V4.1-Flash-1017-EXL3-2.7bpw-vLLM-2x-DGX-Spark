@@ -21,8 +21,9 @@ every column below each row's end bit for bit; a mismatch prints one
 LOG_DISARMED line, keeps the stock result and disarms for good. Decode calls
 replay CUDA graphs, so eager decode calls may never come: the first eager call
 of any kind (a prefill's) also self-tests the bounded kernels on synthetic
-decode logits (rows 1/4/8, ends odd, below one block and at the width) and
-prints LOG_ENGAGED or disarms.
+decode logits (rows 1/4/8/16/24, i.e. up to the c = 4 verify batch at DSpark
+depth 5; ends odd, below one block and at the width) and prints LOG_ENGAGED or
+disarms. The kernels are row-parallel (one program per row): no row limit.
 
 Top-level imports are stdlib only. decode_levers.install() calls install()
 when the env is on.
@@ -38,6 +39,7 @@ LOG_DISARMED = "dsv41: candidate mask bounded DISABLED ->"
 
 TILE = 1024
 DEFAULT_VERIFY = 4
+SELFTEST_ROWS = (1, 4, 8, 16, 24)  # c4-kernels: was (1, 4, 8)
 _STATE = {"armed": True, "verify_left": DEFAULT_VERIFY, "verified": 0, "engaged": False}
 
 
@@ -139,7 +141,7 @@ def make_apply(torch, triton, stock_apply, flags_kernel, mask_kernel):
     def selftest(device, block_size) -> None:
         g = torch.Generator(device=device).manual_seed(0)
         width = 65536
-        for rows in (1, 4, 8):
+        for rows in SELFTEST_ROWS:
             ends = torch.randint(1, 40000, (rows,), device=device, generator=g, dtype=torch.int32)
             ends[0] = 37 * block_size + 3
             if rows > 1:
@@ -160,7 +162,8 @@ def make_apply(torch, triton, stock_apply, flags_kernel, mask_kernel):
                 selftest(logits.device, block_size)
                 _STATE["engaged"] = True
                 print(
-                    "dsv41: candidate mask bounded self-check bit-exact (rows 1/4/8, width 65536)",
+                    "dsv41: candidate mask bounded self-check bit-exact (rows %s, width 65536)"
+                    % "/".join(map(str, SELFTEST_ROWS)),
                     flush=True,
                 )
             except Exception as exc:  # noqa: BLE001

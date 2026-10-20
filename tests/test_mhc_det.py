@@ -196,9 +196,43 @@ class KernelSourceTests(unittest.TestCase):
         cu = (PATCH / "mhc_det.cu").read_text()
         names = set(re.findall(r'GEMM_KERNEL\((\w+),', cu)) | set(re.findall(r"^\s+(mhc_det_\w+)\(", cu, re.M))
         names |= set(re.findall(r"__launch_bounds__\([\d, ]+\)\s+(mhc_det_\w+)\(", cu))
-        for name in ("mhc_det_gemm_t8", "mhc_det_gemm_t16", "mhc_det_post", "mhc_det_norm", "mhc_det_norm_li",
-                     "mhc_det_norm_coef"):
+        for name in ("mhc_det_gemm_t8", "mhc_det_gemm_t16", "mhc_det_gemm_t24", "mhc_det_post", "mhc_det_norm",
+                     "mhc_det_norm_li", "mhc_det_norm_coef"):
             self.assertIn(name, names)
+
+    def test_t24_is_the_t16_body_plus_a_second_tile(self) -> None:
+        cu = (PATCH / "mhc_det.cu").read_text()
+        self.assertEqual((mhc_det.MAX_T, mhc_det.WIDE_T), (16, 24))
+        self.assertIn("gemm_body<true, true>(x, fnp, mixes, sqr, T, K);", cu)
+        self.assertIn("template <bool ROW1, bool ROW2 = false>", cu)
+        # t8 / t16 instantiate the body exactly as before (ROW2 = false: its statements are compile-time dead)
+        self.assertIn("GEMM_KERNEL(mhc_det_gemm_t8, false)\nGEMM_KERNEL(mhc_det_gemm_t16, true)\n", cu)
+        self.assertIn("gemm_body<ROW1>(x, fnp, mixes, sqr, T, K);", cu)
+        body = cu[cu.index("DEV void gemm_body("):cu.index("#define GEMM_KERNEL")]
+        self.assertEqual(body.count("mma_tf32("), 2)
+        self.assertEqual(body.count("if (ROW2)"), 2)
+        self.assertIn("mma_tf32(d2, __float_as_uint(fa4), 0u, __float_as_uint(fa6), 0u, b0, b1);", body)
+        py = (PATCH / "mhc_det.py").read_text()
+        self.assertIn('(self._gemm24 if t > 16 else self._gemm[t > 8]).launch(', py)
+
+    def test_t17_to_24_only_after_their_own_self_test(self) -> None:
+        py = (PATCH / "mhc_det.py").read_text()
+        self.assertEqual(mhc_det._State().max_t, mhc_det.MAX_T)  # T > 16 stays stock until the wide tests pass
+        for fn in ("_post", "_pre_eligible"):
+            body = py[py.index(f"def {fn}("):py.index("\ndef ", py.index(f"def {fn}(") + 1)]
+            self.assertIn("1 <= residual.shape[0] <= _S.max_t", body, fn)
+            self.assertNotIn("<= MAX_T", body, fn)
+        prep = py[py.index("def prepare("):py.index("\ndef _selftest_wide(")]
+        # the T <= 16 self-tests and their disarm come first, unchanged; the wide failure only prints
+        self.assertLess(prep.index("_selftest_post(layers[0].hc_attn_fn.device)"), prep.index("_selftest_wide(tested)"))
+        self.assertIn("_S.max_t = MAX_T if _S.wide_failed else WIDE_T", prep)
+        wide_line = 'print(f"dsv41: mhc det T {MAX_T + 1}..{WIDE_T} stay on the stock kernels: {label}: {wide}", flush=True)'
+        self.assertIn(wide_line, prep)
+        self.assertNotIn(mhc_det.LOG_DISARMED, wide_line)
+        wide = py[py.index("def _selftest_wide("):py.index("\ndef _lookup(")]
+        self.assertIn("_selftest_gemm(fn, packed, (WIDE_T,))", wide)
+        self.assertIn("(MAX_T + 1, WIDE_T)", wide)
+        self.assertIn("_selftest_post(fn.device, (WIDE_T,))", wide)
 
     def test_split_norm_waits_before_reading_the_post_output(self) -> None:
         cu = re.sub(r"//[^\n]*", "", (PATCH / "mhc_det.cu").read_text())
@@ -225,7 +259,7 @@ class KernelSourceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             mhc_det.kb_per_split(4096 + 64)
         for k in (5120, 20480):
-            for t in range(1, mhc_det.MAX_T + 1):
+            for t in range(1, mhc_det.WIDE_T + 1):
                 self.assertLessEqual(mhc_det.smem_bytes(t, k), 101376, (t, k))
 
     def test_audit_knows_the_lever(self) -> None:

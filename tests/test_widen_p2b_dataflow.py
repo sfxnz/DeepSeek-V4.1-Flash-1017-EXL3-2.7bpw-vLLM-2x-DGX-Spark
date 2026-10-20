@@ -260,29 +260,33 @@ class DataflowWiringTests(unittest.TestCase):
         e15 = ROOT / "docker/Dockerfile.e15"
         self.assertFalse(e15.exists() and "FROM dsv41-flash-exl3-sm121:canonical-e14\n" not in e15.read_text())
 
-    def test_full_chain_in_sync_with_e14_and_e15(self) -> None:
+    def test_full_chain_in_sync_with_e14_e15_and_e16(self) -> None:
         """docker/Dockerfile (from scratch) applies the same p2b stages in the same order, with the
-        same import checks and label, as docker/Dockerfile.e15 (kbits, layered on canonical-e14);
-        e15 is docker/Dockerfile.e14's chain (layered on canonical-e13) plus kbits."""
+        same import checks and label, as docker/Dockerfile.e16 (rows, layered on e15-kbits); e16 is
+        docker/Dockerfile.e15's chain (kbits, layered on canonical-e14) plus rows, and e15 is
+        docker/Dockerfile.e14's chain (layered on canonical-e13) plus kbits."""
         full = (ROOT / "docker/Dockerfile").read_text()
         e14 = (ROOT / "docker/Dockerfile.e14").read_text()
         e15 = (ROOT / "docker/Dockerfile.e15").read_text()
-        stages = [re.findall(r"(widen_p2b_\w+)\.py /opt/vllm-exl3", df) for df in (full, e14, e15)]
-        self.assertEqual(stages[0], stages[2])
+        e16 = (ROOT / "docker/Dockerfile.e16").read_text()
+        stages = [re.findall(r"(widen_p2b_\w+)\.py /opt/vllm-exl3", df) for df in (full, e14, e15, e16)]
+        self.assertEqual(stages[0], stages[3])
         self.assertEqual(stages[1], [f"widen_p2b_{n}" for n in CHAIN + ("coop", "dataflow")])
         self.assertEqual(stages[2], stages[1] + ["widen_p2b_kbits"])
-        labels = [re.search(r'LABEL dsv41.recipe.patches="([^"]+)"', df).group(1).split(",") for df in (full, e14, e15)]
-        self.assertEqual(labels[0], labels[2])
+        self.assertEqual(stages[3], stages[2] + ["widen_p2b_rows"])
+        labels = [re.search(r'LABEL dsv41.recipe.patches="([^"]+)"', df).group(1).split(",") for df in (full, e14, e15, e16)]
+        self.assertEqual(labels[0], labels[3])
         self.assertEqual([x for x in labels[2] if x != "kbits"], labels[1])
         self.assertEqual(labels[2][labels[2].index("dataflow") + 1], "kbits")
-        checks = [re.search(r'python3 -c "(import torch, vllm_exl3, vllm_exl3_c;.*)"', df).group(1) for df in (full, e15)]
+        checks = [re.search(r'python3 -c "(import torch, vllm_exl3, vllm_exl3_c;.*)"', df).group(1) for df in (full, e16)]
         self.assertEqual(checks[0], checks[1])
         needle = _load("decode_levers").P2B_DATAFLOW_NEEDLE
         self.assertIn(f"b'{needle}' in so", full)
         self.assertLess(full.index("widen_p2b_dataflow.py /opt/vllm-exl3"), full.index("widen_p2b_kbits.py /opt/vllm-exl3"))
-        self.assertLess(full.index("widen_p2b_kbits.py /opt/vllm-exl3"),
+        self.assertLess(full.index("widen_p2b_kbits.py /opt/vllm-exl3"), full.index("widen_p2b_rows.py /opt/vllm-exl3"))
+        self.assertLess(full.index("widen_p2b_rows.py /opt/vllm-exl3"),
                         full.index("pip install --no-build-isolation --no-deps /opt/vllm-exl3"))
-        for df in (full, e15):
+        for df in (full, e15, e16):
             self.assertIn('LABEL dsv41.recipe.git_rev="$DSV41_GIT_REV" dsv41.recipe.tree_diff_sha256="$DSV41_TREE_DIFF"', df)
 
     def test_lever_check_warns_on_extension_without_dataflow(self) -> None:

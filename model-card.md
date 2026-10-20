@@ -26,7 +26,7 @@ The two Engram shards are about 95 GiB each. Keep Hugging Face xet enabled. Do n
 
 ## Serve
 
-The 2× DGX Spark recipe is [sfxnz/DeepSeek-V4.1-Flash-1017-EXL3-2.7bpw-vLLM-2x-DGX-Spark](https://github.com/sfxnz/DeepSeek-V4.1-Flash-1017-EXL3-2.7bpw-vLLM-2x-DGX-Spark). Clone it, download this revision on both nodes, build the image `dsv41-flash-exl3-sm121:e15-kbits` on both nodes, then run `./run.sh` (and `./stop.sh` when done). Stock vLLM and ExLlamaV3 wheels do not load this model, and the earlier `canonical-e14` image cannot load mixed K. Each node needs about 450 GB free disk (pack plus image).
+The 2× DGX Spark recipe is [sfxnz/DeepSeek-V4.1-Flash-1017-EXL3-2.7bpw-vLLM-2x-DGX-Spark](https://github.com/sfxnz/DeepSeek-V4.1-Flash-1017-EXL3-2.7bpw-vLLM-2x-DGX-Spark). Clone it, download this revision on both nodes, build the image `dsv41-flash-exl3-sm121:e16-rows` on both nodes, then run `./run.sh` (and `./stop.sh` when done). Stock vLLM and ExLlamaV3 wheels do not load this model, and the earlier `canonical-e14` image cannot load mixed K. Each node needs about 450 GB free disk (pack plus image).
 
 ## Results
 

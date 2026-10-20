@@ -45,7 +45,7 @@ class T:
 
 class UsableTests(unittest.TestCase):
     def setUp(self):
-        wpg._STATE.update(armed=True, verify_left=0, engaged=False)
+        wpg._STATE.update(armed=True, verify_left=0, engaged=False, wide=False)
         self.w = T((32, 5120))
 
     def test_decode_rows_are_served(self):
@@ -70,6 +70,54 @@ class UsableTests(unittest.TestCase):
             self.assertFalse(wpg.usable(TORCH, x, w, b), label)
         wpg._STATE["armed"] = False
         self.assertFalse(wpg.usable(TORCH, T((4, 5120)), self.w, None))
+
+    def test_wide_rows_only_after_their_self_test(self):
+        for m in range(wpg.MAX_M + 1, wpg.WIDE_MAX_M + 1):
+            self.assertFalse(wpg.usable(TORCH, T((m, 5120)), self.w, None), m)
+        wpg._STATE["wide"] = True
+        for m in range(wpg.MIN_M, wpg.WIDE_MAX_M + 1):
+            self.assertTrue(wpg.usable(TORCH, T((m, 5120)), self.w, None), m)
+        for m in (1, wpg.WIDE_MAX_M + 1):
+            self.assertFalse(wpg.usable(TORCH, T((m, 5120)), self.w, None), m)
+        # the self-test of a range asks for that range explicitly
+        wpg._STATE["wide"] = False
+        self.assertTrue(wpg.usable(TORCH, T((12, 5120)), self.w, None, max_m=wpg.WIDE_MAX_M))
+        self.assertEqual(wpg.WIDE_MAX_M, 12)
+
+
+class LaunchTests(unittest.TestCase):
+    class Rows:
+        """A 2-D row slice stand-in: rows [lo, hi) of a [m, k] tensor."""
+
+        def __init__(self, m, k, lo=0):
+            self.m, self.k, self.lo = m, k, lo
+            self.shape = (m, k)
+
+        def __getitem__(self, sl):
+            lo, hi = sl.start, min(sl.stop, self.m)
+            return LaunchTests.Rows(hi - lo, self.k, self.lo + lo)
+
+        def stride(self, i):
+            return self.k if i == 0 else 1
+
+    def test_one_launch_per_16_row_tile(self):
+        calls = []
+
+        class Kernel:
+            def __getitem__(self, grid):
+                def run(x, w, o, m, n, k, *strides, **kw):
+                    calls.append((grid, x.lo, o.lo, m, n, k, kw["BM"], kw["BK"]))
+
+                return run
+
+        triton = types.SimpleNamespace(cdiv=lambda a, b: -(-a // b))
+        w = types.SimpleNamespace(shape=(32, 5120), stride=lambda i: 5120)
+        for m, want in ((2, [(0, 2)]), (8, [(0, 8)]), (16, [(0, 16)]), (17, [(0, 16), (16, 1)]), (24, [(0, 16), (16, 8)])):
+            calls.clear()
+            wpg.launch(Kernel(), triton, self.Rows(m, 5120), w, self.Rows(m, 32))
+            self.assertEqual([(lo, mm) for _, lo, olo, mm, *_ in calls], want, m)
+            for grid, lo, olo, mm, n, k, bm, bk in calls:
+                self.assertEqual((grid, olo, n, k, bm, bk), ((2,), lo, 32, 5120, 16, wpg.BK))
 
 
 class ContractTests(unittest.TestCase):
