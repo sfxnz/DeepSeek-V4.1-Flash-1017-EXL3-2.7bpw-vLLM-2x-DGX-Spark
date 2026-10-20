@@ -11,6 +11,7 @@
 #     unchanged (3.875 GiB).
 #   - perf2 c4-kernels: IMAGE e15-kbits -> e16-rows (native decode MoE for 9..24 rows).
 #   - perf2 prefill-moe: DSV41_MOE_PREFILL_TC=1 (tensor-core routed-MoE prefill kernel, prebuilt in e16-rows).
+#   - perf2 engram-io: DSV41_ENGRAM_PREFILL_AHEAD=1 (Engram prefill read-ahead, _DONTNEED=1).
 # GPU evidence: results/2026-10-19-1017-perf2/ (boot I3 ran the kv-pack defaults with the later perf2 levers
 # off). Boot FINAL ran the full stack's defaults (the last of these PRs) with the 4-session resident soak.
 # Run with: SKIP_DOWNLOAD=1 AUDIT=strict results/2026-10-19-1017-c4/boot.sh
@@ -46,6 +47,7 @@ export DSV41_ENGRAM_PREFETCH=1
 export DSV41_ENGRAM_CENSUS=1
 export DSV41_ENGRAM_GATHER_V2=1
 export DSV41_ENGRAM_WILLNEED=1
+export DSV41_ENGRAM_PREFILL_AHEAD=1
 export DSV41_LMHEAD_MXFP8=1
 
 # Round-34 levers.

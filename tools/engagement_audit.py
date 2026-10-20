@@ -42,6 +42,8 @@ PATCHES = {
     "engram_gather_v2.py": {"DSV41_ENGRAM_GATHER_V2": "1"},
     "engram_native_stage.py": {"DSV41_ENGRAM_NATIVE_STAGE": "1"},
     "engram_early_hash.py": {"DSV41_ENGRAM_NATIVE_STAGE": "1", "DSV41_ENGRAM_EARLY_HASH": "1"},
+    "engram_native_poll.py": {"DSV41_ENGRAM_NATIVE_STAGE": "1", "DSV41_ENGRAM_NATIVE_POLL": "1"},
+    "engram_prefill_ahead.py": {"DSV41_ENGRAM_PREFILL_AHEAD": "1"},
     "moe_prep_fused.py": {"DSV41_MOE_PREP_FUSED": "1"},
     "moe_prefill_tc.py": {"DSV41_MOE_PREFILL_TC": "1"},  # opt-in lever; self-check line expected when on
     "candidate_mask_bounded.py": {"DSV41_CANDIDATE_MASK_BOUNDED": "1"},

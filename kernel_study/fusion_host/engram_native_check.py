@@ -15,7 +15,9 @@ Checks (every one compares raw bf16 bits, never float equality):
      local_heads, rows straddling a 4 KiB page, n_tok = 0;
   3. real tables: random owned rows of the two real engram tables for both TP
      ranks, stock DiskEngramTable.gather_dequant (gather v2 path) vs native,
-     token counts 1..8 plus 64, with hot and dropped page cache.
+     token counts 1..8 plus 64, with hot and dropped page cache;
+  4. the same for eng_gather_tables_bf16 (DSV41_ENGRAM_NATIVE_POLL, engram_poll.c),
+     both tables per call, token counts 1, 2, 4, 8, 16, 64.
 Prints one JSON summary line; exit 1 on any mismatch.
 """
 from __future__ import annotations
@@ -124,7 +126,7 @@ def check_exhaustive(lib, lut, tmp: Path) -> dict:
         fd = os.open(path, os.O_RDONLY)
         try:
             ids = torch.arange(512, dtype=torch.int32).view(64, 8)  # 64 tokens x 8 heads
-            for flags in (0, 1):
+            for flags in (0, 1, 3):  # 3: + DONTNEED of the missed pages (prefill read-ahead)
                 got, rc, st = native_gather(lib, lut, fd, w_off, fd, s_off, dim, sb, 0, 512, ids, 8, flags)
                 ref2 = stock_dequant(w2, s_use, torch.ones(512, dtype=torch.bool))
                 res[f"gather_{tag}_flags{flags}"] = dict(
@@ -217,14 +219,15 @@ def check_real(lib, lut, snapshot: str, reps: int) -> dict:
                     )
                     if rep == 1:
                         ids[0, 0] = -1  # a dead id
-                    if rep == 2:
-                        # drop the rows from the page cache first
+                    if rep in (2, 3):
+                        # drop the rows from the page cache first (rep 3 also drops them after: flags 3)
                         for x in ids.reshape(-1).tolist():
                             if v0 <= x < v1:
                                 for fd, off, ln in ((disk.w_fd, disk.w_off + x * disk.dim, disk.dim), (disk.s_fd, disk.s_off + x * disk.sb, disk.sb)):
                                     a = off & ~4095
                                     os.posix_fadvise(fd, a, ((off + ln + 4095) & ~4095) - a, os.POSIX_FADV_DONTNEED)
-                    got, rc, st = native_gather(lib, lut, disk.w_fd, disk.w_off, disk.s_fd, disk.s_off, disk.dim, disk.sb, v0, v1, ids, part)
+                    got, rc, st = native_gather(lib, lut, disk.w_fd, disk.w_off, disk.s_fd, disk.s_off, disk.dim, disk.sb,
+                                                v0, v1, ids, part, flags=3 if rep == 3 else 1)
                     file_rows, owned = rows_owned(ids.to(torch.int64))
                     ref = disk.gather_dequant(file_rows, owned)
                     key = f"layer{layer_id}_rank{rank}_n{n}"
@@ -236,10 +239,68 @@ def check_real(lib, lut, snapshot: str, reps: int) -> dict:
     return out
 
 
+def check_poll(lut, snapshot: str, reps: int) -> dict:
+    """eng_gather_tables_bf16 (DSV41_ENGRAM_NATIVE_POLL=1, both tables per call) vs the stock
+    gather on the real tables, both TP ranks' heads: random owned rows, a dead id, dropped pages."""
+    from types import MethodType, SimpleNamespace
+
+    from vllm.models.deepseek_v4_1.common import engram as eng
+    from vllm.models.deepseek_v4_1.common.engram_disk import DiskEngramTable
+
+    sys.path.insert(0, str(SRC.parent))
+    import engram_native_poll as enp
+
+    with tempfile.TemporaryDirectory() as d:
+        lib = enp.load(enp.build(Path(d)))
+    layout = eng.EngramLayout(load_text_config(snapshot))
+    heads, dim = layout.n_hash_cols, layout.head_dim
+    part = -(-heads // 2)
+    disks = [DiskEngramTable(snapshot, lid, dim, 32) for lid in layout.layer_ids]
+    sizes = [[p for order in layout.primes[li] for p in order] for li in range(len(disks))]
+    g = random.Random(4)
+    out = {}
+    for rank in range(2):
+        h0, h1 = rank * part, min(rank * part + part, heads)
+        vr = [(sum(sz[:h0]), sum(sz[: h0 + part])) for sz in sizes]
+        tabs = [(dk.w_fd, dk.w_off, dk.s_fd, dk.s_off, dk.dim, dk.sb, vr[li][0], vr[li][1], li)
+                for li, dk in enumerate(disks)]
+        outs = [torch.empty((64, part, dim), dtype=torch.bfloat16) for _ in disks]
+        poll = enp.NativePoll(tabs, len(disks), h1 - h0, part, dim, 64, lut.data_ptr(), [o.data_ptr() for o in outs],
+                              lib=lib)
+        for n in (1, 2, 4, 8, 16, 64):
+            for rep in range(reps):
+                ids = torch.tensor(
+                    [[[sum(sizes[li][:c]) + g.randrange(sizes[li][c]) for c in range(h0, h1)] for li in range(len(disks))]
+                     for _ in range(n)],
+                    dtype=torch.int32,
+                )  # [n, tables, heads]: the hash_host layout
+                if rep == 1:
+                    ids[0, 0, 0] = -1  # a dead id
+                if rep >= 2:  # drop the rows from the page cache first
+                    for li, dk in enumerate(disks):
+                        for x in ids[:, li, :].reshape(-1).tolist():
+                            if vr[li][0] <= x < vr[li][1]:
+                                for fd, off, ln in ((dk.w_fd, dk.w_off + x * dk.dim, dk.dim), (dk.s_fd, dk.s_off + x * dk.sb, dk.sb)):
+                                    a = off & ~4095
+                                    os.posix_fadvise(fd, a, ((off + ln + 4095) & ~4095) - a, os.POSIX_FADV_DONTNEED)
+                st = poll.gather(ids.data_ptr(), n)
+                ok = True
+                for li, dk in enumerate(disks):
+                    emb = SimpleNamespace(part_n_hash_cols=part, vocab_start_idx=vr[li][0], vocab_end_idx=vr[li][1])
+                    file_rows, owned = MethodType(eng.ParallelEngramEmbedding.disk_file_rows_owned, emb)(
+                        ids[:, li, :].to(torch.int64))
+                    ok = ok and bits_equal(outs[li][:n].reshape(-1, dim), dk.gather_dequant(file_rows, owned))
+                d = out.setdefault(f"rank{rank}_n{n}", dict(calls=0, equal=0, miss=0))
+                d["calls"] += 1
+                d["equal"] += int(ok)
+                d["miss"] += st[2]
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--snapshot", default="")
-    ap.add_argument("--reps", type=int, default=3)
+    ap.add_argument("--reps", type=int, default=4)
     args = ap.parse_args()
     torch.set_num_threads(4)
     with tempfile.TemporaryDirectory() as tmpd:
@@ -252,6 +313,7 @@ def main() -> int:
         }
         if args.snapshot:
             res["real"] = check_real(lib, lut, args.snapshot, args.reps)
+            res["poll"] = check_poll(lut, args.snapshot, args.reps)
     bad = []
     ex = res["exhaustive"]
     if ex["dequant_one_mismatch"]:
@@ -265,6 +327,9 @@ def main() -> int:
     for k, v in res.get("real", {}).items():
         if v["equal"] != v["calls"]:
             bad.append(k)
+    for k, v in res.get("poll", {}).items():
+        if v["equal"] != v["calls"]:
+            bad.append("poll_" + k)
     res["torch"] = torch.__version__
     res["mismatches"] = bad
     print(json.dumps(res))

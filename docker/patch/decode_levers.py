@@ -32,6 +32,10 @@
   C with the GIL released (engram_native_stage.py, engram_native.c). Hooked
   here rather than in sitecustomize so the mounted patch dir arms it on an
   image whose baked sitecustomize predates it.
+- DSV41_ENGRAM_PREFILL_AHEAD=1: prefill-size Engram stage calls take their rows
+  from a read-ahead of the next chunk, gathered on a thread pool while this
+  chunk computes (engram_prefill_ahead.py). Installed before the native stage,
+  so the native wrapper stays outermost and decode-size calls never enter it.
 - DSV41_INDEXER_WP_GEMV=1: the indexer's bf16 weights_proj [32, 5120] as a
   Triton GEMV with cuBLAS's MMA chain order (bit-identical, indexer_wp_gemv.py).
 - DSV41_CANDIDATE_MASK_BOUNDED=1: the V4.1 decode candidate mask stops at each
@@ -295,6 +299,14 @@ def _install_moe_prefill_tc(env) -> None:
     print(f"dsv41: moe prefill tc: {moe_prefill_tc.install()}", flush=True)
 
 
+def _install_engram_prefill_ahead(env) -> None:
+    if (env.get("DSV41_ENGRAM_PREFILL_AHEAD", "0") or "0") != "1":
+        return
+    import engram_prefill_ahead
+
+    print(f"dsv41: engram prefill ahead: {engram_prefill_ahead.install()}", flush=True)
+
+
 def install(env=None) -> None:
     env = os.environ if env is None else env
     for name, step in (
@@ -304,6 +316,7 @@ def install(env=None) -> None:
         ("woa-prepack", _check_woa_prepack),
         ("p2b_src_sort", _check_p2b_src_sort),
         ("p2b_coop", _check_p2b_coop),
+        ("engram-prefill-ahead", _install_engram_prefill_ahead),
         ("engram-native-stage", _install_engram_native_stage),
         ("attn-t2r-dedup", _install_t2r_dedup),
         ("moe-prep-fused", _install_moe_prep_fused),

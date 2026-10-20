@@ -206,7 +206,7 @@ Encyclopedic text loses the most. Rare-fact recall lives in the routed experts t
 | Speculative | DSpark-3 (`SPEC=dspark`) |
 | CUDA graphs | `FULL_AND_PIECEWISE`, capture sizes {1} ∪ {s·k, s·(k+1)} for s ≤ `--max-num-seqs` (`[1,3,4,6,8,9,12,16]` at k=3) (`ENFORCE_EAGER=0`, `DSV41_ALLOW_CUDA_GRAPHS=1`) |
 | Engram prefetch / census / gather | `DSV41_ENGRAM_PREFETCH=1` `DSV41_ENGRAM_CENSUS=1` `DSV41_ENGRAM_GATHER_V2=1` |
-| Engram prefill read-ahead | `DSV41_ENGRAM_WILLNEED=1` (gv2 calls with >= 512 rows fadvise their pages before the preadv loop) |
+| Engram prefill read-ahead | `DSV41_ENGRAM_WILLNEED=1` (gv2 calls with >= 512 rows fadvise their pages before the preadv loop) `DSV41_ENGRAM_PREFILL_AHEAD=1` (the next chunk's rows are read on 8 threads while the current chunk computes, and used only where they match the GPU's hash ids; `_DONTNEED=1` drops the pages a prefill read brought in) |
 | lm_head | MXFP8 (`DSV41_LMHEAD_MXFP8=1`), needs an lm_head-MXFP8 pack (`2.7bpw-mcg-hq` is one: `tools/build_pack_1017.py` converts source shard 43); self-disarms on a bf16-head pack |
 | Weight-load stream feed | `DSV41_STREAM_FEED=1` |
 | Decode levers | `DSV41_WOA_PREPACK=1` (needs the `dsv41-flash-exl3-sm121:e16-rows` o_proj stage) `DSV41_DSPARK_SPARSE_MARKOV=1` `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024` |
