@@ -22,6 +22,8 @@
 #   - perf2 dspark-adaptive: NUM_SPECULATIVE_TOKENS_PER_BATCH=1-2:5,3-4:3 (DSpark block 5; verify k=5 at 1-2
 #     requests, k=3 at 3-4) and DSV41_DSPARK_ADAPTIVE=1 (TAU 0.15). NUM_SPECULATIVE_TOKENS=3 applies only
 #     with NUM_SPECULATIVE_TOKENS_PER_BATCH=0.
+#   - perf2 decode levers: DSV41_PM_QOS_US=20, DSV41_ENGRAM_WKV_TP=1, DSV41_MHC_DET_OVERLAP=1 (round-35 KP
+#     add-ons, boot KP-C); DSV41_NCCL_EAGER_TWIN and DSV41_AR_L2_PREFETCH stay off.
 # GPU evidence: results/2026-10-19-1017-perf2/ (boot I3 ran the kv-pack defaults with the later perf2 levers
 # off). Boot FINAL ran the full stack's defaults (the last of these PRs) with the 4-session resident soak.
 # Run with: SKIP_DOWNLOAD=1 AUDIT=strict results/2026-10-19-1017-c4/boot.sh
@@ -94,5 +96,9 @@ export DSV41_PREFIX_END_FALLBACK=1
 export DSV41_PREFIX_REPLY_RETAIN=1
 # perf2 dspark-adaptive.
 export DSV41_DSPARK_ADAPTIVE=1
+# perf2 decode levers (round-35 KP add-ons).
+export DSV41_PM_QOS_US=20
+export DSV41_ENGRAM_WKV_TP=1
+export DSV41_MHC_DET_OVERLAP=1
 
 exec ./run.sh

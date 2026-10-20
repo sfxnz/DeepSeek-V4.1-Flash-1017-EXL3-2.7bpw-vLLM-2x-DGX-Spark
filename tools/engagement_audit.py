@@ -54,6 +54,8 @@ PATCHES = {
     "indexer_expanded_lazy.py": {"DSV41_INDEXER_EXPANDED_TABLE_LAZY": "1"},  # sitecustomize rewrite, every process
     "attn_t2r_dedup.py": {"DSV41_ATTN_T2R_DEDUP": "1"},
     "engram_wkv_tp.py": {"DSV41_ENGRAM_WKV_TP": "1"},
+    "router_gemv.py": {"DSV41_ROUTER_GEMV": "1"},
+    "main_proj_overlap.py": {"DSV41_MAIN_PROJ_OVERLAP": "1"},
     "fix_o_proj_woa_fp8.py": {},  # baked into the image at build time
     "drop_page_cache.py": {"DSV41_DROP_PAGE_CACHE": "1"},
     "prefill_empty_cache.py": {"DSV41_PREFILL_EMPTY_CACHE_TOKENS": "8192"},

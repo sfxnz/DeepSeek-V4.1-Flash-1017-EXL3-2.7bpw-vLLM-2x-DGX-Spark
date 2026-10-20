@@ -336,7 +336,9 @@ class InstallTests(unittest.TestCase):
     def test_listed_in_install_run_sh_and_audit(self):
         src = (PATCH / "decode_levers.py").read_text()
         self.assertIn('("engram-wkv-tp", _install_engram_wkv_tp)', src)
-        self.assertIn("  DSV41_ENGRAM_WKV_TP=0\n", (ROOT / "run.sh").read_text())
+        run = (ROOT / "run.sh").read_text()
+        self.assertIn("  DSV41_ENGRAM_WKV_TP=\n", run)  # FORWARD_ENVS: empty takes the recipe.yaml default
+        self.assertIn('DSV41_ENGRAM_WKV_TP="${DSV41_ENGRAM_WKV_TP:-1}"', run)
         sys.path.insert(0, str(ROOT / "tools"))
         import engagement_audit as ea
 

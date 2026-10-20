@@ -1,6 +1,6 @@
 """Hold a PM QoS CPU wake-up latency request while the serve runs.
 
-DSV41_PM_QOS_US=N (default unset = off; run.sh FORWARD_ENVS). sitecustomize calls
+DSV41_PM_QOS_US=N (recipe default 20 since perf2; unset, empty or 0 = off; run.sh FORWARD_ENVS). sitecustomize calls
 install() in every Python process of the container; each holds its own request for
 the process lifetime (the kernel applies the minimum over all open requests, and
 drops a request when its file descriptor closes). run.sh passes
@@ -46,13 +46,15 @@ _held: list[int] = []  # open request fds; never closed while the process lives
 
 
 def requested_us(env) -> int | None:
-    """None when off (unset or empty), else the latency bound in us (0..MAX_US)."""
+    """None when off (unset, empty or 0), else the latency bound in us (1..MAX_US)."""
     raw = (env.get(ENV) or "").strip()
     if not raw:
         return None
     us = int(raw)
-    if not 0 <= us <= MAX_US:
-        raise ValueError(f"{ENV}={us} outside 0..{MAX_US}")
+    if us == 0:
+        return None
+    if not 0 < us <= MAX_US:
+        raise ValueError(f"{ENV}={us} outside 1..{MAX_US}")
     return us
 
 
