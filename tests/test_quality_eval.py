@@ -30,6 +30,9 @@ class PureLogicTests(unittest.TestCase):
         self.assertAlmostEqual(hi, 0.76341, places=4)
         self.assertEqual(q.wilson(0, 0), (0.0, 1.0))
         self.assertEqual(q.rate(18, 20)["rate"], 0.9)
+        # Float noise used to put n/n just under 1.0 (n = 6, 21, 100, ...).
+        self.assertEqual({q.wilson(n, n)[1] for n in range(1, 301)}, {1.0})
+        self.assertEqual({q.wilson(0, n)[0] for n in range(1, 301)}, {0.0})
 
     def test_token_logprobs_skips_bos_and_prefix(self) -> None:
         ids = [0, 11, 12, 13]

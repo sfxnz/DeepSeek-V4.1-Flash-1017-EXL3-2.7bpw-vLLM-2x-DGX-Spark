@@ -186,6 +186,12 @@ python3 tests/quality_eval.py --full --out /tmp/q.json \
 
 The 1017 baselines were recorded on vLLM directly. Its default URL, port 8000, is now the API gateway, where the thinking-on GSM8K requests sample at temperature 1.0 (the API's policy) instead of greedy. `--url http://127.0.0.1:8001` gates on vLLM directly, as the baselines were recorded.
 
+`--api` checks the API gateway against the DeepSeek API as deepseek-recipe 0.2.0 encodes it. `render` posts 52 fixture requests to `/dsv41/render` and compares prompt token IDs and the resolved thinking, effort, sampling and `max_tokens`; `toolflow`, `reasoning`, `structured`, `stream`, `messages`, `responses` and `errors` check live answers on all three APIs. Every answer must come from the API path (`x-dsv41-gateway: api`), so against vLLM directly it fails by design. Each component's invariants must hold; scored items gate with the Wilson rule against the baseline recorded on boot APIG. `tools/api_eval_fixtures.py --check` (with deepseek-recipe 0.2.0 importable) verifies the committed fixtures.
+
+```bash
+python3 tests/quality_eval.py --api --baseline results/2026-10-22-1017-api-parity/APIG/api.json
+```
+
 With `--baseline`, it gates on the following:
 
 | Metric | Gate |
