@@ -150,6 +150,7 @@ PATCH_ENV_NOT_FORWARDED = {
 FORWARDED_ENGINE_ENVS = {
     "VLLM_EXL3_MOE_KERNEL",
     "VLLM_SPARSE_INDEXER_MAX_LOGITS_MB",
+    "VLLM_MAX_STOP_STRINGS",
     "VLLM_USE_BREAKABLE_CUDAGRAPH",
     "VLLM_ADAPTIVE_VERIFICATION_PROFILE_CONTEXT_LEN",
     "MM_ENCODER_TP_MODE",
@@ -982,6 +983,33 @@ class RecipeOpsTests(unittest.TestCase):
             self.assertEqual(args[args.index("--prefix-cache-retention-interval") + 1], "0", role)
         self.assertIn("MM_PROCESSOR_CACHE_GB", _worker_config())
         self.assertIn("PREFIX_CACHE_RETENTION_INTERVAL", _worker_config())
+
+    def test_api_parity_serve_defaults_reach_both_ranks(self) -> None:
+        """api-parity 2/5: serve defaults that move toward the DeepSeek API, the same on both ranks.
+
+        No default effort (thinking on without one gets the encoder's high, 75, the API default),
+        tool_choice "none" renders no tools, xgrammar pinned (under auto, a first json_schema that falls
+        back to guidance breaks every later required or named tool_choice until restart), cached-token
+        usage, and the API's 16 stop strings (vLLM's default is 4).
+        """
+        import json
+
+        self.assertEqual(_recipe()["serve"]["env"]["VLLM_MAX_STOP_STRINGS"], "16")
+        container_env, dry_run, image_and_args = _harness()
+        res = dry_run()
+        self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
+        for role in ("head", "worker"):
+            _, args = image_and_args(res[role])
+            self.assertEqual(json.loads(args[args.index("--default-chat-template-kwargs") + 1]), {"thinking": False}, role)
+            self.assertEqual(json.loads(args[args.index("--structured-outputs-config") + 1]), {"backend": "xgrammar"}, role)
+            self.assertIn("--exclude-tools-when-tool-choice-none", args, role)
+            self.assertIn("--enable-prompt-tokens-details", args, role)
+            self.assertEqual(container_env(res[role])["VLLM_MAX_STOP_STRINGS"], "16", role)
+        res = dry_run(VLLM_MAX_STOP_STRINGS="4")
+        for role in ("head", "worker"):
+            self.assertEqual(container_env(res[role])["VLLM_MAX_STOP_STRINGS"], "4", role)
+        self.assertIn("`high` (75)", _defaults_row("Default thinking"))
+        self.assertIn("`VLLM_MAX_STOP_STRINGS=16`", _defaults_row("Stop strings"))
 
     def test_default_kv_cache_memory_is_the_release_pool(self) -> None:
         self.assertEqual(_recipe()["serve"]["env"]["KV_CACHE_MEMORY"], RELEASE_KV_CACHE_MEMORY)

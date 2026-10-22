@@ -95,6 +95,7 @@ DSV41_MODEL_LOOP_RELEASE="${DSV41_MODEL_LOOP_RELEASE:-1}"
 DSV41_ATTN_OUT_DEFER="${DSV41_ATTN_OUT_DEFER:-1}"
 DSV41_ENGRAM_POST_INPLACE="${DSV41_ENGRAM_POST_INPLACE:-1}"
 VLLM_SPARSE_INDEXER_MAX_LOGITS_MB="${VLLM_SPARSE_INDEXER_MAX_LOGITS_MB:-256}"
+VLLM_MAX_STOP_STRINGS="${VLLM_MAX_STOP_STRINGS:-16}"
 # END generated
 HF_HOME_IN_CONTAINER="/cache/huggingface"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -216,6 +217,7 @@ FORWARD_ENVS=(
   DSV41_ENGRAM_POST_INPLACE=
   DSV41_ENGRAM_WKV_ROWS=0
   VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=
+  VLLM_MAX_STOP_STRINGS=
   VLLM_EXL3_FAT_THRESHOLD=
   DSV41_P2B_SRC_SORT=
   DSV41_P2B_COOP=
@@ -661,7 +663,10 @@ start_local() {
     --tool-call-parser deepseek_v41 \
     --enable-auto-tool-choice \
     --reasoning-parser deepseek_v41 \
-    --default-chat-template-kwargs '{"thinking":false,"reasoning_effort":"low"}' \
+    --default-chat-template-kwargs '{"thinking":false}' \
+    --exclude-tools-when-tool-choice-none \
+    --structured-outputs-config '{"backend":"xgrammar"}' \
+    --enable-prompt-tokens-details \
     "${load_args[@]}" \
     --served-model-name "$SERVED_NAME" \
     --trust-remote-code \

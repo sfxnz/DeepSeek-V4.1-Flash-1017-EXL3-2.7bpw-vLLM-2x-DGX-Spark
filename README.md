@@ -8,7 +8,7 @@ With the perf2 defaults (boot FINAL, 2026-10-20: the stack tip, a plain `./run.s
 
 This recipe replaces the September recipe for `deepseek-ai/DeepSeek-V4.1-Flash` (2.0 bpw pack, rounds 1-36): [sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark](https://github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark) @ `3de9146`. Its numbers are history, not this pack's.
 
-Default thinking is off (`thinking=false`, `reasoning_effort=low`). Turn it on per request with `chat_template_kwargs`. The efforts are `low` (50), `high` (75) and `max` (100). `xhigh` is not a 1017 effort and is rejected. With thinking on, a small `max_tokens` can return empty `content`.
+Default thinking is off (`thinking=false`). Turn it on per request with `chat_template_kwargs`. The efforts are `low` (50), `high` (75) and `max` (100); thinking on without an effort gets `high` (75), the DeepSeek API default. `xhigh` is not a 1017 effort and is rejected. With thinking on, a small `max_tokens` can return empty `content`.
 
 ## Prerequisites
 
@@ -225,7 +225,11 @@ Encyclopedic text loses the most. Rare-fact recall lives in the routed experts t
 | Vision | on (`LANGUAGE_MODEL_ONLY=0`) |
 | `--mm-encoder-tp-mode` | data |
 | `--mm-processor-cache-gb` | 1 (vLLM default 4, mirrored in the API server and EngineCore on the head) |
-| Default thinking | `thinking=false`, `reasoning_effort=low` |
+| Default thinking | `thinking=false`, no default effort: a request that turns thinking on without `reasoning_effort` gets `high` (75), the DeepSeek API default |
+| `tool_choice: none` | renders no tools (`--exclude-tools-when-tool-choice-none`), as the DeepSeek API does |
+| Structured outputs | xgrammar, pinned (`--structured-outputs-config '{"backend":"xgrammar"}'`): under `auto` the first structured request fixes the engine's only backend, and a `json_schema` that falls back to guidance makes every later required or named `tool_choice` fail until restart; a schema xgrammar cannot compile is a 400 instead |
+| Stop strings | up to 16 per request (`VLLM_MAX_STOP_STRINGS=16`, the DeepSeek API's limit; at vLLM's default of 4, a fifth stop string is a 400) |
+| Usage | `prompt_tokens_details.cached_tokens` (`--enable-prompt-tokens-details`); on `/v1/messages`, cached tokens move from `input_tokens` to `cache_read_input_tokens` |
 | Post-ready | engagement audit of both ranks' logs (`AUDIT=warn`; `strict` fails the boot, `off` skips), then greedy, t=0.7, ~3k/~1k/~300-token nonce prefill and small-image warmup requests (`WARMUP=1`) |
 | API | `http://<head>:8000/v1` |
 | Container | `dsv41-flash-exl3` |
