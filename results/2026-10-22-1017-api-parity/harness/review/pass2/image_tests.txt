@@ -1,0 +1,8 @@
+test_core_tests_inside_the_image (tests.test_api_gateway.ImageTests.test_core_tests_inside_the_image) ... ok
+test_gateway_over_http_inside_the_image (tests.test_api_gateway.ImageTests.test_gateway_over_http_inside_the_image) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 44.802s
+
+OK
+exit=0

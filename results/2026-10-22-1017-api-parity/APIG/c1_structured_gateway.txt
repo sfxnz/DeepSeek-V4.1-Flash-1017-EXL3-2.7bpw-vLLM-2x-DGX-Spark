@@ -1,0 +1,54 @@
+# cmd: python3 bench_decode.py --phase structured --concurrency 1 --runs 9 --url http://127.0.0.1:8000/v1/chat/completions
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-api-eval (HEAD 4432b71) host: spark1 start: 2026-10-22T14:45:13Z
+url=http://127.0.0.1:8000/v1/chat/completions model=deepseek-ai/DeepSeek-V4.1-Flash-1017 max_tokens=200 runs=9 concurrency=[1] phases=['structured']
+phase=structured c=1 run=1 wall=2.00s agg=106.98 tok/s per_stream=[107.02] ttft=[0.136] acc=5.882 ms_step=[55.0]
+phase=structured c=1 run=2 wall=2.00s agg=109.01 tok/s per_stream=[109.05] ttft=[0.173] acc=5.882 ms_step=[53.9]
+phase=structured c=1 run=3 wall=2.00s agg=108.20 tok/s per_stream=[108.23] ttft=[0.165] acc=5.882 ms_step=[54.4]
+phase=structured c=1 run=4 wall=2.00s agg=108.36 tok/s per_stream=[108.39] ttft=[0.163] acc=5.882 ms_step=[54.3]
+phase=structured c=1 run=5 wall=2.00s agg=108.34 tok/s per_stream=[108.38] ttft=[0.164] acc=5.882 ms_step=[54.3]
+phase=structured c=1 run=6 wall=2.00s agg=108.55 tok/s per_stream=[108.58] ttft=[0.165] acc=5.882 ms_step=[54.2]
+phase=structured c=1 run=7 wall=2.00s agg=108.50 tok/s per_stream=[108.54] ttft=[0.166] acc=5.882 ms_step=[54.2]
+phase=structured c=1 run=8 wall=2.00s agg=108.57 tok/s per_stream=[108.60] ttft=[0.167] acc=5.882 ms_step=[54.2]
+phase=structured c=1 run=9 wall=2.00s agg=108.65 tok/s per_stream=[108.68] ttft=[0.165] acc=5.882 ms_step=[54.1]
+natural phase=structured completion_tokens=200 finish_reason=length
+SUMMARY [
+  {
+    "phase": "structured",
+    "concurrency": 1,
+    "median_decode_tok_s": 108.538481895254,
+    "median_ttft_s": 0.1651194630012469,
+    "median_agg_tok_s": 108.50369539891354,
+    "median_completion_tokens": 200,
+    "n": 9,
+    "acceptance_len": 5.882352941176471,
+    "draft_acceptance_rate": 0.9764705882352941,
+    "run_acceptance_len": [
+      5.8824,
+      5.8824,
+      5.8824,
+      5.8824,
+      5.8824,
+      5.8824,
+      5.8824,
+      5.8824,
+      5.8824
+    ],
+    "median_run_acceptance_len": 5.882352941176471,
+    "median_ms_per_step": 54.196012681044195,
+    "ttft_s_p50": 0.1651194630012469,
+    "ttft_s_p90": 0.1685457198000222,
+    "ttft_s_p99": 0.17246908908055048,
+    "inter_chunk_ms_p50": 53.841997500057914,
+    "inter_chunk_ms_p90": 56.41181400005735,
+    "inter_chunk_ms_p99": 59.03567160057718,
+    "finish_reasons": {
+      "length": 9
+    },
+    "natural_completion_tokens": 200,
+    "natural_finish_reason": "length",
+    "natural_covers_max": true,
+    "post_eos_fraction": 0.0
+  }
+]
+rc=0
+# end: 2026-10-22T14:45:33Z

@@ -1,0 +1,2 @@
+100 open proxied streams: gateway /health -> 200 after 0.0 s: {"gateway":"ok","upstream":"ok"}
+  an API request meanwhile: 200 after 0.2 s; upstream /health direct: 200

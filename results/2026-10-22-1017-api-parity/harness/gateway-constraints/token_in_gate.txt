@@ -1,0 +1,210 @@
+dsv41-patch skip model_loop_release: DSV41_MODEL_LOOP_RELEASE is not 1
+dsv41-patch skip kv_packed_groups: DSV41_KV_PACKED_GROUPS is not 1
+dsv41-patch skip indexer_expanded_lazy: DSV41_INDEXER_EXPANDED_TABLE_LAZY is not 1
+dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+dsv41-patch ok prefer_b12x_mxfp8
+dsv41-indexer-workspace: already applied
+dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+dsv41-patch ok persistent_topk: already applied
+dsv41-patch ok kpool_persistent_topk: already applied
+dsv41-patch ok indexer_ragged_decode: already applied
+INFO 10-22 12:22:54 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+INFO 10-22 12:22:54 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+WARNING 10-22 12:22:54 [cpu.py:585] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+W1022 12:22:54.261000 7 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+WARNING 10-22 12:22:54 [cpu.py:585] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-22 12:22:54 [cpu.py:585] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+dsv41-patch ok load_general_plugins
+dsv41-patch ok exl3_weight_block_size
+dsv41-patch ok warmup_stubs
+dsv41-patch ok cudagraph_worker_stub
+dsv41-patch skip fat_scratch_shared: DSV41_FAT_SCRATCH_SHARED is not 1
+dsv41-patch skip attn_out_defer: DSV41_ATTN_OUT_DEFER is not 1
+dsv41-patch skip engram_post_inplace: DSV41_ENGRAM_POST_INPLACE is not 1 and DSV41_ENGRAM_WKV_ROWS is 0
+dsv41-patch ok swa_page_coerce
+dsv41-patch ok kernel_block_sizes
+dsv41-patch ok extra_page_bump
+dsv41-patch ok v41_config_vision
+dsv41-patch ok swa_image_width: already applied
+dsv41-patch ok attention_image_width: already applied
+dsv41-patch ok native_indexer_decode: already applied
+dsv41-patch ok indexer_adaptive: already applied
+dsv41-patch ok indexer_short_context: already applied
+dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+dsv41-patch ok decode_levers
+INFO 10-22 12:23:00 [model.py:692] Resolved architecture: DeepseekV41ForCausalLM
+INFO 10-22 12:23:00 [model.py:2034] Using max model len 500000
+INFO 10-22 12:23:01 [vllm.py:734] Auto-enabling VLLM_USE_BREAKABLE_CUDAGRAPH=1. Set VLLM_USE_BREAKABLE_CUDAGRAPH=0 to opt out.
+INFO 10-22 12:23:01 [kernel.py:373] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+INFO 10-22 12:23:01 [cpu.py:443] MLA is enabled on a non-GPU platform; forcing chunked prefill and prefix caching to be disabled.
+WARNING 10-22 12:23:01 [vllm.py:681] Model Runner V2 requires Triton; using the V1 model runner instead.
+INFO 10-22 12:23:01 [compilation.py:329] Enabled custom fusions: norm_quant, act_quant
+INFO 10-22 12:23:01 [parser_manager.py:36] "auto" tool choice has been enabled.
+INFO 10-22 12:23:01 [base.py:264] Multi-modal warmup completed in 0.021s
+INFO 10-22 12:23:01 [base.py:264] Readonly multi-modal warmup completed in 0.017s
+ERROR 10-22 12:23:01 [backend_xgrammar.py:168] Failed to advance FSM for request generate-tokens-895d7787bb5a2040 for tokens 51119. Please file an issue.
+ERROR 10-22 12:23:01 [backend_xgrammar.py:168] Failed to advance FSM for request generate-tokens-895d7787bb5a2040 for tokens 1. Please file an issue.
+ERROR 10-22 12:23:01 [backend_xgrammar.py:168] Failed to advance FSM for request generate-tokens-895d7787bb5a2040-chat for tokens 51119. Please file an issue.
+ERROR 10-22 12:23:01 [backend_xgrammar.py:168] Failed to advance FSM for request generate-tokens-895d7787bb5a2040-chat for tokens 1. Please file an issue.
+{
+ "structured_outputs_config": "StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='deepseek_v41', reasoning_parser_plugin='', enable_in_reasoning=False)",
+ "manager_reasoner_cls": "DeepSeekV41ParserReasoningAdapter",
+ "enable_in_reasoning": false
+}
+== chat_json_object
+  thinking=False prompt tail=': the capital of France?<｜Assistant｜></think>' structured_outputs={'json_object': True}
+  A generate() kwargs=['data_parallel_rank', 'lora_request', 'priority', 'session_id', 'trace_headers'] reasoning kwargs passed={}
+  B {'reasoning_ended': None, 'reasoning_parser_kwargs': None, 'backend': 'xgrammar', 'prompt_len': 37}
+  is_reasoning_end(prompt) {'no_kwargs (token-in)': True, 'thinking=True': True, 'thinking=False': True}; chat path reasoning_ended=True
+  step  0 '{"'                     gate None ->True  masked=True  n_allowed=     5 allowed=True  advanced=('{"', True) term=False
+  step  1 'capital'                gate True ->True  masked=True  n_allowed=127488 allowed=True  advanced=('capital', True) term=False
+  step  2 '":'                     gate True ->True  masked=True  n_allowed=127488 allowed=True  advanced=('":', True) term=False
+  step  3 ' "'                     gate True ->True  masked=True  n_allowed=  1335 allowed=True  advanced=(' "', True) term=False
+  step  4 'Paris'                  gate True ->True  masked=True  n_allowed=127499 allowed=True  advanced=('Paris', True) term=False
+  step  5 '"}'                     gate True ->True  masked=True  n_allowed=127499 allowed=True  advanced=('"}', True) term=False
+  step  6 '<｜end▁of▁sentence｜>'    gate True ->True  masked=True  n_allowed=     1 allowed=True  advanced=('<｜end▁of▁sentence｜>', True) term=True
+  token-in rows == chat-path rows: True
+== chat_json_object_first_token_prose
+  thinking=False prompt tail=': the capital of France?<｜Assistant｜></think>' structured_outputs={'json_object': True}
+  A generate() kwargs=['data_parallel_rank', 'lora_request', 'priority', 'session_id', 'trace_headers'] reasoning kwargs passed={}
+  B {'reasoning_ended': None, 'reasoning_parser_kwargs': None, 'backend': 'xgrammar', 'prompt_len': 37}
+  is_reasoning_end(prompt) {'no_kwargs (token-in)': True, 'thinking=True': True, 'thinking=False': True}; chat path reasoning_ended=True
+  step  0 'Paris'                  gate None ->True  masked=True  n_allowed=     5 allowed=False advanced=('Paris', False) term=False
+  step  1 '<｜end▁of▁sentence｜>'    gate True ->True  masked=True  n_allowed=     5 allowed=False advanced=('<｜end▁of▁sentence｜>', False) term=False
+  token-in rows == chat-path rows: True
+== thinking_json_object
+  thinking=True prompt tail=': the capital of France?<｜Assistant｜><think>' structured_outputs={'json_object': True}
+  A generate() kwargs=['data_parallel_rank', 'lora_request', 'priority', 'session_id', 'trace_headers'] reasoning kwargs passed={}
+  B {'reasoning_ended': None, 'reasoning_parser_kwargs': None, 'backend': 'xgrammar', 'prompt_len': 61}
+  is_reasoning_end(prompt) {'no_kwargs (token-in)': False, 'thinking=True': False, 'thinking=False': False}; chat path reasoning_ended=False
+  step  0 'The'                    gate None ->False masked=False n_allowed=129280 allowed=True  advanced=None term=False
+  step  1 ' user'                  gate False->False masked=False n_allowed=129280 allowed=True  advanced=None term=False
+  step  2 ' wants'                 gate False->False masked=False n_allowed=129280 allowed=True  advanced=None term=False
+  step  3 ' JSON'                  gate False->False masked=False n_allowed=129280 allowed=True  advanced=None term=False
+  step  4 '.'                      gate False->False masked=False n_allowed=129280 allowed=True  advanced=None term=False
+  step  5 ' Hello'                 gate False->False masked=False n_allowed=129280 allowed=True  advanced=None term=False
+  step  6 '</think>'               gate False->True  masked=False n_allowed=129280 allowed=True  advanced=('', True) term=False
+  step  7 '{"'                     gate True ->True  masked=True  n_allowed=     5 allowed=True  advanced=('{"', True) term=False
+  step  8 'capital'                gate True ->True  masked=True  n_allowed=127488 allowed=True  advanced=('capital', True) term=False
+  step  9 '":'                     gate True ->True  masked=True  n_allowed=127488 allowed=True  advanced=('":', True) term=False
+  step 10 ' "'                     gate True ->True  masked=True  n_allowed=  1335 allowed=True  advanced=(' "', True) term=False
+  step 11 'Paris'                  gate True ->True  masked=True  n_allowed=127499 allowed=True  advanced=('Paris', True) term=False
+  step 12 '"}'                     gate True ->True  masked=True  n_allowed=127499 allowed=True  advanced=('"}', True) term=False
+  step 13 '<｜end▁of▁sentence｜>'    gate True ->True  masked=True  n_allowed=     1 allowed=True  advanced=('<｜end▁of▁sentence｜>', True) term=True
+  token-in rows == chat-path rows: True
+== chat_required_prefill
+  thinking=False prompt tail='?<｜Assistant｜></think>\n\n<｜DSML｜ calls>\n' structured_outputs={'structural_tag': '<1087 chars>'}
+  A generate() kwargs=['data_parallel_rank', 'lora_request', 'priority', 'session_id', 'trace_headers'] reasoning kwargs passed={}
+  B {'reasoning_ended': None, 'reasoning_parser_kwargs': None, 'backend': 'xgrammar', 'prompt_len': 269}
+  is_reasoning_end(prompt) {'no_kwargs (token-in)': True, 'thinking=True': True, 'thinking=False': True}; chat path reasoning_ended=True
+  step  0 '<'                      gate None ->True  masked=True  n_allowed=     1 allowed=True  advanced=('<', True) term=False
+  step  1 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=     4 allowed=True  advanced=('｜DSML｜', True) term=False
+  step  2 ' invoke'                gate True ->True  masked=True  n_allowed=     6 allowed=True  advanced=(' invoke', True) term=False
+  step  3 ' name'                  gate True ->True  masked=True  n_allowed=     5 allowed=True  advanced=(' name', True) term=False
+  step  4 '="'                     gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('="', True) term=False
+  step  5 'get'                    gate True ->True  masked=True  n_allowed=     3 allowed=True  advanced=('get', True) term=False
+  step  6 '_'                      gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('_', True) term=False
+  step  7 'weather'                gate True ->True  masked=True  n_allowed=     3 allowed=True  advanced=('weather', True) term=False
+  step  8 '">\n'                   gate True ->True  masked=True  n_allowed=     4 allowed=True  advanced=('">\n', True) term=False
+  step  9 '<'                      gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('<', True) term=False
+  step 10 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=     4 allowed=True  advanced=('｜DSML｜', True) term=False
+  step 11 ' parameter'             gate True ->True  masked=True  n_allowed=     8 allowed=True  advanced=(' parameter', True) term=False
+  step 12 ' name'                  gate True ->True  masked=True  n_allowed=     5 allowed=True  advanced=(' name', True) term=False
+  step 13 '="'                     gate True ->True  masked=True  n_allowed=    15 allowed=True  advanced=('="', True) term=False
+  step 14 'city'                   gate True ->True  masked=True  n_allowed=128632 allowed=True  advanced=('city', True) term=False
+  step 15 '"'                      gate True ->True  masked=True  n_allowed=128633 allowed=True  advanced=('"', True) term=False
+  step 16 ' string'                gate True ->True  masked=True  n_allowed=     6 allowed=True  advanced=(' string', True) term=False
+  step 17 '="'                     gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('="', True) term=False
+  step 18 'true'                   gate True ->True  masked=True  n_allowed=     7 allowed=True  advanced=('true', True) term=False
+  step 19 '">'                     gate True ->True  masked=True  n_allowed=     9 allowed=True  advanced=('">', True) term=False
+  step 20 'Paris'                  gate True ->True  masked=True  n_allowed=129279 allowed=True  advanced=('Paris', True) term=False
+  step 21 '</'                     gate True ->True  masked=True  n_allowed=129279 allowed=True  advanced=('</', True) term=False
+  step 22 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=129279 allowed=True  advanced=('｜DSML｜', True) term=False
+  step 23 ' parameter'             gate True ->True  masked=True  n_allowed=129279 allowed=True  advanced=(' parameter', True) term=False
+  step 24 '>\n'                    gate True ->True  masked=True  n_allowed=129226 allowed=True  advanced=('>\n', True) term=False
+  step 25 '</'                     gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('</', True) term=False
+  step 26 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=     4 allowed=True  advanced=('｜DSML｜', True) term=False
+  step 27 ' invoke'                gate True ->True  masked=True  n_allowed=     6 allowed=True  advanced=(' invoke', True) term=False
+  step 28 '>\n'                    gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('>\n', True) term=False
+  step 29 '</'                     gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('</', True) term=False
+  step 30 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=     4 allowed=True  advanced=('｜DSML｜', True) term=False
+  step 31 ' calls'                 gate True ->True  masked=True  n_allowed=     6 allowed=True  advanced=(' calls', True) term=False
+  step 32 '>'                      gate True ->True  masked=True  n_allowed=     1 allowed=True  advanced=('>', True) term=False
+  step 33 '<｜end▁of▁sentence｜>'    gate True ->True  masked=True  n_allowed=     1 allowed=True  advanced=('<｜end▁of▁sentence｜>', True) term=True
+  token-in rows == chat-path rows: True
+== thinking_auto_strict
+  thinking=True prompt tail='.\n<｜User｜>Weather in Paris?<｜Assistant｜><think>' structured_outputs={'structural_tag': '<798 chars>'}
+  A generate() kwargs=['data_parallel_rank', 'lora_request', 'priority', 'session_id', 'trace_headers'] reasoning kwargs passed={}
+  B {'reasoning_ended': None, 'reasoning_parser_kwargs': None, 'backend': 'xgrammar', 'prompt_len': 294}
+  is_reasoning_end(prompt) {'no_kwargs (token-in)': False, 'thinking=True': False, 'thinking=False': False}; chat path reasoning_ended=False
+  step  0 'Need'                   gate None ->False masked=False n_allowed=129280 allowed=True  advanced=None term=False
+  step  1 ' the'                   gate False->False masked=False n_allowed=129280 allowed=True  advanced=None term=False
+  step  2 ' tool'                  gate False->False masked=False n_allowed=129280 allowed=True  advanced=None term=False
+  step  3 '.'                      gate False->False masked=False n_allowed=129280 allowed=True  advanced=None term=False
+  step  4 '</think>'               gate False->True  masked=False n_allowed=129280 allowed=True  advanced=('', True) term=False
+  step  5 'Checking'               gate True ->True  masked=True  n_allowed=129278 allowed=True  advanced=('Checking', True) term=False
+  step  6 '.\n\n'                  gate True ->True  masked=True  n_allowed=129278 allowed=True  advanced=('.\n\n', True) term=False
+  step  7 '<'                      gate True ->True  masked=True  n_allowed=129278 allowed=True  advanced=('<', True) term=False
+  step  8 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=129278 allowed=True  advanced=('｜DSML｜', True) term=False
+  step  9 ' calls'                 gate True ->True  masked=True  n_allowed=129278 allowed=True  advanced=(' calls', True) term=False
+  step 10 '>\n'                    gate True ->True  masked=True  n_allowed=129225 allowed=True  advanced=('>\n', True) term=False
+  step 11 '<'                      gate True ->True  masked=True  n_allowed=     1 allowed=True  advanced=('<', True) term=False
+  step 12 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=     4 allowed=True  advanced=('｜DSML｜', True) term=False
+  step 13 ' invoke'                gate True ->True  masked=True  n_allowed=     6 allowed=True  advanced=(' invoke', True) term=False
+  step 14 ' name'                  gate True ->True  masked=True  n_allowed=     5 allowed=True  advanced=(' name', True) term=False
+  step 15 '="'                     gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('="', True) term=False
+  step 16 'get'                    gate True ->True  masked=True  n_allowed=     3 allowed=True  advanced=('get', True) term=False
+  step 17 '_'                      gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('_', True) term=False
+  step 18 'weather'                gate True ->True  masked=True  n_allowed=     3 allowed=True  advanced=('weather', True) term=False
+  step 19 '">\n'                   gate True ->True  masked=True  n_allowed=     3 allowed=True  advanced=('">\n', True) term=False
+  step 20 '<'                      gate True ->True  masked=True  n_allowed=     1 allowed=True  advanced=('<', True) term=False
+  step 21 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=     4 allowed=True  advanced=('｜DSML｜', True) term=False
+  step 22 ' parameter'             gate True ->True  masked=True  n_allowed=     8 allowed=True  advanced=(' parameter', True) term=False
+  step 23 ' name'                  gate True ->True  masked=True  n_allowed=     5 allowed=True  advanced=(' name', True) term=False
+  step 24 '="'                     gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('="', True) term=False
+  step 25 'city'                   gate True ->True  masked=True  n_allowed=     4 allowed=True  advanced=('city', True) term=False
+  step 26 '"'                      gate True ->True  masked=True  n_allowed=     1 allowed=True  advanced=('"', True) term=False
+  step 27 ' string'                gate True ->True  masked=True  n_allowed=     6 allowed=True  advanced=(' string', True) term=False
+  step 28 '="'                     gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('="', True) term=False
+  step 29 'true'                   gate True ->True  masked=True  n_allowed=     3 allowed=True  advanced=('true', True) term=False
+  step 30 '">'                     gate True ->True  masked=True  n_allowed=     9 allowed=True  advanced=('">', True) term=False
+  step 31 'Paris'                  gate True ->True  masked=True  n_allowed=129279 allowed=True  advanced=('Paris', True) term=False
+  step 32 '</'                     gate True ->True  masked=True  n_allowed=129279 allowed=True  advanced=('</', True) term=False
+  step 33 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=129279 allowed=True  advanced=('｜DSML｜', True) term=False
+  step 34 ' parameter'             gate True ->True  masked=True  n_allowed=129279 allowed=True  advanced=(' parameter', True) term=False
+  step 35 '>\n'                    gate True ->True  masked=True  n_allowed=129226 allowed=True  advanced=('>\n', True) term=False
+  step 36 '</'                     gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('</', True) term=False
+  step 37 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=     4 allowed=True  advanced=('｜DSML｜', True) term=False
+  step 38 ' invoke'                gate True ->True  masked=True  n_allowed=     6 allowed=True  advanced=(' invoke', True) term=False
+  step 39 '>\n'                    gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('>\n', True) term=False
+  step 40 '</'                     gate True ->True  masked=True  n_allowed=     2 allowed=True  advanced=('</', True) term=False
+  step 41 '｜DSML｜'                 gate True ->True  masked=True  n_allowed=     4 allowed=True  advanced=('｜DSML｜', True) term=False
+  step 42 ' calls'                 gate True ->True  masked=True  n_allowed=     6 allowed=True  advanced=(' calls', True) term=False
+  step 43 '>'                      gate True ->True  masked=True  n_allowed=    55 allowed=True  advanced=('>', True) term=False
+  step 44 '<｜end▁of▁sentence｜>'    gate True ->True  masked=True  n_allowed=129278 allowed=True  advanced=('<｜end▁of▁sentence｜>', True) term=True
+  token-in rows == chat-path rows: True
+== payload shapes
+  json_object: accepted (StructuredOutputsParams, backend xgrammar)
+  json (string): accepted (StructuredOutputsParams, backend xgrammar)
+  json (object): accepted (StructuredOutputsParams, backend xgrammar)
+  regex: accepted (StructuredOutputsParams, backend xgrammar)
+  structural_tag (JSON string): accepted (StructuredOutputsParams, backend xgrammar)
+  structural_tag (object, refused): refused: ValidationError: 2 validation errors for GenerateRequest
+  two constraints (refused): refused: VLLMValidationError: You can only use one kind of structured outputs constraint but multiple are specified: {'json': None, 'regex': 'a', 'choice': None, 'grammar': None, 'json_objec
+  json_object false (refused): refused: VLLMValidationError: structured_outputs.json_object must be True if set; omit structured_outputs to disable structured outputs
+  dangling $ref (refused): refused: VLLMValidationError: Failed to transform json schema into a grammar: [12:23:01] /project/cpp/json_schema_converter.cc:4180: Cannot find field $defs in #/$defs/G

@@ -1,0 +1,23 @@
+== 2. the gateway docker run argv from the run.sh dry run
+docker run -d --name dsv41-api-gateway-smoke --restart on-failure:3 --network host --memory 3g --cpus 4 -v /dev/null:/usr/lib/python3.12/sitecustomize.py:ro -v /home/sfxnz/projects/data/dsv41-1017/api-parity/harness/wiring/home/.cache/dsv41-gateway/deepseek_recipe-0.2.0:/opt/dsr:ro -v /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-api-wiring/gateway:/opt/dsv41-gateway:ro -v /home/sfxnz/.cache/huggingface/hub:/cache/huggingface/hub:ro -e PYTHONPATH=/opt/dsr -e PYTHONDONTWRITEBYTECODE=1 -e DSV41_GATEWAY_UPSTREAM=http://127.0.0.1:18001 -e DSV41_GATEWAY_MAX_MODEL_LEN=500000 -e DSV41_GATEWAY_STRICT=0 -e DSV41_GATEWAY_BLOCK_PRIVATE_URLS=0 --entrypoint python3 dsv41-flash-exl3-sm121:e16-rows /opt/dsv41-gateway/dsv41_gateway.py --host 0.0.0.0 --port 18000 --tokenizer /cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq/tokenizer.json --served-model-name deepseek-ai/DeepSeek-V4.1-Flash-1017
+== 3. stub upstream on 127.0.0.1:18001, then the container
+/health 200 after 0.50 s (docker run to first 200): {"gateway":"ok","upstream":"ok"}
+container log:
+  dsv41-gateway: engaged deepseek-recipe 0.2.0 upstream=http://127.0.0.1:18001 model=deepseek-ai/DeepSeek-V4.1-Flash-1017
+  INFO:     Started server process [1]
+  INFO:     Waiting for application startup.
+  INFO:     Application startup complete.
+  INFO:     Uvicorn running on http://0.0.0.0:18000 (Press CTRL+C to quit)
+dsv41-patch lines (the image's sitecustomize): 0
+/v1/models via the gateway: 200 {"object": "list", "data": [{"id": "deepseek-ai/DeepSeek-V4.1-Flash-1017", "object": "model", "max_model_len": 500000}]}
+/dsv41/render/chat: 200 thinking=False effort=None max_tokens=8192 sampling={'max_tokens': 8192, 'temperature': 1.0, 'top_p': 1.0, 'detokenize': False} prompt_token_ids[11]=[0, 128803, 3085, 344, 223, 1002, 12, 511, 33, 128804, 128822] fallback_reason=None
+/dsv41/render/chat (ctk thinking + effort xhigh): 200 thinking=True effort=xhigh max_tokens=65536 sampling={'max_tokens': 65536, 'temperature': 1.0, 'top_p': 1.0, 'detokenize': False}
+PID 1: python3 /opt/dsv41-gateway/dsv41_gateway.py --host 0.0.0.0 --port 18000 --tokenizer /cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq/tokenizer.json --served-model-name deepseek-ai/DeepSeek-V4.1-Flash-1017
+PID 1 VmRSS 120.2 MiB, VmHWM 120.2 MiB
+mapped libs: libtorch 0, vllm 0, deepseek_recipe 4 files
+docker stats: 102MiB / 3GiB cpu=0.12%
+inspect (memory bytes, nano cpus, device requests, network): 3221225472 4000000000 null host
+/health with the upstream gone: 503 {"gateway":"ok","upstream":"unreachable: ConnectError('All connection attempts failed')"}
+== 4. engagement audit on the container log (API_GATEWAY=1, AUDIT=strict)
+audit rc=0: ==> audit ok: every expected patch engaged on gateway
+containers left named dsv41-api-gateway-smoke: none

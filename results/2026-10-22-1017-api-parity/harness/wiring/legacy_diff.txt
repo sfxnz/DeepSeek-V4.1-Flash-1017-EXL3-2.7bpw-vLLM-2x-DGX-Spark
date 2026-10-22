@@ -1,0 +1,38 @@
+API_GATEWAY=0 head docker run == base head: True (313 argv items)
+API_GATEWAY=0 worker docker run == base worker: True (306 argv items)
+API_GATEWAY=0 starts a gateway container: False
+API_GATEWAY=0 worker ssh line vs base (not a docker command):
+    +API_GATEWAY=0
+    +VLLM_PORT=18001
+API_GATEWAY=1 head vs base, argv items:
+    @@ -247,2 +247,4 @@
+     -e
+    +VLLM_ENABLE_SCALE_OUT_ENDPOINTS=1
+    +-e
+     VLLM_HOST_IP=10.100.8.1
+    @@ -266,5 +268,5 @@
+     --host
+    -0.0.0.0
+    +127.0.0.1
+     --port
+    -18000
+    +18001
+     --max-model-len
+    @@ -310,2 +312,4 @@
+     --enable-prompt-tokens-details
+    +--max-logprobs
+    +21
+     --served-model-name
+API_GATEWAY=1 worker vs base, argv items:
+    @@ -242,2 +242,4 @@
+     NCCL_CROSS_NIC=1
+    +-e
+    +VLLM_ENABLE_SCALE_OUT_ENDPOINTS=1
+     -e
+    @@ -303,2 +305,4 @@
+     --enable-prompt-tokens-details
+    +--max-logprobs
+    +21
+     --served-model-name
+API_GATEWAY=1 gateway:
+    docker run -d --name dsv41-dryrun-gateway --restart no --network host --memory 2g --cpus 4 -v /dev/null:/usr/lib/python3.12/sitecustomize.py:ro -v '<tmp>/.cache/dsv41-gateway/deepseek_recipe-0.2.0:/opt/dsr:ro' -v '<tmp>/repo/gateway:/opt/dsv41-gateway:ro' -v '<tmp>/hf/hub:/cache/huggingface/hub:ro' -e PYTHONPATH=/opt/dsr -e PYTHONDONTWRITEBYTECODE=1 -e DSV41_GATEWAY_UPSTREAM=http://127.0.0.1:18001 -e DSV41_GATEWAY_MAX_MODEL_LEN=500000 -e DSV41_GATEWAY_STRICT=0 -e DSV41_GATEWAY_BLOCK_PRIVATE_URLS=0 --entrypoint python3 dsv41-flash-exl3-sm121:e16-rows /opt/dsv41-gateway/dsv41_gateway.py --host 0.0.0.0 --port 18000 --tokenizer /cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq/tokenizer.json --served-model-name deepseek-ai/DeepSeek-V4.1-Flash-1017

@@ -1,0 +1,2 @@
+masked (run.sh)  /health 200 after 0.45 s, VmRSS 119 MiB, libtorch maps 0, dsv41-patch log lines 0
+unmasked         /health 200 after 4.11 s, VmRSS 986 MiB, libtorch maps 67, dsv41-patch log lines 39

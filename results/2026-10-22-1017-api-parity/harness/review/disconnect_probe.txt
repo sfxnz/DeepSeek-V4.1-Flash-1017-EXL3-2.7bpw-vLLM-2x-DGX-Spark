@@ -1,0 +1,12 @@
+stream     client left at 1.0 s (saw ''): upstream cancelled after 1.0 s, events sent 0
+stream     client left at 4.0 s (saw 'HTTP/1.1 200 OK'): upstream cancelled after None s, events sent 0
+non-stream client left at 1.0 s (saw ''): upstream cancelled after 1.0 s, events sent 0
+non-stream client left at 4.0 s (saw ''): upstream cancelled after 4.01 s, events sent 0
+--- gateway log (tail) ---
+dsv41-gateway: engaged deepseek-recipe 0.2.0 upstream=http://127.0.0.1:18101 model=deepseek-ai/DeepSeek-V4.1-Flash-1017
+INFO:     Started server process [8]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18100 (Press CTRL+C to quit)
+INFO:     127.0.0.1:52994 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53022 - "POST /v1/chat/completions HTTP/1.1" 200 OK

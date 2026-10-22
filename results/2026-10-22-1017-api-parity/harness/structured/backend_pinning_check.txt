@@ -1,0 +1,65 @@
+dsv41-patch skip model_loop_release: DSV41_MODEL_LOOP_RELEASE is not 1
+dsv41-patch skip kv_packed_groups: DSV41_KV_PACKED_GROUPS is not 1
+dsv41-patch skip indexer_expanded_lazy: DSV41_INDEXER_EXPANDED_TABLE_LAZY is not 1
+dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+dsv41-patch ok prefer_b12x_mxfp8
+dsv41-indexer-workspace: already applied
+dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+dsv41-patch ok persistent_topk: already applied
+dsv41-patch ok kpool_persistent_topk: already applied
+dsv41-patch ok indexer_ragged_decode: already applied
+INFO 10-22 11:31:59 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+INFO 10-22 11:31:59 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+WARNING 10-22 11:32:00 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+W1022 11:32:00.079000 1 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+WARNING 10-22 11:32:00 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-22 11:32:00 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+dsv41-patch ok load_general_plugins
+dsv41-patch ok exl3_weight_block_size
+dsv41-patch ok warmup_stubs
+dsv41-patch ok cudagraph_worker_stub
+dsv41-patch skip fat_scratch_shared: DSV41_FAT_SCRATCH_SHARED is not 1
+dsv41-patch skip attn_out_defer: DSV41_ATTN_OUT_DEFER is not 1
+dsv41-patch skip engram_post_inplace: DSV41_ENGRAM_POST_INPLACE is not 1 and DSV41_ENGRAM_WKV_ROWS is 0
+dsv41-patch ok swa_page_coerce
+dsv41-patch ok kernel_block_sizes
+dsv41-patch ok extra_page_bump
+dsv41-patch ok v41_config_vision
+dsv41-patch ok swa_image_width: already applied
+dsv41-patch ok attention_image_width: already applied
+dsv41-patch ok native_indexer_decode: already applied
+dsv41-patch ok indexer_adaptive: already applied
+dsv41-patch ok indexer_short_context: already applied
+dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+dsv41-patch ok decode_levers
+[auto] uniqueItems json_schema -> VLLMValidationError: Grammar error: Unimplemented keys: ["uniqueItems"]
+[xgrammar] uniqueItems json_schema -> VLLMValidationError: The provided JSON schema contains features not supported by xgrammar.
+[auto] multipleOf json_schema -> request backend 'guidance'
+[xgrammar] multipleOf json_schema -> VLLMValidationError: The provided JSON schema contains features not supported by xgrammar.
+[auto] pattern+maxLength json_schema -> request backend 'guidance'
+[xgrammar] pattern+maxLength json_schema -> VLLMValidationError: The provided JSON schema contains features not supported by xgrammar.
+[auto] format:idn-email json_schema -> VLLMValidationError: Grammar error: Unknown format: idn-email
+[xgrammar] format:idn-email json_schema -> VLLMValidationError: The provided JSON schema contains features not supported by xgrammar.
+[auto] contains json_schema -> VLLMValidationError: Grammar error: Unimplemented keys: ["contains"]
+[xgrammar] contains json_schema -> VLLMValidationError: The provided JSON schema contains features not supported by xgrammar.
+[auto] propertyNames json_schema -> VLLMValidationError: Grammar error: Unimplemented keys: ["propertyNames"]
+[xgrammar] propertyNames json_schema -> VLLMValidationError: The provided JSON schema contains features not supported by xgrammar.
+engine backend xgrammar: tool_choice=required structural tag compiles
+engine backend xgrammar: the guidance-routed json_schema compiles
+engine backend guidance: tool_choice=required structural tag FAILS: KeyError: 'triggers'
+engine backend guidance: the guidance-routed json_schema compiles

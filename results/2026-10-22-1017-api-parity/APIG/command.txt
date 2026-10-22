@@ -1,0 +1,1 @@
+bash /home/sfxnz/projects/data/dsv41-1017/api-parity/boot/APIG/boot-APIG.sh  (worktree /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-api-eval HEAD 4432b71, 0 changes; started 2026-10-22T14:26:20Z via setsid -f; caller env had no DSV41_/NUM_SPEC/MAX_NUM/KV/IMAGE vars: 0)

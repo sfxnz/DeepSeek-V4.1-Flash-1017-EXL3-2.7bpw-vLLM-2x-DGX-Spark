@@ -1,0 +1,62 @@
+dsv41-indexer-workspace: already applied
+INFO 10-22 12:03:36 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+INFO 10-22 12:03:36 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+WARNING 10-22 12:03:36 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-22 12:03:37 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-22 12:03:37 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+vllm 0.1.dev20904+g179dd0fa9
+option ['--default-chat-template-kwargs'] _StoreAction default None
+option ['--exclude-tools-when-tool-choice-none', '--no-exclude-tools-when-tool-choice-none'] BooleanOptionalAction default False
+option ['--enable-prompt-tokens-details', '--no-enable-prompt-tokens-details'] BooleanOptionalAction default False
+option ['--structured-outputs-config'] _StoreAction default StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False)
+head: subparser=serve headless=False exclude_tools_when_tool_choice_none=True enable_prompt_tokens_details=True default_chat_template_kwargs={'thinking': False} structured_outputs_config=StructuredOutputsConfig(backend='xgrammar') reasoning_parser='deepseek_v41' tool_call_parser='deepseek_v41' enable_auto_tool_choice=True
+PASS head parses --exclude-tools-when-tool-choice-none
+PASS head parses --enable-prompt-tokens-details
+PASS head parses --default-chat-template-kwargs
+PASS head parses --structured-outputs-config
+PASS head keeps --reasoning-parser for the structured config
+PASS head argv value
+worker: subparser=serve headless=True exclude_tools_when_tool_choice_none=True enable_prompt_tokens_details=True default_chat_template_kwargs={'thinking': False} structured_outputs_config=StructuredOutputsConfig(backend='xgrammar') reasoning_parser='deepseek_v41' tool_call_parser='deepseek_v41' enable_auto_tool_choice=True
+PASS worker parses --exclude-tools-when-tool-choice-none
+PASS worker parses --enable-prompt-tokens-details
+PASS worker parses --default-chat-template-kwargs
+PASS worker parses --structured-outputs-config
+PASS worker keeps --reasoning-parser for the structured config
+PASS worker argv value
+PASS --exclude-tools-when-tool-choice-none absent -> stock False
+PASS --enable-prompt-tokens-details absent -> stock False
+PASS --structured-outputs-config absent -> stock backend 'auto': 'auto'
+PASS head env forwards VLLM_MAX_STOP_STRINGS=16: '16'
+PASS worker env forwards VLLM_MAX_STOP_STRINGS=16
+stop strings stock (unset)  n= 4: {'chat': 'ok', 'completions': 'ok', 'messages': 'ok'}
+stop strings stock (unset)  n= 5: {'chat': 'rejected: Input should be a valid string', 'completions': 'rejected: Input should be a valid string', 'messages': 'rejected: List should have at most 4 items after validation, not 5'}
+stop strings stock (unset)  n=16: {'chat': 'rejected: Input should be a valid string', 'completions': 'rejected: Input should be a valid string', 'messages': 'rejected: List should have at most 4 items after validation, not 16'}
+stop strings stock (unset)  n=17: {'chat': 'rejected: Input should be a valid string', 'completions': 'rejected: Input should be a valid string', 'messages': 'rejected: List should have at most 4 items after validation, not 17'}
+stop strings forwarded      n= 4: {'chat': 'ok', 'completions': 'ok', 'messages': 'ok'}
+stop strings forwarded      n= 5: {'chat': 'ok', 'completions': 'ok', 'messages': 'ok'}
+stop strings forwarded      n=16: {'chat': 'ok', 'completions': 'ok', 'messages': 'ok'}
+stop strings forwarded      n=17: {'chat': 'rejected: Input should be a valid string', 'completions': 'rejected: Input should be a valid string', 'messages': 'rejected: List should have at most 16 items after validation, not 17'}
+PASS chat: stock accepts 4, rejects 5
+PASS chat: forwarded accepts 5 and 16, rejects 17
+PASS completions: stock accepts 4, rejects 5
+PASS completions: forwarded accepts 5 and 16, rejects 17
+PASS messages: stock accepts 4, rejects 5
+PASS messages: forwarded accepts 5 and 16, rejects 17
+PASS identical: no chat_template_kwargs (client default): old chat/effort - (23 ids) -> new chat/effort - (23 ids)
+PASS identical: {thinking:false}: old chat/effort - (23 ids) -> new chat/effort - (23 ids)
+PASS identical: {thinking:false, effort:low} (smoke/bench/quality CHAT_KWARGS): old chat/effort - (23 ids) -> new chat/effort - (23 ids)
+PASS identical: {thinking:true, effort:high} (quality_eval THINK_KWARGS): old think/effort 75 (48 ids) -> new think/effort 75 (48 ids)
+PASS identical: {thinking:true, effort:max}: old think/effort 100 (48 ids) -> new think/effort 100 (48 ids)
+PASS identical: {thinking:true, effort:low}: old think/effort 50 (48 ids) -> new think/effort 50 (48 ids)
+PASS identical: top-level reasoning_effort:high: old think/effort 75 (48 ids) -> new think/effort 75 (48 ids)
+PASS identical: top-level reasoning_effort:none: old chat/effort - (23 ids) -> new chat/effort - (23 ids)
+PASS identical: tools, no kwargs: old chat/effort - (279 ids) -> new chat/effort - (279 ids)
+PASS changes: {thinking:true}, no effort: old think/effort 50 (48 ids) -> new think/effort 75 (48 ids)
+PASS changes: {enable_thinking:true}, no effort: old think/effort 50 (48 ids) -> new think/effort 75 (48 ids)
+PASS changes: tools + {thinking:true}, no effort: old think/effort 50 (304 ids) -> new think/effort 75 (304 ids)
+usage enable_prompt_tokens_details=False: {"prompt_tokens": 1200, "total_tokens": 1208, "completion_tokens": 8}
+usage enable_prompt_tokens_details=True: {"prompt_tokens": 1200, "total_tokens": 1208, "completion_tokens": 8, "prompt_tokens_details": {"cached_tokens": 1024}}
+PASS usage carries prompt_tokens_details.cached_tokens
+RESULT all checks passed

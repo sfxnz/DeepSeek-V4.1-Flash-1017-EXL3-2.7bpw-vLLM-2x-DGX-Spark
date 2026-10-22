@@ -1,0 +1,27 @@
+upstream ok        non-stream: status=200 type=application/json x-dsv41-gateway=api client_error=None last='ails":{"cached_tokens":0},"prompt_cache_hit_tokens":0,"prompt_cache_miss_tokens":5},"system_fingerprint":null}'
+upstream ok        stream    : status=200 type=text/event-stream; charset=utf-8 x-dsv41-gateway=api client_error=None last='data: [DONE]'
+upstream drop      non-stream: status=502 type=application/json x-dsv41-gateway=api client_error=None last='plete message body (incomplete chunked read)\')","type":"internal_error","param":null,"code":"internal_error"}}'
+upstream drop      stream    : status=200 type=text/event-stream; charset=utf-8 x-dsv41-gateway=api client_error=None last='message body (incomplete chunked read)\')", "type": "internal_error", "param": null, "code": "internal_error"}}'
+upstream malformed non-stream: status=502 type=application/json x-dsv41-gateway=api client_error=None last='ent a malformed event: \'data: {\\"choices\\": [\'","type":"internal_error","param":null,"code":"internal_error"}}'
+upstream malformed stream    : status=200 type=text/event-stream; charset=utf-8 x-dsv41-gateway=api client_error=None last='malformed event: \'data: {\\"choices\\": [\'", "type": "internal_error", "param": null, "code": "internal_error"}}'
+stream, client gone at 1 s during a 30 s prefill: upstream generator cancelled after 2.0 s (sent 0 events)
+stream, client gone at 4 s during a 30 s prefill: upstream generator cancelled after 3.99 s (sent 0 events)
+POST /v1/chat/completions/ via gateway: 307 location=http://127.0.0.1:18100/v1/chat/completions
+  same request to the upstream directly with the client's Host: 307 location=http://spark1.lan:8000/v1/chat/completions
+GET /v1/responses/resp%2Fx%3Fy%23z?a=1 via gateway -> upstream saw {"method":"GET","path":"/v1/responses/resp/x?y#z","raw_path":"/v1/responses/resp%2Fx%3Fy%23z","query":"a=1","len":0,"host":"127.0.0.1:18100"}
+fallback with Expect: 100-continue: 200 fallback {"method":"POST","path":"/v1/chat/completions","raw_path":"/v1/chat/completions"
+100 open proxied streams: gateway /health -> 200 after 0.0 s: {"gateway":"ok","upstream":"ok"}
+  an API request meanwhile: 200 after 0.2 s; upstream /health direct: 200
+--- gateway log (tail) ---
+INFO:     127.0.0.1:51382 - "GET /hold HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51398 - "GET /hold HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51402 - "GET /hold HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51408 - "GET /hold HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51418 - "GET /hold HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51420 - "GET /hold HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51430 - "GET /hold HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51434 - "GET /hold HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51438 - "GET /hold HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51442 - "GET /hold HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51452 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51452 - "POST /v1/chat/completions HTTP/1.1" 200 OK

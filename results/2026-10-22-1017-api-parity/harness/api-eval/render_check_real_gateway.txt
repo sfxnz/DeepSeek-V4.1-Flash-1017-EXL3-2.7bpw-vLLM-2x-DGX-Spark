@@ -1,0 +1,3 @@
+[render] 0.1s {"cases": 52, "same": 52, "context_limit": 500000, "invariants": []}
+PASS render.invariants value=0 limit=0
+QUALITY {"mode": "api", "pass": true, "elapsed_s": 0.1, "render_violations": 0}

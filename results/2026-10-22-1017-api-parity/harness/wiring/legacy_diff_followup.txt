@@ -1,0 +1,8 @@
+API_GATEWAY=0 head docker run == base head: True (313 argv items)
+API_GATEWAY=0 worker docker run == base worker: True (306 argv items)
+API_GATEWAY=0 starts a gateway container: False
+API_GATEWAY=0 worker ssh line vs base (not a docker command):
+    +API_GATEWAY=0
+    +VLLM_PORT=18001
+API_GATEWAY=1 head vs base, argv items:
+    @@ -247,2 +247,4 @@

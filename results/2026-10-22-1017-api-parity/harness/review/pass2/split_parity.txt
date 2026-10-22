@@ -1,0 +1,4 @@
+5 mixed sizes/details            API single call: 3293                                                         | gateway: 3293 | same: True
+14 mixed                         API single call: 7156                                                         | gateway: 7156 | same: True
+15 mixed (one 5000 px)           API single call: error: image[2]: You have uploaded an unsupported image. Ple | gateway: error: image[2]: You have uploaded an unsupported image. Ple | same: True
+3 in one message, 3rd broken     API single call: error: .messages[0].image[2]: You have uploaded an unsupport | gateway: error: .messages[0].image[0]: You have uploaded an unsupport | same: False

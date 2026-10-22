@@ -1,0 +1,819 @@
+case                                         api   hf    served | API~served  HF~served  API~HF
+single_user@chat                             ok    ok    ok     | match       match      match
+single_user@think                            ok    ok    ok     | match       match      match
+system_user@chat                             ok    ok    ok     | match       match      match
+system_user@think                            ok    ok    ok     | match       match      match
+multiturn_rc@chat                            ok    ok    ok     | match       match      match
+multiturn_rc@think                           ok    ok    ok     | match       match      match
+multiturn_two_rc@chat                        ok    ok    ok     | match       match      match
+multiturn_two_rc@think                       ok    ok    ok     | match       match      match
+empty_system@chat                            ok    ok    ok     | string      match      string
+empty_system@think                           ok    ok    ok     | match       match      match
+empty_mid_system@chat                        ok    ok    ok     | string      match      string
+empty_mid_system@think                       ok    ok    ok     | string      match      string
+whitespace_content@chat                      ok    ok    ok     | match       match      match
+whitespace_content@think                     ok    ok    ok     | match       match      match
+empty_user@chat                              ok    ok    ok     | match       match      match
+empty_user@think                             ok    ok    ok     | match       match      match
+text_parts@chat                              ok    ok    ok     | match       match      match
+text_parts@think                             ok    ok    ok     | match       match      match
+consecutive_users@chat                       ok    ok    ok     | match       match      match
+consecutive_users@think                      ok    ok    ok     | match       match      match
+developer_role@chat                          E400  E!    ok     | n/a         n/a        n/a
+developer_role@think                         E400  ok    ok     | n/a         match      n/a
+mid_system@chat                              ok    ok    ok     | match       match      match
+mid_system@think                             ok    ok    ok     | match       match      match
+mid_system_last@chat                         ok    ok    ok     | match       match      match
+mid_system_last@think                        ok    ok    ok     | match       match      match
+multi_system_start@chat                      ok    ok    ok     | match       match      match
+multi_system_start@think                     ok    ok    ok     | match       match      match
+latest_reminder@chat                         ok    ok    E400   | n/a         n/a        match
+latest_reminder@think                        ok    ok    E400   | n/a         n/a        match
+latest_reminder_last@chat                    ok    ok    E400   | n/a         n/a        string
+latest_reminder_last@think                   ok    ok    E400   | n/a         n/a        string
+trailing_assistant@chat                      ok    ok    ok     | string      match      string
+trailing_assistant@think                     ok    ok    ok     | string      match      string
+prefix_content@chat                          ok    ok    ok     | string      string     match
+prefix_content@think                         ok    ok    ok     | string      string     match
+prefix_reasoning_only@think                  ok    ok    ok     | string      string     string
+prefix_both@think                            ok    ok    ok     | string      string     match
+prefix_via_wo_eos@chat                       ok    ok    ok     | string      match      string
+vllm_continue_final@chat                     ok    ok    ok     | string      match      string
+vllm_continue_final@think                    ok    ok    ok     | string      match      string
+name_field@chat                              ok    ok    ok     | match       match      match
+name_field@think                             ok    ok    ok     | match       match      match
+tools_auto@chat                              ok    ok    ok     | match       match      match
+tools_auto@think                             ok    ok    ok     | match       match      match
+tools_auto_no_system@chat                    ok    ok    ok     | match       match      match
+tools_auto_no_system@think                   ok    ok    ok     | match       match      match
+tools_choice_auto@chat                       ok    ok    ok     | match       match      match
+tools_choice_auto@think                      ok    ok    ok     | match       match      match
+tools_choice_none@chat                       ok    ok    ok     | string      string     match
+tools_choice_none@think                      ok    ok    ok     | string      string     match
+tools_choice_required@chat                   ok    ok    ok     | string      match      string
+tools_choice_required@think                  E400  ok    ok     | n/a         match      n/a
+tools_choice_named@chat                      ok    ok    ok     | string      string     string
+tools_choice_named@think                     E400  ok    ok     | n/a         string     n/a
+tools_no_description@chat                    ok    ok    ok     | string      string     string
+tools_no_description@think                   ok    ok    ok     | string      string     string
+tools_key_order@chat                         ok    ok    ok     | match       string     string
+tools_key_order@think                        ok    ok    ok     | match       string     string
+tools_strict@chat                            E400  ok    ok     | n/a         string     n/a
+tools_strict@think                           E400  ok    ok     | n/a         string     n/a
+tools_unicode_desc@chat                      ok    ok    ok     | match       match      match
+tools_unicode_desc@think                     ok    ok    ok     | match       match      match
+tools_mid_system_first_user@chat             ok    ok    ok     | string      string     match
+tools_mid_system_first_user@think            ok    ok    ok     | string      string     match
+tools_developer@chat                         E400  E!    ok     | n/a         n/a        n/a
+tools_developer@think                        E400  E!    ok     | n/a         n/a        n/a
+tc_single@chat                               ok    ok    ok     | match       match      match
+tc_single@think                              ok    ok    ok     | match       match      match
+tc_parallel@chat                             ok    ok    ok     | match       match      match
+tc_parallel@think                            ok    ok    ok     | match       match      match
+tc_parallel_reversed@chat                    ok    ok    ok     | match       match      match
+tc_parallel_reversed@think                   ok    ok    ok     | match       match      match
+tc_nested_args@chat                          ok    ok    ok     | match       match      match
+tc_nested_args@think                         ok    ok    ok     | match       match      match
+tc_nonascii_quotes@chat                      ok    ok    ok     | match       match      match
+tc_nonascii_quotes@think                     ok    ok    ok     | match       match      match
+tc_args_malformed@chat                       ok    ok    ok     | string      string     match
+tc_args_malformed@think                      ok    ok    ok     | string      string     match
+tc_args_nonobject@chat                       ok    ok    ok     | string      string     match
+tc_args_nonobject@think                      ok    ok    ok     | string      string     match
+tc_args_empty@chat                           ok    ok    ok     | string      string     match
+tc_args_empty@think                          ok    ok    ok     | string      string     match
+tc_args_double_encoded@chat                  ok    ok    ok     | string      string     string
+tc_args_double_encoded@think                 ok    ok    ok     | string      string     string
+tc_args_float_forms@chat                     ok    ok    ok     | match       match      match
+tc_args_float_forms@think                    ok    ok    ok     | match       match      match
+tc_result_parts@chat                         ok    ok    ok     | match       match      match
+tc_result_parts@think                        ok    ok    ok     | match       match      match
+tc_result_then_user@chat                     ok    ok    ok     | match       match      match
+tc_result_then_user@think                    ok    ok    ok     | match       match      match
+tc_round_trip_final@chat                     ok    ok    ok     | match       match      match
+tc_round_trip_final@think                    ok    ok    ok     | match       match      match
+tc_round_trip_pending@chat                   ok    ok    ok     | match       match      match
+tc_round_trip_pending@think                  ok    ok    ok     | match       match      match
+tc_no_tools_declared@chat                    ok    ok    ok     | match       match      match
+tc_no_tools_declared@think                   ok    ok    ok     | string      match      string
+tc_missing_rc@chat                           ok    ok    ok     | match       match      match
+tc_missing_rc@think                          ok    ok    ok     | match       match      match
+tc_content_and_calls@chat                    ok    ok    ok     | match       match      match
+tc_content_and_calls@think                   ok    ok    ok     | match       match      match
+rf_json_object@chat                          ok    ok    ok     | string      string     match
+rf_json_object@think                         ok    ok    ok     | string      string     match
+rf_json_object_no_word@chat                  E400  ok    ok     | n/a         string     n/a
+rf_json_schema@chat                          ok    ok    ok     | string      string     match
+rf_json_schema@think                         ok    ok    ok     | string      string     match
+rf_json_schema_strict@chat                   ok    ok    ok     | string      string     match
+rf_json_schema_tools@chat                    ok    ok    ok     | string      string     match
+rf_text@chat                                 ok    ok    ok     | match       match      match
+sp_user_text@chat                            ok    ok    ok     | ids-only    match      ids-only
+sp_user_image_spellings@chat                 ok    ok    ok     | match       match      match
+sp_user_deepseek_image@chat                  ok    E!    E400   | n/a         n/a        n/a
+sp_assistant_grounding@chat                  ok    ok    ok     | ids-only    match      ids-only
+sp_tool_result_dsml@chat                     ok    ok    ok     | ids-only    match      ids-only
+img_one@chat                                 ok    ok    ok     | match       match      match
+img_two_system@think                         ok    ok    ok     | match       match      match
+img_tool_result@chat                         ok    ok    ok     | match       match      match
+img_system@chat                              ok    ok    ok     | match       match      match
+img_assistant@chat                           E400  ok    ok     | n/a         match      n/a
+img_file_part@chat                           E400  ok    E400   | n/a         n/a        n/a
+img_tool_results_reordered@chat              ok    ok    ok     | match       match      match
+img_order_control@chat                       ok    ok    ok     | match       match      match
+img_file_part_flat@chat                      ok    ok    E400   | n/a         n/a        string
+tools_strict_valid@chat                      ok    ok    ok     | string      string     string
+tools_name_dot@chat                          E400  ok    ok     | n/a         match      n/a
+tools_duplicate@chat                         E400  ok    ok     | n/a         match      n/a
+tool_orphan@chat                             E400  ok    ok     | n/a         match      n/a
+tc_content_null@chat                         ok    ok    ok     | match       match      match
+tc_content_null@think                        ok    ok    ok     | match       match      match
+tc_empty_list@chat                           E400  ok    ok     | n/a         match      n/a
+assistant_no_content@chat                    E400  ok    ok     | n/a         match      n/a
+user_null_content@chat                       E400  E!    E400   | n/a         n/a        n/a
+prefix_not_last@chat                         E400  ok    ok     | n/a         string     n/a
+prefix_with_tools@chat                       E400  ok    ok     | n/a         string     n/a
+tools_think_history_missing_rc@think         ok    ok    ok     | match       match      match
+tools_choice_none_history@think              ok    ok    ok     | string      string     string
+add_special_tokens_true@chat                 ok    ok    ok     | match       match      match
+billing_header_system@chat                   ok    ok    ok     | string      match      string
+rc_as_reasoning_field@think                  ok    ok    ok     | string      string     match
+ctl_absent                                   ok    ok    ok     | string      string     match
+ctl_effort_none                              ok    ok    ok     | match       match      match
+ctl_effort_minimal                           ok    ok    E400   | n/a         n/a        match
+ctl_effort_low                               ok    ok    ok     | match       match      match
+ctl_effort_medium                            ok    ok    E400   | n/a         n/a        match
+ctl_effort_high                              ok    ok    ok     | match       match      match
+ctl_effort_xhigh                             ok    ok    E400   | n/a         n/a        match
+ctl_effort_max                               ok    ok    ok     | match       match      match
+ctl_effort_ultra                             ok    ok    E400   | n/a         n/a        match
+ctl_effort_numeric                           E400  ok    E400   | n/a         n/a        n/a
+ctl_thinking_enabled                         ok    ok    ok     | string      string     match
+ctl_thinking_adaptive                        ok    ok    ok     | string      string     match
+ctl_thinking_disabled_effort_high            ok    ok    ok     | string      string     match
+ctl_thinking_enabled_effort_max              ok    ok    ok     | match       match      match
+ctl_thinking_enabled_effort_none             ok    ok    ok     | string      string     match
+ctl_ctk_thinking                             ok    ok    ok     | string      string     match
+ctl_ctk_enable_thinking                      ok    ok    ok     | string      string     match
+ctl_ctk_thinking_effort_high                 ok    ok    ok     | match       match      match
+ctl_ctk_numeric_effort                       ok    ok    ok     | string      string     match
+ctl_ctk_effort_only                          ok    ok    ok     | string      string     match
+ctl_ctk_drop_thinking_false                  ok    ok    ok     | string      string     match
+golden_1                                     ok    ok    ok     | string      match      string
+golden_2                                     ok    ok    ok     | string      match      string
+golden_3                                     E400  ok    E400   | n/a         n/a        n/a
+golden_4                                     ok    ok    E400   | n/a         n/a        string
+golden_5                                     ok    ok    ok     | match       match      match
+
+== empty_system@chat: empty system message first
+  api_vs_served string@23
+      a='<｜begin▁of▁sentence｜><｜User｜>Hello<｜Assistant｜></think>'
+      b='<｜begin▁of▁sentence｜><｜System｜><｜User｜>Hello<｜Assistant｜></think>'
+  api_vs_served ids@1 len 5 vs 6: a=[0, 128803, 19923, 128804, 128822] b=[0, 128799, 128803, 19923, 128804, 128822]
+  api_vs_hf string@23
+      a='<｜begin▁of▁sentence｜><｜User｜>Hello<｜Assistant｜></think>'
+      b='<｜begin▁of▁sentence｜><｜System｜><｜User｜>Hello<｜Assistant｜></think>'
+  api_vs_hf ids@1 len 5 vs 6: a=[0, 128803, 19923, 128804, 128822] b=[0, 128799, 128803, 19923, 128804, 128822]
+== empty_mid_system@chat: empty system message mid-conversation
+  api_vs_served string@78
+      a='e｜><｜User｜>Hello<｜Assistant｜></think>Hi<｜end▁of▁sentence｜><｜User｜>Again<｜Assistant｜></think>'
+      b='e｜><｜User｜>Hello<｜Assistant｜></think>Hi<｜end▁of▁sentence｜><｜System｜><｜User｜>Again<｜Assistant｜></think>'
+  api_vs_served ids@7 len 11 vs 12: a=[19923, 128804, 128822, 23166, 1, 128803, 40544, 128804, 128822] b=[19923, 128804, 128822, 23166, 1, 128799, 128803, 40544, 128804, 128822]
+  api_vs_hf string@78
+      a='e｜><｜User｜>Hello<｜Assistant｜></think>Hi<｜end▁of▁sentence｜><｜User｜>Again<｜Assistant｜></think>'
+      b='e｜><｜User｜>Hello<｜Assistant｜></think>Hi<｜end▁of▁sentence｜><｜System｜><｜User｜>Again<｜Assistant｜></think>'
+  api_vs_hf ids@7 len 11 vs 12: a=[19923, 128804, 128822, 23166, 1, 128803, 40544, 128804, 128822] b=[19923, 128804, 128822, 23166, 1, 128799, 128803, 40544, 128804, 128822]
+== empty_mid_system@think: empty system message mid-conversation
+  api_vs_served string@179
+      a=')\n\n<｜User｜>Hello<｜Assistant｜></think>Hi<｜end▁of▁sentence｜><｜User｜>Again<｜Assistant｜><think>'
+      b=')\n\n<｜User｜>Hello<｜Assistant｜></think>Hi<｜end▁of▁sentence｜><｜System｜><｜User｜>Again<｜Assistant｜><think>'
+  api_vs_served ids@33 len 37 vs 38: a=[19923, 128804, 128822, 23166, 1, 128803, 40544, 128804, 128821] b=[19923, 128804, 128822, 23166, 1, 128799, 128803, 40544, 128804, 128821]
+  api_vs_hf string@179
+      a=')\n\n<｜User｜>Hello<｜Assistant｜></think>Hi<｜end▁of▁sentence｜><｜User｜>Again<｜Assistant｜><think>'
+      b=')\n\n<｜User｜>Hello<｜Assistant｜></think>Hi<｜end▁of▁sentence｜><｜System｜><｜User｜>Again<｜Assistant｜><think>'
+  api_vs_hf ids@33 len 37 vs 38: a=[19923, 128804, 128822, 23166, 1, 128803, 40544, 128804, 128821] b=[19923, 128804, 128822, 23166, 1, 128799, 128803, 40544, 128804, 128821]
+== developer_role@chat: developer role message
+  api: ValueError: invalid request body: unknown variant `developer`, expected one of `system`, `user`, `assistant`, `tool`, `latest_reminder`
+  hf: NotImplementedError: Unknown role: developer
+== developer_role@think: developer role message
+  api: ValueError: invalid request body: unknown variant `developer`, expected one of `system`, `user`, `assistant`, `tool`, `latest_reminder`
+== latest_reminder@chat: latest_reminder role after system
+  served: ValueError: Invalid role: latest_reminder
+== latest_reminder@think: latest_reminder role after system
+  served: ValueError: Invalid role: latest_reminder
+== latest_reminder_last@chat: latest_reminder after the user message
+  served: ValueError: Invalid role: latest_reminder
+  api_vs_hf string@46
+      a='<｜begin▁of▁sentence｜><｜User｜>What day is it?<｜latest_reminder｜>2026-10-22<｜Assistant｜></think>'
+      b='<｜begin▁of▁sentence｜><｜User｜>What day is it?<｜Assistant｜></think><｜latest_reminder｜>2026-10-22'
+  api_vs_hf ids@7 len 16 vs 16: a=[3085, 2173, 344, 436, 33, 128828, 939, 24, 15, 553, 15, 1302, 128804] b=[3085, 2173, 344, 436, 33, 128804, 128822, 128828, 939, 24, 15, 553, 15]
+== latest_reminder_last@think: latest_reminder after the user message
+  served: ValueError: Invalid role: latest_reminder
+  api_vs_hf string@147
+      a=' the more thorough the reasoning)\n\n<｜User｜>What day is it?<｜latest_reminder｜>2026-10-22<｜Assistant｜><think>'
+      b=' the more thorough the reasoning)\n\n<｜User｜>What day is it?<｜Assistant｜><think><｜latest_reminder｜>2026-10-22'
+  api_vs_hf ids@33 len 42 vs 42: a=[3085, 2173, 344, 436, 33, 128828, 939, 24, 15, 553, 15, 1302, 128804] b=[3085, 2173, 344, 436, 33, 128804, 128821, 128828, 939, 24, 15, 553, 15]
+== trailing_assistant@chat: conversation ending in an assistant message (no prefix)
+  api_vs_served string@94
+      a=' a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜><｜Assistant｜></think>'
+      b=' a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_served ids@13 len 15 vs 13: a=[128822, 16560, 3970, 4213, 1, 128804, 128822] b=[128822, 16560, 3970, 4213, 1]
+  api_vs_hf string@94
+      a=' a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜><｜Assistant｜></think>'
+      b=' a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_hf ids@13 len 15 vs 13: a=[128822, 16560, 3970, 4213, 1, 128804, 128822] b=[128822, 16560, 3970, 4213, 1]
+== trailing_assistant@think: conversation ending in an assistant message (no prefix)
+  api_vs_served string@158
+      a='horough the reasoning)\n\n<｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜><｜Assistant｜><think>'
+      b='horough the reasoning)\n\n<｜User｜>Write a haiku.<｜Assistant｜><think></think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_served ids@34 len 41 vs 40: a=[260, 535, 16251, 16, 128804, 128822, 16560, 3970, 4213, 1, 128804, 128821] b=[260, 535, 16251, 16, 128804, 128821, 128822, 16560, 3970, 4213, 1]
+  api_vs_hf string@158
+      a='horough the reasoning)\n\n<｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜><｜Assistant｜><think>'
+      b='horough the reasoning)\n\n<｜User｜>Write a haiku.<｜Assistant｜><think></think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_hf ids@34 len 41 vs 40: a=[260, 535, 16251, 16, 128804, 128822, 16560, 3970, 4213, 1, 128804, 128821] b=[260, 535, 16251, 16, 128804, 128821, 128822, 16560, 3970, 4213, 1]
+== prefix_content@chat: assistant prefix continuation with content
+  api_vs_served string@75
+      a='ence｜><｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind'
+      b='ence｜><｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_served ids@12 len 12 vs 13: a=[128804, 128822, 16560, 3970, 4213] b=[128804, 128822, 16560, 3970, 4213, 1]
+  hf_vs_served string@75
+      a='ence｜><｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind'
+      b='ence｜><｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜>'
+  hf_vs_served ids@12 len 12 vs 13: a=[128804, 128822, 16560, 3970, 4213] b=[128804, 128822, 16560, 3970, 4213, 1]
+== prefix_content@think: assistant prefix continuation with content
+  api_vs_served string@183
+      a='｜User｜>Write a haiku.<｜Assistant｜><think></think>Autumn wind'
+      b='｜User｜>Write a haiku.<｜Assistant｜><think></think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_served ids@39 len 39 vs 40: a=[128821, 128822, 16560, 3970, 4213] b=[128821, 128822, 16560, 3970, 4213, 1]
+  hf_vs_served string@183
+      a='｜User｜>Write a haiku.<｜Assistant｜><think></think>Autumn wind'
+      b='｜User｜>Write a haiku.<｜Assistant｜><think></think>Autumn wind<｜end▁of▁sentence｜>'
+  hf_vs_served ids@39 len 39 vs 40: a=[128821, 128822, 16560, 3970, 4213] b=[128821, 128822, 16560, 3970, 4213, 1]
+== prefix_reasoning_only@think: assistant prefix continuation with reasoning only
+  api_vs_served string@186
+      a='er｜>Write a haiku.<｜Assistant｜><think>Let me count syllables'
+      b='er｜>Write a haiku.<｜Assistant｜><think>Let me count syllables</think><｜end▁of▁sentence｜>'
+  api_vs_served ids@39 len 39 vs 41: a=[128821, 5718, 678, 1895, 47610] b=[128821, 5718, 678, 1895, 47610, 128822, 1]
+  hf_vs_served string@194
+      a='e a haiku.<｜Assistant｜><think>Let me count syllables</think>'
+      b='e a haiku.<｜Assistant｜><think>Let me count syllables</think><｜end▁of▁sentence｜>'
+  hf_vs_served ids@40 len 40 vs 41: a=[5718, 678, 1895, 47610, 128822] b=[5718, 678, 1895, 47610, 128822, 1]
+  api_vs_hf string@186
+      a='er｜>Write a haiku.<｜Assistant｜><think>Let me count syllables'
+      b='er｜>Write a haiku.<｜Assistant｜><think>Let me count syllables</think>'
+  api_vs_hf ids@39 len 39 vs 40: a=[128821, 5718, 678, 1895, 47610] b=[128821, 5718, 678, 1895, 47610, 128822]
+== prefix_both@think: assistant prefix continuation with reasoning and content
+  api_vs_served string@204
+      a='<｜Assistant｜><think>Five syllables first.</think>Autumn wind'
+      b='<｜Assistant｜><think>Five syllables first.</think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_served ids@43 len 43 vs 44: a=[16, 128822, 16560, 3970, 4213] b=[16, 128822, 16560, 3970, 4213, 1]
+  hf_vs_served string@204
+      a='<｜Assistant｜><think>Five syllables first.</think>Autumn wind'
+      b='<｜Assistant｜><think>Five syllables first.</think>Autumn wind<｜end▁of▁sentence｜>'
+  hf_vs_served ids@43 len 43 vs 44: a=[16, 128822, 16560, 3970, 4213] b=[16, 128822, 16560, 3970, 4213, 1]
+== prefix_via_wo_eos@chat: HF encoder key wo_eos=true on the final assistant message (served-side escape hatch?)
+  api_vs_served string@75
+      a='ence｜><｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜><｜Assistant｜></think>'
+      b='ence｜><｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind'
+  api_vs_served ids@12 len 15 vs 12: a=[128804, 128822, 16560, 3970, 4213, 1, 128804, 128822] b=[128804, 128822, 16560, 3970, 4213]
+  api_vs_hf string@75
+      a='ence｜><｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜><｜Assistant｜></think>'
+      b='ence｜><｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind'
+  api_vs_hf ids@12 len 15 vs 12: a=[128804, 128822, 16560, 3970, 4213, 1, 128804, 128822] b=[128804, 128822, 16560, 3970, 4213]
+== vllm_continue_final@chat: vLLM-native prefill: continue_final_message=true, add_generation_prompt=false
+  api_vs_served string@94
+      a=' a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜><｜Assistant｜></think>'
+      b=' a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_served ids@13 len 15 vs 13: a=[128822, 16560, 3970, 4213, 1, 128804, 128822] b=[128822, 16560, 3970, 4213, 1]
+  api_vs_hf string@94
+      a=' a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜><｜Assistant｜></think>'
+      b=' a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_hf ids@13 len 15 vs 13: a=[128822, 16560, 3970, 4213, 1, 128804, 128822] b=[128822, 16560, 3970, 4213, 1]
+== vllm_continue_final@think: vLLM-native prefill: continue_final_message=true, add_generation_prompt=false
+  api_vs_served string@158
+      a='horough the reasoning)\n\n<｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜><｜Assistant｜><think>'
+      b='horough the reasoning)\n\n<｜User｜>Write a haiku.<｜Assistant｜><think></think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_served ids@34 len 41 vs 40: a=[260, 535, 16251, 16, 128804, 128822, 16560, 3970, 4213, 1, 128804, 128821] b=[260, 535, 16251, 16, 128804, 128821, 128822, 16560, 3970, 4213, 1]
+  api_vs_hf string@158
+      a='horough the reasoning)\n\n<｜User｜>Write a haiku.<｜Assistant｜></think>Autumn wind<｜end▁of▁sentence｜><｜Assistant｜><think>'
+      b='horough the reasoning)\n\n<｜User｜>Write a haiku.<｜Assistant｜><think></think>Autumn wind<｜end▁of▁sentence｜>'
+  api_vs_hf ids@34 len 41 vs 40: a=[260, 535, 16251, 16, 128804, 128822, 16560, 3970, 4213, 1, 128804, 128821] b=[260, 535, 16251, 16, 128804, 128821, 128822, 16560, 3970, 4213, 1]
+== tools_choice_none@chat: tools, tool_choice=none
+  api_vs_served string@59
+      a='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Weather in Paris?<｜Assistant｜></think>'
+      b="<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.\n\n## Tools\n\nYou have access to a set of tools to help answer the user's question"
+  api_vs_served ids@7 len 15 vs 354: a=[3476, 477, 260, 11502, 22896, 16, 128803, 58565, 295, 11111, 33, 128804, 128822] b=[3476, 477, 260, 11502, 22896, 339, 372, 27193, 271, 3476, 611, 3278, 304]
+  hf_vs_served string@59
+      a='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Weather in Paris?<｜Assistant｜></think>'
+      b="<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.\n\n## Tools\n\nYou have access to a set of tools to help answer the user's question"
+  hf_vs_served ids@7 len 15 vs 354: a=[3476, 477, 260, 11502, 22896, 16, 128803, 58565, 295, 11111, 33, 128804, 128822] b=[3476, 477, 260, 11502, 22896, 339, 372, 27193, 271, 3476, 611, 3278, 304]
+== tools_choice_none@think: tools, tool_choice=none
+  api_vs_served string@150
+      a='e more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Weather in Paris?<｜Assistant｜><think>'
+      b="e more thorough the reasoning)\n\nYou are a helpful assistant.\n\n## Tools\n\nYou have access to a set of tools to help answer the user's question"
+  api_vs_served ids@32 len 40 vs 379: a=[3476, 477, 260, 11502, 22896, 16, 128803, 58565, 295, 11111, 33, 128804, 128821] b=[3476, 477, 260, 11502, 22896, 339, 372, 27193, 271, 3476, 611, 3278, 304]
+  hf_vs_served string@150
+      a='e more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Weather in Paris?<｜Assistant｜><think>'
+      b="e more thorough the reasoning)\n\nYou are a helpful assistant.\n\n## Tools\n\nYou have access to a set of tools to help answer the user's question"
+  hf_vs_served ids@32 len 40 vs 379: a=[3476, 477, 260, 11502, 22896, 16, 128803, 58565, 295, 11111, 33, 128804, 128821] b=[3476, 477, 260, 11502, 22896, 339, 372, 27193, 271, 3476, 611, 3278, 304]
+== tools_choice_required@chat: tools, tool_choice=required
+  api_vs_served string@1515
+      a='e tool calls.\n<｜User｜>Weather in Paris?<｜Assistant｜></think>\n\n<｜DSML｜ calls>\n'
+      b='e tool calls.\n<｜User｜>Weather in Paris?<｜Assistant｜></think>'
+  api_vs_served ids@354 len 359 vs 354: a=[295, 11111, 33, 128804, 128822, 271, 30, 128825, 10699, 1018] b=[295, 11111, 33, 128804, 128822]
+  api_vs_hf string@1515
+      a='e tool calls.\n<｜User｜>Weather in Paris?<｜Assistant｜></think>\n\n<｜DSML｜ calls>\n'
+      b='e tool calls.\n<｜User｜>Weather in Paris?<｜Assistant｜></think>'
+  api_vs_hf ids@354 len 359 vs 354: a=[295, 11111, 33, 128804, 128822, 271, 30, 128825, 10699, 1018] b=[295, 11111, 33, 128804, 128822]
+== tools_choice_required@think: tools, tool_choice=required
+  api: {"error":{"message":"Thinking mode does not support this tool_choice","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+== tools_choice_named@chat: tools, named tool_choice
+  api_vs_served string@919
+      a='s or final response.\n\n### Available Tool Schemas\n\n{"name": "search", "description": "Search the web", "parameters": {"type": "object", "prop'
+      b='s or final response.\n\n### Available Tool Schemas\n\n{"name": "get_weather", "description": "Get the weather for a location", "parameters": {"t'
+  api_vs_served ids@205 len 284 vs 354: a=[271, 24313, 2852, 3362, 582, 14346, 1760, 582, 20855, 3362, 582, 12386, 270] b=[271, 24313, 2852, 3362, 582, 1133, 65, 50219, 1760, 582, 20855, 3362, 582]
+  hf_vs_served string@919
+      a='s or final response.\n\n### Available Tool Schemas\n\n{"name": "search", "description": "Search the web", "parameters": {"type": "object", "prop'
+      b='s or final response.\n\n### Available Tool Schemas\n\n{"name": "get_weather", "description": "Get the weather for a location", "parameters": {"t'
+  hf_vs_served ids@205 len 279 vs 354: a=[271, 24313, 2852, 3362, 582, 14346, 1760, 582, 20855, 3362, 582, 12386, 270] b=[271, 24313, 2852, 3362, 582, 1133, 65, 50219, 1760, 582, 20855, 3362, 582]
+  api_vs_hf string@1243
+      a='e tool calls.\n<｜User｜>Weather in Paris?<｜Assistant｜></think>\n\n<｜DSML｜ calls>\n'
+      b='e tool calls.\n<｜User｜>Weather in Paris?<｜Assistant｜></think>'
+  api_vs_hf ids@279 len 284 vs 279: a=[295, 11111, 33, 128804, 128822, 271, 30, 128825, 10699, 1018] b=[295, 11111, 33, 128804, 128822]
+== tools_choice_named@think: tools, named tool_choice
+  api: {"error":{"message":"Thinking mode does not support this tool_choice","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+  hf_vs_served string@1010
+      a='s or final response.\n\n### Available Tool Schemas\n\n{"name": "search", "description": "Search the web", "parameters": {"type": "object", "prop'
+      b='s or final response.\n\n### Available Tool Schemas\n\n{"name": "get_weather", "description": "Get the weather for a location", "parameters": {"t'
+  hf_vs_served ids@230 len 304 vs 379: a=[271, 24313, 2852, 3362, 582, 14346, 1760, 582, 20855, 3362, 582, 12386, 270] b=[271, 24313, 2852, 3362, 582, 1133, 65, 50219, 1760, 582, 20855, 3362, 582]
+== tools_no_description@chat: tool without description and parameters
+  api_vs_served string@913
+      a='### Available Tool Schemas\n\n{"name": "ping", "description": "", "parameters": {}}\n\nYou MUST strictly follow the above defined tool name and '
+      b='### Available Tool Schemas\n\n{"name": "ping", "description": null, "parameters": null}\n\nYou MUST strictly follow the above defined tool name '
+  api_vs_served ids@205 len 234 vs 235: a=[22153, 1760, 582, 20855, 3362, 51624, 582, 46172, 3362, 26102, 2365, 3476, 74366] b=[22153, 1760, 582, 20855, 3362, 5100, 14, 582, 46172, 3362, 5100, 2365, 3476]
+  hf_vs_served string@896
+      a='final response.\n\n### Available Tool Schemas\n\n{"name": "ping"}\n\nYou MUST strictly follow the above defined tool name and parameter schemas to'
+      b='final response.\n\n### Available Tool Schemas\n\n{"name": "ping", "description": null, "parameters": null}\n\nYou MUST strictly follow the above d'
+  hf_vs_served ids@201 len 226 vs 235: a=[24313, 2852, 3362, 582, 22153, 4, 2365, 3476, 74366, 29851, 1605, 270, 3554] b=[24313, 2852, 3362, 582, 22153, 1760, 582, 20855, 3362, 5100, 14, 582, 46172]
+  api_vs_hf string@896
+      a='final response.\n\n### Available Tool Schemas\n\n{"name": "ping", "description": "", "parameters": {}}\n\nYou MUST strictly follow the above defin'
+      b='final response.\n\n### Available Tool Schemas\n\n{"name": "ping"}\n\nYou MUST strictly follow the above defined tool name and parameter schemas to'
+  api_vs_hf ids@201 len 234 vs 226: a=[24313, 2852, 3362, 582, 22153, 1760, 582, 20855, 3362, 51624, 582, 46172, 3362] b=[24313, 2852, 3362, 582, 22153, 4, 2365, 3476, 74366, 29851, 1605, 270, 3554]
+== tools_no_description@think: tool without description and parameters
+  api_vs_served string@1004
+      a='### Available Tool Schemas\n\n{"name": "ping", "description": "", "parameters": {}}\n\nYou MUST strictly follow the above defined tool name and '
+      b='### Available Tool Schemas\n\n{"name": "ping", "description": null, "parameters": null}\n\nYou MUST strictly follow the above defined tool name '
+  api_vs_served ids@229 len 258 vs 259: a=[22153, 1760, 582, 20855, 3362, 51624, 582, 46172, 3362, 26102, 2365, 3476, 74366] b=[22153, 1760, 582, 20855, 3362, 5100, 14, 582, 46172, 3362, 5100, 2365, 3476]
+  hf_vs_served string@987
+      a='final response.\n\n### Available Tool Schemas\n\n{"name": "ping"}\n\nYou MUST strictly follow the above defined tool name and parameter schemas to'
+      b='final response.\n\n### Available Tool Schemas\n\n{"name": "ping", "description": null, "parameters": null}\n\nYou MUST strictly follow the above d'
+  hf_vs_served ids@225 len 250 vs 259: a=[24313, 2852, 3362, 582, 22153, 4, 2365, 3476, 74366, 29851, 1605, 270, 3554] b=[24313, 2852, 3362, 582, 22153, 1760, 582, 20855, 3362, 5100, 14, 582, 46172]
+  api_vs_hf string@987
+      a='final response.\n\n### Available Tool Schemas\n\n{"name": "ping", "description": "", "parameters": {}}\n\nYou MUST strictly follow the above defin'
+      b='final response.\n\n### Available Tool Schemas\n\n{"name": "ping"}\n\nYou MUST strictly follow the above defined tool name and parameter schemas to'
+  api_vs_hf ids@225 len 258 vs 250: a=[24313, 2852, 3362, 582, 22153, 1760, 582, 20855, 3362, 51624, 582, 46172, 3362] b=[24313, 2852, 3362, 582, 22153, 4, 2365, 3476, 74366, 29851, 1605, 270, 3554]
+== tools_key_order@chat: function keys in client order parameters, description, name
+  hf_vs_served string@883
+      a='ool calls or final response.\n\n### Available Tool Schemas\n\n{"parameters": {"type": "object", "properties": {"host": {"type": "string"}}}, "de'
+      b='ool calls or final response.\n\n### Available Tool Schemas\n\n{"name": "ping", "description": "Ping a host", "parameters": {"type": "object", "p'
+  hf_vs_served ids@197 len 258 vs 257: a=[28249, 13178, 8380, 271, 24313, 46172, 3362, 28612, 4611, 3362, 582, 10325, 1760] b=[28249, 13178, 8380, 271, 24313, 2852, 3362, 582, 22153, 1760, 582, 20855, 3362]
+  api_vs_hf string@883
+      a='ool calls or final response.\n\n### Available Tool Schemas\n\n{"name": "ping", "description": "Ping a host", "parameters": {"type": "object", "p'
+      b='ool calls or final response.\n\n### Available Tool Schemas\n\n{"parameters": {"type": "object", "properties": {"host": {"type": "string"}}}, "de'
+  api_vs_hf ids@197 len 257 vs 258: a=[28249, 13178, 8380, 271, 24313, 2852, 3362, 582, 22153, 1760, 582, 20855, 3362] b=[28249, 13178, 8380, 271, 24313, 46172, 3362, 28612, 4611, 3362, 582, 10325, 1760]
+== tools_key_order@think: function keys in client order parameters, description, name
+  hf_vs_served string@974
+      a='ool calls or final response.\n\n### Available Tool Schemas\n\n{"parameters": {"type": "object", "properties": {"host": {"type": "string"}}}, "de'
+      b='ool calls or final response.\n\n### Available Tool Schemas\n\n{"name": "ping", "description": "Ping a host", "parameters": {"type": "object", "p'
+  hf_vs_served ids@221 len 282 vs 281: a=[28249, 13178, 8380, 271, 24313, 46172, 3362, 28612, 4611, 3362, 582, 10325, 1760] b=[28249, 13178, 8380, 271, 24313, 2852, 3362, 582, 22153, 1760, 582, 20855, 3362]
+  api_vs_hf string@974
+      a='ool calls or final response.\n\n### Available Tool Schemas\n\n{"name": "ping", "description": "Ping a host", "parameters": {"type": "object", "p'
+      b='ool calls or final response.\n\n### Available Tool Schemas\n\n{"parameters": {"type": "object", "properties": {"host": {"type": "string"}}}, "de'
+  api_vs_hf ids@221 len 281 vs 282: a=[28249, 13178, 8380, 271, 24313, 2852, 3362, 582, 22153, 1760, 582, 20855, 3362] b=[28249, 13178, 8380, 271, 24313, 46172, 3362, 28612, 4611, 3362, 582, 10325, 1760]
+== tools_strict@chat: strict tool
+  api: {"error":{"message":"Required properties must match all properties in the object","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+  hf_vs_served string@932
+      a='Schemas\n\n{"name": "get_weather", "description": "Weather", "strict": true, "parameters": {"type": "object", "properties": {"location": {"typ'
+      b='Schemas\n\n{"name": "get_weather", "description": "Weather", "parameters": {"type": "object", "properties": {"location": {"type": "string"}, "'
+  hf_vs_served ids@211 len 276 vs 276: a=[3362, 582, 58565, 1760, 582, 107701, 3362, 3292, 14, 582, 46172, 3362, 28612] b=[3362, 582, 58565, 1760, 582, 46172, 3362, 28612, 4611, 3362, 582, 10325, 1760]
+== tools_strict@think: strict tool
+  api: {"error":{"message":"Required properties must match all properties in the object","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+  hf_vs_served string@1023
+      a='Schemas\n\n{"name": "get_weather", "description": "Weather", "strict": true, "parameters": {"type": "object", "properties": {"location": {"typ'
+      b='Schemas\n\n{"name": "get_weather", "description": "Weather", "parameters": {"type": "object", "properties": {"location": {"type": "string"}, "'
+  hf_vs_served ids@235 len 300 vs 300: a=[3362, 582, 58565, 1760, 582, 107701, 3362, 3292, 14, 582, 46172, 3362, 28612] b=[3362, 582, 58565, 1760, 582, 46172, 3362, 28612, 4611, 3362, 582, 10325, 1760]
+== tools_mid_system_first_user@chat: tools, first message user, later a mid-conversation system message
+  api_vs_served string@23
+      a="<｜begin▁of▁sentence｜><｜System｜>\n\n## Tools\n\nYou have access to a set of tools to help answer the user's "
+      b='<｜begin▁of▁sentence｜><｜User｜>Hi<｜Assistant｜></think>Hello<｜end▁of▁sentence｜><｜System｜>Be brief.\n\n## Too'
+  api_vs_served ids@1 len 359 vs 357: a=[0, 128799, 271, 372, 27193, 271, 3476, 611, 3278] b=[0, 128803, 23166, 128804, 128822, 19923, 1, 128799, 7153]
+  hf_vs_served string@23
+      a="<｜begin▁of▁sentence｜><｜System｜>\n\n## Tools\n\nYou have access to a set of tools to help answer the user's "
+      b='<｜begin▁of▁sentence｜><｜User｜>Hi<｜Assistant｜></think>Hello<｜end▁of▁sentence｜><｜System｜>Be brief.\n\n## Too'
+  hf_vs_served ids@1 len 359 vs 357: a=[0, 128799, 271, 372, 27193, 271, 3476, 611, 3278] b=[0, 128803, 23166, 128804, 128822, 19923, 1, 128799, 7153]
+== tools_mid_system_first_user@think: tools, first message user, later a mid-conversation system message
+  api_vs_served string@122
+      a="00, the higher the value, the more thorough the reasoning)\n\n\n\n## Tools\n\nYou have access to a set of tools to help answer the user's question"
+      b='00, the higher the value, the more thorough the reasoning)\n\n<｜User｜>Hi<｜Assistant｜><think></think>Hello<｜end▁of▁sentence｜><｜System｜>Be brief'
+  api_vs_served ids@26 len 384 vs 384: a=[270, 850, 15146, 270, 22805, 86262, 372, 27193, 271, 3476, 611, 3278, 304] b=[270, 850, 15146, 270, 22805, 868, 128803, 23166, 128804, 128821, 128822, 19923, 1]
+  hf_vs_served string@122
+      a="00, the higher the value, the more thorough the reasoning)\n\n\n\n## Tools\n\nYou have access to a set of tools to help answer the user's question"
+      b='00, the higher the value, the more thorough the reasoning)\n\n<｜User｜>Hi<｜Assistant｜><think></think>Hello<｜end▁of▁sentence｜><｜System｜>Be brief'
+  hf_vs_served ids@26 len 384 vs 384: a=[270, 850, 15146, 270, 22805, 86262, 372, 27193, 271, 3476, 611, 3278, 304] b=[270, 850, 15146, 270, 22805, 868, 128803, 23166, 128804, 128821, 128822, 19923, 1]
+== tools_developer@chat: tools with a developer message and no system message
+  api: ValueError: invalid request body: unknown variant `developer`, expected one of `system`, `user`, `assistant`, `tool`, `latest_reminder`
+  hf: NotImplementedError: Unknown role: developer
+== tools_developer@think: tools with a developer message and no system message
+  api: ValueError: invalid request body: unknown variant `developer`, expected one of `system`, `user`, `assistant`, `tool`, `latest_reminder`
+  hf: NotImplementedError: Unknown role: developer
+== tc_args_malformed@chat: malformed JSON arguments string
+  api_vs_served string@1564
+      a='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">{"query": "x"</｜DSML｜ parameter'
+      b='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  api_vs_served ids@365 len 408 vs 387: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+  hf_vs_served string@1564
+      a='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">{"query": "x"</｜DSML｜ parameter'
+      b='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  hf_vs_served ids@365 len 408 vs 387: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+== tc_args_malformed@think: malformed JSON arguments string
+  api_vs_served string@1685
+      a='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">{"query": "x"</｜DSML｜ parameter'
+      b='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  api_vs_served ids@397 len 440 vs 419: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+  hf_vs_served string@1685
+      a='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">{"query": "x"</｜DSML｜ parameter'
+      b='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  hf_vs_served ids@397 len 440 vs 419: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+== tc_args_nonobject@chat: arguments JSON is an array
+  api_vs_served string@1564
+      a='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">[1, 2]</｜DSML｜ parameter>\n</｜DS'
+      b='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  api_vs_served ids@365 len 408 vs 387: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+  hf_vs_served string@1564
+      a='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">[1, 2]</｜DSML｜ parameter>\n</｜DS'
+      b='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  hf_vs_served ids@365 len 408 vs 387: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+== tc_args_nonobject@think: arguments JSON is an array
+  api_vs_served string@1685
+      a='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">[1, 2]</｜DSML｜ parameter>\n</｜DS'
+      b='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  api_vs_served ids@397 len 440 vs 419: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+  hf_vs_served string@1685
+      a='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">[1, 2]</｜DSML｜ parameter>\n</｜DS'
+      b='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  hf_vs_served ids@397 len 440 vs 419: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+== tc_args_empty@chat: arguments empty string
+  api_vs_served string@1564
+      a='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true"></｜DSML｜ parameter>\n</｜DSML｜ in'
+      b='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  api_vs_served ids@365 len 401 vs 387: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+  hf_vs_served string@1564
+      a='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true"></｜DSML｜ parameter>\n</｜DSML｜ in'
+      b='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  hf_vs_served ids@365 len 401 vs 387: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+== tc_args_empty@think: arguments empty string
+  api_vs_served string@1685
+      a='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true"></｜DSML｜ parameter>\n</｜DSML｜ in'
+      b='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  api_vs_served ids@397 len 433 vs 419: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+  hf_vs_served string@1685
+      a='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true"></｜DSML｜ parameter>\n</｜DSML｜ in'
+      b='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  hf_vs_served ids@397 len 433 vs 419: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+== tc_args_double_encoded@chat: arguments double-encoded JSON string
+  api_vs_served string@1564
+      a='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">"{\\"query\\": \\"x\\"}"</｜DSML｜ pa'
+      b='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  api_vs_served ids@365 len 411 vs 387: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+  hf_vs_served string@1564
+      a='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">x</｜DSML｜ parameter>\n</｜DSML｜ invok'
+      b='ant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  hf_vs_served ids@365 len 403 vs 387: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 12066, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+  api_vs_hf string@1588
+      a='alls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">"{\\"query\\": \\"x\\"}"</｜DSML｜ parameter>\n</｜DSML｜ invoke'
+      b='alls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">x</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁'
+  api_vs_hf ids@371 len 411 vs 403: a=[30, 128825, 10767, 2329, 1281, 83772, 4, 3418, 1281, 11476, 3320, 4, 3757] b=[30, 128825, 10767, 2329, 1281, 12066, 4, 3418, 1281, 11476, 3320, 90, 1718]
+== tc_args_double_encoded@think: arguments double-encoded JSON string
+  api_vs_served string@1685
+      a='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">"{\\"query\\": \\"x\\"}"</｜DSML｜ pa'
+      b='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  api_vs_served ids@397 len 443 vs 419: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 83772, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+  hf_vs_served string@1685
+      a='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">x</｜DSML｜ parameter>\n</｜DSML｜ invok'
+      b='tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁of▁sentence｜><｜User｜><tool_result>ok</too'
+  hf_vs_served ids@397 len 435 vs 419: a=[128825, 34756, 2329, 1281, 14346, 3816, 30, 128825, 10767, 2329, 1281, 12066, 4] b=[128825, 34756, 2329, 1281, 14346, 32572, 1718, 128825, 34756, 1018, 1718, 128825, 10699]
+  api_vs_hf string@1709
+      a='alls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="arguments" string="true">"{\\"query\\": \\"x\\"}"</｜DSML｜ parameter>\n</｜DSML｜ invoke'
+      b='alls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">x</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls><｜end▁'
+  api_vs_hf ids@403 len 443 vs 435: a=[30, 128825, 10767, 2329, 1281, 83772, 4, 3418, 1281, 11476, 3320, 4, 3757] b=[30, 128825, 10767, 2329, 1281, 12066, 4, 3418, 1281, 11476, 3320, 90, 1718]
+== tc_no_tools_declared@think: tool-call history but no tools declared
+  api_vs_served string@191
+      a=' helpful assistant.<｜User｜>Weather in Beijing?<｜Assistant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter nam'
+      b=' helpful assistant.<｜User｜>Weather in Beijing?<｜Assistant｜><think>I should call the tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_w'
+  api_vs_served ids@39 len 109 vs 116: a=[58565, 295, 29660, 33, 128804, 128822, 271, 30, 128825, 10699, 1018, 30, 128825] b=[58565, 295, 29660, 33, 128804, 128821, 43, 1531, 1926, 270, 4105, 16, 128822]
+  api_vs_hf string@191
+      a=' helpful assistant.<｜User｜>Weather in Beijing?<｜Assistant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter nam'
+      b=' helpful assistant.<｜User｜>Weather in Beijing?<｜Assistant｜><think>I should call the tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_w'
+  api_vs_hf ids@39 len 109 vs 116: a=[58565, 295, 29660, 33, 128804, 128822, 271, 30, 128825, 10699, 1018, 30, 128825] b=[58565, 295, 29660, 33, 128804, 128821, 43, 1531, 1926, 270, 4105, 16, 128822]
+== rf_json_object@chat: response_format json_object
+  api_vs_served string@59
+      a='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema to reply'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>List three colors as JSON.<｜Assistant｜></think>'
+  api_vs_served ids@7 len 39 vs 17: a=[3476, 477, 260, 11502, 22896, 339, 372, 17038, 29478, 979, 3476, 74366, 29851] b=[3476, 477, 260, 11502, 22896, 16, 128803, 3536, 2038, 11273, 412, 26639, 16]
+  hf_vs_served string@59
+      a='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema to reply'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>List three colors as JSON.<｜Assistant｜></think>'
+  hf_vs_served ids@7 len 39 vs 17: a=[3476, 477, 260, 11502, 22896, 339, 372, 17038, 29478, 979, 3476, 74366, 29851] b=[3476, 477, 260, 11502, 22896, 16, 128803, 3536, 2038, 11273, 412, 26639, 16]
+== rf_json_object@think: response_format json_object
+  api_vs_served string@150
+      a='e more thorough the reasoning)\n\nYou are a helpful assistant.\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema to reply'
+      b='e more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>List three colors as JSON.<｜Assistant｜><think>'
+  api_vs_served ids@32 len 64 vs 42: a=[3476, 477, 260, 11502, 22896, 339, 372, 17038, 29478, 979, 3476, 74366, 29851] b=[3476, 477, 260, 11502, 22896, 16, 128803, 3536, 2038, 11273, 412, 26639, 16]
+  hf_vs_served string@150
+      a='e more thorough the reasoning)\n\nYou are a helpful assistant.\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema to reply'
+      b='e more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>List three colors as JSON.<｜Assistant｜><think>'
+  hf_vs_served ids@32 len 64 vs 42: a=[3476, 477, 260, 11502, 22896, 339, 372, 17038, 29478, 979, 3476, 74366, 29851] b=[3476, 477, 260, 11502, 22896, 16, 128803, 3536, 2038, 11273, 412, 26639, 16]
+== rf_json_object_no_word@chat: response_format json_object without the word json
+  api: {"error":{"message":"Prompt must contain the word 'json' in some form to use 'response_format' of type 'json_object'.","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+  hf_vs_served string@23
+      a='<｜begin▁of▁sentence｜><｜System｜>\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema '
+      b='<｜begin▁of▁sentence｜><｜User｜>List three colors.<｜Assistant｜></think>'
+  hf_vs_served ids@1 len 32 vs 8: a=[0, 128799, 271, 372, 17038, 29478, 979, 3476, 74366] b=[0, 128803, 3536, 2038, 11273, 16, 128804, 128822]
+== rf_json_schema@chat: response_format json_schema
+  api_vs_served string@59
+      a='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema to reply'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>List three colors.<｜Assistant｜></think>'
+  api_vs_served ids@7 len 66 vs 15: a=[3476, 477, 260, 11502, 22896, 339, 372, 17038, 29478, 979, 3476, 74366, 29851] b=[3476, 477, 260, 11502, 22896, 16, 128803, 3536, 2038, 11273, 16, 128804, 128822]
+  hf_vs_served string@59
+      a='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema to reply'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>List three colors.<｜Assistant｜></think>'
+  hf_vs_served ids@7 len 66 vs 15: a=[3476, 477, 260, 11502, 22896, 339, 372, 17038, 29478, 979, 3476, 74366, 29851] b=[3476, 477, 260, 11502, 22896, 16, 128803, 3536, 2038, 11273, 16, 128804, 128822]
+== rf_json_schema@think: response_format json_schema
+  api_vs_served string@150
+      a='e more thorough the reasoning)\n\nYou are a helpful assistant.\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema to reply'
+      b='e more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>List three colors.<｜Assistant｜><think>'
+  api_vs_served ids@32 len 91 vs 40: a=[3476, 477, 260, 11502, 22896, 339, 372, 17038, 29478, 979, 3476, 74366, 29851] b=[3476, 477, 260, 11502, 22896, 16, 128803, 3536, 2038, 11273, 16, 128804, 128821]
+  hf_vs_served string@150
+      a='e more thorough the reasoning)\n\nYou are a helpful assistant.\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema to reply'
+      b='e more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>List three colors.<｜Assistant｜><think>'
+  hf_vs_served ids@32 len 91 vs 40: a=[3476, 477, 260, 11502, 22896, 339, 372, 17038, 29478, 979, 3476, 74366, 29851] b=[3476, 477, 260, 11502, 22896, 16, 128803, 3536, 2038, 11273, 16, 128804, 128821]
+== rf_json_schema_strict@chat: response_format json_schema strict
+  api_vs_served string@23
+      a='<｜begin▁of▁sentence｜><｜System｜>\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema '
+      b='<｜begin▁of▁sentence｜><｜User｜>List three colors.<｜Assistant｜></think>'
+  api_vs_served ids@1 len 61 vs 8: a=[0, 128799, 271, 372, 17038, 29478, 979, 3476, 74366] b=[0, 128803, 3536, 2038, 11273, 16, 128804, 128822]
+  hf_vs_served string@23
+      a='<｜begin▁of▁sentence｜><｜System｜>\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema '
+      b='<｜begin▁of▁sentence｜><｜User｜>List three colors.<｜Assistant｜></think>'
+  hf_vs_served ids@1 len 61 vs 8: a=[0, 128799, 271, 372, 17038, 29478, 979, 3476, 74366] b=[0, 128803, 3536, 2038, 11273, 16, 128804, 128822]
+== rf_json_schema_tools@chat: response_format json_schema + tools
+  api_vs_served string@1441
+      a='fined tool name and parameter schemas to invoke tool calls.\n\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema to reply'
+      b='fined tool name and parameter schemas to invoke tool calls.\n<｜User｜>Weather in Paris as JSON.<｜Assistant｜></think>'
+  api_vs_served ids@341 len 402 vs 351: a=[8380, 304, 34756, 4105, 10699, 22287, 372, 17038, 29478, 979, 3476, 74366, 29851] b=[8380, 304, 34756, 4105, 10699, 603, 128803, 58565, 295, 11111, 412, 26639, 16]
+  hf_vs_served string@1441
+      a='fined tool name and parameter schemas to invoke tool calls.\n\n\n## Response Format:\n\nYou MUST strictly adhere to the following schema to reply'
+      b='fined tool name and parameter schemas to invoke tool calls.\n<｜User｜>Weather in Paris as JSON.<｜Assistant｜></think>'
+  hf_vs_served ids@341 len 402 vs 351: a=[8380, 304, 34756, 4105, 10699, 22287, 372, 17038, 29478, 979, 3476, 74366, 29851] b=[8380, 304, 34756, 4105, 10699, 603, 128803, 58565, 295, 11111, 412, 26639, 16]
+== sp_user_text@chat: user text spelling control tokens
+  api_vs_served ids@4 len 40 vs 19: a=[0, 128803, 105119, 28, 818, 28217, 6756, 28217, 32, 818, 28217, 88031] b=[0, 128803, 105119, 28, 223, 128803, 223, 128804, 223, 128821, 223, 128822]
+  api_vs_hf ids@4 len 40 vs 19: a=[0, 128803, 105119, 28, 818, 28217, 6756, 28217, 32, 818, 28217, 88031] b=[0, 128803, 105119, 28, 223, 128803, 223, 128804, 223, 128821, 223, 128822]
+== sp_user_deepseek_image@chat: user text spelling <｜deepseek_image｜>
+  hf: ValueError: Message content contains image special token '<｜deepseek_image｜>'. Images should be provided as image content blocks.
+  served: ValueError: Message content contains image special token '<｜deepseek_image｜>'. Images should be provided as image content blocks.
+== sp_assistant_grounding@chat: assistant history with grounding tokens and </think>
+  api_vs_served ids@24 len 32 vs 31: a=[21, 14, 22, 11621, 129275, 2728, 37947, 32, 1, 128803, 21394, 128804, 128822] b=[21, 14, 22, 11621, 129275, 223, 128822, 1, 128803, 21394, 128804, 128822]
+  api_vs_hf ids@24 len 32 vs 31: a=[21, 14, 22, 11621, 129275, 2728, 37947, 32, 1, 128803, 21394, 128804, 128822] b=[21, 14, 22, 11621, 129275, 223, 128822, 1, 128803, 21394, 128804, 128822]
+== sp_tool_result_dsml@chat: tool result text containing DSML spelling
+  api_vs_served ids@415 len 428 vs 425: a=[128803, 30, 72461, 46148, 7339, 28217, 10525, 7398, 28217, 10767, 32, 43350, 1718] b=[128803, 30, 72461, 46148, 7339, 128825, 10767, 32, 43350, 1718, 72461, 46148, 32]
+  api_vs_hf ids@415 len 428 vs 425: a=[128803, 30, 72461, 46148, 7339, 28217, 10525, 7398, 28217, 10767, 32, 43350, 1718] b=[128803, 30, 72461, 46148, 7339, 128825, 10767, 32, 43350, 1718, 72461, 46148, 32]
+== img_one@chat: user text, image, text
+  served mm_placeholders (offset, length): {'image': [[5, 184]]}
+== img_two_system@think: system text + user with two images
+  served mm_placeholders (offset, length): {'image': [[34, 185], [220, 185]]}
+== img_tool_result@chat: tool result content with an image part
+  served mm_placeholders (offset, length): {'image': [[418, 185]]}
+== img_system@chat: system message with an image part
+  served mm_placeholders (offset, length): {'image': [[4, 185]]}
+== img_assistant@chat: assistant history with an image part
+  api: {"error":{"message":"Image in assistant message is not supported","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+  served mm_placeholders (offset, length): {'image': [[7, 184]]}
+== img_file_part@chat: user `file` part carrying a data-URL image
+  api: {"error":{"message":".messages[0]: file must have a file_id or file_data","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+  served: VLLMValidationError: Unsupported chat content part type: 'file'. Supported types: audio_embeds, audio_url, image_embeds, image_pil, image_url, input_audio, input_image, input_text, output_text, prompt
+== img_tool_results_reordered@chat: parallel tool results answered in reverse order, each with an image (big for call 2, small for call 1)
+  served mm_placeholders (offset, length): {'image': [[463, 202], [675, 184]]}
+== img_order_control@chat: control: same two images in user content, small first then big
+  served mm_placeholders (offset, length): {'image': [[2, 185], [188, 203]]}
+== img_file_part_flat@chat: user `file` part, flat file_data (upstream schema shape)
+  served: VLLMValidationError: Unsupported chat content part type: 'file'. Supported types: audio_embeds, audio_url, image_embeds, image_pil, image_url, input_audio, input_image, input_text, output_text, prompt
+  api_vs_hf string@37
+      a='<｜begin▁of▁sentence｜><｜User｜>Color?\n\n<｜deepseek_image｜><｜Assistant｜></think>'
+      b='<｜begin▁of▁sentence｜><｜User｜>Color?\n\n[Unsupported file]<｜Assistant｜></think>'
+  api_vs_hf ids@4 len 7 vs 11: a=[0, 128803, 10232, 1240, 129264, 128804, 128822] b=[0, 128803, 10232, 1240, 61, 4437, 102269, 4245, 63, 128804, 128822]
+== tools_strict_valid@chat: strict tool whose schema passes strict validation
+  api_vs_served string@1059
+      a=' "string", "description": "City"}, "unit": {"type": "string"}}, "additionalProperties": false, "required": ["location", "unit"]}}\n\nYou MUST '
+      b=' "string", "description": "City"}, "unit": {"type": "string", "minLength": 1}}, "required": ["location", "unit"]}, "strict": true}\n\nYou MUST'
+  api_vs_served ids@245 len 286 vs 291: a=[28612, 4611, 3362, 582, 4463, 4, 55695, 582, 102970, 34520, 3362, 5062, 14] b=[28612, 4611, 3362, 582, 4463, 1760, 582, 1930, 13004, 3362, 223, 19, 55695]
+  hf_vs_served string@932
+      a='Schemas\n\n{"name": "get_weather", "description": "Weather", "strict": true, "parameters": {"type": "object", "properties": {"location": {"typ'
+      b='Schemas\n\n{"name": "get_weather", "description": "Weather", "parameters": {"type": "object", "properties": {"location": {"type": "string", "d'
+  hf_vs_served ids@211 len 291 vs 291: a=[3362, 582, 58565, 1760, 582, 107701, 3362, 3292, 14, 582, 46172, 3362, 28612] b=[3362, 582, 58565, 1760, 582, 46172, 3362, 28612, 4611, 3362, 582, 10325, 1760]
+  api_vs_hf string@932
+      a='Schemas\n\n{"name": "get_weather", "description": "Weather", "parameters": {"type": "object", "properties": {"location": {"type": "string", "d'
+      b='Schemas\n\n{"name": "get_weather", "description": "Weather", "strict": true, "parameters": {"type": "object", "properties": {"location": {"typ'
+  api_vs_hf ids@211 len 286 vs 291: a=[3362, 582, 58565, 1760, 582, 46172, 3362, 28612, 4611, 3362, 582, 10325, 1760] b=[3362, 582, 58565, 1760, 582, 107701, 3362, 3292, 14, 582, 46172, 3362, 28612]
+== tools_name_dot@chat: tool name with a dot
+  api: {"error":{"message":"Invalid 'tools[0].function.name': string does not match pattern. Expected a string that matches the pattern '^[a-zA-Z0-9_-]+$'.","type":"invalid_request_error","param":null,"code"
+== tools_duplicate@chat: duplicate tool names
+  api: {"error":{"message":"Tool names must be unique.","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+== tool_orphan@chat: tool message without a preceding tool call
+  api: {"error":{"message":"Messages with role 'tool' must be a response to a preceding message with 'tool_calls'","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+== tc_empty_list@chat: assistant with content and tool_calls: []
+  api: {"error":{"message":"Invalid 'messages[1].tool_calls': empty array. Expected an array with minimum length 1, but got an empty array instead.","type":"invalid_request_error","param":null,"code":"invali
+== assistant_no_content@chat: assistant message with neither content nor tool_calls
+  api: {"error":{"message":"Invalid assistant message: content or tool_calls must be set","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+== user_null_content@chat: user content null
+  api: ValueError: invalid request body: content should be a string or a list
+  hf: TypeError: sequence item 0: expected str instance, NoneType found
+  served: ValidationError: 19 validation errors for ChatCompletionRequest
+messages.0.ChatCompletionDeveloperMessageParam.content.str
+  Input should be a valid string [type=string_type, input_value=None, input_t
+== prefix_not_last@chat: prefix on a non-final assistant message
+  api: {"error":{"message":"Invalid completion message: prefix set true with message which is not final message or message role is not assistant","type":"invalid_request_error","param":null,"code":"invalid_r
+  hf_vs_served string@54
+      a='<｜begin▁of▁sentence｜><｜User｜>a<｜Assistant｜></think>b<｜User｜>c<｜Assistant｜></think>'
+      b='<｜begin▁of▁sentence｜><｜User｜>a<｜Assistant｜></think>b<｜end▁of▁sentence｜><｜User｜>c<｜Assistant｜></think>'
+  hf_vs_served ids@6 len 10 vs 11: a=[128803, 67, 128804, 128822, 68, 128803, 69, 128804, 128822] b=[128803, 67, 128804, 128822, 68, 1, 128803, 69, 128804, 128822]
+== prefix_with_tools@chat: prefix continuation with tools declared
+  api: {"error":{"message":"Function call should not be used with prefix","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+  hf_vs_served string@1484
+      a='voke tool calls.\n<｜User｜>Weather?<｜Assistant｜></think>Let me'
+      b='voke tool calls.\n<｜User｜>Weather?<｜Assistant｜></think>Let me<｜end▁of▁sentence｜>'
+  hf_vs_served ids@349 len 349 vs 350: a=[33, 128804, 128822, 5718, 678] b=[33, 128804, 128822, 5718, 678, 1]
+== tools_choice_none_history@think: tool_choice=none with tool-call history
+  api_vs_served string@150
+      a='e more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Weather in Beijing?<｜Assistant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke '
+      b="e more thorough the reasoning)\n\nYou are a helpful assistant.\n\n## Tools\n\nYou have access to a set of tools to help answer the user's question"
+  api_vs_served ids@32 len 109 vs 455: a=[3476, 477, 260, 11502, 22896, 16, 128803, 58565, 295, 29660, 33, 128804, 128822] b=[3476, 477, 260, 11502, 22896, 339, 372, 27193, 271, 3476, 611, 3278, 304]
+  hf_vs_served string@150
+      a='e more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Weather in Beijing?<｜Assistant｜><think>I should call the tool.</think>\n\n'
+      b="e more thorough the reasoning)\n\nYou are a helpful assistant.\n\n## Tools\n\nYou have access to a set of tools to help answer the user's question"
+  hf_vs_served ids@32 len 116 vs 455: a=[3476, 477, 260, 11502, 22896, 16, 128803, 58565, 295, 29660, 33, 128804, 128821] b=[3476, 477, 260, 11502, 22896, 339, 372, 27193, 271, 3476, 611, 3278, 304]
+  api_vs_hf string@191
+      a=' helpful assistant.<｜User｜>Weather in Beijing?<｜Assistant｜></think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter nam'
+      b=' helpful assistant.<｜User｜>Weather in Beijing?<｜Assistant｜><think>I should call the tool.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_w'
+  api_vs_hf ids@39 len 109 vs 116: a=[58565, 295, 29660, 33, 128804, 128822, 271, 30, 128825, 10699, 1018, 30, 128825] b=[58565, 295, 29660, 33, 128804, 128821, 43, 1531, 1926, 270, 4105, 16, 128822]
+== billing_header_system@chat: system content starting with an x-anthropic-billing-header line
+  api_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>You are Claude Code.<｜User｜>Hi<｜Assistant｜></think>'
+      b='<｜begin▁of▁sentence｜><｜System｜>x-anthropic-billing-header: cc_version=2.1.3; cch=8f2a\nYou are Claude Code.<｜Use'
+  api_vs_served ids@2 len 11 vs 36: a=[0, 128799, 3476, 477, 61932, 9909, 16, 128803, 23166, 128804] b=[0, 128799, 90, 27791, 13172, 297, 1761, 6885, 55159, 28]
+  api_vs_hf string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>You are Claude Code.<｜User｜>Hi<｜Assistant｜></think>'
+      b='<｜begin▁of▁sentence｜><｜System｜>x-anthropic-billing-header: cc_version=2.1.3; cch=8f2a\nYou are Claude Code.<｜Use'
+  api_vs_hf ids@2 len 11 vs 36: a=[0, 128799, 3476, 477, 61932, 9909, 16, 128803, 23166, 128804] b=[0, 128799, 90, 27791, 13172, 297, 1761, 6885, 55159, 28]
+== rc_as_reasoning_field@think: history reasoning sent as `reasoning` (vLLM name) with tools
+  api_vs_served string@1562
+      a='schemas to invoke tool calls.\n<｜User｜>q1<｜Assistant｜><think></think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>'
+      b='schemas to invoke tool calls.\n<｜User｜>q1<｜Assistant｜><think>r1</think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>'
+  api_vs_served ids@371 len 380 vs 382: a=[128803, 83, 19, 128804, 128821, 128822, 67, 19, 1, 128803, 83, 20, 128804] b=[128803, 83, 19, 128804, 128821, 84, 19, 128822, 67, 19, 1, 128803, 83]
+  hf_vs_served string@1562
+      a='schemas to invoke tool calls.\n<｜User｜>q1<｜Assistant｜><think></think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>'
+      b='schemas to invoke tool calls.\n<｜User｜>q1<｜Assistant｜><think>r1</think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>'
+  hf_vs_served ids@371 len 380 vs 382: a=[128803, 83, 19, 128804, 128821, 128822, 67, 19, 1, 128803, 83, 20, 128804] b=[128803, 83, 19, 128804, 128821, 84, 19, 128822, 67, 19, 1, 128803, 83]
+== ctl_absent: no thinking control at all (client default)
+  api_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+  api_vs_served ids@2 len 46 vs 21: a=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343] b=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497]
+  hf_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+  hf_vs_served ids@2 len 46 vs 21: a=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343] b=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497]
+== ctl_effort_minimal: reasoning_effort=minimal
+  served: ValueError: DeepSeek V4.1 reasoning_effort must be low, high, max, or an integer within [1, 100] in chat_template_kwargs
+== ctl_effort_medium: reasoning_effort=medium
+  served: ValueError: DeepSeek V4.1 reasoning_effort must be low, high, max, or an integer within [1, 100] in chat_template_kwargs
+== ctl_effort_xhigh: reasoning_effort=xhigh
+  served: ValueError: DeepSeek V4.1 reasoning_effort must be low, high, max, or an integer within [1, 100] in chat_template_kwargs
+== ctl_effort_ultra: reasoning_effort=ultra
+  served: ValidationError: 1 validation error for ChatCompletionRequest
+reasoning_effort
+  Input should be 'none', 'minimal', 'low', 'medium', 'high', 'xhigh' or 'max' [type=literal_error, input_value='ultra', 
+== ctl_effort_numeric: reasoning_effort=30 (top-level number)
+  api: ValueError: invalid request body: invalid type: integer `30`, expected string or map
+  served: ValidationError: 1 validation error for ChatCompletionRequest
+reasoning_effort
+  Input should be 'none', 'minimal', 'low', 'medium', 'high', 'xhigh' or 'max' [type=literal_error, input_value=30, input
+== ctl_thinking_enabled: thinking={type: enabled}
+  api_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+  api_vs_served ids@2 len 46 vs 21: a=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343] b=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497]
+  hf_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+  hf_vs_served ids@2 len 46 vs 21: a=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343] b=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497]
+== ctl_thinking_adaptive: thinking={type: adaptive}
+  api_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+  api_vs_served ids@2 len 46 vs 21: a=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343] b=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497]
+  hf_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+  hf_vs_served ids@2 len 46 vs 21: a=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343] b=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497]
+== ctl_thinking_disabled_effort_high: thinking={type: disabled} + reasoning_effort=high
+  api_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+      b='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+  api_vs_served ids@2 len 21 vs 46: a=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497] b=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343]
+  hf_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+      b='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+  hf_vs_served ids@2 len 21 vs 46: a=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497] b=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343]
+== ctl_thinking_enabled_effort_none: thinking={type: enabled} + reasoning_effort=none
+  api_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+  api_vs_served ids@2 len 46 vs 21: a=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343] b=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497]
+  hf_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+  hf_vs_served ids@2 len 46 vs 21: a=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343] b=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497]
+== ctl_ctk_thinking: chat_template_kwargs={thinking: true}
+  api_vs_served string@49
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+      b='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+  api_vs_served ids@8 len 46 vs 46: a=[288, 9504, 482, 28, 223, 2402, 343, 16801, 223, 19, 15, 1457, 14] b=[288, 9504, 482, 28, 223, 1328, 343, 16801, 223, 19, 15, 1457, 14]
+  hf_vs_served string@49
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+      b='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+  hf_vs_served ids@8 len 46 vs 46: a=[288, 9504, 482, 28, 223, 2402, 343, 16801, 223, 19, 15, 1457, 14] b=[288, 9504, 482, 28, 223, 1328, 343, 16801, 223, 19, 15, 1457, 14]
+== ctl_ctk_enable_thinking: chat_template_kwargs={enable_thinking: true}
+  api_vs_served string@49
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+      b='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+  api_vs_served ids@8 len 46 vs 46: a=[288, 9504, 482, 28, 223, 2402, 343, 16801, 223, 19, 15, 1457, 14] b=[288, 9504, 482, 28, 223, 1328, 343, 16801, 223, 19, 15, 1457, 14]
+  hf_vs_served string@49
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+      b='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+  hf_vs_served ids@8 len 46 vs 46: a=[288, 9504, 482, 28, 223, 2402, 343, 16801, 223, 19, 15, 1457, 14] b=[288, 9504, 482, 28, 223, 1328, 343, 16801, 223, 19, 15, 1457, 14]
+== ctl_ctk_numeric_effort: chat_template_kwargs={thinking: true, reasoning_effort: 20}
+  api_vs_served string@49
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+      b='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 20 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+  api_vs_served ids@8 len 46 vs 46: a=[288, 9504, 482, 28, 223, 2402, 343, 16801, 223, 19, 15, 1457, 14] b=[288, 9504, 482, 28, 223, 397, 343, 16801, 223, 19, 15, 1457, 14]
+  hf_vs_served string@49
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+      b='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 20 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are'
+  hf_vs_served ids@8 len 46 vs 46: a=[288, 9504, 482, 28, 223, 2402, 343, 16801, 223, 19, 15, 1457, 14] b=[288, 9504, 482, 28, 223, 397, 343, 16801, 223, 19, 15, 1457, 14]
+== ctl_ctk_effort_only: chat_template_kwargs={reasoning_effort: max} (thinking not set)
+  api_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+  api_vs_served ids@2 len 46 vs 21: a=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343] b=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497]
+  hf_vs_served string@31
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r'
+      b='<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant'
+  hf_vs_served ids@2 len 46 vs 21: a=[0, 128799, 77666, 288, 9504, 482, 28, 223, 2402, 343] b=[0, 128799, 3476, 477, 260, 11502, 22896, 16, 128803, 2497]
+== ctl_ctk_drop_thinking_false: chat_template_kwargs={thinking: true, drop_thinking: false} multi-turn
+  api_vs_served string@49
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\n<｜User｜'
+      b='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\n<｜User｜'
+  api_vs_served ids@8 len 40 vs 43: a=[288, 9504, 482, 28, 223, 2402, 343, 16801, 223, 19, 15, 1457, 14] b=[288, 9504, 482, 28, 223, 1328, 343, 16801, 223, 19, 15, 1457, 14]
+  hf_vs_served string@49
+      a='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\n<｜User｜'
+      b='<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\n<｜User｜'
+  hf_vs_served ids@8 len 40 vs 43: a=[288, 9504, 482, 28, 223, 2402, 343, 16801, 223, 19, 15, 1457, 14] b=[288, 9504, 482, 28, 223, 1328, 343, 16801, 223, 19, 15, 1457, 14]
+== golden_1: HF encoding/tests vector 1 as a request
+  api_vs_served string@2363
+      a='h a temperature of 22°C and 45% humidity.<｜end▁of▁sentence｜><｜Assistant｜><think>'
+      b='h a temperature of 22°C and 45% humidity.<｜end▁of▁sentence｜>'
+  api_vs_served ids@548 len 550 vs 548: a=[1883, 7, 27392, 16, 1, 128804, 128821] b=[1883, 7, 27392, 16, 1]
+  api_vs_hf string@2363
+      a='h a temperature of 22°C and 45% humidity.<｜end▁of▁sentence｜><｜Assistant｜><think>'
+      b='h a temperature of 22°C and 45% humidity.<｜end▁of▁sentence｜>'
+  api_vs_hf ids@548 len 550 vs 548: a=[1883, 7, 27392, 16, 1, 128804, 128821] b=[1883, 7, 27392, 16, 1]
+== golden_2: HF encoding/tests vector 2 as a request
+  api_vs_served string@250
+      a='｜></think>The capital of France is Paris.<｜end▁of▁sentence｜><｜Assistant｜></think>'
+      b='｜></think>The capital of France is Paris.<｜end▁of▁sentence｜>'
+  api_vs_served ids@40 len 42 vs 40: a=[8760, 344, 11111, 16, 1, 128804, 128822] b=[8760, 344, 11111, 16, 1]
+  api_vs_hf string@250
+      a='｜></think>The capital of France is Paris.<｜end▁of▁sentence｜><｜Assistant｜></think>'
+      b='｜></think>The capital of France is Paris.<｜end▁of▁sentence｜>'
+  api_vs_hf ids@40 len 42 vs 40: a=[8760, 344, 11111, 16, 1, 128804, 128822] b=[8760, 344, 11111, 16, 1]
+== golden_3: HF encoding/tests vector 3 as a request
+  api: {"error":{"message":"Invalid 'messages[6].tool_calls': empty array. Expected an array with minimum length 1, but got an empty array instead.","type":"invalid_request_error","param":null,"code":"invali
+  served: ValueError: Invalid role: latest_reminder
+== golden_4: HF encoding/tests vector 4 as a request
+  served: ValueError: Invalid role: latest_reminder
+  api_vs_hf string@271
+      a='景点。<｜end▁of▁sentence｜><｜User｜>世界著名温泉有哪些<｜Assistant｜></think>Search<｜end▁of▁sentence｜><｜Assistant｜></think>'
+      b='景点。<｜end▁of▁sentence｜><｜User｜>世界著名温泉有哪些<｜Assistant｜></think><｜action｜>Search<｜end▁of▁sentence｜>'
+  api_vs_hf ids@98 len 102 vs 101: a=[22564, 57282, 23841, 128804, 128822, 12386, 1, 128804, 128822] b=[22564, 57282, 23841, 128804, 128822, 128829, 12386, 1]
+== golden_5: HF encoding/tests vector 5 as a request
+  served mm_placeholders (offset, length): {'image': [[51, 184], [240, 185]]}

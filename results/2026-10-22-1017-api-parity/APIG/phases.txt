@@ -1,0 +1,23 @@
+2026-10-22T14:37:29Z cells start
+2026-10-22T14:37:31Z smoke start
+2026-10-22T14:37:34Z smoke end
+2026-10-22T14:37:34Z api start
+2026-10-22T14:38:15Z api end
+2026-10-22T14:38:15Z quick start
+2026-10-22T14:43:58Z quick end
+2026-10-22T14:43:58Z decode start
+2026-10-22T14:46:56Z decode end
+2026-10-22T14:46:56Z full start
+2026-10-22T14:51:18Z full end
+2026-10-22T14:51:18Z SERVE DOWN
+2026-10-22T14:51:18Z cells done
+2026-10-22T14:53:20Z gateway restarted (final config)
+2026-10-22T14:54:41Z cells2 start
+2026-10-22T14:54:42Z smoke2 start
+2026-10-22T14:54:43Z smoke2 end
+2026-10-22T14:54:43Z api2 start
+2026-10-22T14:55:04Z api2 end
+2026-10-22T14:55:04Z full2 start
+2026-10-22T15:08:25Z full2 end
+2026-10-22T15:08:25Z cells2 done
+2026-10-22T15:08:51Z stopped (./stop.sh)

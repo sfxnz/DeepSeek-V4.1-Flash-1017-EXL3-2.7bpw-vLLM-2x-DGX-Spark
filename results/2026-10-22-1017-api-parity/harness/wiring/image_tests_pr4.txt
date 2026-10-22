@@ -1,0 +1,68 @@
+test_broken_upstream_streams_end_with_a_502 (tests.test_api_gateway.CoreTests.test_broken_upstream_streams_end_with_a_502) ... dsv41-gateway: chatcmpl-de35a5ac3f3446559f29e442fb023300 failed: the model server ended the stream without a stop or length finish
+dsv41-gateway: chatcmpl-7a463e3f443841f6a5f5f957ec0dab68 failed: the model server ended the stream without a stop or length finish
+dsv41-gateway: chatcmpl-49a6ab314b6a457ca7e720258ee61437 failed: 
+ok
+test_chat_shim_keeps_todays_meaning (tests.test_api_gateway.CoreTests.test_chat_shim_keeps_todays_meaning) ... ok
+test_context_limit_is_carried_to_the_route (tests.test_api_gateway.CoreTests.test_context_limit_is_carried_to_the_route) ... ok
+test_empty_values_do_not_fall_back (tests.test_api_gateway.CoreTests.test_empty_values_do_not_fall_back) ... ok
+test_events_after_a_pending_first_event (tests.test_api_gateway.CoreTests.test_events_after_a_pending_first_event) ... ok
+test_fallbacks_and_strict_errors (tests.test_api_gateway.CoreTests.test_fallbacks_and_strict_errors) ... ok
+test_generate_request (tests.test_api_gateway.CoreTests.test_generate_request) ... ok
+test_helpers (tests.test_api_gateway.CoreTests.test_helpers) ... ok
+test_image_work_never_holds_the_default_executor (tests.test_api_gateway.CoreTests.test_image_work_never_holds_the_default_executor) ... ok
+test_images_follow_the_placeholders (tests.test_api_gateway.CoreTests.test_images_follow_the_placeholders) ... ok
+test_images_stay_within_the_api_limits (tests.test_api_gateway.CoreTests.test_images_stay_within_the_api_limits) ... ok
+test_logs_and_fallback_reasons_leave_out_secrets (tests.test_api_gateway.CoreTests.test_logs_and_fallback_reasons_leave_out_secrets) ... ok
+test_media_urls_and_internal_routes (tests.test_api_gateway.CoreTests.test_media_urls_and_internal_routes) ... ok
+test_prompts_match_the_api (tests.test_api_gateway.CoreTests.test_prompts_match_the_api) ... ok
+test_streams_match_the_api (tests.test_api_gateway.CoreTests.test_streams_match_the_api) ... ok
+test_structured_outputs_come_from_constraints (tests.test_api_gateway.CoreTests.test_structured_outputs_come_from_constraints) ... ok
+test_vllm_errors_take_the_api_error_shape (tests.test_api_gateway.CoreTests.test_vllm_errors_take_the_api_error_shape) ... dsv41-gateway: chatcmpl-d90826badd92471c97f4ddbfe392e957 failed: engine died
+ok
+test_requests_cover_the_api_shapes (tests.test_api_gateway.FixtureTests.test_requests_cover_the_api_shapes) ... ok
+test_streams_cover_the_output_paths (tests.test_api_gateway.FixtureTests.test_streams_cover_the_output_paths) ... ok
+test_core_tests_inside_the_image (tests.test_api_gateway.ImageTests.test_core_tests_inside_the_image) ... ok
+test_gateway_over_http_inside_the_image (tests.test_api_gateway.ImageTests.test_gateway_over_http_inside_the_image) ... ok
+test_env_names_and_startup_marker (tests.test_api_gateway.SourceTests.test_env_names_and_startup_marker) ... ok
+test_fallback_fields_are_the_spec_list (tests.test_api_gateway.SourceTests.test_fallback_fields_are_the_spec_list) ... ok
+test_top_level_imports_leave_out_vllm_torch_and_the_web_stack (tests.test_api_gateway.SourceTests.test_top_level_imports_leave_out_vllm_torch_and_the_web_stack) ... ok
+test_grammars_compile_and_gate_inside_the_image (tests.test_api_gateway_constraints.ImageTests.test_grammars_compile_and_gate_inside_the_image) ... ok
+test_a_ref_that_names_nothing_accepts_any_value (tests.test_api_gateway_constraints.MappingTests.test_a_ref_that_names_nothing_accepts_any_value) ... ok
+test_auto_constrains_only_strict_tools_and_is_triggered (tests.test_api_gateway_constraints.MappingTests.test_auto_constrains_only_strict_tools_and_is_triggered) ... ok
+test_every_fixture_request_maps_to_its_kind (tests.test_api_gateway_constraints.MappingTests.test_every_fixture_request_maps_to_its_kind) ... ok
+test_json_object_regex_and_schema_values (tests.test_api_gateway_constraints.MappingTests.test_json_object_regex_and_schema_values) ... ok
+test_no_constraint_and_unknown_kind (tests.test_api_gateway_constraints.MappingTests.test_no_constraint_and_unknown_kind) ... ok
+test_prefix_with_answer_text_gets_no_grammar (tests.test_api_gateway_constraints.MappingTests.test_prefix_with_answer_text_gets_no_grammar) ... ok
+test_required_and_named_start_inside_the_calls_block (tests.test_api_gateway_constraints.MappingTests.test_required_and_named_start_inside_the_calls_block) ... ok
+test_required_in_thinking_mode_falls_back (tests.test_api_gateway_constraints.MappingTests.test_required_in_thinking_mode_falls_back) ... ok
+test_strict_json_schema_is_normalized_and_keeps_its_defs (tests.test_api_gateway_constraints.MappingTests.test_strict_json_schema_is_normalized_and_keeps_its_defs) ... ok
+test_strict_parameters_are_declared_in_order_and_typed (tests.test_api_gateway_constraints.MappingTests.test_strict_parameters_are_declared_in_order_and_typed) ... ok
+test_the_tool_constraint_wins_over_response_format (tests.test_api_gateway_constraints.MappingTests.test_the_tool_constraint_wins_over_response_format) ... ok
+test_thinking_mode_keeps_its_grammar (tests.test_api_gateway_constraints.MappingTests.test_thinking_mode_keeps_its_grammar) ... ok
+test_zero_argument_invokes_take_the_trained_blank_line (tests.test_api_gateway_constraints.MappingTests.test_zero_argument_invokes_take_the_trained_blank_line) ... ok
+test_fixture_is_what_deepseek_recipe_produces (tests.test_api_gateway_constraints.WheelTests.test_fixture_is_what_deepseek_recipe_produces) ... ok
+test_real_converted_requests_map_like_their_stubs (tests.test_api_gateway_constraints.WheelTests.test_real_converted_requests_map_like_their_stubs) ... ok
+test_every_16bit_value_scales_like_the_api (tests.test_image_16bit_gray.ConvertTests.test_every_16bit_value_scales_like_the_api) ... ok
+test_trns_key_still_composites_onto_the_background (tests.test_image_16bit_gray.ConvertTests.test_trns_key_still_composites_onto_the_background) ... ok
+test_wide_targets_and_other_modes_are_unchanged (tests.test_image_16bit_gray.ConvertTests.test_wide_targets_and_other_modes_are_unchanged) ... ok
+test_lever_off_puts_the_image_text_back (tests.test_image_16bit_gray.ImageTests.test_lever_off_puts_the_image_text_back) ... ok
+test_serve_decode_paths_lever_on (tests.test_image_16bit_gray.ImageTests.test_serve_decode_paths_lever_on) ... ok
+test_env_gate (tests.test_image_16bit_gray.InstallTests.test_env_gate) ... ok
+test_install_restore_and_import_order (tests.test_image_16bit_gray.InstallTests.test_install_restore_and_import_order) ... ok
+test_a_changed_anchor_is_refused (tests.test_image_16bit_gray.RewriteTests.test_a_changed_anchor_is_refused) ... ok
+test_rewrites_apply_once_compile_and_round_trip (tests.test_image_16bit_gray.RewriteTests.test_rewrites_apply_once_compile_and_round_trip) ... ok
+test_default_on_forwarded_audited_and_in_the_promoted_boot (tests.test_image_16bit_gray.WiringTests.test_default_on_forwarded_audited_and_in_the_promoted_boot) ... ok
+test_sitecustomize_rewrites_before_any_vllm_import (tests.test_image_16bit_gray.WiringTests.test_sitecustomize_rewrites_before_any_vllm_import) ... ok
+test_vectors_and_serving_path_inside_the_image (tests.test_chat_encoder_1017.ImageTests.test_vectors_and_serving_path_inside_the_image) ... ok
+test_anchor_miss_raises (tests.test_chat_encoder_1017.RewriteTests.test_anchor_miss_raises) ... ok
+test_install_uses_the_given_rewrite_and_logs (tests.test_chat_encoder_1017.RewriteTests.test_install_uses_the_given_rewrite_and_logs) ... ok
+test_rewrites_apply_once_and_compile (tests.test_chat_encoder_1017.RewriteTests.test_rewrites_apply_once_and_compile) ... ok
+test_sitecustomize_wires_it_as_required (tests.test_chat_encoder_1017.RewriteTests.test_sitecustomize_wires_it_as_required) ... ok
+test_tokenizer_validates_before_flattening (tests.test_chat_encoder_1017.RewriteTests.test_tokenizer_validates_before_flattening) ... ok
+test_patched_encoder_matches_every_1017_vector_and_behaviour (tests.test_chat_encoder_1017.VectorTests.test_patched_encoder_matches_every_1017_vector_and_behaviour) ... ok
+test_unpatched_encoder_shows_the_gap (tests.test_chat_encoder_1017.VectorTests.test_unpatched_encoder_shows_the_gap) ... ok
+
+----------------------------------------------------------------------
+Ran 59 tests in 94.219s
+
+OK

@@ -1,0 +1,8 @@
+dsv41-gateway: engaged deepseek-recipe 0.2.0 upstream=http://127.0.0.1:8001 model=deepseek-ai/DeepSeek-V4.1-Flash-1017
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:33648 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33654 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33670 - "GET /v1/models HTTP/1.1" 200 OK

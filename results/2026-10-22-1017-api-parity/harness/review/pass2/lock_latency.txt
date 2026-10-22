@@ -1,0 +1,12 @@
+== 1 4032 3024 14  old (one call, no lock):
+done in 0.30 s; per request [0.3] s; 14 images, prompt_tokens 14033; peak RSS 462 MiB
+   new (per-image calls, IMAGE_LOCK):
+done in 1.26 s; per request [1.26] s; 14 images, prompt_tokens 14033; peak RSS 148 MiB
+== 4 4032 3024 14  old (one call, no lock):
+done in 1.62 s; per request [1.58, 1.62, 1.59, 1.6] s; 14 images, prompt_tokens 14033; peak RSS 1327 MiB
+   new (per-image calls, IMAGE_LOCK):
+done in 4.93 s; per request [1.26, 3.71, 2.51, 4.92] s; 14 images, prompt_tokens 14033; peak RSS 160 MiB
+== 4 4032 3024 3  old (one call, no lock):
+done in 0.28 s; per request [0.24, 0.27, 0.26, 0.27] s; 3 images, prompt_tokens 3011; peak RSS 636 MiB
+   new (per-image calls, IMAGE_LOCK):
+done in 1.07 s; per request [0.28, 1.07, 0.81, 0.55] s; 3 images, prompt_tokens 3011; peak RSS 148 MiB

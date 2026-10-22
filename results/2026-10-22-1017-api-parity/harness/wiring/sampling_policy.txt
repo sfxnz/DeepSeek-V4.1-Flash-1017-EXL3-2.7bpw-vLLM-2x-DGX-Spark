@@ -1,0 +1,7 @@
+chat, T=0 top_p=0.5            thinking=False T=0.0 top_p=1.0 max_tokens=8192
+chat, T=0.6                    thinking=False T=0.6000000238418579 top_p=1.0 max_tokens=8192
+thinking, T=0 top_p=0.5        thinking=True  T=1.0 top_p=0.949999988079071 max_tokens=65536
+thinking, T=0.6 top_p=0.98     thinking=True  T=1.0 top_p=0.9800000190734863 max_tokens=65536
+chat, max_tokens 393217        ConversionError: 400 {"error":{"message":"Invalid max_tokens value, the valid range of max_tokens is [1, 393216]","type":"invalid_request_error","param":null,"code":"invalid_request
+chat, 17 stop strings          ConversionError: 400 {"error":{"message":"Stop string array too long: 17","type":"invalid_request_error","param":null,"code":"invalid_request_error"}}
+chat, 16 stop strings          thinking=False T=1.0 top_p=1.0 max_tokens=8192

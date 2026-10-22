@@ -1,0 +1,4 @@
+idle MiB {'VmRSS': 121, 'VmHWM': 121}
+png MiB 34.4
+1 x 4000x3000 noise PNG: status 200 images None fallback .messages[0].image[0]: image file size exceeds limit 32 MB render 579 ms  MiB {'VmRSS': 368, 'VmHWM': 484}
+2 x 4000x3000 noise PNG: status 200 images None fallback .messages[0].image[0]: image file size exceeds limit 32 MB render 1188 ms  MiB {'VmRSS': 597, 'VmHWM': 805}

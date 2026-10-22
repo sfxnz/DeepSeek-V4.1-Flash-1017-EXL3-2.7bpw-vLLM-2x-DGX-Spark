@@ -1,0 +1,47 @@
+text/chat                                kind=None tools=[] starts_in_tool_calls=False parse_json=False schema=None
+text/thinking                            kind=None tools=[] starts_in_tool_calls=False parse_json=False schema=None
+json_object/chat                         kind=json tools=[] starts_in_tool_calls=False parse_json=True schema=''
+json_object/thinking                     kind=json tools=[] starts_in_tool_calls=False parse_json=True schema=''
+json_object_noword/chat                  400: Prompt must contain the word 'json' in some form to use 'response_format' of type 'json_object'.
+json_object_noword/thinking              400: Prompt must contain the word 'json' in some form to use 'response_format' of type 'json_object'.
+json_schema/chat                         kind=json tools=[] starts_in_tool_calls=False parse_json=False schema='{"type":"object","properties":{"name":{"type":"string","description":"Full name"},"age":{"...'
+json_schema/thinking                     kind=json tools=[] starts_in_tool_calls=False parse_json=False schema='{"type":"object","properties":{"name":{"type":"string","description":"Full name"},"age":{"...'
+json_schema_strict/chat                  kind=json tools=[] starts_in_tool_calls=False parse_json=False schema='{"type":"object","properties":{"name":{"type":"string","description":"Full name"},"age":{"...'
+json_schema_strict/thinking              kind=json tools=[] starts_in_tool_calls=False parse_json=False schema='{"type":"object","properties":{"name":{"type":"string","description":"Full name"},"age":{"...'
+json_schema_strict_partial/chat          400: Required properties must match all properties in the object
+json_schema_strict_partial/thinking      400: Required properties must match all properties in the object
+json_schema_noname/chat                  kind=json tools=[] starts_in_tool_calls=False parse_json=False schema='{"type":"object","properties":{"name":{"type":"string","description":"Full name"},"age":{"...'
+json_schema_noname/thinking              kind=json tools=[] starts_in_tool_calls=False parse_json=False schema='{"type":"object","properties":{"name":{"type":"string","description":"Full name"},"age":{"...'
+regex/chat                               kind=regex tools=[] starts_in_tool_calls=False parse_json=False schema='\\d{4}-\\d{2}-\\d{2}'
+regex/thinking                           kind=regex tools=[] starts_in_tool_calls=False parse_json=False schema='\\d{4}-\\d{2}-\\d{2}'
+tools_auto/chat                          kind=tool_call tools=['get_weather', 'web_search'] starts_in_tool_calls=False parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+tools_auto/thinking                      kind=tool_call tools=['get_weather', 'web_search'] starts_in_tool_calls=False parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+tools_auto_strict/chat                   kind=tool_call tools=['get_weather', 'web_search'] starts_in_tool_calls=False parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+tools_auto_strict/thinking               kind=tool_call tools=['get_weather', 'web_search'] starts_in_tool_calls=False parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+tools_auto_mixed/chat                    400: Cannot use strict tool with non-strict tool in the same request
+tools_auto_mixed/thinking                400: Cannot use strict tool with non-strict tool in the same request
+tools_required/chat                      kind=tool_call_required tools=['get_weather', 'web_search'] starts_in_tool_calls=True parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+tools_required/thinking                  400: Thinking mode does not support this tool_choice
+tools_required_strict/chat               kind=tool_call_required tools=['get_weather', 'web_search'] starts_in_tool_calls=True parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+tools_required_strict/thinking           400: Thinking mode does not support this tool_choice
+tools_named/chat                         kind=tool_call_required tools=['get_weather'] starts_in_tool_calls=True parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+tools_named/thinking                     400: Thinking mode does not support this tool_choice
+tools_none/chat                          kind=None tools=[] starts_in_tool_calls=False parse_json=False schema=None
+tools_none/thinking                      kind=None tools=[] starts_in_tool_calls=False parse_json=False schema=None
+rf_plus_tools/chat                       kind=tool_call tools=['get_weather', 'web_search'] starts_in_tool_calls=False parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+rf_plus_tools/thinking                   kind=tool_call tools=['get_weather', 'web_search'] starts_in_tool_calls=False parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+rf_plus_strict_tools/chat                400: response_format should not be used with tools
+rf_plus_strict_tools/thinking            400: response_format should not be used with tools
+rf_plus_strict_tools_none/chat           kind=json tools=[] starts_in_tool_calls=False parse_json=False schema='{"type":"object","properties":{"name":{"type":"string","description":"Full name"},"age":{"...'
+rf_plus_strict_tools_none/thinking       kind=json tools=[] starts_in_tool_calls=False parse_json=False schema='{"type":"object","properties":{"name":{"type":"string","description":"Full name"},"age":{"...'
+rf_plus_tools_required/chat              kind=tool_call_required tools=['get_weather', 'web_search'] starts_in_tool_calls=True parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+rf_plus_tools_required/thinking          400: Thinking mode does not support this tool_choice
+tools_noarg_required/chat                kind=tool_call_required tools=['get_time'] starts_in_tool_calls=True parse_json=False schema='[{"type":"function","function":{"name":"get_time","description":"Get the current time.","p...'
+tools_noarg_required/thinking            400: Thinking mode does not support this tool_choice
+tools_bare/chat                          kind=tool_call tools=['ping', 'get_weather'] starts_in_tool_calls=False parse_json=False schema='[{"type":"function","function":{"name":"ping","description":null,"parameters":{},"strict":...'
+tools_bare/thinking                      kind=tool_call tools=['ping', 'get_weather'] starts_in_tool_calls=False parse_json=False schema='[{"type":"function","function":{"name":"ping","description":null,"parameters":{},"strict":...'
+mid_system_tools/chat                    kind=tool_call tools=['get_weather'] starts_in_tool_calls=False parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+mid_system_tools/thinking                kind=tool_call tools=['get_weather'] starts_in_tool_calls=False parse_json=False schema='[{"type":"function","function":{"name":"get_weather","description":"Get the weather foreca...'
+mid_system_json_schema/chat              kind=json tools=[] starts_in_tool_calls=False parse_json=False schema='{"type":"object","properties":{"name":{"type":"string","description":"Full name"},"age":{"...'
+mid_system_json_schema/thinking          kind=json tools=[] starts_in_tool_calls=False parse_json=False schema='{"type":"object","properties":{"name":{"type":"string","description":"Full name"},"age":{"...'
+wrote /home/sfxnz/projects/data/dsv41-1017/api-parity/findings/structured/upstream_matrix.json

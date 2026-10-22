@@ -1,0 +1,6 @@
+gray16.png   PIL mode I;16   stock~api {'max_abs': 254, 'mean_abs': 125.529, 'psnr': 4.86, 'pct_gt8': 95.53}
+                         fixed~api {'max_abs': 5, 'mean_abs': 0.401, 'psnr': 51.5, 'pct_gt8': 0.0}
+rgb16.png    PIL mode RGB    stock~api {'max_abs': 83, 'mean_abs': 2.748, 'psnr': 35.46, 'pct_gt8': 4.41}
+                         fixed~api {'max_abs': 83, 'mean_abs': 2.748, 'psnr': 35.46, 'pct_gt8': 4.41}
+gray_l.png   PIL mode L      stock~api {'max_abs': 15, 'mean_abs': 1.117, 'psnr': 43.87, 'pct_gt8': 0.03}
+                         fixed~api {'max_abs': 15, 'mean_abs': 1.117, 'psnr': 43.87, 'pct_gt8': 0.03}

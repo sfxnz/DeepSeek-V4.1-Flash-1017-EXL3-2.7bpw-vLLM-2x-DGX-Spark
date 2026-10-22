@@ -1,0 +1,117 @@
+PASS startup line: dsv41-gateway: engaged deepseek-recipe 0.2.0 upstream=http://127.0.0.1:18001 model=deepseek-ai/DeepSeek-V4.1-Flash-1017
+PASS review 3, pass 2 B: 8 PNGs of 4096 px per request: one request peaks at 590 MiB, three at once at 613 MiB (requests take turns on the image executor)
+PASS render: prompt token IDs, max_tokens, sampling, thinking, effort = the API's (72/72)
+PASS stream fixture chat_text_full: body = the API's
+PASS stream fixture chat_text_stream: SSE = the API's
+PASS stream fixture chat_text_stream_usage: SSE = the API's
+PASS stream fixture chat_think_stream: SSE = the API's
+PASS stream fixture chat_think_full: body = the API's
+PASS stream fixture chat_tool_stream: SSE = the API's
+PASS stream fixture chat_tool_full: body = the API's
+PASS stream fixture chat_think_tool_stream: SSE = the API's
+PASS stream fixture chat_logprobs_full: body = the API's
+PASS stream fixture chat_logprobs_stream: SSE = the API's
+PASS stream fixture chat_logprobs_think_full: body = the API's
+PASS stream fixture chat_length_full: body = the API's
+PASS stream fixture chat_length_mid_tool_full: body = the API's
+PASS stream fixture chat_length_mid_tool_stream: SSE = the API's
+PASS stream fixture chat_stop_sequence_stream: SSE = the API's; stop sequence aborts vLLM after 4/6 chunks
+PASS stream fixture chat_stop_sequence_full: body = the API's; stop sequence aborts vLLM after 3/4 chunks
+PASS stream fixture chat_stop_in_reasoning_full: body = the API's
+PASS stream fixture chat_content_after_tools_full: body = the API's
+PASS stream fixture chat_required_full: body = the API's
+PASS stream fixture chat_json_full: body = the API's
+PASS stream fixture chat_utf8_stream: SSE = the API's
+PASS stream fixture chat_eos_alone_stream: SSE = the API's
+PASS stream fixture msg_text_full: body = the API's
+PASS stream fixture msg_text_stream: SSE = the API's
+PASS stream fixture msg_think_stream: SSE = the API's
+PASS stream fixture msg_tool_stream: SSE = the API's
+PASS stream fixture msg_think_tool_full: body = the API's
+PASS stream fixture msg_length_full: body = the API's
+PASS stream fixture msg_stop_sequence_stream: SSE = the API's; stop sequence aborts vLLM after 1/3 chunks
+PASS stream fixture resp_text_full: body = the API's
+PASS stream fixture resp_text_stream: SSE = the API's
+PASS stream fixture resp_think_stream: SSE = the API's
+PASS stream fixture resp_tool_stream: SSE = the API's
+PASS stream fixture resp_think_tool_full: body = the API's
+PASS stream fixture resp_length_full: body = the API's
+PASS stream fixture resp_logprobs_stream: SSE = the API's
+PASS images chat_images: original bytes in placeholder order, vLLM spans [[6, 195], [202, 207]] (vLLM 402 vs API 400 image tokens)
+PASS images chat_tool_result_images: original bytes in placeholder order, vLLM spans [[349, 194], [554, 207]] (vLLM 401 vs API 400 image tokens)
+PASS images msg_images: original bytes in placeholder order, vLLM spans [[2, 195]] (vLLM 195 vs API 194 image tokens)
+PASS images msg_tool_result_image: original bytes in placeholder order, vLLM spans [[319, 206]] (vLLM 206 vs API 206 image tokens)
+PASS images resp_input_image: original bytes in placeholder order, vLLM spans [[5, 194]] (vLLM 194 vs API 194 image tokens)
+PASS vLLM 400 before the stream (non-stream): 400 in the API's error shape
+PASS vLLM rejection as its first stream event, at once (non-stream): 400 in the API's error shape, no SSE
+PASS vLLM error after output started (non-stream): the API's error shape ends it
+PASS vLLM 400 before the stream (stream): 400 in the API's error shape
+PASS vLLM rejection as its first stream event, at once (stream): 400 in the API's error shape, no SSE
+PASS vLLM error after output started (stream): the API's error shape ends it
+PASS fallbacks reach vLLM unchanged and come back byte for byte (27/27)
+PASS one log line per fallback with its reason
+PASS a body that is not JSON falls back unchanged
+PASS a streamed fallback comes back byte for byte
+PASS proxy GET /v1/models?x=1: request and response unchanged
+PASS proxy POST /tokenize: request and response unchanged
+PASS proxy DELETE /v1/responses/r1: request and response unchanged
+PASS proxy GET /v1/messages/count_tokens: request and response unchanged
+PASS proxy PUT /metrics: request and response unchanged
+PASS proxy HEAD
+PASS stream, first token after the grace window: headers after 2.00 s, then the API's SSE
+PASS vLLM rejection after the grace window (stream: 200, start chunk, error frame)
+PASS vLLM rejection after the grace window (non-stream: 400)
+PASS stream: client disconnect aborts vLLM's request (after 1/201 chunks)
+PASS non-stream: client disconnect aborts vLLM's request (after 19/201 chunks)
+PASS /health follows vLLM's /health
+PASS URL image: fetched once by the gateway, sent to vLLM as a data URL
+PASS DSV41_GATEWAY_BLOCK_PRIVATE_URLS=1: a loopback image URL is refused (400), nothing reaches vLLM
+PASS DSV41_GATEWAY_STRICT=1: the API's error body for requests it rejects (11/11)
+PASS DSV41_GATEWAY_STRICT=1: vLLM-only fields still go to vLLM
+PASS context limit chat (non-stream): the API's 400 body, before any upstream call
+PASS context limit chat (stream): the API's 400 body, before any upstream call
+PASS context limit messages (non-stream): the API's 400 body, before any upstream call
+PASS context limit messages (stream): the API's 400 body, before any upstream call
+PASS context limit responses (non-stream): the API's 400 body, before any upstream call
+PASS context limit responses (stream): the API's 400 body, before any upstream call
+PASS render of a prompt past the context limit: 200, max_tokens null
+PASS four concurrent streams: each = the API's SSE
+PASS review 1: 20 stream clients leave after the grace window, before the first token: 20/20 vLLM requests aborted, 0 upstream connections left, then a request: 200
+PASS review 2: non-stream proxied /v1/completions: the client's disconnect reaches vLLM after 1.01 s
+PASS review 2: non-stream fallback (echo: true): the client's disconnect reaches vLLM after 1.01 s
+PASS review 4/5: a malformed event (non-stream): 502 in the API's error shape
+PASS review 4/5: a malformed event (stream): an error frame in the API's error shape
+PASS review 4/5: a dropped connection (non-stream): 502 in the API's error shape
+PASS review 4/5: a dropped connection (stream): an error frame in the API's error shape
+PASS review 4/5: no finish reason (non-stream): 502 in the API's error shape
+PASS review 4/5: no finish reason (stream): an error frame in the API's error shape
+PASS review 4/5: an engine abort (vLLM drops its token-less output) (non-stream): 502 in the API's error shape
+PASS review 4/5: an engine abort (vLLM drops its token-less output) (stream): an error frame in the API's error shape
+PASS review 4/5: no event at all (non-stream): 502 in the API's error shape
+PASS review 4/5: no event at all (stream): 502 in the API's error shape
+PASS review 6: vLLM's scale-out routes are not served on the public port (404, nothing reaches vLLM)
+PASS review 6: BLOCK_PRIVATE_URLS=1, a fallback (echo: true) with an http(s) image URL: 400, nothing reaches vLLM
+PASS review 6: BLOCK_PRIVATE_URLS=1, an API-rejected request (n: 2) with an http(s) image URL: 400, nothing reaches vLLM
+PASS review 6: BLOCK_PRIVATE_URLS=1, proxied /tokenize with an http(s) image URL: 400, nothing reaches vLLM
+PASS review 6: BLOCK_PRIVATE_URLS=1 still falls back without remote URLs (a data URL image)
+PASS review 8: with 110 proxied requests open, /health answers 200 in 0.00 s; 110/110 complete
+PASS review 9: the proxy keeps the raw path, the query and the client's Host
+PASS pass 2 C: fallback log lines name error classes and field paths, no request values or URL credentials
+PASS pass 2 D: empty no-op vLLM fields (logit_bias {}, documents [], cache_salt "") stay on the API path
+PASS pass 2 E: BLOCK_PRIVATE_URLS=1 lets a fallback with metadata.url (no media part) through
+PASS pass 2 E: BLOCK_PRIVATE_URLS=1 lets a fallback with a schema's examples URL (no media part) through
+PASS sitecustomize masked: the gateway process maps no torch or vLLM library, the check process imported neither
+PASS ~74K-token agentic request: 74473 prompt token IDs = the API's (sha256)
+PASS render endpoint, ~74K-token request: same IDs
+deepseek-recipe 0.2.0
+PASS pass 2 A: a text request beside 30 queued 14-photo requests renders in 0.00 s (image requests take up to 14.8 s, one at a time)
+NUMBER gateway_startup_s (spawn -> /health 200): 0.33
+NUMBER gateway_rss_idle_kib: {'VmRSS': 124440, 'VmHWM': 124440}
+NUMBER review 3: 8 PNGs of 4096 px per request, gateway peak RSS MiB (idle, 1 request, then 3 at once): (121, 590, 613)
+NUMBER prepare_74k_ms (convert+render+encode+sampling, median of 7): 22.0
+NUMBER encode_74k_ms (render+tokenize, median of 7): 18.1
+NUMBER render_74k_http_ms (body parse + prepare + 74K-id JSON reply): 32.9
+NUMBER e2e_small_ms (client -> gateway -> vLLM route -> scripted engine, 2 tokens): 3.5
+NUMBER e2e_74k_ms: 41.6
+NUMBER gateway_rss_after_74k_kib: {'VmRSS': 160920, 'VmHWM': 160920}
+106/106 passed

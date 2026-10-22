@@ -1,0 +1,58 @@
+patched /tmp/tmp0vfwa6q9/v1/worker/gpu/spec_decode/adaptive_verification.py
+patched /tmp/tmp0vfwa6q9/v1/worker/gpu/model_runner.py
+dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+dsv41: prefix-end fallback engaged: SWA boundaries [8999] also keep [8871] (interval 0)
+dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+dsv41: prefix reply retain: decode-filled blocks of 1 SWA groups enter the prefix cache
+dsv41: decoder replay junction anchor: first at J=16384 (prompt 64000, hit 0): rows [13842, 16384) run layers 20-39
+dsv41: dense GEMV hooks patched into /tmp/tmpfu7e3yfl/model_executor/kernels/linear/mxfp8/flashinfer.py
+dsv41: dense GEMV wo_a hook skipped (dense_gemv: /tmp/tmpfu7e3yfl/models/deepseek_v4/nvidia/ops/o_proj.py missing); fp8_einsum stays
+dsv41: dense GEMV hooks patched into /tmp/tmpfu7e3yfl/models/deepseek_v4/nvidia/ops/o_proj.py
+dsv41: dense GEMV hooks patched into /tmp/tmphs92tp04/model_executor/kernels/linear/mxfp8/flashinfer.py
+dsv41: dense GEMV wo_a hook skipped (dense_gemv: /tmp/tmphs92tp04/models/deepseek_v4/nvidia/ops/o_proj.py missing); fp8_einsum stays
+dsv41: dense GEMV wo_a hook skipped (dense_gemv: /tmp/tmphs92tp04/models/deepseek_v4/nvidia/ops/o_proj.py missing); fp8_einsum stays
+[dense-dg] rank? K5120xN1792 rejected (ValueError("DSV41_DENSE_DG_SHAPES: bad entry '5120*1792' (want KxN)")); b12x stays
+dsv41: dense deep_gemm small-M hooks patched into /tmp/tmpv9ymgesc/model_executor/kernels/linear/mxfp8/flashinfer.py
+dsv41: engram native stage: wrapped
+/usr/lib/python3.12/unittest/case.py:589: ResourceWarning: unclosed file <_io.BufferedReader name='/tmp/tmpoa5nyh6p.safetensors'>
+  if method() is not None:
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+----------------------------------------------------------------------
+Ran 1333 tests in 63.838s
+
+OK (skipped=73)
+patched /tmp/tmpu47omcnu/o_proj.py
+patched /tmp/tmp734eqelq/o_proj.py
+patched /tmp/tmpvr9zs6df/o_proj.py
+patched /tmp/tmpxkbkqx3u/model_executor/kernels/linear/__init__.py
+patched /tmp/tmpl8ny9x08/model_executor/kernels/linear/mxfp8/flashinfer.py
+patched /tmp/tmpfqzhis1t/models/deepseek_v4_1/attention.py
+patched /tmp/tmpfqzhis1t/model_executor/kernels/linear/mxfp8/flashinfer.py
+patched /tmp/tmpfqzhis1t/models/deepseek_v4/nvidia/ops/o_proj.py
+patched /tmp/tmpfah8nc9b/include/flashinfer/attention/sparse_mla_sm120/decode_dsv4_kernel.cuh
+patched /tmp/tmpzebdzq1r/include/flashinfer/attention/sparse_mla_sm120/decode_dsv4_kernel.cuh
+patched /tmp/tmpvzgbu6i4/include/flashinfer/attention/sparse_mla_sm120/decode_dsv4_kernel.cuh
+patched /tmp/tmpvzgbu6i4/csrc/sparse_mla_sm120_decode_dsv4.cu
+patched /tmp/tmpvzgbu6i4/mla/_sparse_mla_sm120.py
+patched /tmp/tmpvzgbu6i4/mla/_core.py
+patched /tmp/tmpoktjgess/csrc/p2b_moe.cu
+patched /tmp/tmpoktjgess/csrc/p2b_moe.cu
+patched /tmp/tmp3jcd46z4/csrc/p2b_moe.cu
+patched /tmp/tmp3jcd46z4/vllm_exl3/exl3.py
+patched /tmp/tmp3jcd46z4/csrc/p2b_moe.cu
+patched /tmp/tmp3jcd46z4/vllm_exl3/exl3.py
+patched /tmp/tmpwhr4h_lp/csrc/p2b_moe.cu
+patched /tmp/tmpwhr4h_lp/csrc/p2b_moe.cu
+patched /tmp/tmpba5wgd28/csrc/p2b_moe.cu
+patched /tmp/tmpba5wgd28/csrc/p2b_moe.cu
+patched /tmp/tmpyujee9y3/csrc/p2b_moe.cu
+patched /tmp/tmpyujee9y3/csrc/p2b_moe.cu
+patched /tmp/tmp2kzyumf4/csrc/p2b_moe.cu
+patched /tmp/tmprgx0xzl_/csrc/p2b_moe.cu
+patched /tmp/tmpckohu96m/csrc/p2b_moe.cu
+patched /tmp/tmps1ips963/csrc/p2b_moe.cu
+patched /tmp/tmps1ips963/csrc/p2b_moe.cu
+patched /tmp/tmpdfbbwtou/csrc/p2b_moe.cu
+patched /tmp/tmpdfbbwtou/csrc/p2b_moe.cu
+patched /tmp/tmpun4e8d4m/csrc/p2b_moe.cu
+patched /tmp/tmpun4e8d4m/src/vllm_exl3/exl3.py

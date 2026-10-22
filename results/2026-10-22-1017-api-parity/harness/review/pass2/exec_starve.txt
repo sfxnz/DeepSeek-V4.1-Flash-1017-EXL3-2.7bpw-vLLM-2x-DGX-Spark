@@ -1,0 +1,6 @@
+                                                      ^^^^^^^^^^^^^
+ValueError: max() iterable argument is empty
+os.cpu_count()=20 -> default executor workers 24
+30 image requests x 4 photos: slowest 10.4 s; text-only request started 0.5 s later: prepare 1.93 s
+0 image requests x 1 photos: slowest 0.0 s; text-only request started 0.5 s later: prepare 0.00 s
+30 image requests x 14 photos: slowest 36.8 s; text-only request started 0.5 s later: prepare 13.47 s

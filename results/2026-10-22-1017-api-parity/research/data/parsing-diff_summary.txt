@@ -1,0 +1,555 @@
+====================================================================================================
+CASE think_basic  thinking=True finish=stop  
+  model output: 'The user asks for 6*7.\nThat is 42.</think>The answer is **42**.'
+  UP   nonstream : content='The answer is **42**.' reasoning='The user asks for 6*7.\nThat is 42.' tools=[] finish=stop ct=21 rt=14
+  OURS nonstream : content='The answer is **42**.' reasoning='The user asks for 6*7.\nThat is 42.' tools=[] finish=stop ct=22 rt=14
+  DIFF up vs ours (nonstream): ['completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens']
+====================================================================================================
+CASE think_empty_reasoning  thinking=True finish=stop  </think> immediately
+  model output: '</think>Hello! How can I help?'
+  UP   nonstream : content='Hello! How can I help?' reasoning='' tools=[] finish=stop ct=8 rt=0
+  OURS nonstream : content='Hello! How can I help?' reasoning=None tools=[] finish=stop ct=9 rt=0
+  DIFF up vs ours (nonstream): ['reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['reasoning', 'completion_tokens']
+====================================================================================================
+CASE think_newlines_around  thinking=True finish=stop  leading/trailing newlines of reasoning and content
+  model output: '\n\nFirst line.\n\nSecond line.\n</think>\n\nAnswer text.\n'
+  UP   nonstream : content='Answer text.\n' reasoning='First line.\n\nSecond line.' tools=[] finish=stop ct=12 rt=6
+  OURS nonstream : content='\n\nAnswer text.\n' reasoning='\n\nFirst line.\n\nSecond line.' tools=[] finish=stop ct=13 rt=7
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+====================================================================================================
+CASE think_trailing_spaces  thinking=True finish=stop  HF golden V41_TOOL_CALL_OUTPUT keeps '  reason  '
+  model output: '  reason  </think>summary'
+  UP   nonstream : content='summary' reasoning='  reason  ' tools=[] finish=stop ct=5 rt=3
+  OURS nonstream : content='summary' reasoning='  reason' tools=[] finish=stop ct=6 rt=3
+  DIFF up vs ours (nonstream): ['reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['reasoning', 'completion_tokens']
+====================================================================================================
+CASE think_literal_end_tag_in_reasoning  thinking=True finish=stop  </think> spelled with plain tokens inside reasoning
+  model output: 'The tag </think> closes thinking.</think>Done.'
+  UP   nonstream : content='Done.' reasoning='The tag </think> closes thinking.' tools=[] finish=stop ct=12 rt=7
+  OURS nonstream : content=' closes thinking.Done.' reasoning='The tag' tools=[] finish=stop ct=13 rt=9
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content', 'reasoning']; vs upstream ['completion_tokens', 'reasoning_tokens']
+      -> content='Done.' reasoning='The tag </think> closes thinking.' tools=[] finish=stop ct=13 rt=9
+====================================================================================================
+CASE think_literal_end_tag_in_content  thinking=True finish=stop  
+  model output: '</think>Close reasoning with </think> in the template.'
+  UP   nonstream : content='Close reasoning with </think> in the template.' reasoning='' tools=[] finish=stop ct=12 rt=0
+  OURS nonstream : content='Close reasoning with  in the template.' reasoning=None tools=[] finish=stop ct=13 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'completion_tokens']
+      -> content='Close reasoning with </think> in the template.' reasoning=None tools=[] finish=stop ct=13 rt=0
+====================================================================================================
+CASE think_second_end_token  thinking=True finish=stop  second </think> token in content
+  model output: 'r</think>a</think>b'
+  UP   nonstream : content='ab' reasoning='r' tools=[] finish=stop ct=5 rt=1
+  OURS nonstream : content='ab' reasoning='r' tools=[] finish=stop ct=6 rt=1
+  DIFF up vs ours (nonstream): ['completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens']
+====================================================================================================
+CASE think_literal_tag_pair_in_content  thinking=True finish=stop  content quotes <think>...</think> as plain tokens (e.g. docs about reasoning models)
+  model output: 'r</think>Wrap it as <think>secret</think> please.'
+  UP   nonstream : content='Wrap it as <think>secret</think> please.' reasoning='r' tools=[] finish=stop ct=15 rt=1
+  OURS nonstream : content='Wrap it as  please.' reasoning='rsecret' tools=[] finish=stop ct=16 rt=1
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content', 'reasoning']; vs upstream ['completion_tokens']
+      -> content='Wrap it as <think>secret</think> please.' reasoning='r' tools=[] finish=stop ct=16 rt=1
+====================================================================================================
+CASE think_end_token_then_plain_end_tag_same_step  thinking=True finish=stop  special </think> then plain '</think>' text inside one final DSpark step
+  model output: 'r</think></think> ok'
+  UP   nonstream : content='</think> ok' reasoning='r' tools=[] finish=stop ct=6 rt=1
+  OURS nonstream : content=' ok' reasoning='r' tools=[] finish=stop ct=7 rt=1
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['completion_tokens']
+      -> content='</think> ok' reasoning='r' tools=[] finish=stop ct=7 rt=1
+  OURS stream['6']: vs ours-nonstream ['reasoning']; vs upstream ['content', 'reasoning', 'completion_tokens']
+      -> content=' ok' reasoning='r</think>' tools=[] finish=stop ct=7 rt=1
+====================================================================================================
+CASE nothink_literal_tag_pair_in_content  thinking=False finish=stop  
+  model output: 'Wrap it as <think>secret</think> please.'
+  UP   nonstream : content='Wrap it as <think>secret</think> please.' reasoning=None tools=[] finish=stop ct=13 rt=None
+  OURS nonstream : content='Wrap it as  please.' reasoning='secret' tools=[] finish=stop ct=14 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content', 'reasoning']; vs upstream ['completion_tokens', 'reasoning_tokens']
+      -> content='Wrap it as <think>secret</think> please.' reasoning=None tools=[] finish=stop ct=14 rt=0
+====================================================================================================
+CASE think_start_token_echo  thinking=True finish=stop  model re-emits <think>
+  model output: '<think>\nreasoning</think>answer'
+  UP   nonstream : content='answer' reasoning='<think>\nreasoning' tools=[] finish=stop ct=6 rt=4
+  OURS nonstream : content='answer' reasoning='\nreasoning' tools=[] finish=stop ct=7 rt=3
+  DIFF up vs ours (nonstream): ['reasoning', 'completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['reasoning', 'completion_tokens', 'reasoning_tokens']
+====================================================================================================
+CASE think_no_end_eos  thinking=True finish=stop  EOS inside reasoning
+  model output: 'Reasoning that never closes.'
+  UP   nonstream : content='' reasoning='Reasoning that never closes.' tools=[] finish=stop ct=6 rt=6
+  OURS nonstream : content=None reasoning='Reasoning that never closes.' tools=[] finish=stop ct=7 rt=6
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens']
+  OURS stream['1', '5']: vs ours-nonstream ['content', 'reasoning_tokens']; vs upstream ['completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Reasoning that never closes.' tools=[] finish=stop ct=7 rt=5
+  OURS stream['2', '4', 'rnd2']: vs ours-nonstream ['content', 'reasoning_tokens']; vs upstream ['completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Reasoning that never closes.' tools=[] finish=stop ct=7 rt=4
+  OURS stream['3', 'rnd1', 'rnd3']: vs ours-nonstream ['content', 'reasoning_tokens']; vs upstream ['completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Reasoning that never closes.' tools=[] finish=stop ct=7 rt=3
+  OURS stream['6']: vs ours-nonstream ['content', 'reasoning_tokens']; vs upstream ['completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Reasoning that never closes.' tools=[] finish=stop ct=7 rt=0
+====================================================================================================
+CASE think_truncated_length  thinking=True finish=length  
+  model output: 'Long reasoning cut by max_tokens'
+  UP   nonstream : content='' reasoning='Long reasoning cut by max_tokens' tools=[] finish=length ct=7 rt=7
+  OURS nonstream : content=None reasoning='Long reasoning cut by max_tokens' tools=[] finish=length ct=7 rt=7
+  DIFF up vs ours (nonstream): ['content']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream same
+      -> content='' reasoning='Long reasoning cut by max_tokens' tools=[] finish=length ct=7 rt=7
+====================================================================================================
+CASE think_empty_content  thinking=True finish=stop  EOS right after </think>
+  model output: 'Only reasoning.</think>'
+  UP   nonstream : content='' reasoning='Only reasoning.' tools=[] finish=stop ct=4 rt=3
+  OURS nonstream : content=None reasoning='Only reasoning.' tools=[] finish=stop ct=5 rt=3
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['completion_tokens']
+      -> content='' reasoning='Only reasoning.' tools=[] finish=stop ct=5 rt=3
+====================================================================================================
+CASE nothink_basic  thinking=False finish=stop  
+  model output: 'Hello there! 👋 How can I help?'
+  UP   nonstream : content='Hello there! 👋 How can I help?' reasoning=None tools=[] finish=stop ct=10 rt=None
+  OURS nonstream : content='Hello there! 👋 How can I help?' reasoning=None tools=[] finish=stop ct=11 rt=0
+  DIFF up vs ours (nonstream): ['completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens', 'reasoning_tokens']
+====================================================================================================
+CASE nothink_leading_newlines  thinking=False finish=stop  
+  model output: '\n\nHello'
+  UP   nonstream : content='Hello' reasoning=None tools=[] finish=stop ct=2 rt=None
+  OURS nonstream : content='\n\nHello' reasoning=None tools=[] finish=stop ct=3 rt=0
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['content', 'completion_tokens', 'reasoning_tokens']
+====================================================================================================
+CASE nothink_end_token_in_content  thinking=False finish=stop  </think> token while thinking is off
+  model output: 'a</think>b'
+  UP   nonstream : content='ab' reasoning=None tools=[] finish=stop ct=3 rt=None
+  OURS nonstream : content='ab' reasoning=None tools=[] finish=stop ct=4 rt=0
+  DIFF up vs ours (nonstream): ['completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens', 'reasoning_tokens']
+====================================================================================================
+CASE multibyte_emoji_cjk  thinking=True finish=stop  chars split across byte tokens
+  model output: '思考🤭中</think>答案：🦀🤭 完成'
+  UP   nonstream : content='答案：🦀🤭 完成' reasoning='思考🤭中' tools=[] finish=stop ct=14 rt=4
+  OURS nonstream : content='答案：🦀🤭 完成' reasoning='思考🤭中' tools=[] finish=stop ct=15 rt=4
+  DIFF up vs ours (nonstream): ['completion_tokens']
+  OURS stream['1', 'rnd2']: vs ours-nonstream ['reasoning_tokens']; vs upstream ['completion_tokens', 'reasoning_tokens']
+      -> content='答案：🦀🤭 完成' reasoning='思考🤭中' tools=[] finish=stop ct=15 rt=3
+  OURS stream['2', '3', '4', '5', '6', 'rnd1', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens']
+====================================================================================================
+CASE tool_types_thinking  thinking=True finish=stop  
+  model output: 'Need weather.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter name="city" string="true">São Paulo</｜DSML｜ parameter>\n<｜DSML｜ parameter name="days" string="false">3</｜DSML｜ parameter>\n<｜DSML｜ parameter name="temp" string="false">21.50</｜DSML｜ parameter>\n<｜DSML｜ parameter name="metric" string="false">true</｜DSML｜ parameter>\n<｜DSML｜ parameter name="note" string="false">null</｜DSML｜ parameter>\n<｜DSML｜ parameter name="tags" string="false">["a", "b"]</｜DSML｜ parameter>\n<｜DSML｜ parameter name="opts" string="false">{"unit":"c","n":[1,2]}</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='Need weather.' tools=[('get_weather', '{"city": "São Paulo", "days": 3, "temp": 21.50, "metric": true, "note": null, "tags": ["a", "b"], "opts": {"unit":"c","n":[1,2]}}')] finish=tool_calls ct=157 rt=3
+  OURS nonstream : content=None reasoning='Need weather.' tools=[('get_weather', '{"city": "São Paulo", "days": 3, "temp": 21.5, "metric": true, "note": null, "tags": ["a", "b"], "opts": {"unit": "c", "n": [1, 2]}}')] finish=tool_calls ct=158 rt=3
+  DIFF up vs ours (nonstream): ['content', 'tool_calls', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['tool_calls', 'completion_tokens']
+      -> content='' reasoning='Need weather.' tools=[('get_weather', '{"city": "São Paulo", "days": 3, "temp": 21.5, "metric": true, "note": null, "tags": ["a", "b"], "opts": {"unit": "c", "n": [1, 2]}}')] finish=tool_calls ct=158 rt=3
+  tool call ids: up=['call_00_sVWvKDzCvvz7Wd5AI77I5993'] ours=['chatcmpl-tool-9af6fa4625e50f28']
+====================================================================================================
+CASE tool_types_nothink  thinking=False finish=stop  
+  model output: '\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter name="city" string="true">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name="days" string="false">3</｜DSML｜ parameter>\n<｜DSML｜ parameter name="metric" string="false">false</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning=None tools=[('get_weather', '{"city": "Paris", "days": 3, "metric": false}')] finish=tool_calls ct=70 rt=None
+  OURS nonstream : content=None reasoning=None tools=[('get_weather', '{"city": "Paris", "days": 3, "metric": false}')] finish=tool_calls ct=71 rt=0
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning=None tools=[('get_weather', '{"city": "Paris", "days": 3, "metric": false}')] finish=tool_calls ct=71 rt=0
+  tool call ids: up=['call_00_mNu3WzWUiPfkkuNpKsoA6476'] ours=['chatcmpl-tool-ba7ad8aef2c54de3']
+====================================================================================================
+CASE tool_two_parallel  thinking=True finish=stop  
+  model output: 'Two lookups.</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter name="city" string="true">Paris</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">Paris events</｜DSML｜ parameter>\n<｜DSML｜ parameter name="limit" string="false">5</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='Two lookups.' tools=[('get_weather', '{"city": "Paris"}'), ('search', '{"query": "Paris events", "limit": 5}')] finish=tool_calls ct=87 rt=4
+  OURS nonstream : content=None reasoning='Two lookups.' tools=[('get_weather', '{"city": "Paris"}'), ('search', '{"query": "Paris events", "limit": 5}')] finish=tool_calls ct=88 rt=4
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['completion_tokens']
+      -> content='' reasoning='Two lookups.' tools=[('get_weather', '{"city": "Paris"}'), ('search', '{"query": "Paris events", "limit": 5}')] finish=tool_calls ct=88 rt=4
+  tool call ids: up=['call_00_e7cOmwFMBoVU5rQMATHs0661', 'call_01_1kPvPQ1mHWPjhUbnNe2y1041'] ours=['chatcmpl-tool-a75cd57cf37ebb48', 'chatcmpl-tool-9fc99d5f351515db']
+====================================================================================================
+CASE tool_content_before  thinking=True finish=stop  
+  model output: 'Plan.</think>Let me check the weather for you.\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter name="city" string="true">Oslo</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='Let me check the weather for you.' reasoning='Plan.' tools=[('get_weather', '{"city": "Oslo"}')] finish=tool_calls ct=49 rt=2
+  OURS nonstream : content='Let me check the weather for you.\n\n' reasoning='Plan.' tools=[('get_weather', '{"city": "Oslo"}')] finish=tool_calls ct=50 rt=2
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['content', 'completion_tokens']
+  tool call ids: up=['call_00_OqnpPpkPVJBPKVONgzor5796'] ours=['chatcmpl-tool-b0596966400b6b73']
+====================================================================================================
+CASE tool_content_after  thinking=True finish=stop  text after the tool-call block
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter name="city" string="true">Oslo</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>\nDone, waiting for results.'
+  UP   nonstream : content='' reasoning='' tools=[('get_weather', '{"city": "Oslo"}')] finish=tool_calls ct=46 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('get_weather', '{"city": "Oslo"}')] finish=tool_calls ct=47 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '4', 'rnd2']: vs ours-nonstream ['content']; vs upstream ['content', 'reasoning', 'completion_tokens']
+      -> content='Done, waiting for results.' reasoning=None tools=[('get_weather', '{"city": "Oslo"}')] finish=tool_calls ct=47 rt=0
+  OURS stream['3', '5', '6', 'rnd1', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['content', 'reasoning', 'completion_tokens']
+      -> content='\nDone, waiting for results.' reasoning=None tools=[('get_weather', '{"city": "Oslo"}')] finish=tool_calls ct=47 rt=0
+  tool call ids: up=['call_00_ET_PW5zU1alKE25hxDYaRqr4248'] ours=['chatcmpl-tool-978fbf7e90026232']
+====================================================================================================
+CASE tool_without_think_end  thinking=True finish=stop  tool block inside reasoning (no </think>)
+  model output: 'I will call the tool.\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter name="city" string="true">Rome</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='I will call the tool.' tools=[('get_weather', '{"city": "Rome"}')] finish=tool_calls ct=43 rt=6
+  OURS nonstream : content=None reasoning='I will call the tool.' tools=[('get_weather', '{"city": "Rome"}')] finish=tool_calls ct=44 rt=6
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['completion_tokens']
+      -> content='' reasoning='I will call the tool.' tools=[('get_weather', '{"city": "Rome"}')] finish=tool_calls ct=44 rt=6
+  tool call ids: up=['call_00_OhAdVCHpZdSuGHlmgI651785'] ours=['chatcmpl-tool-965638cd9a33237e']
+====================================================================================================
+CASE tool_truncated_mid_value  thinking=True finish=length  
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">weather in Par'
+  UP   nonstream : content='' reasoning='' tools=[('search', '{"query": "weather in Par')] finish=length ct=27 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('search', '{}')] finish=tool_calls ct=27 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'tool_calls', 'finish_reason']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content', 'tool_calls']; vs upstream ['reasoning', 'tool_calls', 'finish_reason']
+      -> content='' reasoning=None tools=[('search', '{"query": "')] finish=tool_calls ct=27 rt=0
+  tool call ids: up=['call_00_ET_LnjdMh4DzNMYBNUtyDBF1629'] ours=['chatcmpl-tool-bc4a0e9aa20986a1']
+====================================================================================================
+CASE tool_truncated_after_param  thinking=True finish=length  
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">x</｜DSML｜ parameter>\n<｜DSML｜ parameter name="limit" string="false">1'
+  UP   nonstream : content='' reasoning='' tools=[('search', '{"query": "x", "limit": 1')] finish=length ct=41 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('search', '{"query": "x"}')] finish=tool_calls ct=41 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'tool_calls', 'finish_reason']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'tool_calls', 'finish_reason']
+      -> content='' reasoning=None tools=[('search', '{"query": "x"}')] finish=tool_calls ct=41 rt=0
+  tool call ids: up=['call_00_ET_JXr6c9JtEa3djq9rfOJf2604'] ours=['chatcmpl-tool-82ac3b76927abd91']
+====================================================================================================
+CASE tool_string_json_text  thinking=True finish=stop  string=true value that looks like JSON stays a string
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">{"value": "Paris"}</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('search', '{"query": "{\\"value\\": \\"Paris\\"}"}')] finish=tool_calls ct=42 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('search', '{"query": "{\\"value\\": \\"Paris\\"}"}')] finish=tool_calls ct=43 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'completion_tokens']
+      -> content='' reasoning=None tools=[('search', '{"query": "{\\"value\\": \\"Paris\\"}"}')] finish=tool_calls ct=43 rt=0
+  tool call ids: up=['call_00_ET_N7HMzRhxroG4nFkbLIap0412'] ours=['chatcmpl-tool-a8286a6235f4ffce']
+====================================================================================================
+CASE tool_string_escapes  thinking=True finish=stop  
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">line1\nsaid "hi" \\ tab\tend</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('search', '{"query": "line1\\nsaid \\"hi\\" \\\\ tab\\tend"}')] finish=tool_calls ct=46 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('search', '{"query": "line1\\nsaid \\"hi\\" \\\\ tab\\tend"}')] finish=tool_calls ct=47 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'completion_tokens']
+      -> content='' reasoning=None tools=[('search', '{"query": "line1\\nsaid \\"hi\\" \\\\ tab\\tend"}')] finish=tool_calls ct=47 rt=0
+  tool call ids: up=['call_00_ET_Ft9x5005UaSyH6sqT61N2078'] ours=['chatcmpl-tool-82b7fd67c38d5447']
+====================================================================================================
+CASE tool_int_as_string_attr  thinking=True finish=stop  integer param written string=true (schema coercion)
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">x</｜DSML｜ parameter>\n<｜DSML｜ parameter name="limit" string="true">5</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('search', '{"query": "x", "limit": "5"}')] finish=tool_calls ct=53 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('search', '{"query": "x", "limit": 5}')] finish=tool_calls ct=54 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'tool_calls', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'tool_calls', 'completion_tokens']
+      -> content='' reasoning=None tools=[('search', '{"query": "x", "limit": 5}')] finish=tool_calls ct=54 rt=0
+  tool call ids: up=['call_00_ET_RUPepSAfBbuZLYS115uj0813'] ours=['chatcmpl-tool-a3b11ab540621d22']
+====================================================================================================
+CASE tool_str_as_number_attr  thinking=True finish=stop  string param written string=false
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="false">123</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('search', '{"query": 123}')] finish=tool_calls ct=37 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('search', '{"query": "123"}')] finish=tool_calls ct=38 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'tool_calls', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'tool_calls', 'completion_tokens']
+      -> content='' reasoning=None tools=[('search', '{"query": "123"}')] finish=tool_calls ct=38 rt=0
+  tool call ids: up=['call_00_ET_F8lPc6cndZEFtmsWblnJ3727'] ours=['chatcmpl-tool-abf578c35e351b69']
+====================================================================================================
+CASE tool_nullable_string_null_text  thinking=True finish=stop  string=true "null" for a ["string","null"] param
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter name="city" string="true">x</｜DSML｜ parameter>\n<｜DSML｜ parameter name="note" string="true">null</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('get_weather', '{"city": "x", "note": "null"}')] finish=tool_calls ct=55 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('get_weather', '{"city": "x", "note": null}')] finish=tool_calls ct=56 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'tool_calls', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'tool_calls', 'completion_tokens']
+      -> content='' reasoning=None tools=[('get_weather', '{"city": "x", "note": null}')] finish=tool_calls ct=56 rt=0
+  tool call ids: up=['call_00_ET_I1rxJojJMZII2IHRdTe64534'] ours=['chatcmpl-tool-ac0d787a0487a0c9']
+====================================================================================================
+CASE tool_json_number_forms  thinking=True finish=stop  
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter name="city" string="true">x</｜DSML｜ parameter>\n<｜DSML｜ parameter name="temp" string="false">1.0</｜DSML｜ parameter>\n<｜DSML｜ parameter name="opts" string="false">{"big": 12345678901234567890, "f": 1.10, "e": 1e2}</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('get_weather', '{"city": "x", "temp": 1.0, "opts": {"big": 12345678901234567890, "f": 1.10, "e": 1e2}}')] finish=tool_calls ct=100 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('get_weather', '{"city": "x", "temp": 1, "opts": {"big": 12345678901234567890, "f": 1.1, "e": 100.0}}')] finish=tool_calls ct=101 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'tool_calls', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'tool_calls', 'completion_tokens']
+      -> content='' reasoning=None tools=[('get_weather', '{"city": "x", "temp": 1, "opts": {"big": 12345678901234567890, "f": 1.1, "e": 100.0}}')] finish=tool_calls ct=101 rt=0
+  tool call ids: up=['call_00_ET_brribPtEUtYOJrHdL9xJ5534'] ours=['chatcmpl-tool-b6b30dd7de4e43e7']
+====================================================================================================
+CASE tool_false_invalid_json  thinking=True finish=stop  string=false value that is not JSON
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="get_weather">\n<｜DSML｜ parameter name="city" string="true">x</｜DSML｜ parameter>\n<｜DSML｜ parameter name="opts" string="false">{\'a\': True}</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('get_weather', '{"city": "x", "opts": {\'a\': True}}')] finish=tool_calls ct=59 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('get_weather', '{"city": "x", "opts": "{\'a\': True}"}')] finish=tool_calls ct=60 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'tool_calls', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'tool_calls', 'completion_tokens']
+      -> content='' reasoning=None tools=[('get_weather', '{"city": "x", "opts": "{\'a\': True}"}')] finish=tool_calls ct=60 rt=0
+  tool call ids: up=['call_00_ET_y9VHP7MkrwLhuZAJ0u6p4846'] ours=['chatcmpl-tool-98c6d1b0443ecc63']
+====================================================================================================
+CASE tool_empty_invoke  thinking=True finish=stop  
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="now">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('now', '{}')] finish=tool_calls ct=21 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('now', '{}')] finish=tool_calls ct=22 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'completion_tokens']
+      -> content='' reasoning=None tools=[('now', '{}')] finish=tool_calls ct=22 rt=0
+  tool call ids: up=['call_00_ET_BStrRFEU1dTJeKJRhG8v9520'] ours=['chatcmpl-tool-94809c825d1085af']
+====================================================================================================
+CASE tool_duplicate_param  thinking=True finish=stop  
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">a</｜DSML｜ parameter>\n<｜DSML｜ parameter name="query" string="true">b</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('search', '{"query": "a", "query": "b"}')] finish=tool_calls ct=53 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('search', '{"query": "b"}')] finish=tool_calls ct=54 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'tool_calls', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content', 'tool_calls']; vs upstream ['reasoning', 'tool_calls', 'completion_tokens']
+      -> content='' reasoning=None tools=[('search', '{"query": "a')] finish=tool_calls ct=54 rt=0
+  tool call ids: up=['call_00_ET_K4AMk93kTKhvi0JmNKNh2859'] ours=['chatcmpl-tool-b7d77a085c308833']
+====================================================================================================
+CASE tool_param_value_with_plain_dsml_close  thinking=True finish=stop  value contains the close tag spelled with plain tokens
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">a</｜DSML｜ parameter>b</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('search', '{"query": "a</｜DSML｜ parameter>b"}')] finish=tool_calls ct=45 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('search', '{"query": "a"}')] finish=tool_calls ct=46 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'tool_calls', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'tool_calls', 'completion_tokens']
+      -> content='' reasoning=None tools=[('search', '{"query": "a"}')] finish=tool_calls ct=46 rt=0
+  tool call ids: up=['call_00_ET_9Uo7GpfNpCHfyfAXSOIv2260'] ours=['chatcmpl-tool-823a306d727a9124']
+====================================================================================================
+CASE tool_plain_spelled_block_in_content  thinking=True finish=stop  DSML tags spelled with plain tokens are content upstream
+  model output: '</think>Format: <｜DSML｜ calls> ... </｜DSML｜ calls>'
+  UP   nonstream : content='Format: <｜DSML｜ calls> ... </｜DSML｜ calls>' reasoning='' tools=[] finish=stop ct=20 rt=0
+  OURS nonstream : content='Format: ' reasoning=None tools=[] finish=stop ct=21 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['content', 'reasoning', 'completion_tokens']
+====================================================================================================
+CASE tool_v4_unspaced_tags  thinking=True finish=stop  V4 (unspaced) DSML tags; 1017 HF parser rejects them
+  model output: '</think>\n\n<｜DSML｜tool_calls>\n<｜DSML｜invoke name="search">\n<｜DSML｜parameter name="query" string="true">q</｜DSML｜parameter>\n</｜DSML｜invoke>\n</｜DSML｜tool_calls>'
+  UP   nonstream : content='' reasoning='' tools=[('search', '{"query": "q"}')] finish=tool_calls ct=43 rt=0
+  OURS nonstream : content='\n\n<｜DSML｜tool_calls>\n<｜DSML｜invoke name="search">\n<｜DSML｜parameter name="query" string="true">q</｜DSML｜parameter>\n</｜DSML｜invoke>\n</｜DSML｜tool_calls>' reasoning=None tools=[] finish=stop ct=44 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'tool_calls', 'finish_reason', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['content', 'reasoning', 'tool_calls', 'finish_reason', 'completion_tokens']
+  tool call ids: up=['call_00_ET_UUDx80yX7wCWkts9B5Kd4957'] ours=[]
+====================================================================================================
+CASE tool_unknown_name  thinking=True finish=stop  
+  model output: '</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="not_a_tool">\n<｜DSML｜ parameter name="x" string="false">1</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('not_a_tool', '{"x": 1}')] finish=tool_calls ct=40 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('not_a_tool', '{"x": 1}')] finish=tool_calls ct=41 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'completion_tokens']
+      -> content='' reasoning=None tools=[('not_a_tool', '{"x": 1}')] finish=tool_calls ct=41 rt=0
+  tool call ids: up=['call_00_ET_jUu887urYol3FFKo4gaM9078'] ours=['chatcmpl-tool-8b5a7b1db47253d0']
+====================================================================================================
+CASE tool_choice_none_but_emitted  thinking=True finish=stop  
+  model output: '</think>Sure.\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">q</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='Sure.\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">q</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>' reasoning='' tools=[] finish=stop ct=38 rt=0
+  OURS nonstream : content='Sure.\n\n' reasoning=None tools=[] finish=stop ct=39 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['content', 'reasoning', 'completion_tokens']
+====================================================================================================
+CASE tool_no_tools_declared_but_emitted  thinking=True finish=stop  no tools in request; model emits DSML anyway
+  model output: '</think>Sure.\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">q</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='Sure.\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">q</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>' reasoning='' tools=[] finish=stop ct=38 rt=0
+  OURS nonstream : content='Sure.\n\n' reasoning=None tools=[] finish=stop ct=39 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['content', 'reasoning', 'completion_tokens']
+====================================================================================================
+CASE tool_named_choice_nothink  thinking=False finish=stop  named tool choice (thinking must be off upstream)
+  model output: '\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">q</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning=None tools=[('search', '{"query": "q"}')] finish=tool_calls ct=36 rt=None
+  OURS nonstream : content='' reasoning=None tools=[('search', '{"query": "q"}')] finish=stop ct=37 rt=0
+  DIFF up vs ours (nonstream): ['finish_reason', 'completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['finish_reason', 'completion_tokens', 'reasoning_tokens']
+  tool call ids: up=['call_00_18c1Icchmb1xW9yDnQdK9396'] ours=['chatcmpl-tool-a230f5d67653ff81']
+====================================================================================================
+CASE tool_required_nothink  thinking=False finish=stop  required: upstream prompt already opened the block
+  model output: '\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">q</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning=None tools=[('search', '{"query": "q"}')] finish=tool_calls ct=36 rt=None
+  OURS nonstream : content='' reasoning=None tools=[('search', '{"query": "q"}')] finish=tool_calls ct=37 rt=0
+  DIFF up vs ours (nonstream): ['completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens', 'reasoning_tokens']
+  tool call ids: up=['call_00_pFH5RDr8T2Pi38K20DPh7310'] ours=['chatcmpl-tool-95f8eb83fe326695']
+====================================================================================================
+CASE tool_ws_only_content_before  thinking=True finish=stop  
+  model output: '</think>\n\n\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">q</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='' tools=[('search', '{"query": "q"}')] finish=tool_calls ct=37 rt=0
+  OURS nonstream : content=None reasoning=None tools=[('search', '{"query": "q"}')] finish=tool_calls ct=38 rt=0
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['reasoning', 'completion_tokens']
+      -> content='' reasoning=None tools=[('search', '{"query": "q"}')] finish=tool_calls ct=38 rt=0
+  tool call ids: up=['call_00_ET_q7o8ACxVoEFNbMIMOBaH4804'] ours=['chatcmpl-tool-a60b5ed59a385011']
+====================================================================================================
+CASE stop_in_reasoning  thinking=True finish=stop  stop string occurs only inside reasoning
+  model output: 'Step 1.\n\nStep 2. Observation: none.</think>Final answer: 7.'
+  UP   nonstream : content='Final answer: 7.' reasoning='Step 1.\n\nStep 2. Observation: none.' tools=[] finish=stop ct=19 rt=12
+  OURS nonstream : content=None reasoning='Step 1.\n\nStep 2.' tools=[] finish=stop ct=12 rt=12
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens']
+  OURS nonstream[1] differs from nonstream[rnd1] in ['completion_tokens', 'reasoning_tokens']: content=None reasoning='Step 1.\n\nStep 2.' tools=[] finish=stop ct=10 rt=10
+  OURS stream['1']: vs ours-nonstream ['content', 'completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Step 1.\n\nStep 2.' tools=[] finish=stop ct=10 rt=5
+  OURS stream['2']: vs ours-nonstream ['content', 'completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Step 1.\n\nStep 2.' tools=[] finish=stop ct=10 rt=6
+  OURS stream['3', 'rnd1']: vs ours-nonstream ['content', 'reasoning_tokens']; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Step 1.\n\nStep 2.' tools=[] finish=stop ct=12 rt=6
+  OURS stream['4']: vs ours-nonstream ['content', 'reasoning_tokens']; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Step 1.\n\nStep 2.' tools=[] finish=stop ct=12 rt=8
+  OURS stream['5']: vs ours-nonstream ['content', 'completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Step 1.\n\nStep 2.' tools=[] finish=stop ct=10 rt=10
+  OURS stream['6']: vs ours-nonstream ['content']; vs upstream ['content', 'reasoning', 'completion_tokens']
+      -> content='' reasoning='Step 1.\n\nStep 2.' tools=[] finish=stop ct=12 rt=12
+  OURS stream['rnd2']: vs ours-nonstream ['content', 'completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Step 1.\n\nStep 2.' tools=[] finish=stop ct=15 rt=5
+  OURS stream['rnd3']: vs ours-nonstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Step1.\n\nStep 2. ' tools=[] finish=stop ct=13 rt=9
+====================================================================================================
+CASE stop_blankline_reasoning  thinking=True finish=stop  
+  model output: 'Para one.\n\nPara two.</think>Answer line one.\n\nAnswer line two.'
+  UP   nonstream : content='Answer line one.' reasoning='Para one.\n\nPara two.' tools=[] finish=stop ct=12 rt=6
+  OURS nonstream : content=None reasoning='Para one.' tools=[] finish=stop ct=3 rt=3
+  DIFF up vs ours (nonstream): ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+  OURS nonstream[6] differs from nonstream[rnd1] in ['completion_tokens', 'reasoning_tokens']: content=None reasoning='Para one.' tools=[] finish=stop ct=6 rt=6
+  UP   stream[1] differs from UP nonstream in ['completion_tokens']: content='Answer line one.' reasoning='Para one.\n\nPara two.' tools=[] finish=stop ct=11 rt=6
+  OURS stream['1', '3', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content']; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Para one.' tools=[] finish=stop ct=3 rt=3
+  OURS stream['2', '4']: vs ours-nonstream ['content', 'completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Para one.' tools=[] finish=stop ct=4 rt=4
+  OURS stream['5']: vs ours-nonstream ['content', 'completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'reasoning', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='Para one.' tools=[] finish=stop ct=5 rt=5
+  OURS stream['6']: vs ours-nonstream ['content', 'completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'reasoning', 'completion_tokens']
+      -> content='' reasoning='Para one.' tools=[] finish=stop ct=6 rt=6
+====================================================================================================
+CASE stop_in_content  thinking=True finish=stop  
+  model output: '</think>alpha beta END gamma'
+  UP   nonstream : content='alpha beta ' reasoning='' tools=[] finish=stop ct=5 rt=0
+  OURS nonstream : content='alpha beta ' reasoning=None tools=[] finish=stop ct=6 rt=0
+  DIFF up vs ours (nonstream): ['reasoning', 'completion_tokens']
+  OURS nonstream[1] differs from nonstream[rnd1] in ['completion_tokens']: content='alpha beta ' reasoning=None tools=[] finish=stop ct=4 rt=0
+  UP   stream[1] differs from UP nonstream in ['completion_tokens']: content='alpha beta ' reasoning='' tools=[] finish=stop ct=4 rt=0
+  OURS stream['1', '2', '4', 'rnd2']: vs ours-nonstream ['completion_tokens']; vs upstream ['reasoning', 'completion_tokens']
+      -> content='alpha beta ' reasoning=None tools=[] finish=stop ct=4 rt=0
+  OURS stream['3', '5', '6', 'rnd1', 'rnd3']: vs ours-nonstream same; vs upstream ['reasoning', 'completion_tokens']
+====================================================================================================
+CASE stop_in_content_nothink  thinking=False finish=stop  
+  model output: 'alpha beta END gamma'
+  UP   nonstream : content='alpha beta ' reasoning=None tools=[] finish=stop ct=3 rt=None
+  OURS nonstream : content='alpha beta ' reasoning=None tools=[] finish=stop ct=3 rt=0
+  DIFF up vs ours (nonstream): ['reasoning_tokens']
+  OURS nonstream[6] differs from nonstream[rnd1] in ['completion_tokens']: content='alpha beta ' reasoning=None tools=[] finish=stop ct=5 rt=0
+  UP   stream[6] differs from UP nonstream in ['completion_tokens']: content='alpha beta ' reasoning=None tools=[] finish=stop ct=4 rt=None
+  OURS stream['1', '3', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['reasoning_tokens']
+  OURS stream['2', '4', '5', '6']: vs ours-nonstream ['completion_tokens']; vs upstream ['completion_tokens', 'reasoning_tokens']
+      -> content='alpha beta ' reasoning=None tools=[] finish=stop ct=5 rt=0
+====================================================================================================
+CASE stop_in_tool_args  thinking=True finish=stop  stop string only inside tool-call arguments
+  model output: 'r</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">Paris weather</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='r' tools=[('search', '{"query": "Paris weather"}')] finish=tool_calls ct=39 rt=1
+  OURS nonstream : content=None reasoning='r' tools=[('search', '{}')] finish=tool_calls ct=31 rt=1
+  DIFF up vs ours (nonstream): ['content', 'tool_calls', 'completion_tokens']
+  OURS nonstream[1] differs from nonstream[rnd1] in ['completion_tokens']: content=None reasoning='r' tools=[('search', '{}')] finish=tool_calls ct=26 rt=1
+  OURS nonstream[6] differs from nonstream[rnd1] in ['completion_tokens']: content=None reasoning='r' tools=[('search', '{}')] finish=tool_calls ct=30 rt=1
+  OURS stream['1']: vs ours-nonstream ['content', 'tool_calls', 'completion_tokens', 'reasoning_tokens']; vs upstream ['tool_calls', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='r' tools=[('search', '{"query": "')] finish=tool_calls ct=26 rt=2
+  OURS stream['2']: vs ours-nonstream ['content', 'tool_calls', 'completion_tokens', 'reasoning_tokens']; vs upstream ['tool_calls', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='r' tools=[('search', '{"query": "')] finish=tool_calls ct=26 rt=3
+  OURS stream['3']: vs ours-nonstream ['content', 'tool_calls', 'completion_tokens']; vs upstream ['tool_calls', 'completion_tokens']
+      -> content='' reasoning='r' tools=[('search', '{"query": "')] finish=tool_calls ct=27 rt=1
+  OURS stream['4']: vs ours-nonstream ['content', 'tool_calls', 'completion_tokens']; vs upstream ['tool_calls', 'completion_tokens']
+      -> content='' reasoning='r' tools=[('search', '{"query": "')] finish=tool_calls ct=28 rt=1
+  OURS stream['5', '6']: vs ours-nonstream ['content', 'tool_calls', 'completion_tokens']; vs upstream ['tool_calls', 'completion_tokens']
+      -> content='' reasoning='r' tools=[('search', '{"query": "')] finish=tool_calls ct=30 rt=1
+  OURS stream['rnd1']: vs ours-nonstream ['content', 'tool_calls', 'reasoning_tokens']; vs upstream ['tool_calls', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='r' tools=[('search', '{"query": "')] finish=tool_calls ct=31 rt=0
+  OURS stream['rnd2']: vs ours-nonstream ['content', 'tool_calls', 'completion_tokens', 'reasoning_tokens']; vs upstream ['tool_calls', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='r' tools=[('search', '{"query": "')] finish=tool_calls ct=27 rt=2
+  OURS stream['rnd3']: vs ours-nonstream ['content', 'tool_calls', 'completion_tokens', 'reasoning_tokens']; vs upstream ['tool_calls', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='r' tools=[('search', '{"query": "')] finish=tool_calls ct=27 rt=0
+  tool call ids: up=['call_00_r5fz5fFGqkpAKFdJZ11e2390'] ours=['chatcmpl-tool-b454fcfd8d51d317']
+====================================================================================================
+CASE stop_matching_markup  thinking=True finish=stop  stop string that spells DSML markup
+  model output: 'r</think>\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">q</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='' reasoning='r' tools=[('search', '{"query": "q"}')] finish=tool_calls ct=38 rt=1
+  OURS nonstream : content='\n\n' reasoning='r' tools=[] finish=stop ct=12 rt=1
+  DIFF up vs ours (nonstream): ['content', 'tool_calls', 'finish_reason', 'completion_tokens']
+  OURS nonstream[1] differs from nonstream[rnd1] in ['completion_tokens']: content='\n\n' reasoning='r' tools=[] finish=stop ct=10 rt=1
+  OURS stream['1']: vs ours-nonstream ['completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'tool_calls', 'finish_reason', 'completion_tokens', 'reasoning_tokens']
+      -> content='\n\n' reasoning='r' tools=[] finish=stop ct=10 rt=2
+  OURS stream['2']: vs ours-nonstream ['completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'tool_calls', 'finish_reason', 'completion_tokens', 'reasoning_tokens']
+      -> content='\n\n' reasoning='r' tools=[] finish=stop ct=10 rt=3
+  OURS stream['3', '4', '6']: vs ours-nonstream same; vs upstream ['content', 'tool_calls', 'finish_reason', 'completion_tokens']
+  OURS stream['5']: vs ours-nonstream ['completion_tokens']; vs upstream ['content', 'tool_calls', 'finish_reason', 'completion_tokens']
+      -> content='\n\n' reasoning='r' tools=[] finish=stop ct=10 rt=1
+  OURS stream['rnd1']: vs ours-nonstream ['reasoning_tokens']; vs upstream ['content', 'tool_calls', 'finish_reason', 'completion_tokens', 'reasoning_tokens']
+      -> content='\n\n' reasoning='r' tools=[] finish=stop ct=12 rt=0
+  OURS stream['rnd2']: vs ours-nonstream ['completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'tool_calls', 'finish_reason', 'completion_tokens', 'reasoning_tokens']
+      -> content='\n\n' reasoning='r' tools=[] finish=stop ct=15 rt=2
+  OURS stream['rnd3']: vs ours-nonstream ['completion_tokens', 'reasoning_tokens']; vs upstream ['content', 'tool_calls', 'finish_reason', 'completion_tokens', 'reasoning_tokens']
+      -> content='\n\n' reasoning='r' tools=[] finish=stop ct=13 rt=0
+  tool call ids: up=['call_00_PmBU5xvr2Ud9jRJQ8HX50362'] ours=[]
+====================================================================================================
+CASE stop_think_tag  thinking=True finish=stop  client stop on the marker text
+  model output: 'reasoning</think>answer'
+  UP   nonstream : content='answer' reasoning='reasoning' tools=[] finish=stop ct=4 rt=2
+  OURS nonstream : content=None reasoning='reasoning' tools=[] finish=stop ct=3 rt=2
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens']
+  OURS nonstream[6] differs from nonstream[rnd1] in ['completion_tokens']: content=None reasoning='reasoning' tools=[] finish=stop ct=5 rt=2
+  OURS stream['1', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream ['content', 'reasoning_tokens']; vs upstream ['content', 'completion_tokens', 'reasoning_tokens']
+      -> content='' reasoning='reasoning' tools=[] finish=stop ct=3 rt=1
+  OURS stream['2', '4', '5', '6']: vs ours-nonstream ['content', 'completion_tokens']; vs upstream ['content', 'completion_tokens']
+      -> content='' reasoning='reasoning' tools=[] finish=stop ct=5 rt=2
+  OURS stream['3']: vs ours-nonstream ['content']; vs upstream ['content', 'completion_tokens']
+      -> content='' reasoning='reasoning' tools=[] finish=stop ct=3 rt=2
+====================================================================================================
+CASE json_bare  thinking=False finish=stop  
+  model output: '{"a": 1, "b": [true, null]}'
+  UP   nonstream : content='{"a": 1, "b": [true, null]}' reasoning=None tools=[] finish=stop ct=14 rt=None
+  OURS nonstream : content='{"a": 1, "b": [true, null]}' reasoning=None tools=[] finish=stop ct=15 rt=0
+  DIFF up vs ours (nonstream): ['completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens', 'reasoning_tokens']
+====================================================================================================
+CASE json_fenced_with_preamble  thinking=False finish=stop  only reachable if the JSON grammar is not enforced
+  model output: 'Here you go:\n```json\n{"a": 1}\n```\nBye'
+  UP   nonstream : content='   {"a": 1} ' reasoning=None tools=[] finish=stop ct=16 rt=None
+  OURS nonstream : content='Here you go:\n```json\n{"a": 1}\n```\nBye' reasoning=None tools=[] finish=stop ct=17 rt=0
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens', 'reasoning_tokens']
+  UP   stream[1] differs from UP nonstream in ['content']: content='    {"a": 1}   ' reasoning=None tools=[] finish=stop ct=16 rt=None
+  UP   stream[6] differs from UP nonstream in ['content']: content=' {"a": 1} ' reasoning=None tools=[] finish=stop ct=16 rt=None
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['content', 'completion_tokens', 'reasoning_tokens']
+====================================================================================================
+CASE json_thinking  thinking=True finish=stop  
+  model output: 'Think about JSON.</think>{"ok": true}'
+  UP   nonstream : content='{"ok": true}' reasoning='Think about JSON.' tools=[] finish=stop ct=10 rt=4
+  OURS nonstream : content='{"ok": true}' reasoning='Think about JSON.' tools=[] finish=stop ct=11 rt=4
+  DIFF up vs ours (nonstream): ['completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens']
+====================================================================================================
+CASE json_stop_outside  thinking=False finish=stop  
+  model output: '{"a": "x"} trailing END'
+  UP   nonstream : content='{"a": "x"} trailing ' reasoning=None tools=[] finish=stop ct=8 rt=None
+  OURS nonstream : content='{"a": "x"} trailing ' reasoning=None tools=[] finish=stop ct=9 rt=0
+  DIFF up vs ours (nonstream): ['completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens', 'reasoning_tokens']
+====================================================================================================
+CASE grounding_tokens_in_content  thinking=True finish=stop  grounding special tokens (special=true in tokenizer.json)
+  model output: '</think>The <｜ref｜>cat<｜/ref｜><｜box｜>[[10,20,30,40]]<｜/box｜> is here.'
+  UP   nonstream : content='The <｜ref｜>cat<｜/ref｜><｜box｜>[[10,20,30,40]]<｜/box｜> is here.' reasoning='' tools=[] finish=stop ct=20 rt=0
+  OURS nonstream : content='The <｜ref｜>cat<｜/ref｜><｜box｜>[[10,20,30,40]]<｜/box｜> is here.' reasoning=None tools=[] finish=stop ct=21 rt=0
+  DIFF up vs ours (nonstream): ['reasoning', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['reasoning', 'completion_tokens']
+====================================================================================================
+CASE logprobs_think_tool  thinking=True finish=stop  
+  model output: 'Plan.</think>Hi.\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name="search">\n<｜DSML｜ parameter name="query" string="true">q</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>'
+  UP   nonstream : content='Hi.' reasoning='Plan.' tools=[('search', '{"query": "q"}')] finish=tool_calls ct=40 rt=2
+  OURS nonstream : content='Hi.\n\n' reasoning='Plan.' tools=[('search', '{"query": "q"}')] finish=tool_calls ct=41 rt=2
+  DIFF up vs ours (nonstream): ['content', 'completion_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['content', 'completion_tokens']
+  UP   logprobs: {"content": [{"token": "Hi", "logprob": -0.5, "bytes": [72, 105], "top_logprobs": [{"token": "Hi", "logprob": -0.5, "bytes": [72, 105]}]}, {"token": ".\n\n", "logprob": -0.5, "bytes": [46, 10, 10], "top_logprobs": [{"token": ".\n\n", "logprob": -0.5, "bytes": [46, 10, 10]}]}, {"token": "<", "logprob": -0.5, "bytes": [60], "top_logprobs": [{"token": "<", "logprob": -0.5, "bytes": [60]}]}], "reasoning_content": [{"token": "Plan", "logprob": -0.5, "bytes": [80, 108, 97, 110], "top_logprobs": [{"token": "Plan", "logprob": -0.5, "bytes": [80, 108, 97, 110]}]}, {"token": ".", "logprob": -0.5, "bytes": [46], "top_logprobs": [{"token": ".", "logprob": -0.5, "bytes": [46]}]}]}
+  OURS logprobs: {"content": [{"token": "Plan", "logprob": -0.5, "bytes": [80, 108, 97, 110], "top_logprobs": [{"token": "Plan", "logprob": -0.5, "bytes": [80, 108, 97, 110]}]}, {"token": ".", "logprob": -0.5, "bytes": [46], "top_logprobs": [{"token": ".", "logprob": -0.5, "bytes": [46]}]}, {"token": "</think>", "logprob": -0.5, "bytes": [60, 47, 116, 104, 105, 110, 107, 62], "top_logprobs": [{"token": "</think>", "logprob": -0.5, "bytes": [60, 47, 116, 104, 105, 110, 107, 62]}]}, {"token": "Hi", "logprob": -0.5, "bytes": [72, 105], "top_logprobs": [{"token": "Hi", "logprob": -0.5, "bytes": [72, 105]}]}, {"token": ".\n\n", "logprob": -0.5, "bytes": [46, 10, 10], "top_logprobs": [{"token": ".\n\n", "logprob": -0.5, "bytes": [46, 10, 10]}]}, {"token": "<", "logprob": -0.5, "bytes": [60], "top_logprobs": [{"token": "<", "logprob": -0.5, "bytes": [60]}]}, {"token": "｜DSML｜", "logprob": -0.5, "bytes": [239, 189, 156, 68, 83, 77, 76, 239, 189, 156], "top_logprobs": [{"token": "｜DSML｜", "logprob": -0.5, "bytes": [239, 189, 156, 68, 83, 77, 76, 239, 189, 156]}]}, {"token": " calls", "logprob": -0.5, "bytes": [32, 99, 97, 108, 108, 115], "top_logprobs": [{"token": " calls", "logprob": -0.5, "bytes": [32, 99
+  tool call ids: up=['call_00_41xfLxx7GLvuoPvtgxoZ3459'] ours=['chatcmpl-tool-9b15459191baec01']
+====================================================================================================
+CASE logprobs_nothink  thinking=False finish=stop  
+  model output: 'Hello world'
+  UP   nonstream : content='Hello world' reasoning=None tools=[] finish=stop ct=2 rt=None
+  OURS nonstream : content='Hello world' reasoning=None tools=[] finish=stop ct=3 rt=0
+  DIFF up vs ours (nonstream): ['completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens', 'reasoning_tokens']
+  UP   logprobs: {"content": [{"token": "Hello", "logprob": -0.5, "bytes": [72, 101, 108, 108, 111], "top_logprobs": [{"token": "Hello", "logprob": -0.5, "bytes": [72, 101, 108, 108, 111]}]}, {"token": " world", "logprob": -0.5, "bytes": [32, 119, 111, 114, 108, 100], "top_logprobs": [{"token": " world", "logprob": -0.5, "bytes": [32, 119, 111, 114, 108, 100]}]}]}
+  OURS logprobs: {"content": [{"token": "Hello", "logprob": -0.5, "bytes": [72, 101, 108, 108, 111], "top_logprobs": [{"token": "Hello", "logprob": -0.5, "bytes": [72, 101, 108, 108, 111]}]}, {"token": " world", "logprob": -0.5, "bytes": [32, 119, 111, 114, 108, 100], "top_logprobs": [{"token": " world", "logprob": -0.5, "bytes": [32, 119, 111, 114, 108, 100]}]}, {"token": "<｜end▁of▁sentence｜>", "logprob": -0.009999999776482582, "bytes": [60, 239, 189, 156, 101, 110, 100, 226, 150, 129, 111, 102, 226, 150, 129, 115, 101, 110, 116, 101, 110, 99, 101, 239, 189, 156, 62], "top_logprobs": [{"token": "<｜end▁of▁sentence｜>", "logprob": -0.009999999776482582, "bytes": [60, 239, 189, 156, 101, 110, 100, 226, 150, 129, 111, 102, 226, 150, 129, 115, 101, 110, 116, 101, 110, 99, 101, 239, 189, 156, 62]}]}]}
+====================================================================================================
+CASE logprobs_multibyte  thinking=False finish=stop  byte-fallback tokens
+  model output: '🤭🦀'
+  UP   nonstream : content='🤭🦀' reasoning=None tools=[] finish=stop ct=5 rt=None
+  OURS nonstream : content='🤭🦀' reasoning=None tools=[] finish=stop ct=6 rt=0
+  DIFF up vs ours (nonstream): ['completion_tokens', 'reasoning_tokens']
+  OURS stream['1', '2', '3', '4', '5', '6', 'rnd1', 'rnd2', 'rnd3']: vs ours-nonstream same; vs upstream ['completion_tokens', 'reasoning_tokens']
+  UP   logprobs: {"content": [{"token": "\\xf0\\x9f\\xa4", "logprob": -0.5, "bytes": [240, 159, 164], "top_logprobs": [{"token": "\\xf0\\x9f\\xa4", "logprob": -0.5, "bytes": [240, 159, 164]}]}, {"token": "\\xad", "logprob": -0.5, "bytes": [173], "top_logprobs": [{"token": "\\xad", "logprob": -0.5, "bytes": [173]}]}, {"token": "\\xf0\\x9f", "logprob": -0.5, "bytes": [240, 159], "top_logprobs": [{"token": "\\xf0\\x9f", "logprob": -0.5, "bytes": [240, 159]}]}, {"token": "\\xa6", "logprob": -0.5, "bytes": [166], "top_logprobs": [{"token": "\\xa6", "logprob": -0.5, "bytes": [166]}]}, {"token": "\\x80", "logprob": -0.5, "bytes": [128], "top_logprobs": [{"token": "\\x80", "logprob": -0.5, "bytes": [128]}]}]}
+  OURS logprobs: {"content": [{"token": "", "logprob": -0.5, "bytes": [], "top_logprobs": [{"token": "", "logprob": -0.5, "bytes": []}]}, {"token": "🤭", "logprob": -0.5, "bytes": [240, 159, 164, 173], "top_logprobs": [{"token": "🤭", "logprob": -0.5, "bytes": [240, 159, 164, 173]}]}, {"token": "", "logprob": -0.5, "bytes": [], "top_logprobs": [{"token": "", "logprob": -0.5, "bytes": []}]}, {"token": "", "logprob": -0.5, "bytes": [], "top_logprobs": [{"token": "", "logprob": -0.5, "bytes": []}]}, {"token": "🦀", "logprob": -0.5, "bytes": [240, 159, 166, 128], "top_logprobs": [{"token": "🦀", "logprob": -0.5, "bytes": [240, 159, 166, 128]}]}, {"token": "<｜end▁of▁sentence｜>", "logprob": -0.009999999776482582, "bytes": [60, 239, 189, 156, 101, 110, 100, 226, 150, 129, 111, 102, 226, 150, 129, 115, 101, 110, 116, 101, 110, 99, 101, 239, 189, 156, 62], "top_logprobs": [{"token": "<｜end▁of▁sentence｜>", "logprob": -0.009999999776482582, "bytes": [60, 239, 189, 156, 101, 110, 100, 226, 150, 129, 111, 102, 226, 150, 129, 115, 101, 110, 116, 101, 110, 99, 101, 239, 189, 156, 62]}]}]}
