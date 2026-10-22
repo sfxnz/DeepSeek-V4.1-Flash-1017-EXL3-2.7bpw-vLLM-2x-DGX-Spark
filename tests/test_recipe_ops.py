@@ -333,6 +333,8 @@ ENGAGED_LOG = "\n".join(
         "(Worker_TP0 pid=1) dsv41: exl3 routed experts K_gu/K_d=2/2 layer 0 (bits)",
         # 1017 chat-encoder parity (sitecustomize, every process)
         "dsv41: chat encoder 1017 parity engaged (encoding rewritten, tokenizer rewritten)",
+        # api-parity 16-bit grayscale images, DSV41_IMAGE_16BIT_GRAY=1 (sitecustomize, every process)
+        "dsv41: image 16-bit gray engaged (image.py rewritten, mm_preprocess.py rewritten)",
         # PR #60996 packed KV groups and the lazy indexer table (sitecustomize, every process)
         "dsv41: kv packed groups engaged (kv_cache_utils rewritten)",
         "dsv41: indexer expanded block table lazy engaged (indexer rewritten)",

@@ -137,6 +137,24 @@ def _p_indexer_expanded_lazy():
 _patch("indexer_expanded_lazy", _p_indexer_expanded_lazy, required=True)
 
 
+# 16-bit grayscale images (docker/patch/image_16bit_gray.py): Pillow clamps I;16 to 255 when it converts to an
+# 8-bit mode, so a 16-bit grayscale PNG reached the model almost white. DSV41_IMAGE_16BIT_GRAY=1 (run.sh default)
+# rewrites multimodal/image.py convert_image_mode and the V4.1 processor's load_image here, before anything
+# imports vLLM, to scale I;16* by 1/257 as the DeepSeek API does; 0 keeps (or puts back) the image's text.
+# Required: an anchor miss is image drift.
+def _p_image_16bit_gray():
+    import image_16bit_gray
+
+    if not image_16bit_gray.enabled():
+        if "rewritten" in image_16bit_gray.restore(_VLLM, _rewrite):
+            print("dsv41: image 16-bit gray off: the image's conversion restored", file=sys.stderr, flush=True)
+        raise _PatchSkip("DSV41_IMAGE_16BIT_GRAY is not 1")
+    return image_16bit_gray.install(_VLLM, _rewrite)
+
+
+_patch("image_16bit_gray", _p_image_16bit_gray, required=True)
+
+
 # --- pfg8 load tracer (Round 31): when DSV41_LOAD_PF_G8=1, sample the worker
 # process every 10s during weight load: RSS, gc type census (top objects by
 # retained count), torch tensor count, and main-thread stack. Writes

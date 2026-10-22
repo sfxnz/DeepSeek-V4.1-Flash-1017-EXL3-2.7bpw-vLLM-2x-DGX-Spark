@@ -32,6 +32,7 @@ REQUIRED = {
     "kv_packed_groups",
     "indexer_expanded_lazy",
     "indexer_ragged_decode",
+    "image_16bit_gray",
 }
 REQUIRED_UNLESS_LM_ONLY = {"swa_image_width", "attention_image_width"}
 sys.path.insert(0, str(ROOT / "docker/patch"))
