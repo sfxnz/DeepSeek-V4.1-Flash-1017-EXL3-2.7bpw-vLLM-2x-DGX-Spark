@@ -1,0 +1,1459 @@
+{
+ "deepseek_recipe": "0.2.0",
+ "model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+ "cases": [
+  {
+   "name": "chat_text",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Hi"
+     }
+    ]
+   },
+   "thinking": false,
+   "constraint": null,
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Hi"
+   },
+   "expect": null,
+   "accept": [],
+   "reject": []
+  },
+  {
+   "name": "chat_json_object",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Answer in JSON: the capital of France?"
+     }
+    ],
+    "response_format": {
+     "type": "json_object"
+    }
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "json",
+    "schema": ""
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Answer in JSON: the capital of France?"
+   },
+   "expect": "json",
+   "accept": [
+    "{\"capital\": \"Paris\"}",
+    "{\n  \"capital\": \"Paris\"\n}",
+    "[{\"capital\": \"Paris\"}]"
+   ],
+   "reject": [
+    "Here: {\"capital\": \"Paris\"}",
+    "```json\n{\"capital\": \"Paris\"}\n```"
+   ]
+  },
+  {
+   "name": "chat_json_schema",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Extract: Ada Lovelace, 36."
+     }
+    ],
+    "response_format": {
+     "type": "json_schema",
+     "json_schema": {
+      "name": "answer",
+      "schema": {
+       "type": "object",
+       "properties": {
+        "name": {
+         "type": "string"
+        },
+        "age": {
+         "type": "integer"
+        },
+        "email": {
+         "type": "string",
+         "format": "email"
+        }
+       },
+       "required": [
+        "name",
+        "age"
+       ]
+      }
+     }
+    }
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "json",
+    "schema": "{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"integer\"},\"email\":{\"type\":\"string\",\"format\":\"email\"}},\"required\":[\"name\",\"age\"]}"
+   },
+   "response_schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "age": {
+      "type": "integer"
+     },
+     "email": {
+      "type": "string",
+      "format": "email"
+     }
+    },
+    "required": [
+     "name",
+     "age"
+    ]
+   },
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Extract: Ada Lovelace, 36."
+   },
+   "expect": "json",
+   "accept": [
+    "{\"name\": \"Ada Lovelace\", \"age\": 36, \"email\": \"ada@example.org\"}",
+    "{\"name\": \"Ada Lovelace\", \"age\": 36}"
+   ],
+   "reject": [
+    "{\"name\": \"Ada Lovelace\", \"age\": \"36\"}",
+    "{\"name\": \"Ada Lovelace\", \"age\": 36, \"email\": \"ada@example.org\", \"born\": 1815}",
+    "Here: {\"name\": \"Ada Lovelace\", \"age\": 36, \"email\": \"ada@example.org\"}"
+   ]
+  },
+  {
+   "name": "chat_json_schema_strict_defs",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Book for Ada."
+     }
+    ],
+    "response_format": {
+     "type": "json_schema",
+     "json_schema": {
+      "name": "answer",
+      "schema": {
+       "type": "object",
+       "properties": {
+        "guest": {
+         "$ref": "#/$defs/Guest"
+        },
+        "note": {
+         "type": [
+          "string",
+          "null"
+         ]
+        }
+       },
+       "$defs": {
+        "Guest": {
+         "type": "object",
+         "properties": {
+          "name": {
+           "type": "string"
+          }
+         },
+         "required": [
+          "name"
+         ],
+         "additionalProperties": false
+        }
+       }
+      },
+      "strict": true
+     }
+    }
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "json",
+    "schema": "{\"type\":\"object\",\"properties\":{\"guest\":{\"$ref\":\"#/$defs/Guest\"},\"note\":{\"type\":[\"string\",\"null\"]}},\"additionalProperties\":false,\"required\":[\"guest\",\"note\"]}"
+   },
+   "response_schema": {
+    "type": "object",
+    "properties": {
+     "guest": {
+      "$ref": "#/$defs/Guest"
+     },
+     "note": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "$defs": {
+     "Guest": {
+      "type": "object",
+      "properties": {
+       "name": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "name"
+      ],
+      "additionalProperties": false
+     }
+    }
+   },
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Book for Ada."
+   },
+   "expect": "json",
+   "accept": [
+    "{\"guest\": {\"name\": \"Ada\"}, \"note\": null}",
+    "{\"guest\": {\"name\": \"Ada\"}, \"note\": \"window seat\"}"
+   ],
+   "reject": [
+    "{\"guest\": {\"name\": \"Ada\"}}",
+    "{\"guest\": {\"nam\": \"Ada\"}, \"note\": null}",
+    "{\"guest\": \"Ada\", \"note\": null}"
+   ]
+  },
+  {
+   "name": "responses_text_format_strict_defs",
+   "protocol": "responses",
+   "body": {
+    "input": "Book for Ada.",
+    "text": {
+     "format": {
+      "type": "json_schema",
+      "name": "order",
+      "strict": true,
+      "schema": {
+       "type": "object",
+       "properties": {
+        "guest": {
+         "$ref": "#/$defs/Guest"
+        },
+        "note": {
+         "type": [
+          "string",
+          "null"
+         ]
+        }
+       },
+       "$defs": {
+        "Guest": {
+         "type": "object",
+         "properties": {
+          "name": {
+           "type": "string"
+          }
+         },
+         "required": [
+          "name"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     }
+    }
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "json",
+    "schema": "{\"type\":\"object\",\"properties\":{\"guest\":{\"$ref\":\"#/$defs/Guest\"},\"note\":{\"type\":[\"string\",\"null\"]}},\"additionalProperties\":false,\"required\":[\"guest\",\"note\"]}"
+   },
+   "response_schema": {
+    "type": "object",
+    "properties": {
+     "guest": {
+      "$ref": "#/$defs/Guest"
+     },
+     "note": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "$defs": {
+     "Guest": {
+      "type": "object",
+      "properties": {
+       "name": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "name"
+      ],
+      "additionalProperties": false
+     }
+    }
+   },
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Book for Ada."
+   },
+   "expect": "json",
+   "accept": [
+    "{\"guest\": {\"name\": \"Ada\"}, \"note\": null}"
+   ],
+   "reject": [
+    "{\"guest\": {\"name\": \"Ada\"}}"
+   ]
+  },
+  {
+   "name": "chat_regex",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "A date?"
+     }
+    ],
+    "response_format": {
+     "type": "regex",
+     "regex": "\\d{4}-\\d{2}-\\d{2}"
+    }
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "regex",
+    "schema": "\\d{4}-\\d{2}-\\d{2}"
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "A date?"
+   },
+   "expect": "regex",
+   "accept": [
+    "2026-10-22"
+   ],
+   "reject": [
+    "2026-1-22",
+    "Date: 2026-10-22"
+   ]
+  },
+  {
+   "name": "chat_thinking_json_object",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Answer in JSON: the capital of France?"
+     }
+    ],
+    "thinking": {
+     "type": "enabled"
+    },
+    "response_format": {
+     "type": "json_object"
+    }
+   },
+   "thinking": true,
+   "constraint": {
+    "kind": "json",
+    "schema": ""
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Answer in JSON: the capital of France?"
+   },
+   "expect": "json",
+   "accept": [
+    "{\"capital\": \"Paris\"}"
+   ],
+   "reject": [
+    "It is sunny in Paris."
+   ]
+  },
+  {
+   "name": "chat_required",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Weather in Paris?"
+     }
+    ],
+    "tool_choice": "required",
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "get_weather",
+       "description": "get_weather tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "city": {
+          "type": "string",
+          "description": "City name"
+         },
+         "unit": {
+          "type": "string",
+          "enum": [
+           "celsius",
+           "fahrenheit"
+          ]
+         },
+         "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+         }
+        },
+        "required": [
+         "city"
+        ]
+       }
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "web_search",
+       "description": "web_search tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "query": {
+          "type": "string"
+         },
+         "filters": {
+          "type": "object",
+          "properties": {
+           "site": {
+            "type": "string"
+           },
+           "year": {
+            "type": "integer"
+           }
+          }
+         },
+         "tags": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "query"
+        ]
+       }
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "get_time",
+       "description": "get_time tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {}
+       }
+      }
+     }
+    ]
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "tool_call_required",
+    "schema": "[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"description\":\"get_weather tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"City name\"},\"unit\":{\"type\":\"string\",\"enum\":[\"celsius\",\"fahrenheit\"]},\"days\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"required\":[\"city\"]},\"strict\":null}},{\"type\":\"function\",\"function\":{\"name\":\"web_search\",\"description\":\"web_search tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"},\"filters\":{\"type\":\"object\",\"properties\":{\"site\":{\"type\":\"string\"},\"year\":{\"type\":\"integer\"}}},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"query\"]},\"strict\":null}},{\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"description\":\"get_time tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{}},\"strict\":null}}]"
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Weather in Paris?"
+   },
+   "expect": "structural_tag",
+   "accept": [
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"web_search\">\n<｜DSML｜ parameter name=\"query\" string=\"true\">paris weather</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"filters\" string=\"false\">{\"site\": \"meteo.fr\", \"year\": 2026}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"tags\" string=\"false\">[\"forecast\", \"france\"]</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"web_search\">\n<｜DSML｜ parameter name=\"query\" string=\"true\">line one\nline two <b>x</b></｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"filters\" string=\"false\">{\"site\": \"a.b\", \"year\": 1}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"tags\" string=\"false\">[]</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_time\">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>"
+   ],
+   "reject": [
+    "<｜DSML｜ invoke name=\"get_wether\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"web_search\">\n<｜DSML｜ parameter name=\"query\" string=\"true\">paris weather</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"filters\" string=\"false\">{site: meteo.fr}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"tags\" string=\"false\">[\"forecast\", \"france\"]</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>\nDone.",
+    "<｜DSML｜ invoke name=\"get_time\">\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "It is sunny in Paris.",
+    "</｜DSML｜ calls>",
+    "\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>"
+   ]
+  },
+  {
+   "name": "chat_named",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Weather in Paris?"
+     }
+    ],
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "get_weather",
+       "description": "get_weather tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "city": {
+          "type": "string",
+          "description": "City name"
+         },
+         "unit": {
+          "type": "string",
+          "enum": [
+           "celsius",
+           "fahrenheit"
+          ]
+         },
+         "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+         }
+        },
+        "required": [
+         "city"
+        ]
+       }
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "web_search",
+       "description": "web_search tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "query": {
+          "type": "string"
+         },
+         "filters": {
+          "type": "object",
+          "properties": {
+           "site": {
+            "type": "string"
+           },
+           "year": {
+            "type": "integer"
+           }
+          }
+         },
+         "tags": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "query"
+        ]
+       }
+      }
+     }
+    ],
+    "tool_choice": {
+     "type": "function",
+     "function": {
+      "name": "get_weather"
+     }
+    }
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "tool_call_required",
+    "schema": "[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"description\":\"get_weather tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"City name\"},\"unit\":{\"type\":\"string\",\"enum\":[\"celsius\",\"fahrenheit\"]},\"days\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"required\":[\"city\"]},\"strict\":null}}]"
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Weather in Paris?"
+   },
+   "expect": "structural_tag",
+   "accept": [
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Lyon</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">1</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>"
+   ],
+   "reject": [
+    "<｜DSML｜ invoke name=\"web_search\">\n<｜DSML｜ parameter name=\"query\" string=\"true\">paris weather</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"filters\" string=\"false\">{\"site\": \"meteo.fr\", \"year\": 2026}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"tags\" string=\"false\">[\"forecast\", \"france\"]</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"web_search\">\n<｜DSML｜ parameter name=\"query\" string=\"true\">paris weather</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"filters\" string=\"false\">{\"site\": \"meteo.fr\", \"year\": 2026}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"tags\" string=\"false\">[\"forecast\", \"france\"]</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>"
+   ]
+  },
+  {
+   "name": "chat_required_strict",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Weather in Paris?"
+     }
+    ],
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "get_weather",
+       "description": "get_weather tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "city": {
+          "type": "string",
+          "description": "City name"
+         },
+         "unit": {
+          "type": "string",
+          "enum": [
+           "celsius",
+           "fahrenheit"
+          ]
+         },
+         "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+         }
+        }
+       },
+       "strict": true
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "web_search",
+       "description": "web_search tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "query": {
+          "type": "string"
+         },
+         "filters": {
+          "type": "object",
+          "properties": {
+           "site": {
+            "type": "string"
+           },
+           "year": {
+            "type": "integer"
+           }
+          }
+         },
+         "tags": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        }
+       },
+       "strict": true
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "get_time",
+       "description": "get_time tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {}
+       },
+       "strict": true
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "book",
+       "description": "book tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "guest": {
+          "$ref": "#/$defs/Guest"
+         },
+         "note": {
+          "type": [
+           "string",
+           "null"
+          ]
+         }
+        },
+        "$defs": {
+         "Guest": {
+          "type": "object",
+          "properties": {
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        }
+       },
+       "strict": true
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "lookup",
+       "description": "lookup tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "code": {
+          "type": "string",
+          "pattern": "[A-Z]{3}-[0-9]{2}"
+         }
+        }
+       },
+       "strict": true
+      }
+     }
+    ],
+    "tool_choice": "required"
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "tool_call_required",
+    "schema": "[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"description\":\"get_weather tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"City name\"},\"unit\":{\"type\":\"string\",\"enum\":[\"celsius\",\"fahrenheit\"]},\"days\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"additionalProperties\":false,\"required\":[\"city\",\"unit\",\"days\"]},\"strict\":true}},{\"type\":\"function\",\"function\":{\"name\":\"web_search\",\"description\":\"web_search tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"},\"filters\":{\"type\":\"object\",\"properties\":{\"site\":{\"type\":\"string\"},\"year\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"site\",\"year\"]},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"additionalProperties\":false,\"required\":[\"query\",\"filters\",\"tags\"]},\"strict\":true}},{\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"description\":\"get_time tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false,\"required\":[]},\"strict\":true}},{\"type\":\"function\",\"function\":{\"name\":\"book\",\"description\":\"book tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"guest\":{\"$ref\":\"#/$defs/Guest\"},\"note\":{\"type\":[\"string\",\"null\"]}},\"additionalProperties\":false,\"required\":[\"guest\",\"note\"]},\"strict\":true}},{\"type\":\"function\",\"function\":{\"name\":\"lookup\",\"description\":\"lookup tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"string\",\"pattern\":\"[A-Z]{3}-[0-9]{2}\"}},\"additionalProperties\":false,\"required\":[\"code\"]},\"strict\":true}}]"
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Weather in Paris?"
+   },
+   "expect": "structural_tag",
+   "accept": [
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"web_search\">\n<｜DSML｜ parameter name=\"query\" string=\"true\">paris weather</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"filters\" string=\"false\">{\"site\": \"meteo.fr\", \"year\": 2026}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"tags\" string=\"false\">[\"forecast\", \"france\"]</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_time\">\n\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"book\">\n<｜DSML｜ parameter name=\"guest\" string=\"false\">{\"name\": \"Ada\"}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"note\" string=\"true\">window seat</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"book\">\n<｜DSML｜ parameter name=\"guest\" string=\"false\">{\"name\": \"Ada\"}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"note\" string=\"false\">null</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"lookup\">\n<｜DSML｜ parameter name=\"code\" string=\"true\">ABC-12</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"book\">\n<｜DSML｜ parameter name=\"guest\" string=\"false\">{\"nam\": \"Ada\"}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"note\" string=\"true\">window seat</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>"
+   ],
+   "reject": [
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"town\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"true\">three</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">10</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">kelvin</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"city\" string=\"true\">Lyon</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"web_search\">\n<｜DSML｜ parameter name=\"query\" string=\"true\">paris weather</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"filters\" string=\"false\">{\"site\": \"meteo.fr\"}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"tags\" string=\"false\">[\"forecast\", \"france\"]</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"web_search\">\n<｜DSML｜ parameter name=\"query\" string=\"true\">paris weather</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"filters\" string=\"false\">{\"site\": \"meteo.fr\", \"year\": 2026, \"lang\": \"fr\"}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"tags\" string=\"false\">[\"forecast\", \"france\"]</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_time\">\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"lookup\">\n<｜DSML｜ parameter name=\"code\" string=\"true\">abc-12</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>"
+   ]
+  },
+  {
+   "name": "chat_auto_strict",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Weather in Paris?"
+     }
+    ],
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "get_weather",
+       "description": "get_weather tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "city": {
+          "type": "string",
+          "description": "City name"
+         },
+         "unit": {
+          "type": "string",
+          "enum": [
+           "celsius",
+           "fahrenheit"
+          ]
+         },
+         "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+         }
+        }
+       },
+       "strict": true
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "web_search",
+       "description": "web_search tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "query": {
+          "type": "string"
+         },
+         "filters": {
+          "type": "object",
+          "properties": {
+           "site": {
+            "type": "string"
+           },
+           "year": {
+            "type": "integer"
+           }
+          }
+         },
+         "tags": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        }
+       },
+       "strict": true
+      }
+     }
+    ]
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "tool_call",
+    "schema": "[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"description\":\"get_weather tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"City name\"},\"unit\":{\"type\":\"string\",\"enum\":[\"celsius\",\"fahrenheit\"]},\"days\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"additionalProperties\":false,\"required\":[\"city\",\"unit\",\"days\"]},\"strict\":true}},{\"type\":\"function\",\"function\":{\"name\":\"web_search\",\"description\":\"web_search tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"},\"filters\":{\"type\":\"object\",\"properties\":{\"site\":{\"type\":\"string\"},\"year\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"site\",\"year\"]},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"additionalProperties\":false,\"required\":[\"query\",\"filters\",\"tags\"]},\"strict\":true}}]"
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Weather in Paris?"
+   },
+   "expect": "structural_tag",
+   "accept": [
+    "It is sunny in Paris.",
+    "Let me check.\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n<｜DSML｜ invoke name=\"web_search\">\n<｜DSML｜ parameter name=\"query\" string=\"true\">paris weather</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"filters\" string=\"false\">{\"site\": \"meteo.fr\", \"year\": 2026}</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"tags\" string=\"false\">[\"forecast\", \"france\"]</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>"
+   ],
+   "reject": [
+    "Let me check.\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"town\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>",
+    "\n\n<｜DSML｜ calls>\n<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">kelvin</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>"
+   ]
+  },
+  {
+   "name": "chat_auto",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Weather in Paris?"
+     }
+    ],
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "get_weather",
+       "description": "get_weather tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "city": {
+          "type": "string",
+          "description": "City name"
+         },
+         "unit": {
+          "type": "string",
+          "enum": [
+           "celsius",
+           "fahrenheit"
+          ]
+         },
+         "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+         }
+        },
+        "required": [
+         "city"
+        ]
+       }
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "web_search",
+       "description": "web_search tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "query": {
+          "type": "string"
+         },
+         "filters": {
+          "type": "object",
+          "properties": {
+           "site": {
+            "type": "string"
+           },
+           "year": {
+            "type": "integer"
+           }
+          }
+         },
+         "tags": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "query"
+        ]
+       }
+      }
+     }
+    ]
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "tool_call",
+    "schema": "[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"description\":\"get_weather tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"City name\"},\"unit\":{\"type\":\"string\",\"enum\":[\"celsius\",\"fahrenheit\"]},\"days\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"required\":[\"city\"]},\"strict\":null}},{\"type\":\"function\",\"function\":{\"name\":\"web_search\",\"description\":\"web_search tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"},\"filters\":{\"type\":\"object\",\"properties\":{\"site\":{\"type\":\"string\"},\"year\":{\"type\":\"integer\"}}},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"query\"]},\"strict\":null}}]"
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Weather in Paris?"
+   },
+   "expect": null,
+   "accept": [],
+   "reject": []
+  },
+  {
+   "name": "chat_rf_plus_tools",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Weather in Paris? Reply in json."
+     }
+    ],
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "get_weather",
+       "description": "get_weather tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "city": {
+          "type": "string",
+          "description": "City name"
+         },
+         "unit": {
+          "type": "string",
+          "enum": [
+           "celsius",
+           "fahrenheit"
+          ]
+         },
+         "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+         }
+        },
+        "required": [
+         "city"
+        ]
+       }
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "web_search",
+       "description": "web_search tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "query": {
+          "type": "string"
+         },
+         "filters": {
+          "type": "object",
+          "properties": {
+           "site": {
+            "type": "string"
+           },
+           "year": {
+            "type": "integer"
+           }
+          }
+         },
+         "tags": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "query"
+        ]
+       }
+      }
+     }
+    ],
+    "response_format": {
+     "type": "json_object"
+    }
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "tool_call",
+    "schema": "[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"description\":\"get_weather tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"City name\"},\"unit\":{\"type\":\"string\",\"enum\":[\"celsius\",\"fahrenheit\"]},\"days\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"required\":[\"city\"]},\"strict\":null}},{\"type\":\"function\",\"function\":{\"name\":\"web_search\",\"description\":\"web_search tool.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"},\"filters\":{\"type\":\"object\",\"properties\":{\"site\":{\"type\":\"string\"},\"year\":{\"type\":\"integer\"}}},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"query\"]},\"strict\":null}}]"
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Weather in Paris? Reply in json."
+   },
+   "expect": null,
+   "accept": [],
+   "reject": []
+  },
+  {
+   "name": "chat_tools_none_rf",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Extract: Ada Lovelace, 36."
+     }
+    ],
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "get_weather",
+       "description": "get_weather tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "city": {
+          "type": "string",
+          "description": "City name"
+         },
+         "unit": {
+          "type": "string",
+          "enum": [
+           "celsius",
+           "fahrenheit"
+          ]
+         },
+         "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+         }
+        },
+        "required": [
+         "city"
+        ]
+       }
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "web_search",
+       "description": "web_search tool.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "query": {
+          "type": "string"
+         },
+         "filters": {
+          "type": "object",
+          "properties": {
+           "site": {
+            "type": "string"
+           },
+           "year": {
+            "type": "integer"
+           }
+          }
+         },
+         "tags": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "query"
+        ]
+       }
+      }
+     }
+    ],
+    "tool_choice": "none",
+    "response_format": {
+     "type": "json_schema",
+     "json_schema": {
+      "name": "answer",
+      "schema": {
+       "type": "object",
+       "properties": {
+        "name": {
+         "type": "string"
+        },
+        "age": {
+         "type": "integer"
+        },
+        "email": {
+         "type": "string",
+         "format": "email"
+        }
+       },
+       "required": [
+        "name",
+        "age"
+       ]
+      }
+     }
+    }
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "json",
+    "schema": "{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"integer\"},\"email\":{\"type\":\"string\",\"format\":\"email\"}},\"required\":[\"name\",\"age\"]}"
+   },
+   "response_schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "age": {
+      "type": "integer"
+     },
+     "email": {
+      "type": "string",
+      "format": "email"
+     }
+    },
+    "required": [
+     "name",
+     "age"
+    ]
+   },
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Extract: Ada Lovelace, 36."
+   },
+   "expect": "json",
+   "accept": [
+    "{\"name\": \"Ada Lovelace\", \"age\": 36, \"email\": \"ada@example.org\"}"
+   ],
+   "reject": [
+    "It is sunny in Paris."
+   ]
+  },
+  {
+   "name": "chat_prefix_json_schema",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "Extract: Ada."
+     },
+     {
+      "role": "assistant",
+      "content": "{\"name\": ",
+      "prefix": true
+     }
+    ],
+    "response_format": {
+     "type": "json_schema",
+     "json_schema": {
+      "name": "answer",
+      "schema": {
+       "type": "object",
+       "properties": {
+        "name": {
+         "type": "string"
+        },
+        "age": {
+         "type": "integer"
+        },
+        "email": {
+         "type": "string",
+         "format": "email"
+        }
+       },
+       "required": [
+        "name",
+        "age"
+       ]
+      }
+     }
+    }
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "json",
+    "schema": "{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"integer\"},\"email\":{\"type\":\"string\",\"format\":\"email\"}},\"required\":[\"name\",\"age\"]}"
+   },
+   "response_schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "age": {
+      "type": "integer"
+     },
+     "email": {
+      "type": "string",
+      "format": "email"
+     }
+    },
+    "required": [
+     "name",
+     "age"
+    ]
+   },
+   "last_message": {
+    "role": "assistant",
+    "prefix": true,
+    "content": "{\"name\": "
+   },
+   "expect": null,
+   "accept": [],
+   "reject": []
+  },
+  {
+   "name": "chat_prefix_reasoning_regex",
+   "protocol": "chat",
+   "body": {
+    "messages": [
+     {
+      "role": "user",
+      "content": "A date?"
+     },
+     {
+      "role": "assistant",
+      "content": "",
+      "reasoning_content": "Today is",
+      "prefix": true
+     }
+    ],
+    "thinking": {
+     "type": "enabled"
+    },
+    "response_format": {
+     "type": "regex",
+     "regex": "\\d{4}-\\d{2}-\\d{2}"
+    }
+   },
+   "thinking": true,
+   "constraint": {
+    "kind": "regex",
+    "schema": "\\d{4}-\\d{2}-\\d{2}"
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "assistant",
+    "prefix": true,
+    "content": ""
+   },
+   "expect": "regex",
+   "accept": [
+    "2026-10-22"
+   ],
+   "reject": [
+    "Today: 2026-10-22"
+   ]
+  },
+  {
+   "name": "responses_required",
+   "protocol": "responses",
+   "body": {
+    "input": "Weather in Paris?",
+    "tool_choice": "required",
+    "tools": [
+     {
+      "type": "function",
+      "name": "get_weather",
+      "description": "Weather.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "city": {
+         "type": "string",
+         "description": "City name"
+        },
+        "unit": {
+         "type": "string",
+         "enum": [
+          "celsius",
+          "fahrenheit"
+         ]
+        },
+        "days": {
+         "type": "integer",
+         "minimum": 1,
+         "maximum": 7
+        }
+       },
+       "required": [
+        "city"
+       ]
+      }
+     }
+    ]
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "tool_call_required",
+    "schema": "[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"description\":\"Weather.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"City name\"},\"unit\":{\"type\":\"string\",\"enum\":[\"celsius\",\"fahrenheit\"]},\"days\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"required\":[\"city\"]},\"strict\":null}}]"
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Weather in Paris?"
+   },
+   "expect": "structural_tag",
+   "accept": [
+    "<｜DSML｜ invoke name=\"get_weather\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>"
+   ],
+   "reject": [
+    "<｜DSML｜ invoke name=\"get_wether\">\n<｜DSML｜ parameter name=\"city\" string=\"true\">Paris</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"unit\" string=\"true\">celsius</｜DSML｜ parameter>\n<｜DSML｜ parameter name=\"days\" string=\"false\">3</｜DSML｜ parameter>\n</｜DSML｜ invoke>\n</｜DSML｜ calls>"
+   ]
+  },
+  {
+   "name": "messages_any",
+   "protocol": "messages",
+   "body": {
+    "max_tokens": 64,
+    "messages": [
+     {
+      "role": "user",
+      "content": "Weather in Paris?"
+     }
+    ],
+    "tool_choice": {
+     "type": "any"
+    },
+    "tools": [
+     {
+      "name": "get_weather",
+      "description": "Weather.",
+      "input_schema": {
+       "type": "object",
+       "properties": {
+        "city": {
+         "type": "string",
+         "description": "City name"
+        },
+        "unit": {
+         "type": "string",
+         "enum": [
+          "celsius",
+          "fahrenheit"
+         ]
+        },
+        "days": {
+         "type": "integer",
+         "minimum": 1,
+         "maximum": 7
+        }
+       },
+       "required": [
+        "city"
+       ]
+      }
+     }
+    ]
+   },
+   "thinking": false,
+   "constraint": {
+    "kind": "tool_call",
+    "schema": "[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"description\":\"Weather.\",\"parameters\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\",\"description\":\"City name\"},\"unit\":{\"type\":\"string\",\"enum\":[\"celsius\",\"fahrenheit\"]},\"days\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"required\":[\"city\"]},\"strict\":null}}]"
+   },
+   "response_schema": null,
+   "last_message": {
+    "role": "user",
+    "prefix": false,
+    "content": "Weather in Paris?"
+   },
+   "expect": null,
+   "accept": [],
+   "reject": []
+  }
+ ]
+}

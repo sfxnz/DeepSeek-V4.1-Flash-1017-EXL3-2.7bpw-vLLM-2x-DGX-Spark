@@ -4,11 +4,11 @@ Serve an EXL3 pack of [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface
 
 Native MXFP4 and MXFP8 weights are about 510 GB and do not fit 2× Spark UMA. The pack re-encodes only the routed experts (40 layers × 384, source MXFP4) as EXL3 MCG trellis with an integer K in {2, 3, 4} per layer and projection group (GU = gate+up, D = down). The routed mean is exactly 2.70 bpw. K is not uniform: the allocation puts the bits where the measured sensitivity of the official 1017 model is highest. Jointly perturbed, the chosen allocation scores KL_eq 0.050, against 0.088 for uniform 3/2 at 2.67 bpw and 0.137 for uniform 2/2 at 2.0 bpw ([How the pack was made](#how-the-pack-was-made)). The experts are encoded with real activation Hessians. Everything else keeps the source dtypes, the lm_head is MXFP8, and the Engram tables stay on NVMe (`DSV41_ENGRAM_DISK=1`).
 
-With the perf2 defaults (boot FINAL, 2026-10-20: the stack tip, a plain `./run.sh`) the pack serves 40.5 tok/s on the L.A.I.L prose cell, 51.3 tok/s greedy prose and 103.6 tok/s structured output at c=1, and 96.4 tok/s aggregate over four sessions of distinct prose; it prefills a 64K prompt at 2,932 tok/s. It passes the full quality eval against the release baseline (GSM8K 98/100, MMLU 211/228, tools 22/22, needle 9/9; GSM8K with thinking 38/40 against the baseline's 39/40, inside the gate's Wilson bound), finds a needle at 256K and at 500K tokens (3/3 depths each), matches the release's served KL on all 72 panel rows (0.0253 against 0.0254 nats/token), and held four sessions of ~447K tokens resident with 0 preemptions (`results/2026-10-19-1017-perf2/FINAL/`). The release boot D1 (2026-10-18, `MAX_NUM_SEQS=2`, 1,048,576-token window) served 39.6 / 49.6 tok/s on the same c=1 prose cells, found needles at 256K and 1M, stayed within 0.025 nats/token KL on all 72 panel rows and ran a 60-minute mixed c=2 soak with 0 errors. The defaults are four sessions at a 500,000-token window from the same 3.875 GiB KV pool, with packed KV groups ([Memory and context](#memory-and-context)).
+With the perf2 defaults (boot FINAL, 2026-10-20: the stack tip, a plain `./run.sh` of that day, before the API gateway: clients reached vLLM directly, as with `API_GATEWAY=0` now) the pack serves 40.5 tok/s on the L.A.I.L prose cell, 51.3 tok/s greedy prose and 103.6 tok/s structured output at c=1, and 96.4 tok/s aggregate over four sessions of distinct prose; it prefills a 64K prompt at 2,932 tok/s. It passes the full quality eval against the release baseline (GSM8K 98/100, MMLU 211/228, tools 22/22, needle 9/9; GSM8K with thinking 38/40 against the baseline's 39/40, inside the gate's Wilson bound), finds a needle at 256K and at 500K tokens (3/3 depths each), matches the release's served KL on all 72 panel rows (0.0253 against 0.0254 nats/token), and held four sessions of ~447K tokens resident with 0 preemptions (`results/2026-10-19-1017-perf2/FINAL/`). The release boot D1 (2026-10-18, `MAX_NUM_SEQS=2`, 1,048,576-token window) served 39.6 / 49.6 tok/s on the same c=1 prose cells, found needles at 256K and 1M, stayed within 0.025 nats/token KL on all 72 panel rows and ran a 60-minute mixed c=2 soak with 0 errors. The defaults are four sessions at a 500,000-token window from the same 3.875 GiB KV pool, with packed KV groups ([Memory and context](#memory-and-context)).
 
 This recipe replaces the September recipe for `deepseek-ai/DeepSeek-V4.1-Flash` (2.0 bpw pack, rounds 1-36): [sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark](https://github.com/sfxnz/DeepSeek-V4.1-Flash-EXL3-vLLM-2x-DGX-Spark) @ `3de9146`. Its numbers are history, not this pack's.
 
-Default thinking is off (`thinking=false`). Turn it on per request with `chat_template_kwargs`. The efforts are `low` (50), `high` (75) and `max` (100); thinking on without an effort gets `high` (75), the DeepSeek API default. `xhigh` is not a 1017 effort and is rejected. With thinking on, a small `max_tokens` can return empty `content`.
+Clients talk to the DeepSeek API: a gateway built on DeepSeek's deepseek-recipe sits in front of vLLM and serves Chat Completions, Anthropic Messages and Responses ([API](#api)). Default thinking is off. Turn it on per request with `"thinking": {"type": "enabled"}`, or with `chat_template_kwargs` as before. `reasoning_effort` takes the API's names: `minimal` and `low` give 50, `medium`, `high` and `xhigh` 75, `ultra` and `max` 100. Thinking on without an effort gets 75, the DeepSeek API default. With thinking on, a small `max_tokens` can return empty `content`.
 
 ## Prerequisites
 
@@ -19,6 +19,7 @@ You need:
 - Exclusive GPUs on both nodes. Do not start the serve while another `--gpus all` container is up.
 - About 450 GB free disk per node: the pack is 405.1 GB (377.2 GiB) and the image about 24 GB. The source model is not needed to serve.
 - Hugging Face `hf` (or `huggingface-cli`) and Docker on both nodes
+- On the head, `curl` and HTTPS access to `files.pythonhosted.org` at the first boot, for the API gateway's pinned deepseek-recipe wheel ([API](#api))
 
 - The two Sparks' direct ConnectX link up, with an IPv4 address on the same subnet on `IFACE` on both nodes
 
@@ -74,9 +75,9 @@ python3 bench_decode.py --phase prose --concurrency 1
 python3 tools/measure_lail_prose.py
 ```
 
-`./run.sh` starts the worker, then the head, and returns when the serve is ready. It prints `==> Ready → http://127.0.0.1:8000/v1  (context=500000)`, then `==> audit ok`, the warmup replies, and `==> Stop with: ./stop.sh`. Run the smokes after that. Follow the head with `docker logs -f dsv41-flash-exl3`.
+`./run.sh` starts the worker, then the head, then (once vLLM answers on `127.0.0.1:8001`) the API gateway, and returns when the serve is ready. It prints `==> Ready → http://127.0.0.1:8001/v1  (context=500000)` for vLLM and `==> Ready → http://127.0.0.1:8000/v1  (context=500000)` for the gateway, then `==> audit ok`, the warmup replies, and `==> Stop with: ./stop.sh`. Run the smokes after that. Follow the head with `docker logs -f dsv41-flash-exl3` and the gateway with `docker logs -f dsv41-api-gateway`.
 
-The API is `http://127.0.0.1:8000/v1`. The served model is `deepseek-ai/DeepSeek-V4.1-Flash-1017`. Cap is `MAX_NUM_SEQS=4`. Do not send a fifth stream. Boot D1 took about 11 minutes (model load 508 s on the head, 305 s on the worker).
+The API is `http://127.0.0.1:8000/v1` ([API](#api)). The served model is `deepseek-ai/DeepSeek-V4.1-Flash-1017`. Cap is `MAX_NUM_SEQS=4`. Do not send a fifth stream. Boot D1 took about 11 minutes (model load 508 s on the head, 305 s on the worker).
 
 The `smoke_chat.py` default prompt is `What is 17*19? Return only the integer.` Thinking is off. The pass is `content` matching `323` (`--expect ''` accepts any non-empty content). `smoke_vision.py` sends a 64x64 solid-red PNG as OpenAI `image_url`. It must not return HTTP 400 `is not a multimodal model`, and the answer must contain `red`. `bench_decode.py` is streamed greedy, thinking off, 200 completion tokens, 3-run median by default (the headline cell uses `--runs 9`).
 
@@ -88,11 +89,55 @@ When you are done:
 ./stop.sh
 ```
 
-Run it on the head. It removes `dsv41-flash-exl3` on both nodes (the worker over ssh). If it reports `Cannot SSH to <worker>`, run `docker rm -f dsv41-flash-exl3` on the worker.
+Run it on the head. It removes the gateway `dsv41-api-gateway` and `dsv41-flash-exl3` on the head, then `dsv41-flash-exl3` on the worker over ssh. If it reports `Cannot SSH to <worker>`, run `docker rm -f dsv41-flash-exl3` on the worker.
 
 The serve levers are the ones the September recipe promoted, all default-on: DSpark (perf2: the verify width per batch size, `NUM_SPECULATIVE_TOKENS_PER_BATCH=1-2:5,3-4:3`, with adaptive verify, `DSV41_DSPARK_ADAPTIVE=1`; `NUM_SPECULATIVE_TOKENS_PER_BATCH=0` restores one k, `NUM_SPECULATIVE_TOKENS=3`) with cudagraph capture sizes derived from the widths and `MAX_NUM_SEQS` (`[1,4,5,6,8,10,12,15,16,20]` at 4 sessions), `MAX_NUM_BATCHED_TOKENS=8192` (`2048` is the override for long-prompt-heavy workloads), the NCCL AR-tail set, the mem-hygiene bundle, Engram prefetch + gather v2 + census + `DSV41_ENGRAM_WILLNEED`, lm_head MXFP8 (`DSV41_LMHEAD_MXFP8=1`), `DSV41_STREAM_FEED`, `DSV41_WOA_PREPACK`, `DSV41_DSPARK_SPARSE_MARKOV` with `DSV41_DSPARK_SPARSE_MARKOV_TOPK=1024`, and the round-3 kernel bundle (`DSV41_P2B_COOP=2`, `DSV41_DENSE_GEMV=1`, `DSV41_MHC_DET_SPLITS=16`, `DSV41_ENGRAM_NATIVE_STAGE=1`, `DSV41_ENGRAM_EARLY_HASH=1`, `DSV41_ATTN_T2R_DEDUP=1`, `DSV41_SWA_META_FUSED=1`, `DSV41_MOE_PREP_FUSED=1`, `DSV41_CANDIDATE_MASK_BOUNDED=1`, `DSV41_INDEXER_WP_GEMV=1`), plus three of round 35's KP add-ons since perf2 (`DSV41_PM_QOS_US=20`, `DSV41_ENGRAM_WKV_TP=1`, `DSV41_MHC_DET_OVERLAP=1`). Set any `DSV41_*` lever to `0` to turn it off (`DSV41_DSPARK_SPARSE_MARKOV_TOPK=256` restores the round-34 top-k; `SPEC=none` turns speculative decoding off). `flags.md` has the per-flag record; the September A/B evidence is in the September recipe.
 
 The 4-session defaults add packed KV groups (`DSV41_KV_PACKED_GROUPS=1`, vLLM PR #60996 on the image's planner), batched SWA decode metadata (`DSV41_SWA_META_BATCHED=1`, needs `DSV41_SWA_META_FUSED=1`), a ragged-batch guard in the sparse indexer (always on, from vLLM 0.32rc1), the indexer's expanded block table on first use only (`DSV41_INDEXER_EXPANDED_TABLE_LAZY=1`), `--mm-processor-cache-gb 1` and `--prefix-cache-retention-interval 4096`. Boot I3 ran them with the later perf2 levers off: c=1 prose 50.3 tok/s at 52.7 ms/step (the config-only 4-session baseline B0: 49.0 at 52.7), c=4 distinct prose 62.3 tok/s aggregate (B0 61.4), quick quality PASS (`results/2026-10-19-1017-perf2/I3/`).
+
+## API
+
+`./run.sh` serves the DeepSeek API through a gateway (`API_GATEWAY=1`, the default). The gateway, `gateway/dsv41_gateway.py`, runs on [deepseek-recipe](https://github.com/deepseek-ai/deepseek-recipe) 0.2.0, the library DeepSeek's API front end is built on. It runs in its own container on the head, `dsv41-api-gateway`: the serve image without its vLLM patches, no GPU. `--memory 3g` bounds image bursts; the gateway itself uses about 120-150 MiB. If it crashes or hits that cap, Docker restarts it, up to 3 times (`--restart on-failure:3`), so port 8000 comes back while vLLM is up. The next `./run.sh` removes a gateway whose vLLM container is gone. It answers on port 8000 (`PORT`). vLLM moves to `127.0.0.1:8001` (`VLLM_PORT`) and gives the gateway its token-in, token-out route `/inference/v1/generate` (`VLLM_ENABLE_SCALE_OUT_ENDPOINTS=1`). Both ranks also get `--max-logprobs 21`: the gateway asks vLLM for one logprob more than `top_logprobs`, so 20 stays exact.
+
+The gateway serves three protocols:
+
+| Route | Protocol |
+|---|---|
+| `POST /v1/chat/completions` | OpenAI Chat Completions |
+| `POST /v1/messages` | Anthropic Messages |
+| `POST /v1/responses` | OpenAI Responses |
+
+For each request it does what the DeepSeek API does. It validates the request, renders the V4.1 prompt and encodes it with the pack's tokenizer; a special-token spelling inside request text stays text. vLLM generates from those token IDs. The gateway parses the output (reasoning, DSML tool calls, stop sequences, logprobs, usage) into the API's response body or SSE stream. Images still go through vLLM's image processor, bound in the order of the prompt's placeholders.
+
+Thinking:
+
+- `"thinking": {"type": "enabled"}` or `{"type": "disabled"}`, on all three protocols. Without it, thinking stays off (the recipe default) unless the request names an effort.
+- `reasoning_effort`: `minimal` and `low` render effort 50; `medium`, `high` and `xhigh` 75; `ultra` and `max` 100. Thinking on without an effort gets 75, the API default. An effort other than `none` on a request without `thinking` turns thinking on, as the API does.
+- `chat_template_kwargs` still works on Chat Completions. `thinking` or `enable_thinking` (true or false) and a string `reasoning_effort` become the fields above, unless the request sets those itself. Any other key sends the request to vLLM unchanged.
+
+Sampling follows the API:
+
+- Thinking on: temperature 1.0 and `top_p` at least 0.95, whatever the request asks.
+- Thinking off: the request's temperature, with `top_p` 1.0.
+- `max_tokens` unset: 8192 with thinking off, 65536 with thinking on, 131072 at effort `ultra` or `max`, capped by the context left. The API refuses more than 393216.
+- Stop strings end the answer only. They do not match inside reasoning or tool-call markup.
+- `top_k`, `min_p`, `repetition_penalty`, `presence_penalty`, `frequency_penalty`, `min_tokens`, `ignore_eos` and `seed` pass through to vLLM as before.
+
+Anything that worked before keeps working. These requests go to vLLM unchanged:
+
+- a request the API would refuse;
+- a request whose `chat_template_kwargs` holds a key other than the thinking switches and the effort;
+- a request with a vLLM-only field that changes the prompt, the grammar or the output: `continue_final_message`, `add_generation_prompt`, `chat_template`, `structured_outputs`, `guided_*`, `prompt_logprobs`, `echo`, `return_token_ids` and the rest of `FALLBACK_FIELDS` in `gateway/dsv41_gateway.py`.
+
+Every response on the three routes carries `x-dsv41-gateway: api` or `x-dsv41-gateway: fallback`, and the gateway logs each fallback with its reason. `DSV41_GATEWAY_STRICT=1` returns the API's error instead of falling back.
+
+The gateway proxies every other route to vLLM unchanged: `/v1/models`, `/v1/completions`, `/tokenize`, `/detokenize`, `/metrics` and the rest. `GET /health` answers 200 only while vLLM's does. `POST /dsv41/render/{chat,messages,responses}` returns the prompt token IDs, sampling and `max_tokens` the gateway would send, without generating. The gateway fetches image URLs itself; `DSV41_GATEWAY_BLOCK_PRIVATE_URLS=1` refuses loopback, private, link-local, multicast and reserved destinations, redirects included.
+
+Port 8000 is the gateway, on every interface. Port 8001 is vLLM, on loopback only; tools on the head can still reach it there (`curl http://127.0.0.1:8001/v1/models`). `run.sh` refuses to start while either port is in use.
+
+On the head, `run.sh` downloads the pinned wheel, `deepseek_recipe-0.2.0-cp310-abi3-manylinux_2_28_aarch64.whl`, from PyPI at the first gateway boot. It checks the wheel's sha256 against `recipe.yaml` before it unpacks it into `~/.cache/dsv41-gateway/deepseek_recipe-0.2.0/`, which the gateway mounts read-only. With `SKIP_DOWNLOAD=1` it never downloads: put the wheel in `~/.cache/dsv41-gateway/` yourself. The worker never needs the wheel, and the image is not rebuilt.
+
+`API_GATEWAY=0` serves vLLM directly, as before the gateway: vLLM listens on `0.0.0.0:8000`, and there is no gateway container, scale-out route or `--max-logprobs 21`. `run.sh` then runs the same two `docker run` commands as before. vLLM directly ignores the `thinking` field (use `chat_template_kwargs`), refuses the effort names `minimal`, `medium`, `xhigh` and `ultra`, and samples with the request's own settings.
 
 ## Memory and context
 
@@ -138,6 +183,8 @@ The memory watchdog (stop at under 1.5 GiB on either node for two 2 s samples) n
 python3 tests/quality_eval.py --full --out /tmp/q.json \
   --baseline results/2026-10-18-1017/quality-baseline/full.json
 ```
+
+The 1017 baselines were recorded on vLLM directly. Its default URL, port 8000, is now the API gateway, where the thinking-on GSM8K requests sample at temperature 1.0 (the API's policy) instead of greedy. `--url http://127.0.0.1:8001` gates on vLLM directly, as the baselines were recorded.
 
 With `--baseline`, it gates on the following:
 
@@ -231,15 +278,18 @@ Encyclopedic text loses the most. Rare-fact recall lives in the routed experts t
 | Structured outputs | xgrammar, pinned (`--structured-outputs-config '{"backend":"xgrammar"}'`): under `auto` the first structured request fixes the engine's only backend, and a `json_schema` that falls back to guidance makes every later required or named `tool_choice` fail until restart; a schema xgrammar cannot compile is a 400 instead |
 | Stop strings | up to 16 per request (`VLLM_MAX_STOP_STRINGS=16`, the DeepSeek API's limit; at vLLM's default of 4, a fifth stop string is a 400) |
 | Usage | `prompt_tokens_details.cached_tokens` (`--enable-prompt-tokens-details`); on `/v1/messages`, cached tokens move from `input_tokens` to `cache_read_input_tokens` |
-| Post-ready | engagement audit of both ranks' logs (`AUDIT=warn`; `strict` fails the boot, `off` skips), then greedy, t=0.7, ~3k/~1k/~300-token nonce prefill and small-image warmup requests (`WARMUP=1`) |
+| API gateway | on (`API_GATEWAY=1`): `dsv41-api-gateway` on the head (no GPU, `--memory 3g`, `--restart on-failure:3`) serves the DeepSeek API (deepseek-recipe 0.2.0: Chat Completions, Anthropic Messages, Responses) on port 8000, in front of vLLM on `127.0.0.1:8001` (`VLLM_ENABLE_SCALE_OUT_ENDPOINTS=1` and `--max-logprobs 21` on both ranks); a request the API rejects or one with a vLLM-only field goes to vLLM unchanged (`x-dsv41-gateway: fallback`); `API_GATEWAY=0` serves vLLM on `0.0.0.0:8000` without either |
+| Gateway options | `DSV41_GATEWAY_STRICT=0` (1: the API's error instead of the vLLM fallback) `DSV41_GATEWAY_BLOCK_PRIVATE_URLS=0` (1: refuse image URLs that resolve to loopback, private, link-local, multicast or reserved addresses, redirects included) |
+| deepseek-recipe wheel | the PyPI wheel pinned by URL and sha256 in recipe.yaml (`GATEWAY_WHEEL_URL`, `GATEWAY_WHEEL_SHA256`), fetched on the head at the first gateway boot (never with `SKIP_DOWNLOAD=1`; a wheel already in `~/.cache/dsv41-gateway/` is used) and sha256-checked before it is unpacked there |
+| Post-ready | engagement audit of both ranks' logs and the gateway's (`AUDIT=warn`; `strict` fails the boot, `off` skips), then greedy, t=0.7, ~3k/~1k/~300-token nonce prefill and small-image warmup requests through port 8000 (`WARMUP=1`) |
 | API | `http://<head>:8000/v1` |
-| Container | `dsv41-flash-exl3` |
+| Container | `dsv41-flash-exl3` (vLLM, both nodes), `dsv41-api-gateway` (API gateway, head) |
 | Master port | 29524 |
 <!-- END generated defaults -->
 
 ## Measured on 2× DGX Spark
 
-Boot FINAL (2026-10-20, both nodes, `SKIP_DOWNLOAD=1 AUDIT=strict ./run.sh` from the perf2 stack tip: every setting at its default, four sessions at a 500,000-token window, DSpark per-batch k with adaptive verify, the perf2 levers). Evidence: `results/2026-10-19-1017-perf2/FINAL/`. The middle column is the release boot D1 (2026-10-18, `MAX_NUM_SEQS=2`, 1,048,576-token window, the image's KV groups; `results/2026-10-18-1017/boot-d1/`), the right column the September recipe's round-36 pack on the September model. Both are history, not paired comparisons.
+Boot FINAL (2026-10-20, both nodes, `SKIP_DOWNLOAD=1 AUDIT=strict ./run.sh` from the perf2 stack tip: every setting at its default, four sessions at a 500,000-token window, DSpark per-batch k with adaptive verify, the perf2 levers). Evidence: `results/2026-10-19-1017-perf2/FINAL/`. FINAL predates the API gateway: the benches reached vLLM directly on port 8000, as with `API_GATEWAY=0` now. The middle column is the release boot D1 (2026-10-18, `MAX_NUM_SEQS=2`, 1,048,576-token window, the image's KV groups; `results/2026-10-18-1017/boot-d1/`), the right column the September recipe's round-36 pack on the September model. Both are history, not paired comparisons.
 
 | Cell | 1017 2.70 bpw pack, perf2 defaults (FINAL) | 1017 release defaults, boot D1 (history) | Sept 2.0 bpw pack, Sept model (previous recipe, history only) |
 |---|---|---|---|

@@ -53,9 +53,53 @@ class MarkerSourceTests(unittest.TestCase):
 
     def test_gates_are_forwarded_env_names(self) -> None:
         run = (ROOT / "run.sh").read_text()
-        for gate in list(ea.PATCHES.values()) + [ea.BREAKABLE_GATE]:
+        for gate in list(ea.PATCHES.values()) + [ea.BREAKABLE_GATE, ea.GATEWAY_GATE]:
             for env in gate or {}:
                 self.assertIn(f"{env}=", run, env)
+
+
+GATEWAY_ENGAGED = ("dsv41-gateway: engaged deepseek-recipe 0.2.0 upstream=http://127.0.0.1:8001 "
+                   "model=deepseek-ai/DeepSeek-V4.1-Flash-1017\n")
+
+
+class GatewayAuditTests(unittest.TestCase):
+    """API_GATEWAY=1: the gateway's own log holds its startup line; no patch marker is expected there."""
+
+    def test_the_marker_is_the_gateways_startup_line(self) -> None:
+        self.assertEqual(ea.markers(ea.GATEWAY_SRC)["LOG_ENGAGED"], ("dsv41-gateway: engaged deepseek-recipe",))
+        self.assertIn('print(f"{LOG_ENGAGED} {d.__version__} upstream=', ea.GATEWAY_SRC.read_text())
+        self.assertIn('logs+=("gateway=$RUN_STATE/audit-gateway-$ts.log")', (ROOT / "run.sh").read_text())
+
+    def test_gate_on_needs_the_line_in_the_gateway_log_only(self) -> None:
+        env = dict(DEFAULT_ENV, API_GATEWAY="1")
+        ranks = {"head": ENGAGED, "worker": ENGAGED}
+        self.assertEqual(ea.audit({**ranks, "gateway": GATEWAY_ENGAGED}, env), [])
+        missing = ["gateway: missing 'dsv41-gateway: engaged deepseek-recipe' (gateway/dsv41_gateway.py)"]
+        self.assertEqual(ea.audit({**ranks, "gateway": "INFO:     Uvicorn running on http://0.0.0.0:8000\n"}, env), missing)
+        self.assertEqual(ea.audit(ranks, env), missing)  # no gateway log at all
+        # A vLLM rank needs no gateway line, and the gateway log needs no patch marker.
+        self.assertEqual(ea.audit({"head": ENGAGED, "gateway": GATEWAY_ENGAGED}, env), [])
+
+    def test_gate_off_expects_no_gateway(self) -> None:
+        for env in (DEFAULT_ENV, dict(DEFAULT_ENV, API_GATEWAY="0")):
+            self.assertEqual(ea.audit({"head": ENGAGED}, env), [])
+            self.assertEqual(ea.audit({"head": ENGAGED, "gateway": ""}, env), [])
+
+    def test_cli_strict_fails_without_the_line(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            head, gateway = Path(d) / "head.log", Path(d) / "gateway.log"
+            head.write_text(ENGAGED)
+            gateway.write_text(GATEWAY_ENGAGED)
+            argv = [sys.executable, str(ROOT / "tools/engagement_audit.py"), "--mode", "strict",
+                    f"head={head}", f"gateway={gateway}"]
+            env = dict(DEFAULT_ENV, API_GATEWAY="1", PATH="/usr/bin:/bin")
+            proc = subprocess.run(argv, env=env, capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertIn("audit ok: every expected patch engaged on head, gateway", proc.stdout)
+            gateway.write_text("ModuleNotFoundError: No module named 'deepseek_recipe'\n")
+            proc = subprocess.run(argv, env=env, capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 1)
+            self.assertIn("WARNING audit gateway: missing 'dsv41-gateway: engaged deepseek-recipe'", proc.stderr)
 
 
 class AuditTests(unittest.TestCase):

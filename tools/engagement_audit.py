@@ -12,6 +12,10 @@ patch in docker/patch (read with ast, nothing is imported). A marker is
 expected only when its env gate is on. Any disarm line is reported.
 --mode warn prints WARNING lines and exits 0; --mode strict exits 1.
 
+API_GATEWAY=1: run.sh also passes gateway=.run-state/audit-gateway-<ts>.log,
+the gateway container's log. Only gateway/dsv41_gateway.py's LOG_ENGAGED is
+expected there, and the patch markers are not.
+
 K-aware (1017 mixed-K packs): with --pack-config <snapshot>/config.json and
 DSV41_P2B_COOP=2, every routed-expert (K_gu, K_d) of the pack (expert_bits,
 else layer_bits/bits) must be one the image's p2b dataflow kernel takes:
@@ -91,6 +95,11 @@ BACKBONE_LAYERS = 40
 # vLLM's own line (vllm/compilation/breakable_cudagraph.py:290 in the pinned image).
 BREAKABLE_CUDAGRAPH = "Breakable CUDA graph enabled"
 BREAKABLE_GATE = {"VLLM_USE_BREAKABLE_CUDAGRAPH": "1", "ENFORCE_EAGER": "0"}
+# The API gateway runs in its own container without the image's sitecustomize: its startup line
+# (deepseek-recipe imported, tokenizer loaded) is expected in its log only.
+GATEWAY_SRC = Path(__file__).resolve().parents[1] / "gateway" / "dsv41_gateway.py"
+GATEWAY_RANK = "gateway"
+GATEWAY_GATE = {"API_GATEWAY": "1"}
 
 
 def markers(path: Path) -> dict[str, tuple[str, ...]]:
@@ -193,7 +202,13 @@ def audit(logs: dict[str, str], env, pack_config: dict | None = None) -> list[st
     expected, disarm = expectations(env)
     problems, per_k = coverage(pack_config, env)
     expected = expected + per_k
+    if all(env.get(k, "") == v for k, v in GATEWAY_GATE.items()):
+        for marker in markers(GATEWAY_SRC)["LOG_ENGAGED"]:
+            if marker not in logs.get(GATEWAY_RANK, ""):
+                problems.append(f"{GATEWAY_RANK}: missing {marker!r} (gateway/{GATEWAY_SRC.name})")
     for rank, text in logs.items():
+        if rank == GATEWAY_RANK:
+            continue
         for label, marker in expected:
             if marker not in text:
                 problems.append(f"{rank}: missing {marker!r} ({label})")

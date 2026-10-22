@@ -28,6 +28,9 @@
 #     the other sessions' decodes; a request alone in the scheduler is scheduled as stock).
 #   - api-parity vision-16bit: DSV41_IMAGE_16BIT_GRAY=1 (16-bit grayscale images scaled to 8-bit by 1/257 as the
 #     DeepSeek API does, instead of clamped to white; image preprocessing only, CPU-checked, not booted here).
+#   - api-parity gateway: API_GATEWAY=1 (the DeepSeek API gateway, deepseek-recipe 0.2.0, on PORT in front of
+#     vLLM on 127.0.0.1:VLLM_PORT; both ranks get VLLM_ENABLE_SCALE_OUT_ENDPOINTS=1 and --max-logprobs 21),
+#     DSV41_GATEWAY_STRICT=0, DSV41_GATEWAY_BLOCK_PRIVATE_URLS=0 (CPU-checked, not booted here).
 # GPU evidence: results/2026-10-19-1017-perf2/ (boot I3 ran the kv-pack defaults with the later perf2 levers
 # off). Boot FINAL ran the full stack's defaults (the last of these PRs) with the 4-session resident soak.
 # Run with: SKIP_DOWNLOAD=1 AUDIT=strict results/2026-10-19-1017-c4/boot.sh
@@ -109,5 +112,9 @@ export DSV41_SCHED_PREFILL_CAP=2048
 export DSV41_SCHED_DECODE_STEPS=1
 # api-parity vision-16bit.
 export DSV41_IMAGE_16BIT_GRAY=1
+# api-parity gateway.
+export API_GATEWAY=1
+export DSV41_GATEWAY_STRICT=0
+export DSV41_GATEWAY_BLOCK_PRIVATE_URLS=0
 
 exec ./run.sh

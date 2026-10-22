@@ -2,6 +2,7 @@
 set -euo pipefail
 
 CONTAINER_NAME="${CONTAINER_NAME:-dsv41-flash-exl3}"
+GATEWAY_CONTAINER_NAME="${GATEWAY_CONTAINER_NAME:-dsv41-api-gateway}"
 ORCHESTRATE="${ORCHESTRATE:-auto}"
 RUN_STATE="$(cd "$(dirname "$0")" && pwd)/.run-state"
 
@@ -11,18 +12,21 @@ fi
 WORKER_HOST="${WORKER_HOST:-spark2}"
 
 stop_local() {
-  if docker ps -a --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
-    echo "Stopping $CONTAINER_NAME"
-    docker rm -f "$CONTAINER_NAME" >/dev/null
-    echo "Stopped local $CONTAINER_NAME"
+  local name="$1"
+  if docker ps -a --format '{{.Names}}' | grep -qx "$name"; then
+    echo "Stopping $name"
+    docker rm -f "$name" >/dev/null
+    echo "Stopped local $name"
   else
-    echo "No local container named $CONTAINER_NAME"
+    echo "No local container named $name"
   fi
 }
 
 host_short() { hostname -s | tr '[:upper:]' '[:lower:]'; }
 
-stop_local
+# The API gateway (API_GATEWAY=1, head only) first: it is the front door.
+stop_local "$GATEWAY_CONTAINER_NAME"
+stop_local "$CONTAINER_NAME"
 
 if [[ "$ORCHESTRATE" == "0" ]]; then
   exit 0
