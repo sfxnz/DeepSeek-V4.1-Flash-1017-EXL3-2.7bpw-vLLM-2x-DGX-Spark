@@ -56,6 +56,7 @@ serve:
     LANGUAGE_MODEL_ONLY: 0
     MM_ENCODER_TP_MODE: data
     MM_PROCESSOR_CACHE_GB: 1
+    DSV41_IMAGE_16BIT_GRAY: 1
     MAX_NUM_BATCHED_TOKENS: 8192
     FORCE_UNSAFE_CTX: 0
     FORCE_UNSAFE_ENGRAM: 0
@@ -156,6 +157,7 @@ readme:
     - Vision: "on (`LANGUAGE_MODEL_ONLY={LANGUAGE_MODEL_ONLY}`)"
     - "`--mm-encoder-tp-mode`": "{MM_ENCODER_TP_MODE}"
     - "`--mm-processor-cache-gb`": "{MM_PROCESSOR_CACHE_GB} (vLLM default 4, mirrored in the API server and EngineCore on the head)"
+    - 16-bit grayscale images: "scaled to 8-bit by 1/257, as the DeepSeek API does (`DSV41_IMAGE_16BIT_GRAY={DSV41_IMAGE_16BIT_GRAY}`); Pillow alone clamps them to 255, almost white (0 = stock)"
     - Default thinking: "`thinking=false`, no default effort: a request that turns thinking on without `reasoning_effort` gets `high` (75), the DeepSeek API default"
     - "`tool_choice: none`": "renders no tools (`--exclude-tools-when-tool-choice-none`), as the DeepSeek API does"
     - Structured outputs: "xgrammar, pinned (`--structured-outputs-config '{\"backend\":\"xgrammar\"}'`): under `auto` the first structured request fixes the engine's only backend, and a `json_schema` that falls back to guidance makes every later required or named `tool_choice` fail until restart; a schema xgrammar cannot compile is a 400 instead"

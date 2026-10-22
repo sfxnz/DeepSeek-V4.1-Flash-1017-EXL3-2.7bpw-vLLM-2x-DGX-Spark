@@ -26,6 +26,8 @@
 #     add-ons, boot KP-C); DSV41_NCCL_EAGER_TWIN and DSV41_AR_L2_PREFETCH stay off.
 #   - perf2 c4-sched: DSV41_SCHED_PREFILL_CAP=2048, DSV41_SCHED_DECODE_STEPS=1 (prefill shares each step with
 #     the other sessions' decodes; a request alone in the scheduler is scheduled as stock).
+#   - api-parity vision-16bit: DSV41_IMAGE_16BIT_GRAY=1 (16-bit grayscale images scaled to 8-bit by 1/257 as the
+#     DeepSeek API does, instead of clamped to white; image preprocessing only, CPU-checked, not booted here).
 # GPU evidence: results/2026-10-19-1017-perf2/ (boot I3 ran the kv-pack defaults with the later perf2 levers
 # off). Boot FINAL ran the full stack's defaults (the last of these PRs) with the 4-session resident soak.
 # Run with: SKIP_DOWNLOAD=1 AUDIT=strict results/2026-10-19-1017-c4/boot.sh
@@ -105,5 +107,7 @@ export DSV41_MHC_DET_OVERLAP=1
 # perf2 c4-sched.
 export DSV41_SCHED_PREFILL_CAP=2048
 export DSV41_SCHED_DECODE_STEPS=1
+# api-parity vision-16bit.
+export DSV41_IMAGE_16BIT_GRAY=1
 
 exec ./run.sh

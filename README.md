@@ -225,6 +225,7 @@ Encyclopedic text loses the most. Rare-fact recall lives in the routed experts t
 | Vision | on (`LANGUAGE_MODEL_ONLY=0`) |
 | `--mm-encoder-tp-mode` | data |
 | `--mm-processor-cache-gb` | 1 (vLLM default 4, mirrored in the API server and EngineCore on the head) |
+| 16-bit grayscale images | scaled to 8-bit by 1/257, as the DeepSeek API does (`DSV41_IMAGE_16BIT_GRAY=1`); Pillow alone clamps them to 255, almost white (0 = stock) |
 | Default thinking | `thinking=false`, no default effort: a request that turns thinking on without `reasoning_effort` gets `high` (75), the DeepSeek API default |
 | `tool_choice: none` | renders no tools (`--exclude-tools-when-tool-choice-none`), as the DeepSeek API does |
 | Structured outputs | xgrammar, pinned (`--structured-outputs-config '{"backend":"xgrammar"}'`): under `auto` the first structured request fixes the engine's only backend, and a `json_schema` that falls back to guidance makes every later required or named `tool_choice` fail until restart; a schema xgrammar cannot compile is a 400 instead |
