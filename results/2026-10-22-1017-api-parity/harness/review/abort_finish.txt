@@ -1,0 +1,7 @@
+chat     non-stream: finish_reason='stop' content='The answer is 3'
+chat     stream last frames: ['ompletion_tokens":5,"total_tokens":13,"prompt_tokens_details":{"cached_tokens":0},"prompt_cache_hit_tokens":0,"prompt_cache_miss_tokens":8}}', 'data: [DONE]']
+messages non-stream: stop_reason='end_turn' content=[{'type': 'text', 'text': 'The answer is 3'}]
+messages stream last frames: ['e":null},"usage":{"input_tokens":8,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":5,"service_tier":"standard"}}', 'event: message_stop\ndata: {"type":"message_stop"}']
+responses non-stream: status='completed' incomplete_details=None
+responses stream last frames: ['al_answer","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"The answer is 3"}]},"output_index":0,"sequence_number":7}', 'kens":0},"output_tokens":5,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":13},"user":null,"metadata":{}},"sequence_number":8}']
+chat, upstream stream with no events at all: HTTP 200 body finish_reason='stop' content=''

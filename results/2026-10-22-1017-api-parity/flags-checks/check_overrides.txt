@@ -1,0 +1,13 @@
+dsv41-indexer-workspace: already applied
+INFO 10-22 12:04:45 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+INFO 10-22 12:04:45 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+WARNING 10-22 12:04:45 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-22 12:04:46 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-22 12:04:46 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+WARNING 10-22 12:04:46 [argparse_utils.py:441] Found duplicate keys --default-chat-template-kwargs, --structured-outputs-config
+head effective: (False, False, 'auto', {'thinking': False, 'reasoning_effort': 'low'}) stock
+WARNING 10-22 12:04:46 [argparse_utils.py:441] Found duplicate keys --default-chat-template-kwargs, --structured-outputs-config
+worker effective: (False, False, 'auto', {'thinking': False, 'reasoning_effort': 'low'}) stock
+RESULT EXTRA_ARGS restores every stock value

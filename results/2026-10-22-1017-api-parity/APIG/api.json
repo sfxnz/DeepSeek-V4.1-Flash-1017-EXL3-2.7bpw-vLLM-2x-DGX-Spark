@@ -1,0 +1,638 @@
+{
+ "schema": 1,
+ "mode": "api",
+ "ts": "2026-10-22T14:37:34Z",
+ "url": "http://127.0.0.1:8000",
+ "provenance": {
+  "model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "root": "/cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq",
+  "max_model_len": 500000,
+  "image": "dsv41-flash-exl3-sm121:e16-rows",
+  "flags_sha256": "d91546360ef83838"
+ },
+ "nonce": "551397655",
+ "baseline": null,
+ "components": {
+  "render": {
+   "cases": 52,
+   "same": 52,
+   "fixture": {
+    "generated_by": "tools/api_eval_fixtures.py",
+    "deepseek_recipe": "0.2.0",
+    "tokenizer_sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+    "model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "default_thinking": false,
+    "image_token": "<\uff5cdeepseek_image\uff5c>"
+   },
+   "context_limit": 500000,
+   "invariants": [],
+   "items": [
+    {
+     "id": "chat_default",
+     "violations": []
+    },
+    {
+     "id": "chat_thinking_enabled",
+     "violations": []
+    },
+    {
+     "id": "chat_thinking_adaptive",
+     "violations": []
+    },
+    {
+     "id": "chat_thinking_disabled_effort_high",
+     "violations": []
+    },
+    {
+     "id": "chat_thinking_enabled_effort_max",
+     "violations": []
+    },
+    {
+     "id": "chat_effort_none",
+     "violations": []
+    },
+    {
+     "id": "chat_effort_minimal",
+     "violations": []
+    },
+    {
+     "id": "chat_effort_low",
+     "violations": []
+    },
+    {
+     "id": "chat_effort_medium",
+     "violations": []
+    },
+    {
+     "id": "chat_effort_high",
+     "violations": []
+    },
+    {
+     "id": "chat_effort_xhigh",
+     "violations": []
+    },
+    {
+     "id": "chat_effort_max",
+     "violations": []
+    },
+    {
+     "id": "chat_effort_ultra",
+     "violations": []
+    },
+    {
+     "id": "chat_ctk_harness",
+     "violations": []
+    },
+    {
+     "id": "chat_ctk_think_high",
+     "violations": []
+    },
+    {
+     "id": "chat_ctk_enable_thinking",
+     "violations": []
+    },
+    {
+     "id": "chat_tools_auto",
+     "violations": []
+    },
+    {
+     "id": "chat_tool_roundtrip_think",
+     "violations": []
+    },
+    {
+     "id": "chat_tool_parallel_results_reversed",
+     "violations": []
+    },
+    {
+     "id": "chat_history_reasoning_dropped",
+     "violations": []
+    },
+    {
+     "id": "chat_tool_choice_none",
+     "violations": []
+    },
+    {
+     "id": "chat_tool_choice_required",
+     "violations": []
+    },
+    {
+     "id": "chat_tool_choice_named",
+     "violations": []
+    },
+    {
+     "id": "chat_json_schema",
+     "violations": []
+    },
+    {
+     "id": "chat_json_object",
+     "violations": []
+    },
+    {
+     "id": "chat_json_schema_tools",
+     "violations": []
+    },
+    {
+     "id": "chat_prefix",
+     "violations": []
+    },
+    {
+     "id": "chat_prefix_reasoning",
+     "violations": []
+    },
+    {
+     "id": "chat_special_spellings",
+     "violations": []
+    },
+    {
+     "id": "chat_image_spelling_text",
+     "violations": []
+    },
+    {
+     "id": "chat_image_one",
+     "violations": []
+    },
+    {
+     "id": "chat_images_two_think",
+     "violations": []
+    },
+    {
+     "id": "chat_tool_result_image",
+     "violations": []
+    },
+    {
+     "id": "chat_developer_fallback",
+     "violations": []
+    },
+    {
+     "id": "chat_numeric_effort_fallback",
+     "violations": []
+    },
+    {
+     "id": "msg_plain",
+     "violations": []
+    },
+    {
+     "id": "msg_system_blocks",
+     "violations": []
+    },
+    {
+     "id": "msg_thinking_enabled",
+     "violations": []
+    },
+    {
+     "id": "msg_thinking_adaptive_effort_medium",
+     "violations": []
+    },
+    {
+     "id": "msg_tool_roundtrip",
+     "violations": []
+    },
+    {
+     "id": "msg_thinking_tool_history",
+     "violations": []
+    },
+    {
+     "id": "msg_mid_system",
+     "violations": []
+    },
+    {
+     "id": "msg_image",
+     "violations": []
+    },
+    {
+     "id": "msg_tool_choice_any",
+     "violations": []
+    },
+    {
+     "id": "resp_string",
+     "violations": []
+    },
+    {
+     "id": "resp_input_text",
+     "violations": []
+    },
+    {
+     "id": "resp_instructions_developer",
+     "violations": []
+    },
+    {
+     "id": "resp_effort_medium",
+     "violations": []
+    },
+    {
+     "id": "resp_function_roundtrip",
+     "violations": []
+    },
+    {
+     "id": "resp_reasoning_item_encrypted",
+     "violations": []
+    },
+    {
+     "id": "resp_input_image",
+     "violations": []
+    },
+    {
+     "id": "resp_json_schema",
+     "violations": []
+    }
+   ],
+   "s": 0.1
+  },
+  "toolflow": {
+   "acc": {
+    "k": 6,
+    "n": 6,
+    "rate": 1.0,
+    "ci95": [
+     0.6097,
+     1.0
+    ]
+   },
+   "invariants": [],
+   "items": [
+    {
+     "id": "single",
+     "violations": [],
+     "finish": "tool_calls",
+     "calls": [
+      [
+       "get_weather",
+       {
+        "city": "Paris"
+       }
+      ]
+     ],
+     "final": "Here's the current weather in Paris:\n\n- **Temperature:** 18\u00b0C (about 64\u00b0F)\n- **Condition:** Light rain\n\nYou might want to bring an umbrella if you're heading out! Let me know if you'd like the local t",
+     "ok": true
+    },
+    {
+     "id": "parallel",
+     "violations": [],
+     "finish": "tool_calls",
+     "calls": [
+      [
+       "get_weather",
+       {
+        "city": "Paris"
+       }
+      ],
+      [
+       "get_weather",
+       {
+        "city": "Tokyo"
+       }
+      ]
+     ],
+     "final": "Here's the current weather for both cities:\n\n- **Paris:** 18\u00b0C, light rain \ud83c\udf27\ufe0f\n- **Tokyo:** 24\u00b0C, sunny \u2600\ufe0f",
+     "ok": true
+    },
+    {
+     "id": "required",
+     "violations": [],
+     "finish": "tool_calls",
+     "calls": [
+      [
+       "get_weather",
+       {
+        "city": "Paris"
+       }
+      ],
+      [
+       "get_time",
+       {
+        "city": "Paris"
+       }
+      ]
+     ],
+     "ok": true
+    },
+    {
+     "id": "named",
+     "violations": [],
+     "finish": "tool_calls",
+     "calls": [
+      [
+       "get_time",
+       {
+        "city": "Paris"
+       }
+      ]
+     ],
+     "ok": true
+    },
+    {
+     "id": "none",
+     "violations": [],
+     "finish": "stop",
+     "calls": [],
+     "ok": true
+    },
+    {
+     "id": "think",
+     "violations": [],
+     "finish": "tool_calls",
+     "calls": [
+      [
+       "get_weather",
+       {
+        "city": "Paris"
+       }
+      ]
+     ],
+     "final": "Here's the current weather in Paris:\n\n- **Temperature:** 18 \u00b0C\n- **Conditions:** Light rain\n\nYou might want an umbrella if you're heading out.",
+     "ok": true
+    }
+   ],
+   "s": 8.5
+  },
+  "reasoning": {
+   "acc": {
+    "k": 4,
+    "n": 4,
+    "rate": 1.0,
+    "ci95": [
+     0.5101,
+     1.0
+    ]
+   },
+   "invariants": [],
+   "items": [
+    {
+     "id": "effort_medium",
+     "violations": [],
+     "finish": "stop",
+     "content": "1081",
+     "reasoning_chars": 66,
+     "reasoning_tokens": 19,
+     "ok": true
+    },
+    {
+     "id": "thinking_enabled",
+     "violations": [],
+     "finish": "stop",
+     "content": "1102",
+     "reasoning_chars": 84,
+     "reasoning_tokens": 32,
+     "ok": true
+    },
+    {
+     "id": "stop_in_reasoning",
+     "violations": [],
+     "finish": "stop",
+     "content": "1081",
+     "reasoning_chars": 63,
+     "reasoning_tokens": 19,
+     "ok": true
+    },
+    {
+     "id": "thinking_off",
+     "violations": [],
+     "finish": "stop",
+     "content": "1081",
+     "reasoning_chars": 0,
+     "reasoning_tokens": null,
+     "ok": true
+    }
+   ],
+   "s": 2.5
+  },
+  "structured": {
+   "acc": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci95": [
+     0.4385,
+     1.0
+    ]
+   },
+   "invariants": [],
+   "items": [
+    {
+     "id": "json_schema",
+     "violations": [],
+     "finish": "stop",
+     "content": "{\"name\": \"Mira Voss\", \"age\": 29, \"languages\": [\"Python\", \"Rust\", \"TypeScript\", \"Go\", \"SQL\"]}",
+     "ok": true
+    },
+    {
+     "id": "json_object",
+     "violations": [],
+     "finish": "stop",
+     "content": "{\"colors\": [\"red\", \"blue\", \"yellow\"]}",
+     "ok": true
+    },
+    {
+     "id": "format_plus_tools",
+     "violations": [],
+     "finish": "tool_calls",
+     "content": "",
+     "ok": true
+    }
+   ],
+   "s": 1.7
+  },
+  "stream": {
+   "text_equal": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci95": [
+     0.4385,
+     1.0
+    ]
+   },
+   "invariants": [],
+   "items": [
+    {
+     "id": "answer",
+     "violations": [],
+     "equal": true
+    },
+    {
+     "id": "answer_usage",
+     "violations": [],
+     "equal": true
+    },
+    {
+     "id": "tool",
+     "violations": [],
+     "equal": true
+    },
+    {
+     "id": "think",
+     "violations": [],
+     "reasoning_chars": 85,
+     "content": "1081"
+    }
+   ],
+   "s": 2.6
+  },
+  "messages": {
+   "acc": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci95": [
+     0.4385,
+     1.0
+    ]
+   },
+   "invariants": [],
+   "items": [
+    {
+     "id": "basic",
+     "violations": [],
+     "ok": true
+    },
+    {
+     "id": "thinking",
+     "violations": [],
+     "ok": true
+    },
+    {
+     "id": "tool",
+     "violations": [],
+     "calls": [
+      [
+       "get_weather",
+       {
+        "city": "Paris"
+       }
+      ]
+     ],
+     "ok": true,
+     "final": "Here's the current weather in Paris:\n\n- **Temperature:** 18\u00b0C (about 64\u00b0F)\n- **Condition:** Light rain\n\nYou might want to bring an umbrella if you're heading out! \u2614"
+    }
+   ],
+   "s": 2.4
+  },
+  "responses": {
+   "acc": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci95": [
+     0.4385,
+     1.0
+    ]
+   },
+   "invariants": [],
+   "items": [
+    {
+     "id": "basic",
+     "violations": [],
+     "ok": true
+    },
+    {
+     "id": "thinking",
+     "violations": [],
+     "ok": true
+    },
+    {
+     "id": "tool",
+     "violations": [],
+     "calls": [
+      [
+       "get_weather",
+       {
+        "city": "Paris"
+       }
+      ]
+     ],
+     "ok": true,
+     "final": "Right now in Paris it's 18\u00b0C with light rain. You might want an umbrella if you're heading out."
+    }
+   ],
+   "s": 2.2
+  },
+  "errors": {
+   "context_limit": 500000,
+   "invariants": [],
+   "items": [
+    {
+     "id": "chat",
+     "prompt_tokens": 169401,
+     "status": 400,
+     "gateway": "api",
+     "violations": []
+    },
+    {
+     "id": "messages",
+     "prompt_tokens": 169401,
+     "status": 400,
+     "gateway": "api",
+     "violations": []
+    },
+    {
+     "id": "responses",
+     "prompt_tokens": 169401,
+     "status": 400,
+     "gateway": "api",
+     "violations": []
+    }
+   ],
+   "s": 1.3
+  }
+ },
+ "elapsed_s": 21.2,
+ "gates": [
+  {
+   "gate": "render.invariants",
+   "pass": true,
+   "value": 0,
+   "limit": 0,
+   "rule": "no violation of a deterministic API-parity check (render IDs vs deepseek-recipe, response shape, stream structure, gateway path, 400 text)"
+  },
+  {
+   "gate": "toolflow.invariants",
+   "pass": true,
+   "value": 0,
+   "limit": 0,
+   "rule": "no violation of a deterministic API-parity check (render IDs vs deepseek-recipe, response shape, stream structure, gateway path, 400 text)"
+  },
+  {
+   "gate": "reasoning.invariants",
+   "pass": true,
+   "value": 0,
+   "limit": 0,
+   "rule": "no violation of a deterministic API-parity check (render IDs vs deepseek-recipe, response shape, stream structure, gateway path, 400 text)"
+  },
+  {
+   "gate": "structured.invariants",
+   "pass": true,
+   "value": 0,
+   "limit": 0,
+   "rule": "no violation of a deterministic API-parity check (render IDs vs deepseek-recipe, response shape, stream structure, gateway path, 400 text)"
+  },
+  {
+   "gate": "stream.invariants",
+   "pass": true,
+   "value": 0,
+   "limit": 0,
+   "rule": "no violation of a deterministic API-parity check (render IDs vs deepseek-recipe, response shape, stream structure, gateway path, 400 text)"
+  },
+  {
+   "gate": "messages.invariants",
+   "pass": true,
+   "value": 0,
+   "limit": 0,
+   "rule": "no violation of a deterministic API-parity check (render IDs vs deepseek-recipe, response shape, stream structure, gateway path, 400 text)"
+  },
+  {
+   "gate": "responses.invariants",
+   "pass": true,
+   "value": 0,
+   "limit": 0,
+   "rule": "no violation of a deterministic API-parity check (render IDs vs deepseek-recipe, response shape, stream structure, gateway path, 400 text)"
+  },
+  {
+   "gate": "errors.invariants",
+   "pass": true,
+   "value": 0,
+   "limit": 0,
+   "rule": "no violation of a deterministic API-parity check (render IDs vs deepseek-recipe, response shape, stream structure, gateway path, 400 text)"
+  }
+ ],
+ "pass": true
+}

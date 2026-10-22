@@ -1,0 +1,1 @@
+proxied stream, client gone at 3 s before any upstream byte: upstream cancelled after 3.0 s

@@ -1,0 +1,5225 @@
+[
+ {
+  "case": "ctl_absent",
+  "title": "no thinking control at all (client default)",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ]
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128822
+   ],
+   "engine_ids_len": 21,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "b": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "len_a": 46,
+     "len_b": 21
+    }
+   },
+   "hf_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "b": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "len_a": 46,
+     "len_b": 21
+    }
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_effort_none",
+  "title": "reasoning_effort=none",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "reasoning_effort": "none"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128822
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "</think>"
+   ],
+   "thinking_mode": false,
+   "reasoning_effort": null,
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128822
+   ],
+   "thinking_mode": "chat",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128822
+   ],
+   "engine_ids_len": 21,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "reasoning_effort": "none",
+    "enable_thinking": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "hf_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_effort_minimal",
+  "title": "reasoning_effort=minimal",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "reasoning_effort": "minimal"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1328,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "low",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1328,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "low",
+   "n_images": 0
+  },
+  "served": {
+   "ok": false,
+   "status": 400,
+   "stage": "render",
+   "error": "ValueError: DeepSeek V4.1 reasoning_effort must be low, high, max, or an integer within [1, 100] in chat_template_kwargs",
+   "captured_kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "reasoning_effort": "minimal",
+    "enable_thinking": true,
+    "return_dict": false
+   }
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "n/a",
+    "ok": [
+     true,
+     false
+    ]
+   },
+   "hf_vs_served": {
+    "status": "n/a",
+    "ok": [
+     true,
+     false
+    ]
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_effort_low",
+  "title": "reasoning_effort=low",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "reasoning_effort": "low"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1328,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "low",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1328,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "low",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 50 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1328,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 46,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "reasoning_effort": "low",
+    "enable_thinking": true,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "hf_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_effort_medium",
+  "title": "reasoning_effort=medium",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "reasoning_effort": "medium"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": false,
+   "status": 400,
+   "stage": "render",
+   "error": "ValueError: DeepSeek V4.1 reasoning_effort must be low, high, max, or an integer within [1, 100] in chat_template_kwargs",
+   "captured_kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "reasoning_effort": "medium",
+    "enable_thinking": true,
+    "return_dict": false
+   }
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "n/a",
+    "ok": [
+     true,
+     false
+    ]
+   },
+   "hf_vs_served": {
+    "status": "n/a",
+    "ok": [
+     true,
+     false
+    ]
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_effort_high",
+  "title": "reasoning_effort=high",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "reasoning_effort": "high"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 46,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "reasoning_effort": "high",
+    "enable_thinking": true,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "hf_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_effort_xhigh",
+  "title": "reasoning_effort=xhigh",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "reasoning_effort": "xhigh"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "xhigh",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": false,
+   "status": 400,
+   "stage": "render",
+   "error": "ValueError: DeepSeek V4.1 reasoning_effort must be low, high, max, or an integer within [1, 100] in chat_template_kwargs",
+   "captured_kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "reasoning_effort": "xhigh",
+    "enable_thinking": true,
+    "return_dict": false
+   }
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "n/a",
+    "ok": [
+     true,
+     false
+    ]
+   },
+   "hf_vs_served": {
+    "status": "n/a",
+    "ok": [
+     true,
+     false
+    ]
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_effort_max",
+  "title": "reasoning_effort=max",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "reasoning_effort": "max"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 100 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1457,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "max",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 100 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1457,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "max",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 100 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1457,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 46,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "reasoning_effort": "max",
+    "enable_thinking": true,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "hf_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_effort_ultra",
+  "title": "reasoning_effort=ultra",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "reasoning_effort": "ultra"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 100 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1457,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "max",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 100 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1457,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "max",
+   "n_images": 0
+  },
+  "served": {
+   "ok": false,
+   "status": 400,
+   "stage": "pydantic",
+   "error": "ValidationError: 1 validation error for ChatCompletionRequest\nreasoning_effort\n  Input should be 'none', 'minimal', 'low', 'medium', 'high', 'xhigh' or 'max' [type=literal_error, input_value='ultra', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error"
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "n/a",
+    "ok": [
+     true,
+     false
+    ]
+   },
+   "hf_vs_served": {
+    "status": "n/a",
+    "ok": [
+     true,
+     false
+    ]
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_effort_numeric",
+  "title": "reasoning_effort=30 (top-level number)",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "reasoning_effort": 30
+  },
+  "api": {
+   "ok": false,
+   "status": 400,
+   "error": "ValueError: invalid request body: invalid type: integer `30`, expected string or map"
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": false,
+   "status": 400,
+   "stage": "pydantic",
+   "error": "ValidationError: 1 validation error for ChatCompletionRequest\nreasoning_effort\n  Input should be 'none', 'minimal', 'low', 'medium', 'high', 'xhigh' or 'max' [type=literal_error, input_value=30, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error"
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "n/a",
+    "ok": [
+     false,
+     false
+    ]
+   },
+   "hf_vs_served": {
+    "status": "n/a",
+    "ok": [
+     true,
+     false
+    ]
+   },
+   "api_vs_hf": {
+    "status": "n/a",
+    "ok": [
+     false,
+     true
+    ]
+   }
+  }
+ },
+ {
+  "case": "ctl_thinking_enabled",
+  "title": "thinking={type: enabled}",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "thinking": {
+    "type": "enabled"
+   }
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128822
+   ],
+   "engine_ids_len": 21,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "b": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "len_a": 46,
+     "len_b": 21
+    }
+   },
+   "hf_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "b": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "len_a": 46,
+     "len_b": 21
+    }
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_thinking_adaptive",
+  "title": "thinking={type: adaptive}",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "thinking": {
+    "type": "adaptive"
+   }
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128822
+   ],
+   "engine_ids_len": 21,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "b": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "len_a": 46,
+     "len_b": 21
+    }
+   },
+   "hf_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "b": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "len_a": 46,
+     "len_b": 21
+    }
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_thinking_disabled_effort_high",
+  "title": "thinking={type: disabled} + reasoning_effort=high",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "thinking": {
+    "type": "disabled"
+   },
+   "reasoning_effort": "high"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128822
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "</think>"
+   ],
+   "thinking_mode": false,
+   "reasoning_effort": null,
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128822
+   ],
+   "thinking_mode": "chat",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 46,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "reasoning_effort": "high",
+    "enable_thinking": true,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "b": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "len_a": 21,
+     "len_b": 46
+    }
+   },
+   "hf_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "b": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "len_a": 21,
+     "len_b": 46
+    }
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_thinking_enabled_effort_max",
+  "title": "thinking={type: enabled} + reasoning_effort=max",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "thinking": {
+    "type": "enabled"
+   },
+   "reasoning_effort": "max"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 100 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1457,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "max",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 100 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1457,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "max",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 100 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    1457,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 46,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "reasoning_effort": "max",
+    "enable_thinking": true,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "hf_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_thinking_enabled_effort_none",
+  "title": "thinking={type: enabled} + reasoning_effort=none",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "thinking": {
+    "type": "enabled"
+   },
+   "reasoning_effort": "none"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128822
+   ],
+   "engine_ids_len": 21,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "reasoning_effort": "none",
+    "enable_thinking": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "b": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "len_a": 46,
+     "len_b": 21
+    }
+   },
+   "hf_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "b": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "len_a": 46,
+     "len_b": 21
+    }
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_ctk_thinking",
+  "title": "chat_template_kwargs={thinking: true}",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "chat_template_kwargs": {
+    "thinking": true
+   }
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 46,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": true,
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "hf_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_ctk_enable_thinking",
+  "title": "chat_template_kwargs={enable_thinking: true}",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "chat_template_kwargs": {
+    "enable_thinking": true
+   }
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 46,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "enable_thinking": true,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "hf_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_ctk_thinking_effort_high",
+  "title": "chat_template_kwargs={thinking: true, reasoning_effort: high}",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "chat_template_kwargs": {
+    "thinking": true,
+    "reasoning_effort": "high"
+   }
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 46,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": true,
+    "tokenize": false,
+    "reasoning_effort": "high",
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "hf_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_ctk_numeric_effort",
+  "title": "chat_template_kwargs={thinking: true, reasoning_effort: 20}",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "chat_template_kwargs": {
+    "thinking": true,
+    "reasoning_effort": 20
+   }
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 20 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    397,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 46,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": true,
+    "tokenize": false,
+    "reasoning_effort": 20,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 49,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 20 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are"
+    },
+    "id_diff": {
+     "at": 8,
+     "a": [
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343,
+      16801,
+      223,
+      19,
+      15,
+      1457,
+      14
+     ],
+     "b": [
+      288,
+      9504,
+      482,
+      28,
+      223,
+      397,
+      343,
+      16801,
+      223,
+      19,
+      15,
+      1457,
+      14
+     ],
+     "len_a": 46,
+     "len_b": 46
+    }
+   },
+   "hf_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 49,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 20 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are"
+    },
+    "id_diff": {
+     "at": 8,
+     "a": [
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343,
+      16801,
+      223,
+      19,
+      15,
+      1457,
+      14
+     ],
+     "b": [
+      288,
+      9504,
+      482,
+      28,
+      223,
+      397,
+      343,
+      16801,
+      223,
+      19,
+      15,
+      1457,
+      14
+     ],
+     "len_a": 46,
+     "len_b": 46
+    }
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_ctk_effort_only",
+  "title": "chat_template_kwargs={reasoning_effort: max} (thinking not set)",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Prove that sqrt(2) is irrational."
+    }
+   ],
+   "chat_template_kwargs": {
+    "reasoning_effort": "max"
+   }
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    2497,
+    427,
+    396,
+    29764,
+    10,
+    20,
+    11,
+    344,
+    54195,
+    16,
+    128804,
+    128822
+   ],
+   "engine_ids_len": 21,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "tokenize": false,
+    "reasoning_effort": "max",
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Prove that sqrt(2) is irrational.",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "b": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "len_a": 46,
+     "len_b": 21
+    }
+   },
+   "hf_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 31,
+     "a": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the r",
+     "b": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Prove that sqrt(2) is irrational.<｜Assistant"
+    },
+    "id_diff": {
+     "at": 2,
+     "a": [
+      0,
+      128799,
+      77666,
+      288,
+      9504,
+      482,
+      28,
+      223,
+      2402,
+      343
+     ],
+     "b": [
+      0,
+      128799,
+      3476,
+      477,
+      260,
+      11502,
+      22896,
+      16,
+      128803,
+      2497
+     ],
+     "len_a": 46,
+     "len_b": 21
+    }
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "ctl_ctk_drop_thinking_false",
+  "title": "chat_template_kwargs={thinking: true, drop_thinking: false} multi-turn",
+  "variant": "as-is",
+  "tags": [
+   "control"
+  ],
+  "body": {
+   "messages": [
+    {
+     "role": "user",
+     "content": "q1"
+    },
+    {
+     "role": "assistant",
+     "content": "a1",
+     "reasoning_content": "r1"
+    },
+    {
+     "role": "user",
+     "content": "q2"
+    }
+   ],
+   "chat_template_kwargs": {
+    "thinking": true,
+    "drop_thinking": false
+   }
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\n<｜User｜>q1<｜Assistant｜></think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    128803,
+    83,
+    19,
+    128804,
+    128822,
+    67,
+    19,
+    1,
+    128803,
+    83,
+    20,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "</think>",
+    "<｜end▁of▁sentence｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "auto",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "user",
+    "assistant",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\n<｜User｜>q1<｜Assistant｜></think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    128803,
+    83,
+    19,
+    128804,
+    128822,
+    67,
+    19,
+    1,
+    128803,
+    83,
+    20,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\n<｜User｜>q1<｜Assistant｜><think>r1</think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    128803,
+    83,
+    19,
+    128804,
+    128821,
+    84,
+    19,
+    128822,
+    67,
+    19,
+    1,
+    128803,
+    83,
+    20,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 43,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": true,
+    "tokenize": false,
+    "drop_thinking": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "reasoning",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "q1",
+     "role": "user"
+    },
+    {
+     "role": "assistant",
+     "content": "a1",
+     "reasoning": "r1"
+    },
+    {
+     "content": "q2",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 146,
+     "a": ", the more thorough the reasoning)\n\n<｜User｜>q1<｜Assistant｜></think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>",
+     "b": ", the more thorough the reasoning)\n\n<｜User｜>q1<｜Assistant｜><think>r1</think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>"
+    },
+    "id_diff": {
+     "at": 31,
+     "a": [
+      868,
+      128803,
+      83,
+      19,
+      128804,
+      128822,
+      67,
+      19,
+      1,
+      128803,
+      83,
+      20,
+      128804
+     ],
+     "b": [
+      868,
+      128803,
+      83,
+      19,
+      128804,
+      128821,
+      84,
+      19,
+      128822,
+      67,
+      19,
+      1,
+      128803
+     ],
+     "len_a": 40,
+     "len_b": 43
+    }
+   },
+   "hf_vs_served": {
+    "status": "string",
+    "string_diff": {
+     "at": 146,
+     "a": ", the more thorough the reasoning)\n\n<｜User｜>q1<｜Assistant｜></think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>",
+     "b": ", the more thorough the reasoning)\n\n<｜User｜>q1<｜Assistant｜><think>r1</think>a1<｜end▁of▁sentence｜><｜User｜>q2<｜Assistant｜><think>"
+    },
+    "id_diff": {
+     "at": 31,
+     "a": [
+      868,
+      128803,
+      83,
+      19,
+      128804,
+      128822,
+      67,
+      19,
+      1,
+      128803,
+      83,
+      20,
+      128804
+     ],
+     "b": [
+      868,
+      128803,
+      83,
+      19,
+      128804,
+      128821,
+      84,
+      19,
+      128822,
+      67,
+      19,
+      1,
+      128803
+     ],
+     "len_a": 40,
+     "len_b": 43
+    }
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ }
+]

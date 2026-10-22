@@ -1,0 +1,7 @@
+# MALLOC_MMAP_THRESHOLD_ check, 2026-10-22, spark1 (CPU only; the serve on GPUs was up and untouched).
+# Gateway container as run.sh starts it (serve image e16-rows, sitecustomize masked, wheel + gateway/ + HF hub
+# read-only, --memory 3g), against harness/api-eval/stub_upstream.py; 3 POSTs of one 56.6 MB Chat request
+# (6 random 1536x1536 RGB PNG data URLs) to /dsv41/render/chat (each image is resolved for the API's token count).
+# RSS from `docker stats --no-stream`, idle = after /health, after = 1 s after the third request.
+200 200 200  env='' idle=100.6MiB  after3x6imgs=682.8MiB
+200 200 200  env='-e MALLOC_MMAP_THRESHOLD_=131072' idle=97.4MiB  after3x6imgs=103.3MiB

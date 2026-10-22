@@ -1,0 +1,7 @@
+chat     non-stream: ApiError 502 the model server ended the stream without a stop or length finish (None)
+chat     stream last frames: ['.1-Flash-1017","system_fingerprint":null,"choices":[{"index":0,"delta":{"content":"The answer is 3"},"logprobs":null,"finish_reason":null}]}', 'e model server ended the stream without a stop or length finish (None)", "type": "internal_error", "param": null, "code": "internal_error"}}']
+messages non-stream: ApiError 502 the model server ended the stream without a stop or length finish (None)
+messages stream last frames: ['event: content_block_delta\ndata: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The answer is 3"}}', 'e model server ended the stream without a stop or length finish (None)", "type": "internal_error", "param": null, "code": "internal_error"}}']
+responses non-stream: ApiError 502 the model server ended the stream without a stop or length finish (None)
+responses stream last frames: ['dex":0,"delta":"The answer is 3","item_id":"msg_resp_2e6f87dd9baf4fd8b507d73a3c3e3d29_0","logprobs":[],"output_index":0,"sequence_number":4}', 'e model server ended the stream without a stop or length finish (None)", "type": "internal_error", "param": null, "code": "internal_error"}}']
+empty upstream stream: ApiError 502 the model server ended the stream without output

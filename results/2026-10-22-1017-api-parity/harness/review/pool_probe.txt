@@ -1,0 +1,2 @@
+100 open proxied streams: gateway /health -> 503 after 10.0 s: {"gateway":"ok","upstream":"unreachable: PoolTimeout('')"}
+  an API request meanwhile: ReadTimeout('') after 15.0 s; upstream /health direct: 200

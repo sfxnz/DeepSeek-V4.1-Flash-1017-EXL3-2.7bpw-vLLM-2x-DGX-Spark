@@ -1,0 +1,29 @@
+# cmd: python3 tests/quality_eval.py --full --url http://127.0.0.1:8000 --baseline results/2026-10-18-1017/quality-baseline/full.json --out /home/sfxnz/projects/data/dsv41-1017/api-parity/boot/APIG/full-gateway.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-api-eval (HEAD 4432b71) host: spark1 start: 2026-10-22T14:55:04Z
+[nll] 44.4s {"passages": 40, "tokens_scored": 19828, "bos_id": 0, "mean_nll": 0.143459, "ppl": 1.1543, "run_means": [0.143459, 0.145268], "repeat_abs_delta": 0.001809, "repeat_max_passage_delta": 0.022548, "prefix_cache_hits_delta": 0.0}
+[decode] 32.0s {"prompts": 8, "tokens": 1024, "median_abs_dlogprob": 0.00086, "p99_abs_dlogprob": 0.99512, "mean_abs_dlogprob": 0.06975, "gen_nll_prefill": 0.22267, "gen_nll_decode": 0.18278}
+[tools] 25.4s {"json_valid": {"k": 22, "n": 22, "rate": 1.0, "ci95": [0.8513, 1.0]}, "exact_args": {"k": 22, "n": 22, "rate": 1.0, "ci95": [0.8513, 1.0]}, "no_call": {"k": 8, "n": 8, "rate": 1.0, "ci95": [0.6756, 1.0]}}
+[needle] 173.7s {"found": 9, "total": 9}
+[selfcons] 42.4s {"prompts": 12, "max_tokens": 128, "identical": 6}
+[c2] 1.1s {"pass": true, "answers": ["323", "252"]}
+[vision] 0.3s {"pass": true, "content": "Red"}
+[gsm8k] 194.4s {"acc": {"k": 98, "n": 100, "rate": 0.98, "ci95": [0.93, 0.9945]}, "mean_completion_tokens": 185.8}
+[gsm8k_think] 213.2s {"acc": {"k": 38, "n": 40, "rate": 0.95, "ci95": [0.835, 0.9862]}, "mean_completion_tokens": 365.3}
+[mmlu] 72.1s {"acc": {"k": 209, "n": 228, "rate": 0.9167, "ci95": [0.8735, 0.946]}}
+PASS vision value=Red limit=red
+PASS c2 value=['323', '252'] limit=None
+PASS nll.mean_nll value=0.143459 limit=0.15447
+PASS decode.median_abs_dlogprob value=0.00086 limit=0.05069
+PASS decode.gen_nll_prefill value=0.22267 limit=0.35876
+PASS selfcons.golden_hazard value=0.01485 limit=0.02852
+PASS selfcons.aa_hazard value=0.00963 limit=0.02852
+PASS tools.json_valid value=1.0 limit=1.0
+PASS tools.exact_args value=1.0 limit=1.0
+PASS tools.no_call value=1.0 limit=1.0
+PASS gsm8k.acc value=0.98 limit=0.97
+PASS gsm8k_think.acc value=0.95 limit=0.975
+PASS mmlu.acc value=0.9167 limit=0.9123
+PASS needle.found value=9 limit=9
+QUALITY {"mode": "full", "pass": true, "elapsed_s": 798.9, "nll": 0.143459, "nll_repeat_delta": 0.001809, "decode_median_dlp": 0.00086, "decode_gen_nll": 0.22267, "tools_exact": 1.0, "tools_json": 1.0, "tools_nocall": 1.0, "needle": 9, "selfcons_identical": 6, "selfcons_aa_hazard": 0.00963, "selfcons_golden_hazard": 0.01485, "gsm8k": 0.98, "gsm8k_think": 0.95, "mmlu": 0.9167, "c2": true, "vision": true}
+rc=0
+# end: 2026-10-22T15:08:23Z

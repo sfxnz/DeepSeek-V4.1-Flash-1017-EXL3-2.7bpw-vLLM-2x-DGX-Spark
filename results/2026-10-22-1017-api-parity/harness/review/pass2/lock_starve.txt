@@ -1,0 +1,6 @@
+heavy body 42.6 MiB (600 x 4096x4096)
+heavy request prepare 17.9 s (ok); 1-image request started 0.5 s later: prepare 17.31 s (ok)
+exit=0
+heavy body 3.5 MiB (600 x 1024x1024)
+heavy request prepare 5.06 s (ok); 1-image request started 0.5 s later: prepare 4.56 s (ok)
+exit=0

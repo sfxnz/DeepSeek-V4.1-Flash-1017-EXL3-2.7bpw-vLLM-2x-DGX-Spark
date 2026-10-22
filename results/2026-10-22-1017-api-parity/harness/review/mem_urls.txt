@@ -1,0 +1,8 @@
+== N=3
+N=3 URL images of 32 MiB: Fallback('.messages[0]: Total image size exceeds the limit: max 64 MB per request, got 95 MB') -> vLLM fetches all 3 URLs again; 0.1 s; peak RSS 498 MiB
+exit=0
+== N=12
+N=12 URL images of 32 MiB: Fallback('.messages[0]: Total image size exceeds the limit: max 64 MB per request, got 95 MB') -> vLLM fetches all 12 URLs again; 0.4 s; peak RSS 1362 MiB
+exit=0
+== N=40
+exit=137

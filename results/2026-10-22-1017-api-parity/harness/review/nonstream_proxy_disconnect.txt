@@ -1,0 +1,3 @@
+direct to upstream  /v1/completions: client gone at 3 s -> upstream cancelled after 3.0 s
+via gateway (proxy) /v1/completions: client gone at 3 s -> upstream cancelled after None s
+via gateway (fallback, echo:true) /v1/chat/completions: client gone at 3 s -> upstream cancelled after None s

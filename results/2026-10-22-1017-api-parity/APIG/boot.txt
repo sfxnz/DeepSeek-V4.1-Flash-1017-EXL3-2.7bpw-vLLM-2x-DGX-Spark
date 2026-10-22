@@ -1,0 +1,47 @@
+==> role=head host=spark1
+==> Preflight spark1
+==> Ensuring image dsv41-flash-exl3-sm121:e16-rows
+==> Using pinned snapshot /home/sfxnz/.cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq
+==> Preflight spark2
+==> Ensuring image dsv41-flash-exl3-sm121:e16-rows
+==> Using pinned snapshot /home/sfxnz/.cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq
+==> Starting worker on spark2 first
+==> role=worker host=spark2
+==> Ensuring image dsv41-flash-exl3-sm121:e16-rows
+==> Using pinned snapshot /home/sfxnz/.cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq
+==> Starting dsv41-flash-exl3 rank=1 model=/cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq ctx=500000 quant=exl3 engram_disk=1
+a2dbe55ca20fa3dc80ad28b26d60b9e0207ee168226f2e237087e0a8bcde1c7e
+==> Worker rank 1 is up. Head should start next.
+==> Worker is connecting to 10.100.8.1:29524. Starting head.
+==> Ensuring image dsv41-flash-exl3-sm121:e16-rows
+==> Using pinned snapshot /home/sfxnz/.cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq
+==> Starting dsv41-flash-exl3 rank=0 model=/cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq ctx=500000 quant=exl3 engram_disk=1
+38c41a6f02662994af1414b89d64ec0d6fe95255176e8020f296934210923f22
+==> Waiting for http://127.0.0.1:8001/health and /v1/models
+==> still loading… (12×5s) — docker logs -f dsv41-flash-exl3
+==> still loading… (24×5s) — docker logs -f dsv41-flash-exl3
+==> still loading… (36×5s) — docker logs -f dsv41-flash-exl3
+==> still loading… (48×5s) — docker logs -f dsv41-flash-exl3
+==> still loading… (60×5s) — docker logs -f dsv41-flash-exl3
+==> still loading… (72×5s) — docker logs -f dsv41-flash-exl3
+==> still loading… (84×5s) — docker logs -f dsv41-flash-exl3
+==> still loading… (96×5s) — docker logs -f dsv41-flash-exl3
+==> still loading… (108×5s) — docker logs -f dsv41-flash-exl3
+==> Ready → http://127.0.0.1:8001/v1  (context=500000)
+{"object":"list","data":[{"id":"deepseek-ai/DeepSeek-V4.1-Flash-1017","object":"model","created":1792679791,"owned_by":"vllm","root":"/cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq","parent":null,"max_model_len":500000,"permission":[{"id":"modelperm-883a6e81bd8e3fdc","object":"model_permission","created":1792679791,"allow_create_engine":false,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":false,"allow_view":true,"allow_fine_tuning":false,"organization":"*","group":null,"is_blocking":false}]}]}
+
+==> Starting dsv41-api-gateway: the DeepSeek API on port 8000 in front of http://127.0.0.1:8001
+f4028dde09e63f96469cfa7b5e0ce008aca46848109e093573b21fca120e5bf0
+==> Waiting for http://127.0.0.1:8000/health and /v1/models
+==> Ready → http://127.0.0.1:8000/v1  (context=500000)
+{"object":"list","data":[{"id":"deepseek-ai/DeepSeek-V4.1-Flash-1017","object":"model","created":1792679797,"owned_by":"vllm","root":"/cache/huggingface/hub/models--sfxnz--DeepSeek-V4.1-Flash-1017-EXL3/snapshots/2.7bpw-mcg-hq","parent":null,"max_model_len":500000,"permission":[{"id":"modelperm-ac420c1cdb439ce9","object":"model_permission","created":1792679797,"allow_create_engine":false,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":false,"allow_view":true,"allow_fine_tuning":false,"organization":"*","group":null,"is_blocking":false}]}]}
+
+==> audit ok: every expected patch engaged on head, worker, gateway
+==> Warmup: greedy, t=0.7, ~3k/~1k/~300-token nonce prefills and a small image
+==> warmup greedy: 1.6s '323'
+==> warmup t=0.7: 1.3s '101'
+==> warmup prefill: 3.6s 'This document describes a vLLM deploymen'
+==> warmup prefill-300: 1.6s 'The text describes a README rendering fu'
+==> warmup prefill-1000: 14.1s 'The text is a table of DeepSe'
+==> warmup vision: 0.7s 'Red'
+==> Stop with: ./stop.sh

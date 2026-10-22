@@ -1,0 +1,4 @@
+stream     client left at 1.0 s (saw ''): upstream cancelled after 1.0 s, events sent 0
+stream     client left at 4.0 s (saw 'HTTP/1.1 200 OK'): upstream cancelled after 4.01 s, events sent 0
+non-stream client left at 1.0 s (saw ''): upstream cancelled after 1.0 s, events sent 0
+non-stream client left at 4.0 s (saw ''): upstream cancelled after 4.01 s, events sent 0

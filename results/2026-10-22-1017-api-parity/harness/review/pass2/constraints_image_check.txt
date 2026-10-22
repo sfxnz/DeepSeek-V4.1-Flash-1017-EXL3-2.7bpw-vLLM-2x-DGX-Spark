@@ -1,0 +1,180 @@
+dsv41-patch skip model_loop_release: DSV41_MODEL_LOOP_RELEASE is not 1
+dsv41-patch skip kv_packed_groups: DSV41_KV_PACKED_GROUPS is not 1
+dsv41-patch skip indexer_expanded_lazy: DSV41_INDEXER_EXPANDED_TABLE_LAZY is not 1
+dsv41-patch skip g8_load_tracer: DSV41_LOAD_PF_G8 is not 1
+dsv41-patch ok prefer_b12x_mxfp8
+dsv41-indexer-workspace: already applied
+dsv41-patch skip mla_tile32_workspace: image kernel has no DSV4_CAND_WINDOW = 32
+dsv41-patch ok persistent_topk: already applied
+dsv41-patch ok kpool_persistent_topk: already applied
+dsv41-patch ok indexer_ragged_decode: already applied
+INFO 10-22 13:57:29 [importing.py:74] Triton is installed but 0 active driver(s) found (expected 1). Disabling Triton to prevent runtime errors.
+INFO 10-22 13:57:29 [importing.py:98] Triton not installed or not compatible; certain GPU-related functions will not be available.
+WARNING 10-22 13:57:29 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+W1022 13:57:29.341000 1 torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+WARNING 10-22 13:57:29 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+WARNING 10-22 13:57:29 [interface.py:368] Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+dsv41-patch ok load_general_plugins
+dsv41-patch ok exl3_weight_block_size
+dsv41-patch ok warmup_stubs
+dsv41-patch ok cudagraph_worker_stub
+dsv41-patch skip fat_scratch_shared: DSV41_FAT_SCRATCH_SHARED is not 1
+dsv41-patch skip attn_out_defer: DSV41_ATTN_OUT_DEFER is not 1
+dsv41-patch skip engram_post_inplace: DSV41_ENGRAM_POST_INPLACE is not 1 and DSV41_ENGRAM_WKV_ROWS is 0
+dsv41-patch ok swa_page_coerce
+dsv41-patch ok kernel_block_sizes
+dsv41-patch ok extra_page_bump
+dsv41-patch ok v41_config_vision
+dsv41-patch ok swa_image_width: already applied
+dsv41-patch ok attention_image_width: already applied
+dsv41-patch ok native_indexer_decode: already applied
+dsv41-patch ok indexer_adaptive: already applied
+dsv41-patch ok indexer_short_context: already applied
+dsv41: chat encoder 1017 parity engaged (encoding already applied, tokenizer already applied)
+dsv41-patch ok chat_encoder_1017: encoding already applied, tokenizer already applied
+dsv41-patch skip dspark_markov_scale: DSV41_DSPARK_MARKOV_SCALE=1
+dsv41-patch skip step_census: DSV41_STEP_CENSUS is not 1
+dsv41-patch skip mhc_decode_splits: DSV41_MHC_DECODE_SPLITS=0: this block only collapses at =1 (N >= 2 is decode_levers)
+dsv41-patch skip engram_row_cache: DSV41_ENGRAM_CACHE is not 1
+dsv41-patch skip mhc_no_deepgemm: DSV41_MHC_NO_DEEPGEMM is not 1
+dsv41-patch skip ar_l2_prefetch: DSV41_AR_L2_PREFETCH is not 1
+dsv41-patch skip pm_qos: DSV41_PM_QOS_US is not set
+dsv41-patch skip nccl_eager_twin: DSV41_NCCL_EAGER_TWIN is not 1
+dsv41: prefix-end fallback armed (SWA prefix-cache tails at b and b-128 for every reachable boundary b)
+dsv41-patch ok prefix_end_fallback: SlidingWindowManager.reachable_block_mask keeps b-128 next to every reachable boundary
+dsv41: prefix reply retain armed (SWA blocks at or past the prompt end are cached as they fill)
+dsv41-patch ok prefix_reply_retain: BlockPool.cache_full_blocks caches decode-filled SWA blocks
+dsv41-patch ok decoder_replay: W=2670: DeepseekV4Model.forward split at the cut, scheduler SWA prefix-cache guard, junction anchors
+dsv41-patch skip sched_prefill_cap: DSV41_SCHED_PREFILL_CAP and DSV41_SCHED_DECODE_STEPS are 0
+dsv41-patch ok decode_levers
+PASS chat_text: maps to None
+PASS chat_json_object: maps to json
+PASS chat_json_object: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_json_object: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_json_object: compiles (JSON, 9 ms)
+PASS chat_json_object: accepts sample 0
+PASS chat_json_object: accepts sample 1
+PASS chat_json_object: accepts sample 2
+PASS chat_json_object: refuses malformed 0
+PASS chat_json_object: refuses malformed 1
+PASS chat_json_schema: maps to json
+PASS chat_json_schema: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_json_schema: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_json_schema: compiles (JSON, 20 ms)
+PASS chat_json_schema: accepts sample 0
+PASS chat_json_schema: accepts sample 1
+PASS chat_json_schema: refuses malformed 0
+PASS chat_json_schema: refuses malformed 1
+PASS chat_json_schema: refuses malformed 2
+PASS chat_json_schema_strict_defs: maps to json
+PASS chat_json_schema_strict_defs: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_json_schema_strict_defs: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_json_schema_strict_defs: compiles (JSON, 1 ms)
+PASS chat_json_schema_strict_defs: accepts sample 0
+PASS chat_json_schema_strict_defs: accepts sample 1
+PASS chat_json_schema_strict_defs: refuses malformed 0
+PASS chat_json_schema_strict_defs: refuses malformed 1
+PASS chat_json_schema_strict_defs: refuses malformed 2
+PASS responses_text_format_strict_defs: maps to json
+PASS responses_text_format_strict_defs: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS responses_text_format_strict_defs: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS responses_text_format_strict_defs: compiles (JSON, 0 ms)
+PASS responses_text_format_strict_defs: accepts sample 0
+PASS responses_text_format_strict_defs: refuses malformed 0
+PASS chat_regex: maps to regex
+PASS chat_regex: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_regex: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_regex: compiles (REGEX, 1 ms)
+PASS chat_regex: accepts sample 0
+PASS chat_regex: refuses malformed 0
+PASS chat_regex: refuses malformed 1
+PASS chat_thinking_json_object: maps to json
+PASS chat_thinking_json_object: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_thinking_json_object: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_thinking_json_object: compiles (JSON, 0 ms)
+PASS chat_thinking_json_object: accepts sample 0
+PASS chat_thinking_json_object: refuses malformed 0
+PASS chat_required: maps to structural_tag
+PASS chat_required: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_required: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_required: compiles (STRUCTURAL_TAG, 17 ms)
+PASS chat_required: accepts sample 0
+PASS chat_required: accepts sample 1
+PASS chat_required: accepts sample 2
+PASS chat_required: accepts sample 3
+PASS chat_required: accepts sample 4
+PASS chat_required: accepts sample 5
+PASS chat_required: refuses malformed 0
+PASS chat_required: refuses malformed 1
+PASS chat_required: refuses malformed 2
+PASS chat_required: refuses malformed 3
+PASS chat_required: refuses malformed 4
+PASS chat_required: refuses malformed 5
+PASS chat_required: refuses malformed 6
+PASS chat_required: refuses malformed 7
+PASS chat_named: maps to structural_tag
+PASS chat_named: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_named: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_named: compiles (STRUCTURAL_TAG, 2 ms)
+PASS chat_named: accepts sample 0
+PASS chat_named: accepts sample 1
+PASS chat_named: refuses malformed 0
+PASS chat_named: refuses malformed 1
+PASS chat_required_strict: maps to structural_tag
+PASS chat_required_strict: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_required_strict: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_required_strict: compiles (STRUCTURAL_TAG, 5 ms)
+PASS chat_required_strict: accepts sample 0
+PASS chat_required_strict: accepts sample 1
+PASS chat_required_strict: accepts sample 2
+PASS chat_required_strict: accepts sample 3
+PASS chat_required_strict: accepts sample 4
+PASS chat_required_strict: accepts sample 5
+PASS chat_required_strict: accepts sample 6
+PASS chat_required_strict: refuses malformed 0
+PASS chat_required_strict: refuses malformed 1
+PASS chat_required_strict: refuses malformed 2
+PASS chat_required_strict: refuses malformed 3
+PASS chat_required_strict: refuses malformed 4
+PASS chat_required_strict: refuses malformed 5
+PASS chat_required_strict: refuses malformed 6
+PASS chat_required_strict: refuses malformed 7
+PASS chat_required_strict: refuses malformed 8
+PASS chat_required_strict: refuses malformed 9
+PASS chat_required_strict: refuses malformed 10
+PASS chat_auto_strict: maps to structural_tag
+PASS chat_auto_strict: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_auto_strict: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_auto_strict: compiles (STRUCTURAL_TAG, 16 ms)
+PASS chat_auto_strict: accepts sample 0
+PASS chat_auto_strict: accepts sample 1
+PASS chat_auto_strict: accepts sample 2
+PASS chat_auto_strict: accepts sample 3
+PASS chat_auto_strict: refuses malformed 0
+PASS chat_auto_strict: refuses malformed 1
+PASS chat_auto: maps to None
+PASS chat_rf_plus_tools: maps to None
+PASS chat_tools_none_rf: maps to json
+PASS chat_tools_none_rf: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_tools_none_rf: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_tools_none_rf: compiles (JSON, 0 ms)
+PASS chat_tools_none_rf: accepts sample 0
+PASS chat_tools_none_rf: refuses malformed 0
+PASS chat_prefix_json_schema: maps to None
+PASS chat_prefix_reasoning_regex: maps to regex
+PASS chat_prefix_reasoning_regex: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS chat_prefix_reasoning_regex: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS chat_prefix_reasoning_regex: compiles (REGEX, 0 ms)
+PASS chat_prefix_reasoning_regex: accepts sample 0
+PASS chat_prefix_reasoning_regex: refuses malformed 0
+PASS responses_required: maps to structural_tag
+PASS responses_required: /inference/v1/generate accepts it, backend auto -> xgrammar
+PASS responses_required: /inference/v1/generate accepts it, backend xgrammar -> xgrammar
+PASS responses_required: compiles (STRUCTURAL_TAG, 0 ms)
+PASS responses_required: accepts sample 0
+PASS responses_required: refuses malformed 0
+PASS messages_any: maps to None
+PASS gate: token-in request arrives without reasoning_ended
+PASS gate: prompt ending in </think> is masked from the first token
+PASS gate: prompt ending in <think> is free until </think>, masked after it
+130/130 passed

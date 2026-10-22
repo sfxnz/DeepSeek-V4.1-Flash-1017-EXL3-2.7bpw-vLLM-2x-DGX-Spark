@@ -1,0 +1,253 @@
+### T. Thinking mode and effort (no sampling fields, no max_tokens, no tools; context 500000; API column 2 = library default_thinking_mode=false)
+
+| request | API (deepseek-recipe) | API, default off | ours (vLLM + run.sh) | diverges in |
+|---|---|---|---|---|
+| `none` | think/75 T=1 top_p=1 max=65536 | chat T=1 top_p=1 max=8192 | chat T=1 top_p=1 max=499986 | thinking, effort_budget, max_tokens_resolved |
+| `eff_none` | chat T=1 top_p=1 max=8192 | same | chat T=1 top_p=1 max=499986 | max_tokens_resolved |
+| `eff_minimal` | think/50 T=1 top_p=1 max=65536 | same | 400 `DeepSeek V4.1 reasoning_effort must be low, high, max, or an intege...` | status |
+| `eff_low` | think/50 T=1 top_p=1 max=65536 | same | think/50 T=1 top_p=1 max=499960 | max_tokens_resolved |
+| `eff_medium` | think/75 T=1 top_p=1 max=65536 | same | 400 `DeepSeek V4.1 reasoning_effort must be low, high, max, or an intege...` | status |
+| `eff_high` | think/75 T=1 top_p=1 max=65536 | same | think/75 T=1 top_p=1 max=499960 | max_tokens_resolved |
+| `eff_xhigh` | think/75 T=1 top_p=1 max=65536 | same | 400 `DeepSeek V4.1 reasoning_effort must be low, high, max, or an intege...` | status |
+| `eff_ultra` | think/100 T=1 top_p=1 max=131072 | same | 400 `reasoning_effort: Input should be 'none', 'minimal', 'low', 'medium...` | status |
+| `eff_max` | think/100 T=1 top_p=1 max=131072 | same | think/100 T=1 top_p=1 max=499960 | max_tokens_resolved |
+| `eff_80` | 400 `ValueError: invalid request body: invalid type: integer `80`, expec...` | same | 400 `reasoning_effort: Input should be 'none', 'minimal', 'low', 'medium...` | match |
+| `th_enabled` | think/75 T=1 top_p=1 max=65536 | same | chat T=1 top_p=1 max=499986 | thinking, effort_budget, max_tokens_resolved |
+| `th_adaptive` | think/75 T=1 top_p=1 max=65536 | same | chat T=1 top_p=1 max=499986 | thinking, effort_budget, max_tokens_resolved |
+| `th_disabled+eff_high` | chat T=1 top_p=1 max=8192 | same | think/75 T=1 top_p=1 max=499960 | thinking, effort_budget, max_tokens_resolved |
+| `th_enabled+eff_none` | think/75 T=1 top_p=1 max=65536 | same | chat T=1 top_p=1 max=499986 | thinking, effort_budget, max_tokens_resolved |
+| `th_enabled+eff_max` | think/100 T=1 top_p=1 max=131072 | same | think/100 T=1 top_p=1 max=499960 | max_tokens_resolved |
+| `ctk_thinking` | think/75 T=1 top_p=1 max=65536 | same | think/50 T=1 top_p=1 max=499960 | effort_budget, max_tokens_resolved |
+| `ctk_thinking+eff80` | think/75 T=1 top_p=1 max=65536 | same | think/80 T=1 top_p=1 max=499960 | effort_budget, max_tokens_resolved |
+| `ctk_think_high(quality)` | think/75 T=1 top_p=1 max=65536 | same | think/75 T=1 top_p=1 max=499960 | max_tokens_resolved |
+| `ctk_chat_low(smoke)` | think/75 T=1 top_p=1 max=65536 | same | chat T=1 top_p=1 max=499986 | thinking, effort_budget, max_tokens_resolved |
+
+### S. Temperature / top_p (max_tokens=32, no tools)
+
+| request | API | ours | diverges in |
+|---|---|---|---|
+| `eff_none` + `s_unset` | chat T=1 top_p=1 | chat T=1 top_p=1 | match |
+| `eff_none` + `t0` | chat T=0 top_p=1 | chat T=0 top_p=1 | match |
+| `eff_none` + `t0.6_p0.9` | chat T=0.6 top_p=1 | chat T=0.6 top_p=0.9 | top_p |
+| `eff_none` + `p0.5` | chat T=1 top_p=1 | chat T=1 top_p=0.5 | top_p |
+| `eff_high` + `s_unset` | think/75 T=1 top_p=1 | think/75 T=1 top_p=1 | match |
+| `eff_high` + `t0` | think/75 T=1 top_p=1 | think/75 T=0 top_p=1 | temperature |
+| `eff_high` + `t0.6_p0.9` | think/75 T=1 top_p=0.95 | think/75 T=0.6 top_p=0.9 | temperature, top_p |
+| `eff_high` + `p0.5` | think/75 T=1 top_p=0.95 | think/75 T=1 top_p=0.5 | top_p |
+| `eff_max` + `s_unset` | think/100 T=1 top_p=1 | think/100 T=1 top_p=1 | match |
+| `eff_max` + `t0` | think/100 T=1 top_p=1 | think/100 T=0 top_p=1 | temperature |
+| `eff_max` + `t0.6_p0.9` | think/100 T=1 top_p=0.95 | think/100 T=0.6 top_p=0.9 | temperature, top_p |
+| `eff_max` + `p0.5` | think/100 T=1 top_p=0.95 | think/100 T=1 top_p=0.5 | top_p |
+| `ctk_think_high(quality)` + `s_unset` | think/75 T=1 top_p=1 | think/75 T=1 top_p=1 | match |
+| `ctk_think_high(quality)` + `t0` | think/75 T=1 top_p=1 | think/75 T=0 top_p=1 | temperature |
+| `ctk_think_high(quality)` + `t0.6_p0.9` | think/75 T=1 top_p=0.95 | think/75 T=0.6 top_p=0.9 | temperature, top_p |
+| `ctk_think_high(quality)` + `p0.5` | think/75 T=1 top_p=0.95 | think/75 T=1 top_p=0.5 | top_p |
+| `ctk_chat_low(smoke)` + `s_unset` | think/75 T=1 top_p=1 | chat T=1 top_p=1 | thinking, effort_budget |
+| `ctk_chat_low(smoke)` + `t0` | think/75 T=1 top_p=1 | chat T=0 top_p=1 | thinking, effort_budget, temperature |
+| `ctk_chat_low(smoke)` + `t0.6_p0.9` | think/75 T=1 top_p=0.95 | chat T=0.6 top_p=0.9 | thinking, effort_budget, temperature, top_p |
+| `ctk_chat_low(smoke)` + `p0.5` | think/75 T=1 top_p=0.95 | chat T=1 top_p=0.5 | thinking, effort_budget, top_p |
+
+### M. max_tokens sent to the engine (real prompt, context 500000)
+
+| request | API resolve_max_tokens | ours get_max_tokens |
+|---|---|---|
+| `eff_none` + `mt_unset` | 8192 (prompt 14) | 499986 (prompt 14) |
+| `eff_none` + `mt_32` | 32 (prompt 14) | 32 (prompt 14) |
+| `eff_none` + `mt_300k` | 300000 (prompt 14) | 300000 (prompt 14) |
+| `eff_none` + `mt_400k` | 400 `Invalid max_tokens value, the valid range of max_tokens is [1, 393216]` | 400000 (prompt 14) |
+| `eff_none` + `mct_100` | 8192 (prompt 14) | 100 (prompt 14) |
+| `eff_high` + `mt_unset` | 65536 (prompt 40) | 499960 (prompt 40) |
+| `eff_high` + `mt_32` | 32 (prompt 40) | 32 (prompt 40) |
+| `eff_high` + `mt_300k` | 300000 (prompt 40) | 300000 (prompt 40) |
+| `eff_high` + `mt_400k` | 400 `Invalid max_tokens value, the valid range of max_tokens is [1, 393216]` | 400000 (prompt 40) |
+| `eff_high` + `mct_100` | 65536 (prompt 40) | 100 (prompt 40) |
+| `eff_max` + `mt_unset` | 131072 (prompt 40) | 499960 (prompt 40) |
+| `eff_max` + `mt_32` | 32 (prompt 40) | 32 (prompt 40) |
+| `eff_max` + `mt_300k` | 300000 (prompt 40) | 300000 (prompt 40) |
+| `eff_max` + `mt_400k` | 400 `Invalid max_tokens value, the valid range of max_tokens is [1, 393216]` | 400000 (prompt 40) |
+| `eff_max` + `mct_100` | 131072 (prompt 40) | 100 (prompt 40) |
+
+### X. Tools (max_tokens=32)
+
+| request | API | ours | diverges in |
+|---|---|---|---|
+| `eff_none` + `tools_off` | chat T=1 top_p=1 | chat T=1 top_p=1 | match |
+| `eff_none` + `tools_auto` | chat T=1 top_p=1 constraint=tool_call | chat T=1 top_p=1 | match |
+| `eff_none` + `tools_required` | chat T=1 top_p=1 constraint=tool_call_required | chat T=1 top_p=1 | match |
+| `eff_high` + `tools_off` | think/75 T=1 top_p=1 | think/75 T=1 top_p=1 | match |
+| `eff_high` + `tools_auto` | think/75 T=1 top_p=1 constraint=tool_call | think/75 T=1 top_p=1 | match |
+| `eff_high` + `tools_required` | 400 `Thinking mode does not support this tool_choice` | think/75 T=1 top_p=1 | status |
+
+### P. Single-parameter probes (reasoning_effort=none, max_tokens=64)
+
+| probe | API | ours |
+|---|---|---|
+| `n=2` | 400 `Invalid n value (currently only n = 1 is supported)` | accepted n=2 |
+| `presence_penalty=0.5` | accepted, dropped (not in InferenceOptions) | accepted presence_penalty=0.5 |
+| `frequency_penalty=0.5` | accepted, dropped (not in InferenceOptions) | accepted frequency_penalty=0.5 |
+| `presence_penalty=3` | 400 `Invalid presence_penalty value, the valid range of presence_penalty is [-2, 2]` | 400 `presence_penalty must be in [-2, 2], got 3.0.` |
+| `logit_bias={100:5}` | accepted, ignored (unknown/ignored field) | 400 `The min_p and logit_bias sampling parameters are not yet supported with speculative decoding.` |
+| `logit_bias={}` | accepted, ignored (unknown/ignored field) | accepted logit_bias={} |
+| `seed=42` | accepted, seed=42 | accepted seed=42 |
+| `seed=-1` | 400 `ValueError: invalid request body: invalid value: integer `-1`, expected u64` | accepted seed=None |
+| `stop=5 strings` | accepted, 5 stop seqs (content only) | 400 `stop.str: Input should be a valid string | stop.list[str]: List should have at most 4 items after validation, not 5` |
+| `stop=16 strings` | accepted, 16 stop seqs (content only) | 400 `stop.str: Input should be a valid string | stop.list[str]: List should have at most 4 items after validation, not 16` |
+| `stop=17 strings` | 400 `Stop string array too long: 17` | 400 `stop.str: Input should be a valid string | stop.list[str]: List should have at most 4 items after validation, not 17` |
+| `stop=['']` | 400 `Invalid 'stop[0]': empty string. Expected a string with minimum length 1, but...` | 400 `stop cannot contain an empty string.` |
+| `stream_options w/o stream` | 400 `stream_options should be set along with stream = true` | 400 `Stream options can only be defined when `stream=True`. (parameter=stream_options)` |
+| `logprobs+top_logprobs=5` | accepted, logprobs=True top=5 | accepted logprobs=5 |
+| `top_logprobs=0 w/o logprobs` | 400 `Invalid top_logprobs and logprobs value, logprobs must be set to true if top_...` | accepted logprobs=None |
+| `top_logprobs=3 w/o logprobs` | 400 `Invalid top_logprobs and logprobs value, logprobs must be set to true if top_...` | 400 `when using `top_logprobs`, `logprobs` must be set to true. (parameter=top_logprobs)` |
+| `top_logprobs=21` | 400 `Invalid top_logprobs value, the valid range of top_logprobs is [0, 20].` | 400 `Requested sample logprobs of 21, which is greater than max allowed: 20 (parameter=logprobs, value=21)` |
+| `temperature=2.5` | 400 `Invalid temperature value, the valid range of temperature is [0, 2]` | 400 `temperature must be in [0, 2], got 2.5. (parameter=temperature, value=2.5)` |
+| `top_p=0` | 400 `Invalid top_p value, the valid range of top_p is (0, 1.0]` | 400 `top_p must be in (0, 1], got 0.0. (parameter=top_p, value=0.0)` |
+| `top_p=1.5` | 400 `Invalid top_p value, the valid range of top_p is (0, 1.0]` | 400 `top_p must be in (0, 1], got 1.5. (parameter=top_p, value=1.5)` |
+| `max_tokens=0` | 400 `Invalid max_tokens value, the valid range of max_tokens is [1, 393216]` | 400 `max_tokens must be at least 1, got 0. (parameter=max_tokens, value=0)` |
+| `top_k=20 (vLLM ext)` | accepted, ignored (unknown/ignored field) | accepted top_k=20 |
+| `min_p=0.05 (vLLM ext)` | accepted, ignored (unknown/ignored field) | 400 `The min_p and logit_bias sampling parameters are not yet supported with speculative decoding.` |
+| `repetition_penalty=1.1 (vLLM ext)` | accepted, ignored (unknown/ignored field) | accepted repetition_penalty=1.1 |
+| `user='u'` | accepted, ignored (unknown/ignored field) | accepted  |
+| `parallel_tool_calls=false` | accepted, ignored (unknown/ignored field) | accepted, parallel_tool_calls=False (first call kept) |
+| `tool_choice=required +thinking` | 400 `Thinking mode does not support this tool_choice` | accepted  |
+| `tool_choice=named +thinking` | 400 `Thinking mode does not support this tool_choice` | accepted  |
+
+### L. Context limit (synthetic prompt lengths, context 500000)
+
+| mode / prompt / max_tokens | API | ours |
+|---|---|---|
+| `chat|prompt=100|max_tokens=None` | 8192 | 499900 |
+| `chat|prompt=100|max_tokens=8192` | 8192 | 8192 |
+| `chat|prompt=100|max_tokens=393216` | 393216 | 393216 |
+| `chat|prompt=100|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400000 |
+| `chat|prompt=450000|max_tokens=None` | 8192 | 50000 |
+| `chat|prompt=450000|max_tokens=8192` | 8192 | 8192 |
+| `chat|prompt=450000|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 843216 tokens (450000 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 450000 input tokens, for...` |
+| `chat|prompt=450000|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 450000 input tokens, for...` |
+| `chat|prompt=499999|max_tokens=None` | 1 | 1 |
+| `chat|prompt=499999|max_tokens=8192` | 400 `This model's maximum context length is 500000 tokens. However, you requested 508191 tokens (499999 in the messages, 8192 in the completion). Please...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 8192 output tokens and your prompt contains 499999 input tokens, for a...` |
+| `chat|prompt=499999|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 893215 tokens (499999 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 499999 input tokens, for...` |
+| `chat|prompt=499999|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 499999 input tokens, for...` |
+| `chat|prompt=500000|max_tokens=None` | 1 | 400 `max_tokens must be at least 1, got 0. (parameter=max_tokens, value=0)` |
+| `chat|prompt=500000|max_tokens=8192` | 400 `This model's maximum context length is 500000 tokens. However, you requested 508192 tokens (500000 in the messages, 8192 in the completion). Please...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 8192 output tokens and your prompt contains 500000 input tokens, for a...` |
+| `chat|prompt=500000|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 893216 tokens (500000 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 500000 input tokens, for...` |
+| `chat|prompt=500000|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 500000 input tokens, for...` |
+| `chat|prompt=600000|max_tokens=None` | 400 `This model's maximum context length is 500000 tokens. However, you requested 600000 tokens (600000 in the messages, 0 in the completion). Please re...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 0 output tokens and your prompt contains 600000 input tokens, for a to...` |
+| `chat|prompt=600000|max_tokens=8192` | 400 `This model's maximum context length is 500000 tokens. However, you requested 608192 tokens (600000 in the messages, 8192 in the completion). Please...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 8192 output tokens and your prompt contains 600000 input tokens, for a...` |
+| `chat|prompt=600000|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 993216 tokens (600000 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 600000 input tokens, for...` |
+| `chat|prompt=600000|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 600000 input tokens, for...` |
+| `think_high|prompt=100|max_tokens=None` | 65536 | 499900 |
+| `think_high|prompt=100|max_tokens=8192` | 8192 | 8192 |
+| `think_high|prompt=100|max_tokens=393216` | 393216 | 393216 |
+| `think_high|prompt=100|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400000 |
+| `think_high|prompt=450000|max_tokens=None` | 50000 | 50000 |
+| `think_high|prompt=450000|max_tokens=8192` | 8192 | 8192 |
+| `think_high|prompt=450000|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 843216 tokens (450000 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 450000 input tokens, for...` |
+| `think_high|prompt=450000|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 450000 input tokens, for...` |
+| `think_high|prompt=499999|max_tokens=None` | 1 | 1 |
+| `think_high|prompt=499999|max_tokens=8192` | 400 `This model's maximum context length is 500000 tokens. However, you requested 508191 tokens (499999 in the messages, 8192 in the completion). Please...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 8192 output tokens and your prompt contains 499999 input tokens, for a...` |
+| `think_high|prompt=499999|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 893215 tokens (499999 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 499999 input tokens, for...` |
+| `think_high|prompt=499999|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 499999 input tokens, for...` |
+| `think_high|prompt=500000|max_tokens=None` | 1 | 400 `max_tokens must be at least 1, got 0. (parameter=max_tokens, value=0)` |
+| `think_high|prompt=500000|max_tokens=8192` | 400 `This model's maximum context length is 500000 tokens. However, you requested 508192 tokens (500000 in the messages, 8192 in the completion). Please...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 8192 output tokens and your prompt contains 500000 input tokens, for a...` |
+| `think_high|prompt=500000|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 893216 tokens (500000 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 500000 input tokens, for...` |
+| `think_high|prompt=500000|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 500000 input tokens, for...` |
+| `think_high|prompt=600000|max_tokens=None` | 400 `This model's maximum context length is 500000 tokens. However, you requested 600000 tokens (600000 in the messages, 0 in the completion). Please re...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 0 output tokens and your prompt contains 600000 input tokens, for a to...` |
+| `think_high|prompt=600000|max_tokens=8192` | 400 `This model's maximum context length is 500000 tokens. However, you requested 608192 tokens (600000 in the messages, 8192 in the completion). Please...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 8192 output tokens and your prompt contains 600000 input tokens, for a...` |
+| `think_high|prompt=600000|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 993216 tokens (600000 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 600000 input tokens, for...` |
+| `think_high|prompt=600000|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 600000 input tokens, for...` |
+| `think_max|prompt=100|max_tokens=None` | 131072 | 499900 |
+| `think_max|prompt=100|max_tokens=8192` | 8192 | 8192 |
+| `think_max|prompt=100|max_tokens=393216` | 393216 | 393216 |
+| `think_max|prompt=100|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400000 |
+| `think_max|prompt=450000|max_tokens=None` | 50000 | 50000 |
+| `think_max|prompt=450000|max_tokens=8192` | 8192 | 8192 |
+| `think_max|prompt=450000|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 843216 tokens (450000 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 450000 input tokens, for...` |
+| `think_max|prompt=450000|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 450000 input tokens, for...` |
+| `think_max|prompt=499999|max_tokens=None` | 1 | 1 |
+| `think_max|prompt=499999|max_tokens=8192` | 400 `This model's maximum context length is 500000 tokens. However, you requested 508191 tokens (499999 in the messages, 8192 in the completion). Please...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 8192 output tokens and your prompt contains 499999 input tokens, for a...` |
+| `think_max|prompt=499999|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 893215 tokens (499999 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 499999 input tokens, for...` |
+| `think_max|prompt=499999|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 499999 input tokens, for...` |
+| `think_max|prompt=500000|max_tokens=None` | 1 | 400 `max_tokens must be at least 1, got 0. (parameter=max_tokens, value=0)` |
+| `think_max|prompt=500000|max_tokens=8192` | 400 `This model's maximum context length is 500000 tokens. However, you requested 508192 tokens (500000 in the messages, 8192 in the completion). Please...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 8192 output tokens and your prompt contains 500000 input tokens, for a...` |
+| `think_max|prompt=500000|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 893216 tokens (500000 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 500000 input tokens, for...` |
+| `think_max|prompt=500000|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 500000 input tokens, for...` |
+| `think_max|prompt=600000|max_tokens=None` | 400 `This model's maximum context length is 500000 tokens. However, you requested 600000 tokens (600000 in the messages, 0 in the completion). Please re...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 0 output tokens and your prompt contains 600000 input tokens, for a to...` |
+| `think_max|prompt=600000|max_tokens=8192` | 400 `This model's maximum context length is 500000 tokens. However, you requested 608192 tokens (600000 in the messages, 8192 in the completion). Please...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 8192 output tokens and your prompt contains 600000 input tokens, for a...` |
+| `think_max|prompt=600000|max_tokens=393216` | 400 `This model's maximum context length is 500000 tokens. However, you requested 993216 tokens (600000 in the messages, 393216 in the completion). Plea...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 393216 output tokens and your prompt contains 600000 input tokens, for...` |
+| `think_max|prompt=600000|max_tokens=400000` | 400 `Invalid max_tokens value, the valid range of max_tokens i...` | 400 `This model's maximum context length is 500000 tokens. However, you requested 400000 output tokens and your prompt contains 600000 input tokens, for...` |
+
+### Proto. Messages and Responses (context 500000)
+
+| request | API | ours | diverges in |
+|---|---|---|---|
+| messages: `max_tokens=1024 only` | think/75 T=1 top_p=1 max=1024 | chat T=1 top_p=1 max=1024 | thinking, effort_budget |
+| messages: `thinking enabled (budget 4096)` | think/75 T=1 top_p=1 max=1024 | chat T=1 top_p=1 max=1024 | thinking, effort_budget |
+| messages: `thinking disabled` | chat T=1 top_p=1 max=1024 | chat T=1 top_p=1 max=1024 | match |
+| messages: `output_config.effort=medium` | think/75 T=1 top_p=1 max=1024 | 400 `DeepSeek V4.1 reasoning_effort must be low, high, max, or an intege...` | status |
+| messages: `output_config.effort=max` | think/100 T=1 top_p=1 max=1024 | think/100 T=1 top_p=1 max=1024 | match |
+| messages: `thinking enabled + T=0.2 top_p=0.5 top_k=5` | think/75 T=1 top_p=0.95 max=1024 | chat T=0.2 top_p=0.5 max=1024 | thinking, effort_budget, temperature, top_p |
+| messages: `no max_tokens` | think/75 T=1 top_p=1 max=65536 | 400 `max_tokens: Field required` | status |
+| messages: `max_tokens=500000` | think/75 T=1 top_p=1 max=393216 | 400 `This model's maximum context length is 500000 tokens. However, you ...` | status |
+| responses: `input only` | think/75 T=1 top_p=1 max=65536 | chat T=1 top_p=1 max=499989 | thinking, effort_budget, max_tokens_resolved |
+| responses: `reasoning.effort=high` | think/75 T=1 top_p=1 max=65536 | think/75 T=1 top_p=1 max=499963 | max_tokens_resolved |
+| responses: `reasoning.effort=medium` | think/75 T=1 top_p=1 max=65536 | 400 `DeepSeek V4.1 reasoning_effort must be low, high, max, or an intege...` | status |
+| responses: `reasoning.effort=none` | chat T=1 top_p=1 max=8192 | chat T=1 top_p=1 max=499989 | max_tokens_resolved |
+| responses: `max_output_tokens=100` | think/75 T=1 top_p=1 max=100 | chat T=1 top_p=1 max=100 | thinking, effort_budget |
+| responses: `effort=high + T=0 top_p=0.5` | think/75 T=1 top_p=0.95 max=65536 | think/75 T=0 top_p=1 max=499963 | temperature, top_p, max_tokens_resolved |
+
+### Matrix-wide: 1140 requests (19 thinking controls x 4 sampling x 5 max_tokens x 3 tools)
+
+| field | requests that diverge |
+|---|---|
+| status | 488 |
+| effort_budget | 272 |
+| max_tokens_resolved | 240 |
+| top_p | 240 |
+| thinking | 208 |
+| (none) | 204 |
+| temperature | 192 |
+
+### Residual with the prototype (max_tokens defaults on, sampling policy off): 190/1140 requests match
+
+| field | requests that diverge | thinking controls involved |
+|---|---|---|
+| top_p | 288 | ctk_chat_low(smoke), ctk_think_high(quality), ctk_thinking, ctk_thinking+eff80, eff_high, eff_low, eff_max, eff_medium, eff_minimal, eff_none, eff_xhigh, none, th_adaptive, th_disabled+eff_high, th_enabled, th_enabled+eff_max, th_enabled+eff_none |
+| temperature | 240 | ctk_chat_low(smoke), ctk_think_high(quality), ctk_thinking, ctk_thinking+eff80, eff_high, eff_low, eff_max, eff_medium, eff_minimal, eff_xhigh, none, th_adaptive, th_enabled, th_enabled+eff_max, th_enabled+eff_none |
+| max_tokens_resolved | 160 | ctk_chat_low(smoke), ctk_think_high(quality), ctk_thinking, ctk_thinking+eff80, eff_high, eff_low, eff_max, eff_medium, eff_minimal, eff_none, eff_xhigh, none, th_adaptive, th_disabled+eff_high, th_enabled, th_enabled+eff_max, th_enabled+eff_none |
+| effort_budget | 128 | ctk_chat_low(smoke), ctk_thinking, ctk_thinking+eff80, none |
+| thinking | 64 | ctk_chat_low(smoke), none |
+| status: API 400 only: `Thinking mode does not support this tool_choice` | 300 | |
+| status: API 400 only: `Invalid max_tokens value, the valid range of max_tokens i...` | 144 | |
+| status: ours 400 only: `reasoning_effort: Input should be 'none', 'minimal', 'low...` | 32 | |
+
+### Residual with the prototype (max_tokens defaults on, sampling policy on): 424/1140 requests match
+
+| field | requests that diverge | thinking controls involved |
+|---|---|---|
+| max_tokens_resolved | 160 | ctk_chat_low(smoke), ctk_think_high(quality), ctk_thinking, ctk_thinking+eff80, eff_high, eff_low, eff_max, eff_medium, eff_minimal, eff_none, eff_xhigh, none, th_adaptive, th_disabled+eff_high, th_enabled, th_enabled+eff_max, th_enabled+eff_none |
+| effort_budget | 128 | ctk_chat_low(smoke), ctk_thinking, ctk_thinking+eff80, none |
+| thinking | 64 | ctk_chat_low(smoke), none |
+| temperature | 32 | ctk_chat_low(smoke), none |
+| top_p | 32 | ctk_chat_low(smoke), none |
+| status: API 400 only: `Thinking mode does not support this tool_choice` | 300 | |
+| status: API 400 only: `Invalid max_tokens value, the valid range of max_tokens i...` | 144 | |
+| status: ours 400 only: `reasoning_effort: Input should be 'none', 'minimal', 'low...` | 32 | |
+
+### Residual with the prototype (max_tokens defaults on, sampling policy on, run.sh default kwargs {"thinking":false}): 448/1140 requests match
+
+| field | requests that diverge | thinking controls involved |
+|---|---|---|
+| max_tokens_resolved | 160 | ctk_chat_low(smoke), ctk_think_high(quality), ctk_thinking, ctk_thinking+eff80, eff_high, eff_low, eff_max, eff_medium, eff_minimal, eff_none, eff_xhigh, none, th_adaptive, th_disabled+eff_high, th_enabled, th_enabled+eff_max, th_enabled+eff_none |
+| effort_budget | 96 | ctk_chat_low(smoke), ctk_thinking+eff80, none |
+| thinking | 64 | ctk_chat_low(smoke), none |
+| temperature | 32 | ctk_chat_low(smoke), none |
+| top_p | 32 | ctk_chat_low(smoke), none |
+| status: API 400 only: `Thinking mode does not support this tool_choice` | 300 | |
+| status: API 400 only: `Invalid max_tokens value, the valid range of max_tokens i...` | 144 | |
+| status: ours 400 only: `reasoning_effort: Input should be 'none', 'minimal', 'low...` | 32 | |
+
+### --override-generation-config '{"max_new_tokens": 8192, ...}' (candidate fix, rejected)
+
+default_sampling_params={'max_tokens': 8192, 'temperature': 1.0, 'top_p': 1.0}, override_max_tokens=8192; unset -> 8192, max_tokens=20000 -> 8192, thinking + max_tokens=60000 -> 8192
+
+default_sampling_params on the served pack (no generation_config.json): {}; GenerationConfig.from_model_config diff: {'_from_model_config': True, 'bos_token_id': 0, 'eos_token_id': 1, 'output_attentions': False, 'output_hidden_states': False, 'pad_token_id': 2, 'transformers_version': '5.17.0', 'use_cache': True}

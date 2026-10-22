@@ -1,0 +1,495 @@
+[
+ {
+  "case": "tools_choice_none@chat",
+  "title": "tools, tool_choice=none",
+  "variant": "chat",
+  "tags": [],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Weather in Paris?"
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "get_weather",
+      "description": "Get the weather for a location",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "location": {
+         "type": "string",
+         "description": "City name"
+        },
+        "unit": {
+         "type": "string",
+         "enum": [
+          "celsius",
+          "fahrenheit"
+         ]
+        }
+       },
+       "required": [
+        "location"
+       ]
+      }
+     }
+    },
+    {
+     "type": "function",
+     "function": {
+      "name": "search",
+      "description": "Search the web",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "query": {
+         "type": "string"
+        },
+        "num_results": {
+         "type": "integer"
+        }
+       },
+       "required": [
+        "query"
+       ]
+      }
+     }
+    }
+   ],
+   "tool_choice": "none",
+   "reasoning_effort": "none"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Weather in Paris?<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    58565,
+    295,
+    11111,
+    33,
+    128804,
+    128822
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "</think>"
+   ],
+   "thinking_mode": false,
+   "reasoning_effort": null,
+   "tool_choice": "none",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Weather in Paris?<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    58565,
+    295,
+    11111,
+    33,
+    128804,
+    128822
+   ],
+   "thinking_mode": "chat",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>You are a helpful assistant.<｜User｜>Weather in Paris?<｜Assistant｜></think>",
+   "ids": [
+    0,
+    128799,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    58565,
+    295,
+    11111,
+    33,
+    128804,
+    128822
+   ],
+   "engine_ids_len": 15,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "reasoning_effort": "none",
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "enable_thinking": false,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Weather in Paris?",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "hf_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ },
+ {
+  "case": "tools_choice_none@think",
+  "title": "tools, tool_choice=none",
+  "variant": "think",
+  "tags": [],
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are a helpful assistant."
+    },
+    {
+     "role": "user",
+     "content": "Weather in Paris?"
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "get_weather",
+      "description": "Get the weather for a location",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "location": {
+         "type": "string",
+         "description": "City name"
+        },
+        "unit": {
+         "type": "string",
+         "enum": [
+          "celsius",
+          "fahrenheit"
+         ]
+        }
+       },
+       "required": [
+        "location"
+       ]
+      }
+     }
+    },
+    {
+     "type": "function",
+     "function": {
+      "name": "search",
+      "description": "Search the web",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "query": {
+         "type": "string"
+        },
+        "num_results": {
+         "type": "integer"
+        }
+       },
+       "required": [
+        "query"
+       ]
+      }
+     }
+    }
+   ],
+   "tool_choice": "none",
+   "reasoning_effort": "high"
+  },
+  "api": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Weather in Paris?<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    58565,
+    295,
+    11111,
+    33,
+    128804,
+    128821
+   ],
+   "specials": [
+    "<｜begin▁of▁sentence｜>",
+    "<｜System｜>",
+    "<｜User｜>",
+    "<｜Assistant｜>",
+    "<think>"
+   ],
+   "thinking_mode": true,
+   "reasoning_effort": "high",
+   "tool_choice": "none",
+   "tools": [],
+   "response_format": "text",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "prefix": [
+    false,
+    false
+   ],
+   "output_constraint": null,
+   "temperature": 1.0,
+   "top_p": 1.0,
+   "n_images": 0
+  },
+  "hf": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Weather in Paris?<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    58565,
+    295,
+    11111,
+    33,
+    128804,
+    128821
+   ],
+   "thinking_mode": "thinking",
+   "reasoning_effort": "high",
+   "n_images": 0
+  },
+  "served": {
+   "ok": true,
+   "prompt": "<｜begin▁of▁sentence｜><｜System｜>Reasoning Effort: 75 (range 1-100, the higher the value, the more thorough the reasoning)\n\nYou are a helpful assistant.<｜User｜>Weather in Paris?<｜Assistant｜><think>",
+   "ids": [
+    0,
+    128799,
+    77666,
+    288,
+    9504,
+    482,
+    28,
+    223,
+    2402,
+    343,
+    16801,
+    223,
+    19,
+    15,
+    1457,
+    14,
+    270,
+    4077,
+    270,
+    1990,
+    14,
+    270,
+    850,
+    15146,
+    270,
+    22805,
+    868,
+    3476,
+    477,
+    260,
+    11502,
+    22896,
+    16,
+    128803,
+    58565,
+    295,
+    11111,
+    33,
+    128804,
+    128821
+   ],
+   "engine_ids_len": 40,
+   "engine_ids_equal_pre": true,
+   "mm_placeholders": null,
+   "kwargs": {
+    "thinking": false,
+    "reasoning_effort": "high",
+    "tokenize": false,
+    "add_generation_prompt": true,
+    "continue_final_message": false,
+    "enable_thinking": true,
+    "return_dict": false
+   },
+   "tools_passed": null,
+   "message_keys": [
+    [
+     "content",
+     "role"
+    ],
+    [
+     "content",
+     "role"
+    ]
+   ],
+   "validated_messages": [
+    {
+     "content": "You are a helpful assistant.",
+     "role": "system"
+    },
+    {
+     "content": "Weather in Paris?",
+     "role": "user"
+    }
+   ]
+  },
+  "cmp": {
+   "api_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "hf_vs_served": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   },
+   "api_vs_hf": {
+    "status": "match",
+    "string_diff": null,
+    "id_diff": null
+   }
+  }
+ }
+]

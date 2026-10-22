@@ -1,0 +1,5 @@
+one stream client, gone at 4 s (prefill 6 s): b'HTTP/1.1 200 OK'
+  upstream: cancelled_after_s=4.01 events_sent=0 finished=False; gateway sockets ESTABLISHED to the upstream port: 0
+100 stream clients gone at 3 s (prefill 600 s): upstream requests cancelled 100/100; gateway sockets to the upstream: 0
+  gateway /health: 200 after 0.0 s {"gateway":"ok","upstream":"ok"}
+  a new API request (upstream fast again): 200 after 0.2 s

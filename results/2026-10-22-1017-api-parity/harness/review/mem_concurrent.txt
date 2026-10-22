@@ -1,0 +1,19 @@
+== K=1
+request body 2.2 MiB; idle peak RSS 99 MiB
+1 concurrent prepares done in 0.62 s, [8] images; peak RSS 1727 MiB
+exit=0
+== K=2
+request body 2.2 MiB; idle peak RSS 99 MiB
+2 concurrent prepares done in 3.70 s, [8, 8] images; peak RSS 2063 MiB
+exit=0
+== K=3
+request body 2.2 MiB; idle peak RSS 99 MiB
+exit=137
+== K W H N = 1 4032 3024 8
+request body 0.4 MiB; idle peak RSS 97 MiB
+1 concurrent prepares done in 0.23 s, [8] images; peak RSS 455 MiB
+exit=0
+== K W H N = 4 4032 3024 8
+request body 0.4 MiB; idle peak RSS 97 MiB
+4 concurrent prepares done in 0.88 s, [8, 8, 8, 8] images; peak RSS 1183 MiB
+exit=0

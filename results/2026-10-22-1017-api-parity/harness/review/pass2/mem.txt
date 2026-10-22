@@ -1,0 +1,22 @@
+== old repro: 3 x 8 x 8192^2
+K=3 x 8 images 8192x8192 8-bit 3ch, body 2.2 MiB; idle peak RSS 99 MiB
+done in 6.52 s; per request [2.17, 6.51, 4.32] s; 8 images, prompt_tokens 7965; peak RSS 341 MiB
+exit=0
+== 1 x 15 x 4096^2 8-bit RGB
+K=1 x 15 images 4096x4096 8-bit 3ch, body 1.1 MiB; idle peak RSS 98 MiB
+done in 0.43 s; per request [0.43] s; 15 images, prompt_tokens 14930; peak RSS 568 MiB
+exit=0
+== 1 x 15 x 4096^2 16-bit RGBA
+K=1 x 15 images 4096x4096 16-bit 4ch, body 3.9 MiB; idle peak RSS 101 MiB
+done in 0.90 s; per request [0.9] s; 15 images, prompt_tokens 14930; peak RSS 1705 MiB
+exit=0
+== 1 x 1 x 8192^2 16-bit RGBA
+K=1 x 1 images 8192x8192 16-bit 4ch, body 1.0 MiB; idle peak RSS 99 MiB
+done in 0.64 s; per request [0.64] s; 1 images, prompt_tokens 1000; peak RSS 1068 MiB
+exit=0
+== mem_urls N=12
+N=12 URL images of 32 MiB: Fallback('image bytes') -> vLLM fetches all 12 URLs again; 0.1 s; peak RSS 338 MiB
+exit=0
+== mem_urls N=40
+N=40 URL images of 32 MiB: Fallback('image bytes') -> vLLM fetches all 40 URLs again; 0.1 s; peak RSS 338 MiB
+exit=0

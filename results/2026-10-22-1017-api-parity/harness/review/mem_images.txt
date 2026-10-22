@@ -1,0 +1,6 @@
+case=big n=1 request_body=0.3 MiB upstream_body=0.3 MiB images=1 prompt_tokens=1002
+peak RSS before prepare 98 MiB, after prepare+json.dumps 302 MiB (prepare 0.29 s in the worker thread, json.dumps+encode 0 ms on the event loop)
+case=big n=8 request_body=2.2 MiB upstream_body=2.2 MiB images=8 prompt_tokens=7967
+peak RSS before prepare 102 MiB, after prepare+json.dumps 1727 MiB (prepare 0.35 s in the worker thread, json.dumps+encode 3 ms on the event loop)
+case=noise n=6 request_body=76.9 MiB upstream_body=76.9 MiB images=6 prompt_tokens=6073
+peak RSS before prepare 338 MiB, after prepare+json.dumps 995 MiB (prepare 0.75 s in the worker thread, json.dumps+encode 81 ms on the event loop)

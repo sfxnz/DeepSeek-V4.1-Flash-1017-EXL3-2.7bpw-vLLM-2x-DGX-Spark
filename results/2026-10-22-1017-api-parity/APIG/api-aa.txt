@@ -1,0 +1,27 @@
+# cmd: python3 tests/quality_eval.py --api --url http://127.0.0.1:8000 --baseline /home/sfxnz/projects/data/dsv41-1017/api-parity/boot/APIG/api.json --out /home/sfxnz/projects/data/dsv41-1017/api-parity/boot/APIG/api-aa.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-api-eval (HEAD 4432b71) host: spark1 start: 2026-10-22T14:37:55Z
+[render] 0.1s {"cases": 52, "same": 52, "context_limit": 500000, "invariants": []}
+[toolflow] 6.8s {"acc": {"k": 6, "n": 6, "rate": 1.0, "ci95": [0.6097, 1.0]}, "invariants": []}
+[reasoning] 1.5s {"acc": {"k": 4, "n": 4, "rate": 1.0, "ci95": [0.5101, 1.0]}, "invariants": []}
+[structured] 1.5s {"acc": {"k": 3, "n": 3, "rate": 1.0, "ci95": [0.4385, 1.0]}, "invariants": []}
+[stream] 2.6s {"text_equal": {"k": 3, "n": 3, "rate": 1.0, "ci95": [0.4385, 1.0]}, "invariants": []}
+[messages] 2.4s {"acc": {"k": 3, "n": 3, "rate": 1.0, "ci95": [0.4385, 1.0]}, "invariants": []}
+[responses] 2.5s {"acc": {"k": 3, "n": 3, "rate": 1.0, "ci95": [0.4385, 1.0]}, "invariants": []}
+[errors] 1.2s {"context_limit": 500000, "invariants": []}
+PASS render.invariants value=0 limit=0
+PASS toolflow.invariants value=0 limit=0
+PASS reasoning.invariants value=0 limit=0
+PASS structured.invariants value=0 limit=0
+PASS stream.invariants value=0 limit=0
+PASS messages.invariants value=0 limit=0
+PASS responses.invariants value=0 limit=0
+PASS errors.invariants value=0 limit=0
+PASS toolflow.acc value=1.0 limit=1.0
+PASS reasoning.acc value=1.0 limit=1.0
+PASS structured.acc value=1.0 limit=1.0
+PASS stream.text_equal value=1.0 limit=1.0
+PASS messages.acc value=1.0 limit=1.0
+PASS responses.acc value=1.0 limit=1.0
+QUALITY {"mode": "api", "pass": true, "elapsed_s": 18.7, "toolflow": 1.0, "reasoning": 1.0, "structured": 1.0, "stream_text_equal": 1.0, "messages": 1.0, "responses": 1.0, "render_violations": 0, "toolflow_violations": 0, "reasoning_violations": 0, "structured_violations": 0, "stream_violations": 0, "messages_violations": 0, "responses_violations": 0, "errors_violations": 0}
+rc=0
+# end: 2026-10-22T14:38:14Z

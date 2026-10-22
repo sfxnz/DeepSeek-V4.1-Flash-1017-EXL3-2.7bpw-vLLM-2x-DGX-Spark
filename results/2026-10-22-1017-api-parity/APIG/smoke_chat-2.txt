@@ -1,0 +1,5 @@
+# cmd: python3 smoke_chat.py
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-api-eval (HEAD 4432b71) host: spark1 start: 2026-10-22T14:54:42Z
+323
+rc=0
+# end: 2026-10-22T14:54:42Z

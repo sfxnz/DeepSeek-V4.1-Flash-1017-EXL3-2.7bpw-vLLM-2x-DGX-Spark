@@ -1,0 +1,5 @@
+plain                                -> 400 image[0]: Failed to download image from http://169.254.169.254/latest/meta-data/iam/x.png
+echo: true                           -> Fallback (vLLM field echo): body with the 169.254.169.254 URL goes to vLLM unchanged
+chat_template_kwargs drop_thinking   -> Fallback (chat_template_kwargs {'drop_thinking': False}): body with the 169.254.169.254 URL goes to vLLM unchanged
+n: 2 (API rejects)                   -> Fallback (Invalid n value (currently only n = 1 is supported)): body with the 169.254.169.254 URL goes to vLLM unchanged
+unknown model (API rejects)          -> Fallback (The supported API model names are DeepSeek-V4.1-Flash, DeepS): body with the 169.254.169.254 URL goes to vLLM unchanged

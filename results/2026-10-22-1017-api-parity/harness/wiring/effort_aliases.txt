@@ -1,0 +1,15 @@
+no thinking field                        thinking=False effort=-    T=1.0 top_p=1.0 max_tokens(prompt 10)=8192
+thinking enabled, effort None            thinking=True  effort=75   T=1.0 top_p=1.0 max_tokens(prompt 10)=65536
+thinking enabled, effort none            thinking=True  effort=75   T=1.0 top_p=1.0 max_tokens(prompt 10)=65536
+thinking enabled, effort minimal         thinking=True  effort=50   T=1.0 top_p=1.0 max_tokens(prompt 10)=65536
+thinking enabled, effort low             thinking=True  effort=50   T=1.0 top_p=1.0 max_tokens(prompt 10)=65536
+thinking enabled, effort medium          thinking=True  effort=75   T=1.0 top_p=1.0 max_tokens(prompt 10)=65536
+thinking enabled, effort high            thinking=True  effort=75   T=1.0 top_p=1.0 max_tokens(prompt 10)=65536
+thinking enabled, effort xhigh           thinking=True  effort=75   T=1.0 top_p=1.0 max_tokens(prompt 10)=65536
+thinking enabled, effort ultra           thinking=True  effort=100  T=1.0 top_p=1.0 max_tokens(prompt 10)=131072
+thinking enabled, effort max             thinking=True  effort=100  T=1.0 top_p=1.0 max_tokens(prompt 10)=131072
+no thinking field, effort none           thinking=False effort=-    T=1.0 top_p=1.0 max_tokens(prompt 10)=8192
+no thinking field, effort low            thinking=True  effort=50   T=1.0 top_p=1.0 max_tokens(prompt 10)=65536
+no thinking field, effort high           thinking=True  effort=75   T=1.0 top_p=1.0 max_tokens(prompt 10)=65536
+no thinking field, effort max            thinking=True  effort=100  T=1.0 top_p=1.0 max_tokens(prompt 10)=131072
+thinking disabled, effort high           thinking=False effort=-    T=1.0 top_p=1.0 max_tokens(prompt 10)=8192

@@ -1,0 +1,5 @@
+one stream client, gone at 4 s (prefill 6 s): b'HTTP/1.1 200 OK'
+  upstream: cancelled_after_s=None events_sent=3 finished=True; gateway sockets ESTABLISHED to the upstream port: 1
+100 stream clients gone at 3 s (prefill 600 s): upstream requests cancelled 0/99; gateway sockets to the upstream: 99
+  gateway /health: 503 after 10.0 s {"gateway":"ok","upstream":"unreachable: PoolTimeout('')"}
+  a new API request (upstream fast again): ReadTimeout('timed out') after 20.0 s

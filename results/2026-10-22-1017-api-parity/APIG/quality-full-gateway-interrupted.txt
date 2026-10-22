@@ -1,0 +1,28 @@
+# cmd: python3 tests/quality_eval.py --full --url http://127.0.0.1:8000 --baseline results/2026-10-18-1017/quality-baseline/full.json --out /home/sfxnz/projects/data/dsv41-1017/api-parity/boot/APIG/full-gateway.json
+# cwd: /home/sfxnz/projects/ai-lab/worktrees/dsv41-1017-api-eval (HEAD 4432b71) host: spark1 start: 2026-10-22T14:46:56Z
+[nll] 44.8s {"passages": 40, "tokens_scored": 19828, "bos_id": 0, "mean_nll": 0.143908, "ppl": 1.1548, "run_means": [0.143908, 0.144704], "repeat_abs_delta": 0.000796, "repeat_max_passage_delta": 0.014964, "prefix_cache_hits_delta": 0.0}
+[decode] 31.8s {"prompts": 8, "tokens": 941, "median_abs_dlogprob": 0.00156, "p99_abs_dlogprob": 0.8056, "mean_abs_dlogprob": 0.06382, "gen_nll_prefill": 0.25081, "gen_nll_decode": 0.22141}
+[tools] 25.0s {"json_valid": {"k": 22, "n": 22, "rate": 1.0, "ci95": [0.8513, 1.0]}, "exact_args": {"k": 22, "n": 22, "rate": 1.0, "ci95": [0.8513, 1.0]}, "no_call": {"k": 8, "n": 8, "rate": 1.0, "ci95": [0.6756, 1.0]}}
+[needle] 160.0s ERROR RemoteDisconnected: Remote end closed connection without response
+[selfcons] 0.0s ERROR URLError: <urlopen error [Errno 111] Connection refused>
+[c2] 0.0s ERROR URLError: <urlopen error [Errno 111] Connection refused>
+[vision] 0.0s ERROR URLError: <urlopen error [Errno 111] Connection refused>
+[gsm8k] 0.0s ERROR URLError: <urlopen error [Errno 111] Connection refused>
+[gsm8k_think] 0.0s ERROR URLError: <urlopen error [Errno 111] Connection refused>
+[mmlu] 0.0s ERROR URLError: <urlopen error [Errno 111] Connection refused>
+FAIL needle.error value=RemoteDisconnected: Remote end closed connection without response limit=None
+FAIL selfcons.error value=URLError: <urlopen error [Errno 111] Connection refused> limit=None
+FAIL c2.error value=URLError: <urlopen error [Errno 111] Connection refused> limit=None
+FAIL vision.error value=URLError: <urlopen error [Errno 111] Connection refused> limit=None
+FAIL gsm8k.error value=URLError: <urlopen error [Errno 111] Connection refused> limit=None
+FAIL gsm8k_think.error value=URLError: <urlopen error [Errno 111] Connection refused> limit=None
+FAIL mmlu.error value=URLError: <urlopen error [Errno 111] Connection refused> limit=None
+PASS nll.mean_nll value=0.143908 limit=0.15447
+PASS decode.median_abs_dlogprob value=0.00156 limit=0.05069
+PASS decode.gen_nll_prefill value=0.25081 limit=0.35876
+PASS tools.json_valid value=1.0 limit=1.0
+PASS tools.exact_args value=1.0 limit=1.0
+PASS tools.no_call value=1.0 limit=1.0
+QUALITY {"mode": "full", "pass": false, "elapsed_s": 261.5, "nll": 0.143908, "nll_repeat_delta": 0.000796, "decode_median_dlp": 0.00156, "decode_gen_nll": 0.25081, "tools_exact": 1.0, "tools_json": 1.0, "tools_nocall": 1.0}
+rc=1
+# end: 2026-10-22T14:51:17Z

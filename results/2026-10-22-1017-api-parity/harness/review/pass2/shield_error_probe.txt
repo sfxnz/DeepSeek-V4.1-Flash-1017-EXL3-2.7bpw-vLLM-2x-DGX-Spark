@@ -1,0 +1,4 @@
+slow_drop: client stays -> 200, 2 frames, last: 'data: {"error": {"message": "the model server connection failed: RemoteProtocolError(\'peer closed connection without sending complete message body (in'
+slow_malformed: client stays -> 200, 2 frames, last: 'data: {"error": {"message": "the model server sent a malformed event: \'data: [1, 2]\'", "type": "internal_error", "param": null, "code": "internal_erro'
+slow_drop: client left at 3 s -> upstream cancelled after 3.0 s
+gateway log: 0 error/noise lines
