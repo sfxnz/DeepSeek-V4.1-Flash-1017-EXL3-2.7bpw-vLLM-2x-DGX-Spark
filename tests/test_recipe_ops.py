@@ -30,6 +30,9 @@ def _env(**extra: str) -> dict[str, str]:
     env.pop("FORCE_UNSAFE_QUANT", None)
     env.pop("VALIDATE_ONLY", None)
     env.pop("RESOLVE_SNAPSHOT_ONLY", None)
+    # Tests run the real stop.sh with the real docker (with a made-up CONTAINER_NAME); stop.sh also removes the
+    # gateway by name, so the default name would remove a live serve's gateway.
+    env["GATEWAY_CONTAINER_NAME"] = "dsv41-ops-test-gateway"
     env.update(extra)
     return env
 
@@ -141,6 +144,11 @@ def _worker_config() -> list[str]:
     return _bash_array("worker_config")
 
 
+def _gateway_envs() -> list[str]:
+    """GATEWAY_ENVS in run.sh: the API gateway container's env names."""
+    return _bash_array("GATEWAY_ENVS")
+
+
 # Env names read under docker/patch/ that are deliberately NOT forwarded.
 PATCH_ENV_NOT_FORWARDED = {
     "DSV41_VL_MODEL_PATH": "g8_stream_feed install-time path override (offline tests), not a serve knob",
@@ -173,9 +181,9 @@ _ENV_READ = re.compile(
 )
 
 
-def _patch_env_reads() -> set[str]:
+def _patch_env_reads(subdir: str = "docker/patch") -> set[str]:
     names = set()
-    for path in (ROOT / "docker/patch").glob("*.py"):
+    for path in (ROOT / subdir).glob("*.py"):
         for m in _ENV_READ.finditer(path.read_text()):
             names.add(next(g for g in m.groups() if g))
     return names
@@ -211,9 +219,27 @@ class EnvForwardingTests(unittest.TestCase):
         names = [item.split("=", 1)[0] for item in _bash_array("FORWARD_ENVS")]
         self.assertEqual(len(names), len(set(names)))
 
+    def test_gateway_envs_are_what_the_gateway_reads(self) -> None:
+        """GATEWAY_ENVS lists every env gateway/*.py reads, and only those; they reach the gateway alone."""
+        reads = _patch_env_reads("gateway")
+        self.assertEqual(reads, {"DSV41_GATEWAY_UPSTREAM", "DSV41_GATEWAY_MAX_MODEL_LEN", "DSV41_GATEWAY_STRICT",
+                                 "DSV41_GATEWAY_BLOCK_PRIVATE_URLS"})
+        self.assertEqual(sorted(_gateway_envs()), sorted(reads), "GATEWAY_ENVS in run.sh lists what gateway/*.py reads")
+        self.assertEqual(reads & set(_forward_envs()), set(), "the vLLM ranks never get the gateway's env")
+        container_env, dry_run, _ = _harness()
+        res = dry_run()
+        self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
+        self.assertEqual(set(container_env(res["gateway"])),
+                         reads | {"PYTHONPATH", "PYTHONDONTWRITEBYTECODE", "MALLOC_MMAP_THRESHOLD_"})
+        for role in ("head", "worker"):
+            self.assertEqual(reads & set(container_env(res[role])), set(), role)
+
     def test_every_recipe_knob_reaches_the_worker(self) -> None:
         # NUM_SPECULATIVE_TOKENS_PER_BATCH: the head turns it into SPEC_CONFIG and COMPILATION_CONFIG.
         head_only = {"WORKER_HOST", "ORCHESTRATE", "AUDIT", "WARMUP", "NUM_SPECULATIVE_TOKENS_PER_BATCH"}
+        # The API gateway's container runs on the head only.
+        head_only |= {"GATEWAY_CONTAINER_NAME", "GATEWAY_MEMORY", "GATEWAY_WHEEL_URL", "GATEWAY_WHEEL_SHA256"}
+        head_only |= set(_gateway_envs())
         reach = set(_worker_config()) | set(_forward_envs())
         missing = sorted(set(_recipe()["serve"]["env"]) - reach - head_only)
         self.assertEqual(missing, [])
@@ -372,6 +398,11 @@ ENGAGED_LOG = "\n".join(
         "1 decode-only step(s) after each step that carried prefill while a request decodes)",
     ]
 )
+# The API gateway container's startup (gateway/dsv41_gateway.py LOG_ENGAGED, then uvicorn).
+GATEWAY_LOG = (
+    "dsv41-gateway: engaged deepseek-recipe 0.2.0 upstream=http://127.0.0.1:8001 model=deepseek-ai/DeepSeek-V4.1-Flash-1017\n"
+    "INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)"
+)
 
 
 class OrchestrationTests(unittest.TestCase):
@@ -463,6 +494,12 @@ class OrchestrationTests(unittest.TestCase):
             self.assertNotIn("HUGGING_FACE_HUB_TOKEN", env, role)
             self.assertEqual(env["HF_HUB_OFFLINE"], "1", role)
             self.assertNotIn("hf_dummy_not_a_token", " ".join(res[role]), role)
+        # The gateway mounts the HF hub only: the cache's token file stays out of it.
+        self.assertNotIn("hf_dummy_not_a_token", " ".join(res["gateway"]))
+        self.assertNotIn("HF_TOKEN", container_env(res["gateway"]))
+        mounts = [v for f, v in zip(res["gateway"], res["gateway"][1:]) if f == "-v"]
+        self.assertIn(f"{res['env']['HF_CACHE']}/hub:/cache/huggingface/hub:ro", mounts)
+        self.assertFalse(any(m.startswith(f"{res['env']['HF_CACHE']}:") for m in mounts), mounts)
         self.assertNotIn("token_env", _read("run.sh"))
 
     def test_worker_patch_dir_is_per_user(self) -> None:
@@ -517,15 +554,24 @@ class OrchestrationTests(unittest.TestCase):
         self.assertEqual(res["returncode"], 1, res["stdout"] + res["stderr"])
         self.assertIn("AUDIT=strict", res["stderr"])
         self.assertEqual(_docker(res, "worker", "rm"), [], "strict audit reports; ./stop.sh tears down")
-        res = dry_run(
+        clean = dict(
             AUDIT="strict",
             STUB_LOGS_HEAD=ENGAGED_LOG,
             STUB_LOGS_WORKER=ENGAGED_LOG + "\n" + "Launching vLLM headless multiproc executor",
         )
+        res = dry_run(**clean, STUB_LOGS_GATEWAY=GATEWAY_LOG)
         self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
         self.assertIn("audit ok", res["stdout"])
         self.assertTrue(any(n.startswith("audit-head-") for n in res["run_state"]))
         self.assertTrue(any(n.startswith("audit-worker-") for n in res["run_state"]))
+        self.assertEqual([t for n, t in res["run_state"].items() if n.startswith("audit-gateway-")], [GATEWAY_LOG + "\n"])
+        # API_GATEWAY=1: strict needs the gateway's startup line in the gateway's own log.
+        res = dry_run(**clean, STUB_LOGS_GATEWAY="INFO:     Uvicorn running on http://0.0.0.0:8000")
+        self.assertEqual(res["returncode"], 1, res["stdout"] + res["stderr"])
+        self.assertIn("WARNING audit gateway: missing 'dsv41-gateway: engaged deepseek-recipe'", res["stderr"])
+        res = dry_run(**clean, API_GATEWAY="0")
+        self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
+        self.assertFalse(any(n.startswith("audit-gateway-") for n in res["run_state"]))
 
     def test_warmup_failure_warns_but_keeps_the_serve(self) -> None:
         _, dry_run, _ = _harness()
@@ -535,7 +581,254 @@ class OrchestrationTests(unittest.TestCase):
         self.assertIn("WARNING: warmup failed", res["stderr"])
 
 
+GATEWAY_WHEEL = "deepseek_recipe-0.2.0-cp310-abi3-manylinux_2_28_aarch64.whl"
+GATEWAY_WHEEL_SHA256 = "7c31fa6ed6ff8319670fa6efdf682e724f4e78f76218f6d08dfc4c0d6f47a071"
+GATEWAY_SITE = "deepseek_recipe-0.2.0"  # under ~/.cache/dsv41-gateway/
+
+
+def _free_port() -> int:
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
+def _fake_wheel() -> tuple[bytes, str]:
+    """A wheel-shaped zip and its sha256: the provisioning tests never fetch the real wheel."""
+    import hashlib
+    import io
+    import zipfile
+
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("deepseek_recipe/__init__.py", "__version__ = '0.2.0'\n")
+        z.writestr("deepseek_recipe-0.2.0.dist-info/METADATA", "Name: deepseek-recipe\nVersion: 0.2.0\n")
+    return buf.getvalue(), hashlib.sha256(buf.getvalue()).hexdigest()
+
+
+def _is_gateway_run(res: dict):
+    name = res["env"]["GATEWAY_CONTAINER_NAME"]
+    return lambda c: c["tool"] == "docker" and c["argv"][:1] == ["run"] and name in c["argv"]
+
+
+class ApiGatewayTests(unittest.TestCase):
+    """API_GATEWAY=1 (default): the DeepSeek API gateway on PORT, in front of vLLM on 127.0.0.1:VLLM_PORT."""
+
+    def test_wheel_pin_and_defaults_are_one_value_in_recipe_and_scripts(self) -> None:
+        recipe, env = _recipe(), _recipe()["serve"]["env"]
+        url, sha = recipe["gateway"]["wheel_url"], recipe["gateway"]["wheel_sha256"]
+        self.assertEqual((env["GATEWAY_WHEEL_URL"], env["GATEWAY_WHEEL_SHA256"]), (url, sha))
+        self.assertTrue(url.startswith("https://files.pythonhosted.org/packages/"), url)
+        self.assertEqual(url.rsplit("/", 1)[1], GATEWAY_WHEEL)
+        self.assertEqual(sha, GATEWAY_WHEEL_SHA256)
+        run = _read("run.sh")
+        self.assertIn(f'GATEWAY_WHEEL_URL="${{GATEWAY_WHEEL_URL:-{url}}}"', run)
+        self.assertIn(f'GATEWAY_WHEEL_SHA256="${{GATEWAY_WHEEL_SHA256:-{sha}}}"', run)
+        self.assertEqual([env[k] for k in ("API_GATEWAY", "PORT", "VLLM_PORT", "GATEWAY_CONTAINER_NAME", "GATEWAY_MEMORY")],
+                         ["1", "8000", "8001", "dsv41-api-gateway", "3g"])
+        self.assertEqual((env["DSV41_GATEWAY_STRICT"], env["DSV41_GATEWAY_BLOCK_PRIVATE_URLS"]), ("0", "0"))
+        self.assertIn(f'GATEWAY_CONTAINER_NAME="${{GATEWAY_CONTAINER_NAME:-{env["GATEWAY_CONTAINER_NAME"]}}}"',
+                      _read("stop.sh"))
+        self.assertIn("(`API_GATEWAY=1`)", _defaults_row("API gateway"))
+
+    def test_gateway_container_command(self) -> None:
+        container_env, dry_run, image_and_args = _harness()
+        res = dry_run()
+        self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
+        env = res["env"]
+        repo = Path(env["STUB_RUN_SH"]).parent
+        self.assertEqual(res["gateway"], [
+            "run", "-d", "--name", env["GATEWAY_CONTAINER_NAME"], "--restart", "on-failure:3", "--network", "host",
+            "--memory", "3g", "--cpus", "4",
+            "-v", "/dev/null:/usr/lib/python3.12/sitecustomize.py:ro",
+            "-v", f"{env['HOME']}/.cache/dsv41-gateway/{GATEWAY_SITE}:/opt/dsr:ro",
+            "-v", f"{repo}/gateway:/opt/dsv41-gateway:ro",
+            "-v", f"{env['HF_CACHE']}/hub:/cache/huggingface/hub:ro",
+            "-e", "PYTHONPATH=/opt/dsr", "-e", "PYTHONDONTWRITEBYTECODE=1", "-e", "MALLOC_MMAP_THRESHOLD_=131072",
+            "-e", f"DSV41_GATEWAY_UPSTREAM=http://127.0.0.1:{env['VLLM_PORT']}",
+            "-e", "DSV41_GATEWAY_MAX_MODEL_LEN=500000",
+            "-e", "DSV41_GATEWAY_STRICT=0", "-e", "DSV41_GATEWAY_BLOCK_PRIVATE_URLS=0",
+            "--entrypoint", "python3", IMAGE_TAG, "/opt/dsv41-gateway/dsv41_gateway.py",
+            "--host", "0.0.0.0", "--port", env["PORT"],
+            "--tokenizer", f"/cache/huggingface/hub/{HUB_DIRNAME}/snapshots/{HUB_REV}/tokenizer.json",
+            "--served-model-name", SERVED_NAME,
+        ])
+        # vLLM binds 127.0.0.1:VLLM_PORT. Both ranks get the token-in route and 21 logprobs, so they stay identical.
+        _, args = image_and_args(res["head"])
+        i = args.index("--host")
+        self.assertEqual(args[i : i + 4], ["--host", "127.0.0.1", "--port", env["VLLM_PORT"]])
+        for role in ("head", "worker"):
+            _, args = image_and_args(res[role])
+            self.assertEqual(container_env(res[role])["VLLM_ENABLE_SCALE_OUT_ENDPOINTS"], "1", role)
+            self.assertEqual(args[args.index("--max-logprobs") + 1], "21", role)
+        # The gateway starts once vLLM lists its model on VLLM_PORT; the readiness wait then goes through PORT.
+        curls = [(i, c["argv"][-1]) for i, c in enumerate(res["calls"]) if c["tool"] == "curl"]
+        vllm_ready = min(i for i, url in curls if url == f"http://127.0.0.1:{env['VLLM_PORT']}/v1/models")
+        gateway_polls = [i for i, url in curls if f"127.0.0.1:{env['PORT']}/" in url]
+        self.assertTrue(vllm_ready < _call_index(res, _is_gateway_run(res)) < min(gateway_polls))
+        self.assertIn(f"Ready → http://127.0.0.1:{env['PORT']}/v1", res["stdout"])
+
+    def test_api_gateway_0_is_the_legacy_topology(self) -> None:
+        """API_GATEWAY=0: vLLM on 0.0.0.0:PORT, no gateway. =1 differs from it by the gateway's items only."""
+        container_env, dry_run, image_and_args = _harness()
+        ports = {"PORT": str(_free_port()), "VLLM_PORT": str(_free_port())}
+        off, on = dry_run(API_GATEWAY="0", **ports), dry_run(**ports)
+        self.assertEqual((off["returncode"], on["returncode"]), (0, 0), off["stderr"] + on["stderr"])
+        self.assertIsNone(off["gateway"])
+        self.assertFalse([c for c in off["calls"] if c["tool"] == "curl" and f":{ports['VLLM_PORT']}/" in c["argv"][-1]])
+        _, args = image_and_args(off["head"])
+        i = args.index("--host")
+        self.assertEqual(args[i : i + 4], ["--host", "0.0.0.0", "--port", ports["PORT"]])
+
+        def norm(res: dict, role: str) -> list[str]:
+            return [a.replace(res["env"]["HOME"], "<home>") for a in res[role]]
+
+        def without_gateway_items(argv: list[str], head: bool) -> list[str]:
+            argv = list(argv)
+            i = argv.index("VLLM_ENABLE_SCALE_OUT_ENDPOINTS=1")
+            del argv[i - 1 : i + 1]
+            i = argv.index("--max-logprobs")
+            del argv[i : i + 2]
+            if head:
+                argv[argv.index("--host") + 1] = "0.0.0.0"
+                argv[argv.index("--port") + 1] = ports["PORT"]
+            return argv
+
+        for role in ("head", "worker"):
+            legacy = norm(off, role)
+            self.assertNotIn("VLLM_ENABLE_SCALE_OUT_ENDPOINTS=1", legacy, role)
+            self.assertNotIn("--max-logprobs", legacy, role)
+            self.assertEqual(without_gateway_items(norm(on, role), role == "head"), legacy, role)
+
+    def test_wheel_is_checked_before_it_is_unpacked(self) -> None:
+        _, dry_run, _ = _harness()
+        data, sha = _fake_wheel()
+        placed = {f".cache/dsv41-gateway/{GATEWAY_WHEEL}": data}
+        unpacked = {GATEWAY_WHEEL, f"{GATEWAY_SITE}/.sha256", f"{GATEWAY_SITE}/deepseek_recipe/__init__.py",
+                    f"{GATEWAY_SITE}/deepseek_recipe-0.2.0.dist-info/METADATA"}
+        # A wheel already in the cache: checked, unpacked, recorded and mounted; nothing fetched.
+        res = dry_run(gateway_site=False, home_files=placed, GATEWAY_WHEEL_SHA256=sha)
+        self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
+        self.assertEqual(set(res["gateway_cache"]), unpacked)
+        self.assertEqual(res["gateway_cache"][f"{GATEWAY_SITE}/.sha256"], f"{sha}\n".encode())
+        self.assertIn(f"{res['env']['HOME']}/.cache/dsv41-gateway/{GATEWAY_SITE}:/opt/dsr:ro", res["gateway"])
+        self.assertFalse([c for c in res["calls"] if c["tool"] == "curl" and "-o" in c["argv"]])
+        # Missing: fetched from GATEWAY_WHEEL_URL into a .part file, then checked and unpacked.
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / GATEWAY_WHEEL).write_bytes(data)
+            res = dry_run(gateway_site=False, GATEWAY_WHEEL_SHA256=sha, STUB_CURL_FILE=str(Path(d) / GATEWAY_WHEEL))
+        self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
+        part = f"{res['env']['HOME']}/.cache/dsv41-gateway/{GATEWAY_WHEEL}.part"
+        self.assertEqual([c["argv"] for c in res["calls"] if c["tool"] == "curl" and "-o" in c["argv"]],
+                         [["-fsSL", "--retry", "3", "-o", part, _recipe()["gateway"]["wheel_url"]]])
+        self.assertEqual(set(res["gateway_cache"]), unpacked)
+        # Not the pinned wheel: refused in the head's preflight, before any container or the worker copy.
+        res = dry_run(gateway_site=False, home_files=placed)
+        self.assertEqual(res["returncode"], 1, res["stdout"] + res["stderr"])
+        self.assertIn(f"has sha256 {sha}, not the pinned {GATEWAY_WHEEL_SHA256}. Not unpacking it", res["stderr"])
+        self.assertEqual(set(res["gateway_cache"]), {GATEWAY_WHEEL})
+        self.assertEqual((res["head"], res["worker"], res["gateway"], res["scp"]), (None, None, None, []))
+        # SKIP_DOWNLOAD=1 never fetches.
+        res = dry_run(gateway_site=False, SKIP_DOWNLOAD="1")
+        self.assertEqual(res["returncode"], 1, res["stdout"] + res["stderr"])
+        self.assertIn("SKIP_DOWNLOAD=1 and the gateway wheel", res["stderr"])
+        self.assertFalse([c for c in res["calls"] if c["tool"] == "curl"])
+        self.assertIsNone(res["head"])
+        # A dir unpacked from another wheel is refused, not reused.
+        stale = {f".cache/dsv41-gateway/{GATEWAY_SITE}/.sha256": b"0" * 64 + b"\n"}
+        res = dry_run(gateway_site=False, home_files=stale)
+        self.assertEqual(res["returncode"], 1, res["stdout"] + res["stderr"])
+        self.assertIn(f"unpacked from a wheel with sha256 {'0' * 64}, not the pinned", res["stderr"])
+        self.assertIsNone(res["head"])
+
+    def test_gateway_failures_clean_up_like_the_head(self) -> None:
+        _, dry_run, _ = _harness()
+        port = str(_free_port())
+        for stub, reason in (({"STUB_GATEWAY_EXITS": "1"}, "Container exited early: dsv41-dryrun-gateway"),
+                             ({}, "Timed out waiting for API")):
+            res = dry_run(PORT=port, STUB_CURL_FAIL_PORT=port, STUB_LOGS_GATEWAY="gateway traceback", **stub)
+            self.assertEqual(res["returncode"], 1, res["stdout"] + res["stderr"])
+            self.assertIn(reason, res["stderr"])
+            self.assertIn("gateway traceback", res["stderr"])
+            self.assertEqual([t for n, t in res["run_state"].items() if n.startswith("gateway-")], ["gateway traceback\n"])
+            self.assertTrue(any(n.startswith("head-") for n in res["run_state"]), sorted(res["run_state"]))
+            for role, name in (("head", res["env"]["GATEWAY_CONTAINER_NAME"]), ("head", res["env"]["CONTAINER_NAME"]),
+                               ("worker", res["env"]["CONTAINER_NAME"])):
+                self.assertTrue(any(name in a for a in _docker(res, role, "rm")), (role, name))
+        # Never healthy: a minute (12 polls 5 s apart) after vLLM was ready.
+        polls = [c for c in res["calls"] if c["tool"] == "curl" and c["argv"][-1] == f"http://127.0.0.1:{port}/health"]
+        self.assertEqual(len(polls), 12)
+
+    def test_busy_vllm_port_is_refused_before_anything_starts(self) -> None:
+        _, dry_run, _ = _harness()
+        with socket.socket() as s:
+            s.bind(("127.0.0.1", 0))
+            s.listen(1)
+            busy = str(s.getsockname()[1])
+            res = dry_run(VLLM_PORT=busy)
+            self.assertEqual(res["returncode"], 1, res["stdout"] + res["stderr"])
+            self.assertIn(f"Port {busy} is already in use", res["stderr"])
+            self.assertEqual((res["head"], res["worker"], res["gateway"]), (None, None, None))
+            res = dry_run(VLLM_PORT=busy, API_GATEWAY="0")  # vLLM is on PORT then
+            self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
+
+    def test_a_gateway_left_from_an_earlier_boot_cannot_block_the_next_boot(self) -> None:
+        """Docker restarts a crashed or OOM-killed gateway (on-failure:3), so one can outlive its head. It is ours
+        (its image env names NVIDIA; not a foreign GPU serve), and without its head it serves nothing: the next
+        ./run.sh removes it before the port check. With the head up the serve is live: refused, nothing removed."""
+        _, dry_run, _ = _harness()
+        import run_sh_harness as h
+
+        inspect = 'null null ["NVIDIA_VISIBLE_DEVICES=all"]'
+        res = dry_run(running={"head": [h.GATEWAY]}, STUB_INSPECT=inspect)
+        self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
+        self.assertIn(f"Removing {h.GATEWAY} left from an earlier boot", res["stdout"])
+        rm = _call_index(res, lambda c: c["tool"] == "docker" and c["argv"][:2] == ["rm", "-f"] and h.GATEWAY in c["argv"])
+        preflight = _call_index(res, lambda c: c["tool"] == "ssh" and "PREFLIGHT_ONLY=1" in " ".join(c["argv"]))
+        self.assertTrue(0 <= rm < preflight < _call_index(res, _is_gateway_run(res)), (rm, preflight))
+        with socket.socket() as s:  # a live vLLM behind it
+            s.bind(("127.0.0.1", 0))
+            s.listen(1)
+            vllm = str(s.getsockname()[1])
+            res = dry_run(running={"head": [h.CONTAINER, h.GATEWAY]}, STUB_INSPECT=inspect, VLLM_PORT=vllm)
+        self.assertEqual(res["returncode"], 1, res["stdout"] + res["stderr"])
+        self.assertIn(f"Port {vllm} is already in use", res["stderr"])
+        self.assertEqual(_docker(res, "head", "rm"), [], "a live serve's gateway is not removed")
+        res = dry_run(running={"head": ["someone-elses-vllm"]}, STUB_INSPECT=inspect)
+        self.assertEqual(res["returncode"], 1, res["stdout"] + res["stderr"])
+        self.assertIn("someone-elses-vllm is using GPUs", res["stderr"])
+
+    def test_validate_only_checks_the_gateway_knobs(self) -> None:
+        proc = _run_sh(API_GATEWAY="2")
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("API_GATEWAY=2 (want 1", proc.stderr)
+        proc = _run_sh(PORT="8001", VLLM_PORT="8001")
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("VLLM_PORT=8001 is PORT", proc.stderr)
+        self.assertEqual(_run_sh(PORT="8001", VLLM_PORT="8001", API_GATEWAY="0").returncode, 0)
+
+    def test_stop_sh_removes_the_gateway_then_the_head(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            log = Path(d) / "docker.log"
+            stub = Path(d) / "docker"
+            stub.write_text('#!/bin/sh\necho "$*" >>"$STUB_DOCKER_LOG"\n'
+                            '[ "$1" = ps ] && printf "dsv41-flash-exl3\\ndsv41-api-gateway\\n"\nexit 0\n')
+            stub.chmod(0o755)
+            env = _env(PATH=f"{d}{os.pathsep}{os.environ['PATH']}", ORCHESTRATE="0", STUB_DOCKER_LOG=str(log))
+            env.pop("CONTAINER_NAME", None)
+            env.pop("GATEWAY_CONTAINER_NAME", None)
+            proc = subprocess.run(_script("stop.sh"), capture_output=True, text=True, cwd=str(ROOT), env=env)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            rms = [line for line in log.read_text().splitlines() if line.startswith("rm ")]
+        self.assertEqual(rms, ["rm -f dsv41-api-gateway", "rm -f dsv41-flash-exl3"])
+        self.assertIn("Stopped local dsv41-api-gateway", proc.stdout)
+
+
 class RecipeOpsTests(unittest.TestCase):
+    def test_real_stop_sh_runs_never_name_the_live_gateway(self) -> None:
+        # A suite run on a host with a live serve once removed its gateway (stop.sh run for real, gateway name unset).
+        self.assertEqual(_env()["GATEWAY_CONTAINER_NAME"], "dsv41-ops-test-gateway")
+        self.assertNotEqual(_env()["GATEWAY_CONTAINER_NAME"], _recipe()["serve"]["env"]["GATEWAY_CONTAINER_NAME"])
+
     def test_stop_sh_ssh_probe_has_else_exit_1(self) -> None:
         stop = _read("stop.sh")
         self.assertRegex(
@@ -822,6 +1115,8 @@ class RecipeOpsTests(unittest.TestCase):
         self.assertEqual(res["returncode"], 0, res["stdout"] + res["stderr"])
         image, args = image_and_args(res["head"])
         effective = container_env(res["head"])
+        # The API gateway: its container's env, and whether run.sh started it.
+        effective.update(container_env(res["gateway"] or []), API_GATEWAY="1" if res["gateway"] else "0")
         effective.update(
             IMAGE=image,
             SNAPSHOT_SHA=Path(args[1]).name,

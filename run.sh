@@ -8,6 +8,14 @@ SERVED_NAME="${SERVED_NAME:-deepseek-ai/DeepSeek-V4.1-Flash-1017}"
 IMAGE="${IMAGE:-dsv41-flash-exl3-sm121:e16-rows}"
 CONTAINER_NAME="${CONTAINER_NAME:-dsv41-flash-exl3}"
 PORT="${PORT:-8000}"
+API_GATEWAY="${API_GATEWAY:-1}"
+VLLM_PORT="${VLLM_PORT:-8001}"
+GATEWAY_CONTAINER_NAME="${GATEWAY_CONTAINER_NAME:-dsv41-api-gateway}"
+GATEWAY_MEMORY="${GATEWAY_MEMORY:-3g}"
+GATEWAY_WHEEL_URL="${GATEWAY_WHEEL_URL:-https://files.pythonhosted.org/packages/13/57/56cbc6d4084460ed5866804c775c9cff7919e2567c71a5e3e0bc8cc2fabd/deepseek_recipe-0.2.0-cp310-abi3-manylinux_2_28_aarch64.whl}"
+GATEWAY_WHEEL_SHA256="${GATEWAY_WHEEL_SHA256:-7c31fa6ed6ff8319670fa6efdf682e724f4e78f76218f6d08dfc4c0d6f47a071}"
+DSV41_GATEWAY_STRICT="${DSV41_GATEWAY_STRICT:-0}"
+DSV41_GATEWAY_BLOCK_PRIVATE_URLS="${DSV41_GATEWAY_BLOCK_PRIVATE_URLS:-0}"
 MASTER_PORT="${MASTER_PORT:-29524}"
 HEAD_IP="${HEAD_IP:-10.100.8.1}"
 WORKER_HOST="${WORKER_HOST:-spark2}"
@@ -104,6 +112,9 @@ PATCH_DIR="${DSV41_PATCH_DIR:-$SCRIPT_DIR/docker/patch}"
 RUN_STATE="$SCRIPT_DIR/.run-state"
 # Worker copy of PATCH_DIR, relative to the worker's $HOME: per-user, not a shared /tmp name.
 WORKER_PATCH_DIR=".cache/dsv41-patch"
+# API gateway (API_GATEWAY=1, head only): its source, and where the deepseek-recipe wheel is unpacked.
+GATEWAY_DIR="$SCRIPT_DIR/gateway"
+GATEWAY_CACHE="$HOME/.cache/dsv41-gateway"
 
 # Container env for BOTH ranks: `docker run -e` below and the worker ssh line.
 # NAME=default; an empty value is not passed (unset in the container). Names
@@ -248,6 +259,18 @@ for fwd in "${FORWARD_ENVS[@]}"; do
   fi
 done
 
+# Gateway container env (API_GATEWAY=1, head only), never the vLLM ranks'. Every env a gateway/*.py file
+# reads must be listed (tests check it). The upstream and the window follow VLLM_PORT and MAX_MODEL_LEN;
+# the other two take their defaults from the generated block.
+GATEWAY_ENVS=(
+  DSV41_GATEWAY_UPSTREAM
+  DSV41_GATEWAY_MAX_MODEL_LEN
+  DSV41_GATEWAY_STRICT
+  DSV41_GATEWAY_BLOCK_PRIVATE_URLS
+)
+DSV41_GATEWAY_UPSTREAM="http://127.0.0.1:$VLLM_PORT"
+DSV41_GATEWAY_MAX_MODEL_LEN="$MAX_MODEL_LEN"
+
 # Hub download writes a commit hash in refs/<rev>. Files live in snapshots/<commit>/.
 # Assembled packs live at snapshots/<rev>/ with no refs file. Prefer refs when both exist.
 resolve_snapshot() {
@@ -366,6 +389,24 @@ case "$AUDIT" in
     exit 1
     ;;
 esac
+case "$API_GATEWAY" in
+  0 | 1) ;;
+  *)
+    echo "API_GATEWAY=$API_GATEWAY (want 1, the DeepSeek API gateway on PORT in front of vLLM on 127.0.0.1:VLLM_PORT, or 0, vLLM on PORT)" >&2
+    exit 1
+    ;;
+esac
+# vLLM's API server: 0.0.0.0:PORT, or 127.0.0.1:VLLM_PORT behind the gateway.
+VLLM_API_HOST=0.0.0.0
+VLLM_API_PORT="$PORT"
+if [[ "$API_GATEWAY" == 1 ]]; then
+  if [[ "$VLLM_PORT" == "$PORT" ]]; then
+    echo "VLLM_PORT=$VLLM_PORT is PORT. With API_GATEWAY=1 the gateway listens on PORT and vLLM on 127.0.0.1:VLLM_PORT." >&2
+    exit 1
+  fi
+  VLLM_API_HOST=127.0.0.1
+  VLLM_API_PORT="$VLLM_PORT"
+fi
 
 # Cudagraph capture sizes match the verify batch: {1} + {s*k, s*(k+1)} for s in 1..MAX_NUM_SEQS.
 # k=3, 4 seqs gives [1,3,4,6,8,9,12,16]; 2 seqs gave [1,3,4,6,8] (R16: +5.5% vs padded k5-era sizes).
@@ -481,10 +522,50 @@ ensure_weights() {
   fi
 }
 
+# deepseek-recipe for the gateway (API_GATEWAY=1, head only): the pinned wheel, sha256-checked before it is
+# unpacked into a versioned dir that the gateway mounts read-only. A wheel already in GATEWAY_CACHE is
+# checked, not fetched; SKIP_DOWNLOAD=1 never fetches. .sha256 in the dir records the wheel it came from.
+ensure_gateway() {
+  [[ "$API_GATEWAY" == 1 ]] || return 0
+  local whl="${GATEWAY_WHEEL_URL##*/}" got
+  GATEWAY_SITE="$GATEWAY_CACHE/$(cut -d- -f1-2 <<<"$whl")"
+  if [[ ! -f "$GATEWAY_DIR/dsv41_gateway.py" ]]; then
+    echo "API_GATEWAY=1 needs $GATEWAY_DIR/dsv41_gateway.py. API_GATEWAY=0 serves vLLM on port $PORT without it." >&2
+    exit 1
+  fi
+  if [[ -d "$GATEWAY_SITE" ]]; then
+    got="$(cat "$GATEWAY_SITE/.sha256" 2>/dev/null || true)"
+    [[ "$got" == "$GATEWAY_WHEEL_SHA256" ]] && return 0
+    echo "$GATEWAY_SITE was unpacked from a wheel with sha256 ${got:-unknown}, not the pinned $GATEWAY_WHEEL_SHA256. Remove it and run again." >&2
+    exit 1
+  fi
+  mkdir -p "$GATEWAY_CACHE"
+  if [[ ! -f "$GATEWAY_CACHE/$whl" ]]; then
+    if [[ "$SKIP_DOWNLOAD" == 1 ]]; then
+      echo "SKIP_DOWNLOAD=1 and the gateway wheel $GATEWAY_CACHE/$whl is missing. Put it there ($GATEWAY_WHEEL_URL, sha256 $GATEWAY_WHEEL_SHA256), run once without SKIP_DOWNLOAD, or set API_GATEWAY=0." >&2
+      exit 1
+    fi
+    log "Downloading $GATEWAY_WHEEL_URL"
+    curl -fsSL --retry 3 -o "$GATEWAY_CACHE/$whl.part" "$GATEWAY_WHEEL_URL"
+    mv "$GATEWAY_CACHE/$whl.part" "$GATEWAY_CACHE/$whl"
+  fi
+  got="$(sha256sum "$GATEWAY_CACHE/$whl" | cut -d' ' -f1)"
+  if [[ "$got" != "$GATEWAY_WHEEL_SHA256" ]]; then
+    echo "$GATEWAY_CACHE/$whl has sha256 $got, not the pinned $GATEWAY_WHEEL_SHA256. Not unpacking it; delete it to download again." >&2
+    exit 1
+  fi
+  rm -rf "$GATEWAY_SITE.tmp"
+  python3 -m zipfile -e "$GATEWAY_CACHE/$whl" "$GATEWAY_SITE.tmp"
+  printf '%s\n' "$got" >"$GATEWAY_SITE.tmp/.sha256"
+  mv -T "$GATEWAY_SITE.tmp" "$GATEWAY_SITE"
+  log "Unpacked $whl into $GATEWAY_SITE"
+}
+
 refuse_foreign_serve() {
   local name devices
   while IFS= read -r name; do
-    [[ -z "$name" || "$name" == "$CONTAINER_NAME" ]] && continue
+    # The gateway runs from the serve image, whose env names NVIDIA: skip it like the head container.
+    [[ -z "$name" || "$name" == "$CONTAINER_NAME" || "$name" == "$GATEWAY_CONTAINER_NAME" ]] && continue
     devices="$(docker inspect -f '{{json .HostConfig.DeviceRequests}} {{json .HostConfig.Devices}} {{json .Config.Env}}' "$name" 2>/dev/null || true)"
     if printf '%s' "$devices" | grep -Eqi 'gpu|nvidia|infiniband'; then
       echo "$name is using GPUs or InfiniBand. This recipe needs exclusive GPUs on both Sparks. Do not start. Do not docker rm that container from this script." >&2
@@ -494,10 +575,25 @@ refuse_foreign_serve() {
 }
 
 refuse_busy_port() {
-  if (echo >/dev/tcp/127.0.0.1/"$PORT") >/dev/null 2>&1; then
-    echo "Port $PORT is already in use. If it is this recipe's serve, stop it first: ./stop.sh" >&2
-    exit 1
+  local port
+  for port in "$PORT" "$VLLM_API_PORT"; do
+    if (echo >/dev/tcp/127.0.0.1/"$port") >/dev/null 2>&1; then
+      echo "Port $port is already in use. If it is this recipe's serve, stop it first: ./stop.sh" >&2
+      exit 1
+    fi
+  done
+}
+
+# A gateway left from an earlier boot serves nothing once that boot's head container is gone, yet it
+# holds PORT (Docker restarts it after a crash or an OOM kill): remove it before the port check. With the
+# head running the serve is up, and refuse_busy_port refuses as before.
+remove_orphan_gateway() {
+  docker ps -a --format '{{.Names}}' | grep -qx -- "$GATEWAY_CONTAINER_NAME" || return 0
+  if docker ps --format '{{.Names}}' | grep -qx -- "$CONTAINER_NAME"; then
+    return 0
   fi
+  log "Removing $GATEWAY_CONTAINER_NAME left from an earlier boot ($CONTAINER_NAME is not running)"
+  docker rm -f "$GATEWAY_CONTAINER_NAME" >/dev/null
 }
 
 stop_local() {
@@ -550,6 +646,14 @@ start_local() {
       env_args+=(-e "$fwd_name=${!fwd_name}")
     fi
   done
+  # API gateway: vLLM's token-in/token-out route (/inference/v1/generate). Both ranks, so their env stays
+  # identical: the headless worker builds no API server, and vLLM leaves this env out of its compile hash.
+  local gateway_args=()
+  if [[ "$API_GATEWAY" == 1 ]]; then
+    env_args+=(-e "VLLM_ENABLE_SCALE_OUT_ENDPOINTS=1")
+    # The gateway asks for N+1 logprobs, so the API's top_logprobs 20 stays exact (vLLM's default cap: 20).
+    gateway_args+=(--max-logprobs 21)
+  fi
   local host_ip="$HEAD_IP"
   if [[ "$rank" != "0" ]]; then
     host_ip="$(ip -4 -o addr show "$IFACE" 2>/dev/null | awk '{print $4}' | cut -d/ -f1 | head -1)"
@@ -559,7 +663,7 @@ start_local() {
 
   local rank_args=()
   if [[ "$rank" == "0" ]]; then
-    rank_args+=(--host 0.0.0.0 --port "$PORT")
+    rank_args+=(--host "$VLLM_API_HOST" --port "$VLLM_API_PORT")
   else
     rank_args+=(--headless)
   fi
@@ -669,6 +773,7 @@ start_local() {
     --exclude-tools-when-tool-choice-none \
     --structured-outputs-config '{"backend":"xgrammar"}' \
     --enable-prompt-tokens-details \
+    "${gateway_args[@]}" \
     "${load_args[@]}" \
     --served-model-name "$SERVED_NAME" \
     --trust-remote-code \
@@ -708,10 +813,24 @@ fail_worker_exited() {
   exit 1
 }
 
+# Save a local container's logs to .run-state/<label>-<ts>.log, then remove it.
+remove_local_with_logs() {
+  local name="$1" label="$2" saved
+  docker ps -a --format '{{.Names}}' | grep -qx -- "$name" || return 0
+  saved="$RUN_STATE/$label-$(date +%Y%m%d-%H%M%S).log"
+  mkdir -p "$RUN_STATE"
+  docker logs "$name" >"$saved" 2>&1 || true
+  echo "${label^} logs saved to $saved. Removing $name here." >&2
+  docker rm -f "$name" >/dev/null 2>&1 \
+    || echo "Could not remove $name here. Run ./stop.sh." >&2
+}
+
 # EXIT trap while the head is starting: keep both ranks' logs, then remove
 # both containers so a failed boot does not leave a 97.73 GiB rank loaded on
 # either node (a started head keeps waiting on the rendezvous otherwise).
+# The gateway, if it started, goes the same way.
 HEAD_STARTED=0
+GATEWAY_STARTED=0
 cleanup_worker_on_failure() {
   local rc=$?
   trap - EXIT
@@ -720,14 +839,11 @@ cleanup_worker_on_failure() {
     save_worker_logs
     worker_ssh "docker rm -f $(printf '%q' "$CONTAINER_NAME")" >/dev/null 2>&1 \
       || echo "Could not remove $CONTAINER_NAME on $WORKER_HOST. Run ./stop.sh." >&2
-    if [[ "$HEAD_STARTED" == 1 ]] && docker ps -a --format '{{.Names}}' | grep -qx -- "$CONTAINER_NAME"; then
-      local head_log
-      head_log="$RUN_STATE/head-$(date +%Y%m%d-%H%M%S).log"
-      mkdir -p "$RUN_STATE"
-      docker logs "$CONTAINER_NAME" >"$head_log" 2>&1 || true
-      echo "Head logs saved to $head_log. Removing $CONTAINER_NAME here." >&2
-      docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 \
-        || echo "Could not remove $CONTAINER_NAME here. Run ./stop.sh." >&2
+    if [[ "$HEAD_STARTED" == 1 ]]; then
+      remove_local_with_logs "$CONTAINER_NAME" head
+    fi
+    if [[ "$GATEWAY_STARTED" == 1 ]]; then
+      remove_local_with_logs "$GATEWAY_CONTAINER_NAME" gateway
     fi
   fi
   exit "$rc"
@@ -752,22 +868,23 @@ wait_worker_launch() {
   log "No '$WORKER_LAUNCH_MARK' in the worker log after 120s. Starting head anyway."
 }
 
+# Wait for 127.0.0.1:$1/health and /v1/models (listing SERVED_NAME) while container $2 runs: $3 polls 5 s apart.
 wait_ready() {
-  log "Waiting for http://127.0.0.1:${PORT}/health and /v1/models"
-  local i body st
-  for i in $(seq 1 720); do
-    if curl -sf "http://127.0.0.1:${PORT}/health" >/dev/null 2>&1; then
-      body="$(curl -sf "http://127.0.0.1:${PORT}/v1/models" || true)"
+  local port="$1" name="$2" polls="$3" i body st
+  log "Waiting for http://127.0.0.1:${port}/health and /v1/models"
+  for i in $(seq 1 "$polls"); do
+    if curl -sf "http://127.0.0.1:${port}/health" >/dev/null 2>&1; then
+      body="$(curl -sf "http://127.0.0.1:${port}/v1/models" || true)"
       if [[ -n "$body" && "$body" == *"$SERVED_NAME"* ]]; then
-        log "Ready → http://127.0.0.1:${PORT}/v1  (context=$MAX_MODEL_LEN)"
+        log "Ready → http://127.0.0.1:${port}/v1  (context=$MAX_MODEL_LEN)"
         printf '%s\n' "$body"
         echo
         return 0
       fi
     fi
-    if ! docker ps --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
-      echo "Container exited early. Logs:" >&2
-      docker logs "$CONTAINER_NAME" 2>&1 | tail -120 >&2
+    if ! docker ps --format '{{.Names}}' | grep -qx "$name"; then
+      echo "Container exited early: $name. Logs:" >&2
+      docker logs "$name" 2>&1 | tail -120 >&2
       exit 1
     fi
     if [[ "$WORKER_STARTED" == 1 ]] && (( i % 12 == 0 )); then
@@ -779,18 +896,60 @@ wait_ready() {
     fi
     sleep 5
     if (( i % 12 == 0 )); then
-      log "still loading… (${i}×5s) — docker logs -f $CONTAINER_NAME"
+      log "still loading… (${i}×5s) — docker logs -f $name"
     fi
   done
   echo "Timed out waiting for API. Recent logs:" >&2
-  docker logs "$CONTAINER_NAME" 2>&1 | tail -120 >&2
+  docker logs "$name" 2>&1 | tail -120 >&2
   exit 1
 }
 
-# Grep both ranks' logs for the engagement markers kept next to each patch.
+# API_GATEWAY=1, once vLLM answers on 127.0.0.1:VLLM_PORT: the DeepSeek API gateway on PORT, from the serve
+# image without its sitecustomize (that imports vLLM and torch). Read-only mounts: the gateway source, the
+# unpacked wheel (PYTHONPATH) and the HF hub at the head's container path, so the pack's tokenizer.json
+# symlink resolves (the hub only: the cache's token file stays out). No GPU. The memory cap bounds image
+# bursts; Docker restarts a gateway that crashes or is OOM-killed, at most 3 times (never at daemon start).
+# Its /health is 200 only while vLLM's is; a gateway that is not ready within a minute fails the boot.
+start_gateway() {
+  [[ "$API_GATEWAY" == 1 ]] || return 0
+  ensure_gateway
+  # A fixed mmap threshold returns large freed buffers (decoded images) to the OS: with glibc's dynamic threshold
+  # the gateway kept ~680 MiB after three 6-image requests, with this ~100 MiB.
+  local env_args=(-e PYTHONPATH=/opt/dsr -e PYTHONDONTWRITEBYTECODE=1 -e MALLOC_MMAP_THRESHOLD_=131072) name
+  for name in "${GATEWAY_ENVS[@]}"; do
+    env_args+=(-e "$name=${!name}")
+  done
+  if docker ps -a --format '{{.Names}}' | grep -qx "$GATEWAY_CONTAINER_NAME"; then
+    log "Removing existing container $GATEWAY_CONTAINER_NAME"
+    docker rm -f "$GATEWAY_CONTAINER_NAME" >/dev/null
+  fi
+  GATEWAY_STARTED=1
+  log "Starting $GATEWAY_CONTAINER_NAME: the DeepSeek API on port $PORT in front of $DSV41_GATEWAY_UPSTREAM"
+  docker run -d \
+    --name "$GATEWAY_CONTAINER_NAME" \
+    --restart on-failure:3 \
+    --network host \
+    --memory "$GATEWAY_MEMORY" \
+    --cpus 4 \
+    -v /dev/null:/usr/lib/python3.12/sitecustomize.py:ro \
+    -v "$GATEWAY_SITE:/opt/dsr:ro" \
+    -v "$GATEWAY_DIR:/opt/dsv41-gateway:ro" \
+    -v "$HF_CACHE/hub:$HF_HOME_IN_CONTAINER/hub:ro" \
+    "${env_args[@]}" \
+    --entrypoint python3 \
+    "$IMAGE" \
+    /opt/dsv41-gateway/dsv41_gateway.py \
+    --host 0.0.0.0 \
+    --port "$PORT" \
+    --tokenizer "$SNAPSHOT_IN_CONTAINER/tokenizer.json" \
+    --served-model-name "$SERVED_NAME"
+  wait_ready "$PORT" "$GATEWAY_CONTAINER_NAME" 12
+}
+
+# Grep both ranks' logs (and the gateway's) for the engagement markers kept next to each patch.
 audit_engagement() {
   [[ "$AUDIT" == off ]] && return 0
-  local ts name logs=() envs=(ENFORCE_EAGER="$ENFORCE_EAGER")
+  local ts name logs=() envs=(ENFORCE_EAGER="$ENFORCE_EAGER" API_GATEWAY="$API_GATEWAY")
   ts="$(date +%Y%m%d-%H%M%S)"
   mkdir -p "$RUN_STATE"
   docker logs "$CONTAINER_NAME" >"$RUN_STATE/audit-head-$ts.log" 2>&1 || true
@@ -798,6 +957,10 @@ audit_engagement() {
   if [[ "$WORKER_STARTED" == 1 ]]; then
     worker_ssh "docker logs $(printf '%q' "$CONTAINER_NAME")" >"$RUN_STATE/audit-worker-$ts.log" 2>&1 || true
     logs+=("worker=$RUN_STATE/audit-worker-$ts.log")
+  fi
+  if [[ "$API_GATEWAY" == 1 ]]; then
+    docker logs "$GATEWAY_CONTAINER_NAME" >"$RUN_STATE/audit-gateway-$ts.log" 2>&1 || true
+    logs+=("gateway=$RUN_STATE/audit-gateway-$ts.log")
   fi
   for name in "${FORWARD_ENVS[@]%%=*}"; do
     envs+=("$name=${!name:-}")
@@ -832,6 +995,7 @@ log "role=$ROLE host=$(host_short)"
 
 if [[ "$ORCHESTRATE" == "auto" && "$ROLE" == "head" ]]; then
   refuse_foreign_serve
+  remove_orphan_gateway
   refuse_busy_port
   if [[ "$NNODES" -gt 1 ]]; then
     if ! command -v ssh >/dev/null 2>&1 || ! ssh -o BatchMode=yes -o ConnectTimeout=5 "$WORKER_HOST" true >/dev/null 2>&1; then
@@ -845,7 +1009,7 @@ if [[ "$ORCHESTRATE" == "auto" && "$ROLE" == "head" ]]; then
       SERVED_NAME SKIP_DOWNLOAD SPEC SPEC_CONFIG NUM_SPECULATIVE_TOKENS ENFORCE_EAGER
       COMPILATION_CONFIG MAX_NUM_BATCHED_TOKENS FORCE_UNSAFE_CTX FORCE_UNSAFE_ENGRAM
       FORCE_UNSAFE_QUANT LOAD_FORMAT QUANTIZATION SNAPSHOT_SHA HF_CACHE MODEL EXTRA_ARGS
-      MM_PROCESSOR_CACHE_GB PREFIX_CACHE_RETENTION_INTERVAL
+      MM_PROCESSOR_CACHE_GB PREFIX_CACHE_RETENTION_INTERVAL API_GATEWAY VLLM_PORT
     )
     worker_env="ROLE=worker ORCHESTRATE=0 DSV41_PATCH_DIR=\$HOME/$WORKER_PATCH_DIR"
     for name in "${worker_config[@]}" "${FORWARD_ENVS[@]%%=*}"; do
@@ -853,10 +1017,11 @@ if [[ "$ORCHESTRATE" == "auto" && "$ROLE" == "head" ]]; then
     done
     # The head turned the tiers into SPEC_CONFIG and COMPILATION_CONFIG above; the worker takes those as they are.
     worker_env+=" NUM_SPECULATIVE_TOKENS_PER_BATCH=0"
-    # Preflight both nodes (image, weights, EXL3 config) before any container starts.
+    # Preflight both nodes (image, weights, EXL3 config; the gateway's wheel on the head) before any container starts.
     log "Preflight $(host_short)"
     ensure_image
     ensure_weights
+    ensure_gateway
     scp -q "$0" "${WORKER_HOST}:/tmp/dsv41-exl3-run.sh"
     log "Preflight $WORKER_HOST"
     if ! ssh "$WORKER_HOST" "$worker_env PREFLIGHT_ONLY=1 bash /tmp/dsv41-exl3-run.sh"; then
@@ -876,7 +1041,8 @@ if [[ "$ORCHESTRATE" == "auto" && "$ROLE" == "head" ]]; then
   fi
   HEAD_STARTED=1
   start_local 0
-  wait_ready
+  wait_ready "$VLLM_API_PORT" "$CONTAINER_NAME" 720
+  start_gateway
   trap - EXIT INT
   audit_engagement
   warmup
@@ -886,7 +1052,8 @@ elif [[ "$ROLE" == "worker" ]]; then
   log "Worker rank 1 is up. Head should start next."
 else
   start_local 0
-  wait_ready
+  wait_ready "$VLLM_API_PORT" "$CONTAINER_NAME" 720
+  start_gateway
   audit_engagement
   warmup
   log "Stop with: ./stop.sh"
