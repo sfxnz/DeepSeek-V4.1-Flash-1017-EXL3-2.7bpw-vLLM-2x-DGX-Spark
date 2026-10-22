@@ -36,8 +36,15 @@ Chat requests use chat_template_kwargs {thinking: false, reasoning_effort:
 low} except gsm8k_think. Concurrency never exceeds 2 (the c2 component); nll,
 decode, selfcons and needle run at c=1. Never run this next to a bench.
 
+--api runs the API-parity components against the dsv41 API gateway instead
+(tests/api_eval.py: render toolflow reasoning structured stream messages
+responses errors). They send DeepSeek API request shapes and compare with
+deepseek-recipe 0.2.0. Their `invariants` are gated absolutely, their rates
+with the Wilson rule against a baseline.
+
   python3 tests/quality_eval.py --quick --out q.json
   python3 tests/quality_eval.py --full --baseline results/2026-10-18-1017/quality-baseline/full.json
+  python3 tests/quality_eval.py --api --out api.json
   python3 tests/quality_eval.py --result armB.json --baseline armA.json   # offline re-gate
 """
 
@@ -92,6 +99,7 @@ SELFCONS_PROMPTS = [
 
 QUICK = ["nll", "decode", "tools", "needle", "selfcons", "c2", "vision"]
 FULL = QUICK + ["gsm8k", "gsm8k_think", "mmlu"]
+API = ["render", "toolflow", "reasoning", "structured", "stream", "messages", "responses", "errors"]
 NEEDLE_LENGTHS = {"quick": (8192, 32768), "full": (8192, 32768, 131072)}
 
 GATE_RULES = {
@@ -105,6 +113,8 @@ GATE_RULES = {
     "selfcons.aa": "A/A hazard <= 2 * max(base aa_hazard, 0.005)",
     "rate": "Wilson 95% upper bound of (k+1)/n >= base rate (one item of slack)",
     "needle": "found count >= base found count on shared cells",
+    "api.invariants": "no violation of a deterministic API-parity check (render IDs vs deepseek-recipe, "
+                      "response shape, stream structure, gateway path, 400 text)",
 }
 
 
@@ -118,7 +128,9 @@ def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
     den = 1 + z * z / n
     mid = (p + z * z / (2 * n)) / den
     half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / den
-    return max(0.0, mid - half), min(1.0, mid + half)
+    # Round off float noise: k == n must give exactly 1.0 (n=6 gave 1 - 1e-16,
+    # which failed a 100% run against a 100% baseline).
+    return max(0.0, round(mid - half, 12)), min(1.0, round(mid + half, 12))
 
 
 def rate(k: int, n: int) -> dict:
@@ -336,6 +348,10 @@ def gates(cur: dict, base: dict | None) -> list[dict]:
         add("vision", comps["vision"]["pass"], comps["vision"].get("content"), "red", "vision")
     if "pass" in comps.get("c2", {}):
         add("c2", comps["c2"]["pass"], comps["c2"].get("answers"), None, "c2")
+    for name in API:
+        bad = _get(comps, f"{name}.invariants")
+        if bad is not None:
+            add(f"{name}.invariants", not bad, len(bad), 0, "api.invariants")
     if not base:
         return rows
     bc = base.get("components", {})
@@ -360,7 +376,9 @@ def gates(cur: dict, base: dict | None) -> list[dict]:
     if v is not None and b_aa is not None:
         add("selfcons.aa_hazard", v <= lim, v, round(lim, 5), "selfcons.aa")
     for path in ("tools.json_valid", "tools.exact_args", "tools.no_call",
-                 "gsm8k.acc", "gsm8k_think.acc", "mmlu.acc"):
+                 "gsm8k.acc", "gsm8k_think.acc", "mmlu.acc",
+                 "toolflow.acc", "reasoning.acc", "structured.acc", "stream.text_equal",
+                 "messages.acc", "responses.acc"):
         v, b = _get(comps, path), _get(bc, path)
         if v and b and v.get("n") and b.get("n"):
             # One item of slack: at a 100% baseline the plain upper bound
@@ -644,19 +662,29 @@ def provenance(c: Client) -> dict:
 
 
 def run_components(args, comps: list[str], mode_name: str) -> dict:
+    import api_eval as api  # imports this module by name; see __main__ below
+
     c = Client(args.url, args.model)
     nonce = f"{time.time_ns() % 10**9:09d}"
     runners = {
         "nll": lambda: run_nll(c, repeats=2 if args.full else 1),
         "decode": lambda: run_decode(c),
         "tools": lambda: run_tools(c),
-        "needle": lambda: run_needle(c, NEEDLE_LENGTHS[mode_name], nonce),
+        "needle": lambda: run_needle(c, NEEDLE_LENGTHS["full" if args.full else "quick"], nonce),
         "selfcons": lambda: run_selfcons(c),
         "c2": lambda: run_c2(c),
         "vision": lambda: run_vision(c),
         "gsm8k": lambda: run_gsm(c, 100, think=False),
         "gsm8k_think": lambda: run_gsm(c, 40, think=True),
         "mmlu": lambda: run_mmlu(c),
+        "render": lambda: api.run_render(c),
+        "toolflow": lambda: api.run_toolflow(c),
+        "reasoning": lambda: api.run_reasoning(c),
+        "structured": lambda: api.run_structured(c),
+        "stream": lambda: api.run_stream(c),
+        "messages": lambda: api.run_messages(c),
+        "responses": lambda: api.run_responses(c),
+        "errors": lambda: api.run_errors(c),
     }
     result = {"schema": 1, "mode": mode_name, "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
               "url": args.url, "provenance": provenance(c), "nonce": nonce,
@@ -680,6 +708,8 @@ def main(argv=None) -> int:
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument("--quick", action="store_true", help="default mode (~8 min)")
     mode.add_argument("--full", action="store_true", help="adds GSM8K, MMLU, 128k needle")
+    mode.add_argument("--api", action="store_true",
+                      help="API-parity components against the dsv41 API gateway (a few minutes)")
     ap.add_argument("--url", default="http://127.0.0.1:8000")
     ap.add_argument("--model", default=None, help="default: first id in /v1/models")
     ap.add_argument("--baseline", type=Path,
@@ -691,11 +721,11 @@ def main(argv=None) -> int:
                     help="gate this saved result JSON against --baseline; sends no traffic")
     args = ap.parse_args(argv)
 
-    mode_name = "full" if args.full else "quick"
-    comps = FULL if args.full else QUICK
+    mode_name = "full" if args.full else "api" if args.api else "quick"
+    comps = FULL if args.full else API if args.api else QUICK
     if args.only:
         comps = [x for x in args.only.split(",") if x]
-        unknown = set(comps) - set(FULL)
+        unknown = set(comps) - set(FULL) - set(API)
         if unknown:
             ap.error(f"unknown components: {sorted(unknown)}")
     base = json.loads(args.baseline.read_text()) if args.baseline else None
@@ -730,19 +760,28 @@ def headline(result: dict) -> dict:
                       ("selfcons_identical", "selfcons.identical"), ("selfcons_aa_hazard", "selfcons.aa.hazard"),
                       ("selfcons_golden_hazard", "selfcons.golden.hazard"),
                       ("gsm8k", "gsm8k.acc.rate"), ("gsm8k_think", "gsm8k_think.acc.rate"),
-                      ("mmlu", "mmlu.acc.rate"), ("c2", "c2.pass"), ("vision", "vision.pass")):
+                      ("mmlu", "mmlu.acc.rate"), ("c2", "c2.pass"), ("vision", "vision.pass"),
+                      ("toolflow", "toolflow.acc.rate"), ("reasoning", "reasoning.acc.rate"),
+                      ("structured", "structured.acc.rate"), ("stream_text_equal", "stream.text_equal.rate"),
+                      ("messages", "messages.acc.rate"), ("responses", "responses.acc.rate")):
         v = _get(c, path)
         if v is not None:
             h[key] = v
+    for name in API:
+        bad = _get(c, f"{name}.invariants")
+        if bad is not None:
+            h[f"{name}_violations"] = len(bad)
     return h
 
 
 def _brief(name: str, res: dict) -> str:
     if "error" in res:
         return f"ERROR {res['error'][:200]}"
-    skip = {"per_passage", "items", "runs", "cells", "misses", "per_prompt", "aa"}
+    skip = {"per_passage", "items", "runs", "cells", "misses", "per_prompt", "aa", "fixture"}
     return json.dumps({k: v for k, v in res.items() if k not in skip and k != "s"})[:300]
 
 
 if __name__ == "__main__":
+    # api_eval imports `quality_eval`; give it this module, not a second copy.
+    sys.modules.setdefault("quality_eval", sys.modules[__name__])
     sys.exit(main())

@@ -85,9 +85,10 @@ After `./run.sh` is up:
 ```bash
 python3 smoke_chat.py
 python3 smoke_vision.py
+python3 tests/quality_eval.py --api --baseline results/2026-10-22-1017-api-parity/APIG/api.json
 ```
 
-`smoke_chat.py` fails unless `choices[0].message.content` matches `323` for `17*19` (`--expect ''` accepts any non-empty content). `smoke_vision.py` must not return HTTP 400 `is not a multimodal model`, and its answer for the solid-red PNG must contain `red`.
+`--api` checks the API gateway on port 8000 against the DeepSeek API as deepseek-recipe 0.2.0 encodes it (exact prompt token IDs through `/dsv41/render`, tool round trips, reasoning, structured output, streaming, Messages, Responses, error texts); against vLLM directly it fails by design. `smoke_chat.py` fails unless `choices[0].message.content` matches `323` for `17*19` (`--expect ''` accepts any non-empty content). `smoke_vision.py` must not return HTTP 400 `is not a multimodal model`, and its answer for the solid-red PNG must contain `red`.
 
 ## Never touch
 
