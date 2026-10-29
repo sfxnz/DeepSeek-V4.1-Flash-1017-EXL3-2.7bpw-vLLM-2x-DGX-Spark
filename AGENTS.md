@@ -95,3 +95,17 @@ python3 tests/quality_eval.py --api --baseline results/2026-10-22-1017-api-parit
 - Live HF tokens
 - Floating `:latest` on the dsv41 base. Digest is pinned in `recipe.yaml` and the Dockerfile
 - Hand-edited generated README / `run.sh` blocks
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues on `sfxnz/DeepSeek-V4.1-Flash-1017-EXL3-2.7bpw-vLLM-2x-DGX-Spark`, through `gh`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five default roles, each label named after its role (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root, created when a term or decision is first recorded. See `docs/agents/domain.md`.
